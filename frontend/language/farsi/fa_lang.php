@@ -1,0 +1,29 @@
+<?php
+$lang['direction'] = "rtl";
+
+$lang['Home'] = "خانه";
+$lang['Contact us'] = "تماس باما";
+$lang['Sign Up'] = "عضویت";
+$lang['Login'] = "ورود";
+$lang['Read More'] = "ادامه مطلب";
+$lang['Search'] = "جستجو";
+$lang['Get More Information'] = "دریافت اطلاعت بیشتر";
+$lang['All'] = "همه";
+$lang['Email'] = "آدرس ایمیل";
+$lang['Password'] = "رمز";
+$lang['Sign in'] = "ورود";
+$lang['Forget My Password'] = "بازیابی رمز";
+$lang['Keep me login'] = "مرا لاگین نگه دار";
+$lang['User Login'] = "ورود کاربر";
+$lang['Register'] = "عضویت";
+$lang['Submit'] = "تایید";
+$lang['Fast & Quick register'] = "عضویت سریع و ساده";
+$lang['For register to this website, insert your email address in down text box, and get a email from our website and flow it.'] = "برای ثبت عضویت در این سایت، باید آدرس ایمیل خود را وارد کنید و بر روی دکمه ثبت عضویت کلیک کنید. و بعد ایمیلی از طریق سایت برای شما ارسال می شود که از آن طریق می توانید ادامه کار را دنبال کنید.";
+$lang['Insert your correct email address'] = "آدرس ایمیل خود را به صورت صحیح وارد کنید";
+$lang['Register now'] = "ثبت عضویت";
+$lang['Forget password'] = "فراموشی رمز";
+$lang['Return password'] = "بازیابی رمز";
+$lang['If forgot your password, insert your email address in down text box, and get a email from our website and flow it.'] = "برای بازیابی رمز خود آدرس ایمیلی که با آن در این سایت عضو شده اید را وارد کرده، ایمیلی برای شما فرستاده می شود و از طریق آن ادامه کار را دنبال کنید.";
+$lang['Type a message here'] = "در این قسمت یک نظر برای ما بنویسید";
+$lang['Comments'] = "نظرات";
+$lang['Please send us your feedback'] = "لطفا بازخورد را برای ما ارسال کنید";

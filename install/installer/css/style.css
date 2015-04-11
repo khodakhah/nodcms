@@ -1,0 +1,633 @@
+
+
+    /* ====================================================================
+
+    *
+
+    *                            PHP Setup Wizard
+
+    *
+
+    *                        -= INSTALLER STYLESHEET =-
+
+    *
+
+    *  ================================================================= */
+
+
+
+/* Containers */ 
+
+body {
+
+	
+
+	margin: 40px;
+
+	font-family: Lucida Grande, Verdana, Sans-serif;
+
+	font-size: 12px;
+
+	color: #000;
+
+}
+#installer p
+{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:13px;
+	line-height:20px;
+	color:#5E5E5E;
+}
+/* Contains all divs */
+
+#container{ 
+
+	width:900px;
+
+	margin:0 auto;
+
+}
+
+/* Contains #installer and #footer */
+
+#content{
+
+	width: 500px;
+
+	float:left;
+
+}
+
+/* Overall style on all boxes */
+
+#installer, #footer, #steps {		
+
+	background-color: #FFFFFF; 	
+
+	padding:20px; 
+
+	border:1px solid #AEAEAE;
+	 -moz-border-radius: 5px; /* Firefox */
+  -webkit-border-radius: 5px; /* Safari and Chrome */
+  border-radius: 5px; /* Opera 10.5+, future browsers, and now also Internet Explorer 6+ using IE-CSS3 */
+
+ 
+
+  behavior: url(ie-css3.htc); /* This lets IE know to call the script on all elements which get the 'box' class */
+
+}
+
+/* Custom style on #footer */
+
+#footer {
+
+	padding:8px 20px 8px 20px;
+
+	margin:6px 0 10px 0;
+
+	font-size:10px;
+
+	color:#4B4B4B;
+
+}
+
+/* Custom style on #steps */
+
+#steps{
+
+	width:230px;
+
+	display:block;
+
+	float:left;
+
+	padding:3px;
+
+	margin-right:5px;
+
+}
+
+
+
+/* Normal links */
+
+a{
+
+	color:#000000;
+
+	text-decoration:underline;
+
+}
+
+div.warning a{
+
+	color:#9B7C00;
+
+}
+
+a:hover{
+
+	text-decoration:none;
+
+}
+
+
+/* Steps links */
+
+ul.steps li a{
+
+	display:block;
+
+	text-decoration:none;
+
+	border:1px solid #FFFFFF;
+
+	padding:4px 0 4px 2px;
+
+}
+
+ul.steps li.wait a{
+
+	color:#5D5D5D;
+
+	font-style:italic;
+
+}
+
+ul.steps li a:hover{	
+
+	
+
+
+	color:#000000;
+
+}
+
+
+
+
+
+/* Text and headings */
+
+h1 /* Main title */ {
+
+    padding: 6px 0 5px 0px; 
+
+    margin: 0px;        
+
+    border-bottom:1px solid #AEAEAE;
+
+    font-size:18px;
+
+    color: #3C3C3C;
+
+}
+
+h2  /* Page subtitles */ {
+
+    padding: 10px 0 4px 0px;     
+
+	margin-top:22px;
+	font-weight:500;
+	font-family:Arial, Helvetica, sans-serif; 
+
+    border-bottom:1px dashed #CECECE;
+
+    font-size:15px;
+
+    color: #3C3C3C;
+
+}
+
+h3 /* Form labels */ { 
+
+    padding: 7px 0 0 0; 
+
+    margin: 0px;        
+
+    font-size:13px;
+
+    color: #3C3C3C;
+
+}
+
+span.emphazis /* Emphazise */ {
+
+	font-weight:bold;
+
+	text-transform:uppercase;
+
+	font-size:14px;
+
+	border:1px dashed #CECECE;
+
+	background-color:#CADBBB;
+
+}
+
+span.descrete /* Discression */ { 
+
+	font-size:10px;
+
+	color:#9B9B9B;
+
+}
+
+span.must /* Must */ { 
+
+	font-size:10px;
+
+	font-weight:bold;
+
+	color:#FF0000;
+
+}
+
+tt{
+
+	font-size:14px;
+
+}
+
+
+
+/* Forms */ 
+
+textarea.display{
+
+	width:100%;
+
+	height:220px;
+
+	font-family:Lucida Grande, Verdana, Sans-serif;
+
+	font-size:12px;
+
+	margin:12px 0 12px 0;
+
+}
+
+div.quote{
+
+	padding:8px 25px 8px 25px;
+
+	font-style:italic;
+
+	color:#3B3B3B;
+
+}
+
+div.formrbt, div.formchb{
+
+	padding:3px 0 3px 0;
+
+	margin:0;
+
+	border:1px solid #FFFFFF;
+
+}
+
+div.formrbt:hover, div.formchb:hover{
+
+	border:1px solid #757575;
+
+	background-color:#FFFDCC;
+
+	cursor:pointer;
+
+}
+
+div.installdone{
+
+	background-color: #E3FFDF;
+
+	border: 1px solid #24B700;
+
+}
+
+div.newdb{
+
+	background-color: #D7DFFF;
+
+	border: 1px solid #046DBB;
+
+}
+
+div.textbox input{
+
+	width:448px;
+	height:25px;
+	padding:0 0 0 5px;
+	margin:8px 0 0 0;
+	background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+
+}
+
+div.textbox input:focus{
+
+	border:1px solid #757575;
+
+	background-color:#FFFDCC;
+
+	color:#000000;
+
+}
+
+div.textbox input:hover{	
+
+	border:1px solid #757575;
+
+	background-color:#FFFDCC;
+
+	color:#000000;
+
+}
+
+div.bigbox input{
+
+	width:320px;
+
+}
+
+div.mediumbox input{
+
+	width:224px;
+
+}
+
+div.smallbox input{
+
+	width:190px;
+
+}
+
+div.tinybox input{
+
+	width:110px;
+
+}
+
+table.dblist{
+
+	width:100%;
+
+}
+
+table.dblist td{
+
+	width:50%;
+
+}
+
+.btn{
+	padding:3px 12px 3px 12px;	
+	margin:15px 0px 8px 0px;
+	background:url('../images/btn-bgnormal.png') repeat-x;
+	border:1px solid #818184;
+	font:12px Lucida Grande, Verdana, Sans-serif;
+	text-align:center;
+ -moz-border-radius:5px; /* Firefox */
+  -webkit-border-radius:5px; /* Safari and Chrome */
+  border-radius:5px; /* Opera 10.5+, future browsers, and now also Internet Explorer 6+ using IE-CSS3 */
+  behavior: url(ie-css3.htc); /* This lets IE know to call the script on all elements which get the 'box' class */
+}
+.btn:hover{
+	background:url('../images/btn-bghover.png') repeat-x;
+	cursor:pointer;
+}
+/* Optional Port Table */
+
+table.hostport
+{
+	width:99%;
+	margin:0; 
+	padding:0;
+}
+/* DB Access Tests */
+
+table.dbtests{
+	margin:6px 0 10px 10px;
+	border:0px;
+}
+
+table.dbtests td{
+	border-bottom:1px dashed #C0C0C0;
+	padding:4px 0 4px 0;
+	margin:0px;
+}
+
+table.dbtests td.operation{
+
+	width:70px;
+
+	font-family:"Courier New" Courier monospace;
+
+	font-size:14px;
+
+	text-transform: uppercase;
+
+}
+
+table.dbtests td.errormsg{
+
+	color:#CA9394;
+
+	font-size:10px;
+
+	width:255px;
+
+	padding-left:8px;
+
+}
+
+table.dbtests td.normalmsg{
+
+	color:#57A532;
+
+	font-size:10px;
+
+	width:255px;
+
+	padding-left:8px;
+
+}
+
+table.dbtests td.unknownmsg{
+
+	color:#7F7F7F;
+
+	font-size:10px;
+
+	width:255px;
+
+	padding-left:8px;
+
+}
+
+table.dbtests td.okay{
+
+	font-weight:bold;
+
+	color:#53A600;
+
+}
+
+table.dbtests td.fail{
+
+	font-weight:bold;
+
+	color:#DD0000;
+
+}
+
+table.dbtests td.exist{
+
+	font-weight:bold;
+
+	color:#3300FF;
+
+}
+
+table.dbtests td.unknown{
+
+	font-weight:bold;
+
+	color:#7F7F7F;
+
+}
+
+table.dbtests td.okayico{
+
+	background:url('../images/smsuccess.png') no-repeat;
+
+	background-position: 2px center;
+
+	width:35px;
+
+}
+
+table.dbtests td.failico{
+
+	background:url('../images/smfail.png') no-repeat;
+
+	background-position: 2px center;
+
+	width:35px;
+
+}
+
+table.dbtests td.existico{
+
+	background:url('../images/smexists.png') no-repeat;
+
+	background-position: 2px center;
+
+	width:35px;
+
+}
+
+table.dbtests td.unknownico{
+
+	background:url('../images/smunknown.png') no-repeat;
+
+	background-position: 2px center;
+
+	width:35px;
+
+}
+
+
+
+
+
+/* Install SQL */
+
+table.tablelist{
+
+	margin:6px 0 10px 30px;
+
+	border:0px;
+
+	width:90%;
+
+}
+
+table.tablelist td{
+
+	font-family:"Courier New" Courier monospace;
+
+	font-size:9px;
+
+	padding-right:7px;
+
+}
+
+textarea.codeblock{
+
+	width:96%;
+
+	height:200px;
+
+	margin:1px 0px 4px 0px;
+
+	padding:8px;
+
+	word-wrap:normal;
+
+	font-family:"Courier New" Courier monospace;
+
+	font-size:11px;
+
+	border:1px solid #AEAEAE;
+
+	background-color:#FFFEE6;
+
+	color:#4B4921;
+
+}
+
+
+
+/* Created Admin Account */
+
+table.administrator{
+
+	margin:6px 0 10px 30px;
+
+	border:0px;
+
+}
+
+table.administrator td{
+
+	padding:4px;
+
+}
+
+table.administrator td.data{
+
+	border:1px solid #757575;
+
+	background-color:#FFFDCC;
+
+	color:#000000;
+
+	font-size:16px;
+
+	font-family:Georgia, Arial, Verdana, sans-serif;
+
+	padding:4px;
+
+	width:200px;
+
+}
+
+table.administrator td.label{
+
+	font-weight:bold;
+
+}

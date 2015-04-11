@@ -1,0 +1,423 @@
+
+
+    /* ====================================================================
+
+    *
+
+    *                            PHP Setup Wizard
+
+    *
+
+    *                        -= INSTALLER STYLESHEET =-
+
+    *
+
+    *  ================================================================= */
+
+
+
+
+
+/* Notification boxes */
+
+.msg {	
+
+    margin: 9px 0 9px 0;
+
+    padding: 12px;
+
+    padding-left:55px;
+
+	background-repeat: no-repeat; 
+
+    background-position: 10px center;	
+
+	min-height: 18px;
+
+    font-size: 13px;
+
+	line-height: 15px;
+
+}
+
+.success {
+
+    background-image: url('../images/success.png');
+
+	background-color: #E3FFDF;
+
+	border: 1px solid #24B700;
+
+	color: #009900;	
+
+}
+
+.info {
+
+    background-image: url('../images/info.png');
+
+	background-color: #D7DFFF;
+
+	border: 1px solid #046DBB;
+
+	color: #0033FF;	
+
+}
+
+.warning { 
+
+    background-image: url('../images/warning.png');
+
+    background-color: #FFFBCC; 
+
+    border: 1px solid #A89B00;
+
+    color: #9B7C00; 
+
+}
+
+.error {
+
+    background-image: url('../images/error.png');
+
+	background-color: #FFE1E1;
+
+	border: 1px solid #E85757;
+
+	color: #CC3300;	
+
+}
+
+.dberror {
+
+    background-image: url('../images/dberror.png');
+
+	background-color: #FFE1E1;
+
+	border: 1px solid #E85757;
+
+	color: #CC3300;	
+
+	font-family : "courier new", courier, monospace;
+
+}
+
+.dberror span{	
+
+	font-weight:bold;
+
+}
+
+.zoom {
+
+    background-image: url('../images/zoom.png');
+
+	background-color: #F7E1F7;
+
+	border: 1px solid #711371;
+
+	color: #430051;	
+
+}
+
+
+
+
+
+/* Progress steps */
+
+ul.steps{
+
+	margin:14px 0 10px 0; 
+
+	padding:0px 20px 0px 6px;
+
+	list-style-type:none;
+
+}
+
+ul.steps li{
+
+	background-repeat: no-repeat; 
+
+    background-position: 10px 10px;
+
+	margin:10px 0 10px 0;
+
+	padding:0;
+
+	padding-left:30px;
+
+	display:block;
+
+}
+
+ul.steps li.okay{
+
+	background-image: url('../images/smsuccess.png');
+
+}
+
+ul.steps li.now{
+
+	background-image: url('../images/smcurrent.png');
+
+	font-weight:bold;
+
+}
+
+ul.steps li.wait{
+
+	background-image: url('../images/smwait.png');
+
+	color:#707070;
+
+}
+
+ul.steps li.disabled{
+
+	background-image: url('../images/smfail.png');
+
+	color:#910000;
+
+}
+
+ul.steps li.autoskip{
+
+	background-image: url('../images/smskip.png');
+
+	color:#0000FF;
+
+	font-style:italic;
+
+}
+
+ul.steps li.settings{
+
+	background-image: url('../images/smsettings.png');
+
+	color:#0000FF;
+
+}
+
+
+
+
+
+/* Icons used in headings: h1, h2 etc. */
+
+.hicon{
+
+	background-repeat: no-repeat; 
+
+	background-position: 0px 0px;
+
+}
+
+.connection{
+
+	background-image: url('../images/connection.png');
+
+	padding-left:40px;	
+
+}
+
+.database{
+
+	background-image: url('../images/database.png');
+
+	padding-left:40px;	
+
+}
+
+.home{
+
+	background-image: url('../images/home.png');
+
+	padding-left:40px;	
+
+}
+
+.package{
+
+	background-image: url('../images/package.png');
+
+	padding-left:40px;	
+
+}
+
+.rootuser{
+
+	background-image: url('../images/rootuser.png');
+
+	padding-left:40px;	
+
+}
+
+.settings{
+
+	background-image: url('../images/settings.png');
+
+	padding-left:40px;	
+
+}
+
+.keywords{
+
+	background-image: url('../images/keywords.png');
+
+	padding-left:40px;	
+
+}
+
+.agreement{
+
+	background-image: url('../images/agreement.png');
+
+	padding-left:40px;	
+
+}
+
+.dbselect{
+
+	background-image: url('../images/dbselect.png');
+
+	padding-left:40px;	
+
+}
+
+.dbnew{
+
+	background-image: url('../images/dbnew.png');
+
+	padding-left:40px;	
+
+}
+
+.sql{
+
+	background-image: url('../images/sql.png');
+
+	padding-left:40px;	
+
+}
+
+.prefix{
+
+	background-image: url('../images/prefix.png');
+
+	padding-left:40px;	
+
+}
+
+.custom{
+
+	background-image: url('../images/custom.png');
+
+	padding-left:40px;	
+
+}
+
+.debug{
+
+	background-image: url('../images/debug.png');
+
+	padding-left:40px;	
+
+}
+
+.zoom2{
+
+	background-image: url('../images/zoom.png');
+
+	padding-left:40px;	
+
+}
+
+.filenew{
+
+	background-image: url('../images/filenew.png');
+
+	padding-left:40px;	
+
+}
+
+.filelocked{
+
+	background-image: url('../images/filelocked.png');
+
+	padding-left:40px;	
+
+}
+
+.disconnect{
+
+	background-image: url('../images/disconnect.png');
+
+	padding-left:40px;	
+
+}
+
+.dbaccess{
+
+	background-image: url('../images/dbaccess.png');
+
+	padding-left:40px;	
+
+}
+
+.cake{
+
+	background-image: url('../images/cake.png');
+
+	padding-left:40px;	
+
+}
+
+.remconf{
+
+	background-image: url('../images/remconf.png');
+
+	padding-left:40px;	
+
+}
+
+.exit{
+
+	background-image: url('../images/exit.png');
+
+	padding-left:40px;	
+
+}
+
+.allsteps{
+
+	background-image: url('../images/allsteps.png');
+
+	padding-left:40px;	
+
+}
+
+.language{
+
+	background-image: url('../images/language.png');
+
+	padding-left:40px;	
+
+}
+
+.timezone{
+
+	background-image: url('../images/timezone.png');
+
+	padding-left:40px;	
+
+}
+
+.phpmodule{
+
+	background-image: url('../images/phpmodule.png');
+
+	padding-left:40px;	
+
+}

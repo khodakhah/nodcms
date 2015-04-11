@@ -1,0 +1,39 @@
+body{color: #222222;}
+.form-control{color: #333333;border-color:#aaaaaa;}
+.header.dark-bg{background: #384144}
+.header.dark-bg .top-nav ul.top-menu > li > a{border-color: #666666 !important;}
+.header.dark-bg .top-nav .username{color: #888888 !important;}
+
+.header.blue-bg{background: #288cd6;}
+.header.blue-bg .top-nav ul.top-menu > li > a{border-color: #999999 !important;}
+.header.blue-bg .top-nav ul.top-menu > li > a:hover,
+.header.blue-bg .top-nav ul.top-menu > li > a:hover, .top-nav ul.top-menu > li > a:focus,
+.header.blue-bg .dropdown-menu.extended.logout > li:last-child
+{background: #286fb2 !important;}
+.header.blue-bg .top-nav .username,.header.blue-bg .tooltips{color: #ffffff !important;}
+
+.header.green-bg{background: #93B874;}
+.header.green-bg .top-nav ul.top-menu > li > a{border-color: #cccccc !important;}
+.header.green-bg .top-nav ul.top-menu > li > a:hover,
+.header.green-bg .top-nav ul.top-menu > li > a:hover, .top-nav ul.top-menu > li > a:focus,
+.header.green-bg .dropdown-menu.extended.logout > li:last-child
+{background: #7fa363 !important;}
+.header.green-bg .top-nav .username,.header.green-bg .tooltips{color: #ffffff !important;}
+
+.header.blue-bg{background: #286fb2;}
+.header.blue-bg .top-nav ul.top-menu > li > a{border-color: #cccccc !important;color: #ffffff !important;}
+.header.blue-bg a.btn-link, .header.blue-bg button.btn-link, .header.blue-bg .logo{color: #eeeeee !important;text-decoration: none;}
+.header.blue-bg a.btn-link:hover, .header.blue-bg button.btn-link:hover{color: #ffffff !important;text-decoration: none;}
+.header.blue-bg .top-nav ul.top-menu > li > a:hover,
+.header.blue-bg .top-nav ul.top-menu > li > a:hover, .top-nav ul.top-menu > li > a:focus,
+.header.blue-bg .dropdown-menu.extended.logout > li:last-child
+{background: #288cd6 !important;}
+.header.blue-bg .top-nav .username,.header.blue-bg .tooltips{color: #ffffff !important;}
+
+.select_icon label{border: 1px solid #cccccc;padding: 4px; margin: 3px;cursor: pointer;width:40px;text-align: center;}
+.select_icon label input{display: none;}
+.select_icon label:hover{background: #eeeeee;}
+.select_icon label.checked{background: #cccccc;}
+.form-group{margin-bottom: 0 !important;padding-top: 15px;}
+.form-group:hover{background: #eeeeee;}
+.dd3-content{height: auto !important;}

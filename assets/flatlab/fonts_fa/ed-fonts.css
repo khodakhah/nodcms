@@ -1,0 +1,31 @@
+@font-face {
+    font-family: 'ed-normal';
+    src: url('naskh.eot');
+    src: url('naskh.eot?#iefix') format('embedded-opentype'),
+    url('naskh.woff') format('woff'),
+    url('naskh.svg') format('svg'),
+    url('naskh.otf') format('otf'),
+    url('naskh.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'ed-normal2';
+    src: url('BRoya.eot');
+    src: url('BRoya.eot?#iefix') format('embedded-opentype'),
+    url('BRoya.woff') format('woff'),
+    url('BRoya.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'ed-title';
+    src: url('naskh.eot');
+    src: url('naskh.eot?#iefix') format('embedded-opentype'),
+    url('naskh.woff') format('woff'),
+    url('naskh.svg') format('svg'),
+    url('naskh.otf') format('otf'),
+    url('naskh.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}

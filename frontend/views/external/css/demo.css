@@ -1,0 +1,46 @@
+body {
+  background: #123;
+  color: #333;
+  font-size: 11px;
+  height: auto;
+  padding-bottom: 20px;
+}
+
+a {
+  color: #fff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  font-family: Georgia, serif;
+  font-weight: normal;
+  padding-top: 20px;
+  text-align: center;
+}
+
+h2 {
+  padding-top: 20px;
+  text-align: center;
+}
+
+
+
+.container_12,
+.container_16,
+.container_24 {
+  background-repeat: repeat-y;
+  margin-bottom: 20px;
+}
+
+.container_12 {
+}
+
+.container_16 {
+}
+
+.container_24 {
+  background-image: url(../img/24_col.gif)
