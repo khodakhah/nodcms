@@ -399,7 +399,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `users` (`user_id`, `username`, `password`, `fullname`, `firstname`, `lastname`, `email`, `group_id`, `created_date`, `reset_pass_exp`, `status`, `active_register`, `active`, `active_code`, `email_hash`, `avatar`, `user_agent`, `keep_me_time`) VALUES
-(1, 'admin', '4c178e256210c5da915749c818019d72', 'Administrator', NULL, NULL, '', 1, 1, 0, 1, 1, 1, '', '', '', NULL, 0);
+(1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', 'Administrator', NULL, NULL, '', 1, 1, 0, 1, 1, 1, '', '', '', NULL, 0);
 
 
 -- Dumping structure for table nodcms_demo.visitors
