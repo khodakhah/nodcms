@@ -99,7 +99,7 @@
 	
 					// Execute the query and return the results with
 					// success state and error message if set
-					$q = explode(";\r\n",$q);
+					$q = explode(";\n",$q);
 					foreach($q as $query)
 					{
 						$result = mysql_query( $query, $this->connection);
