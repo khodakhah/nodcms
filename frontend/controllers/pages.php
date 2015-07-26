@@ -1,9 +1,9 @@
 <?php
 class Pages extends CI_Controller {
-	private $data;
+	private $data,$mainTemplate;
 	function preset($lang){
         session_start();
-
+        $this->mainTemplate = $this->config->item('templateName');;
         $language = $this->general_model->get_language_by_code($lang);
         if($language!=0){
             $_SESSION["language"] = $language;
@@ -204,7 +204,7 @@ class Pages extends CI_Controller {
         $this->data['content']='home';
         $this->data['keyword']= isset($this->data['settings']["options"]["site_keyword"])?$this->data['settings']["options"]["site_keyword"]:"";
         $this->data['description']= isset($this->data['settings']["options"]["site_description"])?$this->data['settings']["options"]["site_description"]:"";
-        $this->load->view('flatlab',$this->data,'');
+        $this->load->view($this->mainTemplate,$this->data,'');
 
 	}
     function login($lang,$logout=null){
@@ -235,7 +235,7 @@ class Pages extends CI_Controller {
         $this->data['login_error']=isset($error)?$error:null;
         $this->data['title']=_l('Login',$this);
         $this->data['content']='login';
-        $this->load->view('flatlab',$this->data,'');
+        $this->load->view($this->mainTemplate,$this->data,'');
     }
 	function register($lang){
         $this->preset($lang);
@@ -289,7 +289,7 @@ class Pages extends CI_Controller {
         }
         $this->data['title']='Register';
         $this->data['content']='register';
-        $this->load->view('flatlab',$this->data,'');
+        $this->load->view($this->mainTemplate,$this->data,'');
 	}
 	function forget_password($lang){
         $this->preset($lang);
@@ -318,7 +318,7 @@ class Pages extends CI_Controller {
         }
         $this->data['title']=_l('Forget password',$this);
         $this->data['content']='forget_password';
-        $this->load->view('flatlab',$this->data,'');
+        $this->load->view($this->mainTemplate,$this->data,'');
 	}
     function reset_password($lang,$email_hash,$active_code){
         $this->preset($lang);
@@ -346,7 +346,7 @@ class Pages extends CI_Controller {
         }
         $this->data['title']=_l("Set password",$this);
         $this->data['content']='reset_password';
-        $this->load->view('flatlab',$this->data,'');
+        $this->load->view($this->mainTemplate,$this->data,'');
     }
     function profile(){
         $this->data["userdata"] = $_SESSION["user"];
@@ -357,7 +357,7 @@ class Pages extends CI_Controller {
             $this->data['banners'] = null;
         $this->data['title']='Profile';
         $this->data['content']='profile';
-        $this->load->view('flatlab',$this->data,'');
+        $this->load->view($this->mainTemplate,$this->data,'');
 	}
  	function profile_detail(){
          $this->data["userdata"] = $_SESSION["user"];
@@ -442,7 +442,7 @@ class Pages extends CI_Controller {
 
              $this->data['title']='Edit Detail';
              $this->data['content']='profiledetail';
-             $this->load->view('flatlab',$this->data,'');
+             $this->load->view($this->mainTemplate,$this->data,'');
          }
          else
          {	$_SESSION['redirect_page'] = "profile-detail";
@@ -469,7 +469,7 @@ class Pages extends CI_Controller {
             }
             $this->data['title']=_l('Change password',$this);
             $this->data['content']='profilepassword';
-            $this->load->view('flatlab',$this->data,'');
+            $this->load->view($this->mainTemplate,$this->data,'');
         }
         else
         {	$_SESSION['redirect_page'] = "profile-password";
@@ -517,7 +517,7 @@ class Pages extends CI_Controller {
         $this->data['title']=$extension['name'];
         $this->data['keyword']=$extension['tag'];
         $this->data['description']=$extension['description'];
-        $this->load->view('flatlab',$this->data,'');
+        $this->load->view($this->mainTemplate,$this->data,'');
 	}
 
 	function extension_addcomment($lang){
@@ -568,7 +568,7 @@ class Pages extends CI_Controller {
             echo $this->load->view('flatlab/'.get_theme_page_ajax($page["page_type"],$page_type),$this->data,true);
         }else{
             $this->data['content']=get_theme_page($page["page_type"],$page_type);
-            $this->load->view('flatlab',$this->data,'');
+            $this->load->view($this->mainTemplate,$this->data,'');
         }
     }
 
@@ -593,7 +593,7 @@ class Pages extends CI_Controller {
             echo $this->load->view('flatlab/search_ajax',$this->data,true);
         }else{
             $this->data['content']="search";
-            $this->load->view('flatlab',$this->data,'');
+            $this->load->view($this->mainTemplate,$this->data,'');
         }
     }
 
@@ -622,7 +622,7 @@ class Pages extends CI_Controller {
         }
         $this->data['title']='Contact to admin';
         $this->data['content']='contact';
-        $this->load->view('flatlab',$this->data,'');
+        $this->load->view($this->mainTemplate,$this->data,'');
     }
 	function sendEmailAutomatic($emails, $subject,$content, $from = null, $mailType = 'html')
 	{
