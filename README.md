@@ -24,4 +24,4 @@ There are various ways you can contribute:
 
 1. Raise an [Issue](https://github.com/khodakhah/nodcms/issues) on GitHub
 2. Send us a Pull Request with your bug fixes and/or new features
-3. Translate nodcms into [Languages files in GitHub](https://www.github.com/khodakhah/nodcms/frontend/language)
+3. Translate nodcms into [Languages files in GitHub](https://www.github.com/khodakhah/nodcms/tree/master/frontend/language)
