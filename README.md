@@ -16,6 +16,15 @@ Password: demo
 ## Download ##
 You can download it directly as a ZIP file: [GitHub Download](https://github.com/khodakhah/nodcms/archive/master.zip)!
 
+## Installation ##
+After install, you can access the admin side on this URL www.your-domain.com/admin
+
+#### Default administrator:
+
+username: <strong>admin</strong>
+
+password: <strong>123456</strong>
+
 ## Bugs ##
 If you find an issue, let us know [here](https://github.com/khodakhah/nodcms/issues/new)!
 
