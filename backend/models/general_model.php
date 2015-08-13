@@ -419,7 +419,7 @@ class General_Model extends CI_Model
 
     function get_all_extension($data_type=null,$relation_id=null)
     {
-        $this->db->select("*");
+        $this->db->select("*,extensions.public,extensions.created_date,extensions.status");
         $this->db->from('extensions');
         $this->db->join('languages','languages.language_id=extensions.language_id');
         if($data_type!=null){
