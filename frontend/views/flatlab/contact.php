@@ -119,8 +119,8 @@ function check_request(){
         var mapMarker = function () {
             var map = new GMaps({
                 div: '#gmap_marker',
-                lat: 48.137769,
-                lng: 16.276226
+                lat: <?php echo substr($settings["location"],0,10)?>,
+                lng: <?php echo substr($settings["location"],11,10)?>
             });
             map.addMarker({
                 lat: <?=substr($settings["location"],0,10)?>,
