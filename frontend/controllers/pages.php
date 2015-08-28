@@ -574,20 +574,24 @@ class Pages extends CI_Controller {
 
     function search($lang){
         $this->preset($lang);
-        $search_text = isset($_GET["filter"])?$_GET["filter"]:"";
-        $search = explode("_",$search_text);
-        if(count($search)!=""){
-            $limit = 20;
-            if(isset($_GET["offset"]) && is_numeric($_GET["offset"])){
-                $offset = $_GET["offset"];
-            }else{
-                $offset = 0;
+        $search_text = isset($_GET["filter"])?str_replace("'","",$this->input->get("filter")):"";
+        if($search_text!=""){
+            $search = explode("_",$search_text);
+            if(count($search)!=""){
+                $limit = 20;
+                if(isset($_GET["offset"]) && is_numeric($_GET["offset"])){
+                    $offset = $_GET["offset"];
+                }else{
+                    $offset = 0;
+                }
+                $this->data['data'] = $this->general_model->search_extension($search,$limit,$offset);
             }
-            $this->data['data'] = $this->general_model->search_extension($search,$limit,$offset);
+            $this->data['search_word']=str_replace("_"," ",$search_text);
+            $this->data['text_search']=$search;
+            $this->data['text_replace']=array_map(function($value){ return "<strong>".$value."</strong>"; },$search);
+        }else{
+            $this->data['data'] = array();
         }
-        $this->data['search_word']=str_replace("_"," ",$search_text);
-        $this->data['text_search']=$search;
-        $this->data['text_replace']=array_map(function($value){ return "<strong>".$value."</strong>"; },$search);
         $this->data['title']=str_replace("_"," ",$search_text);
         if(isset($_GET["ajax"])){
             echo $this->load->view('flatlab/search_ajax',$this->data,true);
