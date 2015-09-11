@@ -27,6 +27,21 @@ class Pages extends CI_Controller {
         $this->data['settings'] =  $this->general_model->get_website_info();
         $this->data['settings']["options"] =  $this->general_model->get_website_info_options($language["language_id"]);
 
+//        Statistic
+        $visitorMinDate = $this->general_model->get_min_date_visitor();
+        if($visitorMinDate!=0){
+            $visitorMaxDate = $this->general_model->get_max_date_visitor();
+            $times = $visitorMaxDate - $visitorMinDate;
+            if($times >= 86400){
+                $days = round($times / 86400);
+                $visitorMinDate = (mktime(0,0,0,date("m",$visitorMinDate),(date("j",$visitorMinDate)),date("Y",$visitorMinDate)));
+                for($d=0;$d<$days;$d++){
+                    $maxTime = (mktime(0,0,0,date("m",$visitorMinDate),(date("j",$visitorMinDate)),date("Y",$visitorMinDate))) + 86400;
+                    $this->general_model->update_statistic(strtotime(date("d.m.Y",$visitorMinDate)),$maxTime);
+                    $visitorMinDate = $maxTime;
+                }
+            }
+        }
         $visitor = $this->general_model->get_duplicate_visitor(session_id(),$_SERVER["REQUEST_URI"]);
         if(count($visitor) == 0){
             // Get IP address

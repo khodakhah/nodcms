@@ -342,4 +342,104 @@ class General_Model extends CI_Model
         $insert_id = $this->db->insert_id();
         return $insert_id;
     }
+    function get_max_date_visitor()
+    {
+        $this->db->select('max(created_date)');
+        $this->db->from('visitors');
+        $this->db->where('created_date < "'.strtotime(date("d.m.Y")).'"');
+        $query = $this->db->get();
+        $result = $query->result_array();
+        return count($result)!=0?$result[0]["max(created_date)"]:0;
+    }
+    function get_min_date_visitor()
+    {
+        $this->db->select('min(created_date)');
+        $this->db->from('visitors');
+        $this->db->where('created_date < "'.strtotime(date("d.m.Y")).'"');
+        $query = $this->db->get();
+        $result = $query->result_array();
+        return count($result)!=0?$result[0]["min(created_date)"]:0;
+    }
+    function update_statistic($minDate,$maxDate)
+    {
+//            Initial data get
+        $this->db->select('count(*), sum(count_view)');
+        $this->db->from('visitors');
+        $this->db->where('created_date >= "'.$minDate.'"');
+        $this->db->where('created_date < "'.$maxDate.'"');
+        $query = $this->db->get();
+        $result = $query->result_array();
+        if(count($result)!=0 && $result[0]["count(*)"]){
+//            Initial data set
+            $data = array(
+                "created_date"=>time(),
+                "statistic_date"=>$minDate,
+                "visits"=>$result[0]["sum(count_view)"],
+            );
+//            Get visitors count
+            $this->db->select('session_id');
+            $this->db->from('visitors');
+            $this->db->where('created_date >= "'.$minDate.'"');
+            $this->db->where('created_date < "'.$maxDate.'"');
+            $this->db->group_by('session_id');
+            $query = $this->db->get();
+            $result = $query->result_array();
+//            Set visitors count
+            $data["visitors"]=count($result);
+//            Get popular URL info
+            $this->db->select('request_url, count(request_url) as url_count');
+            $this->db->from('visitors');
+            $this->db->where('created_date >= "'.$minDate.'"');
+            $this->db->where('created_date < "'.$maxDate.'"');
+            $this->db->group_by('request_url');
+            $this->db->order_by('url_count','DESC');
+            $this->db->limit(1);
+            $query = $this->db->get();
+            $result = $query->result_array();
+//            Set popular URL info
+            $data["popular_url"]=$result[0]["request_url"];
+            $data["popular_url_count"]=$result[0]["url_count"];
+//            Get popular Language info
+            $this->db->select('language_id, count(language_id) as language_count');
+            $this->db->from('visitors');
+            $this->db->where('created_date >= "'.$minDate.'"');
+            $this->db->where('created_date < "'.$maxDate.'"');
+            $this->db->group_by('language_id');
+            $this->db->order_by('language_count','DESC');
+            $this->db->limit(1);
+            $query = $this->db->get();
+            $result = $query->result_array();
+//            Set popular Language info
+            $data["popular_lang"]=$result[0]["language_id"];
+            $data["popular_lang_count"]=$result[0]["language_count"];
+//            Get popular Language visits percent
+            $this->db->select('count(*)');
+            $this->db->from('visitors');
+            $this->db->where('created_date >= "'.$minDate.'"');
+            $this->db->where('created_date < "'.$maxDate.'"');
+            $query = $this->db->get();
+            $result = $query->result_array();
+//            Set popular Language visits percent
+            $data["popular_lang_percent"]=round((100*$data["popular_lang_count"])/$result[0]["count(*)"]);
+//            Insert in statistic's table
+            $this->db->insert('statistic',$data);
+//            Delete unused records from visitors table
+            $this->db->delete('visitors','created_date >= "'.$minDate.'" AND created_date < "'.$maxDate.'"');
+        }else{
+//            Set data for statistic table if doesn't exists eny data in visitors table in the period time
+            $data = array(
+                "created_date"=>time(),
+                "statistic_date"=>$minDate,
+                "visitors"=>0,
+                "visits"=>0,
+                "popular_url"=>"",
+                "popular_url_count"=>0,
+                "popular_lang"=>0,
+                "popular_lang_count"=>0,
+                "popular_lang_percent"=>0,
+            );
+//            Insert in statistic's table
+            $this->db->insert('statistic',$data);
+        }
+    }
 }

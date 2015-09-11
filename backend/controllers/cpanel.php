@@ -36,22 +36,19 @@ class Cpanel extends CI_Controller {
             $item["content_percent"] = $this->general_model->count_extensions(array("language_id"=>$item["language_id"]))!=0?(($this->general_model->count_extensions(array("language_id"=>$item["language_id"])) * 100) / $extension_count):0;
             $item["comment_percent"] = $this->general_model->count_comment(array("lang"=>$item["code"]))!=0?(($this->general_model->count_comment(array("lang"=>$item["code"])) * 100) / $comment_count):0;
         }
-        $this->data['visits_count']=$this->general_model->count_visits();
-        $visit_bars = array();
-        $time = mktime(0,0,0,date("m",time()),date("d",time()),date("Y",time()));
-        for($i=29;$i>=0;$i--){
-            $start_day = $time - ($i * 86400);
-            $end_day = $time - (($i-1) * 86400);
-            array_push($visit_bars,$this->general_model->count_visits(null,$start_day,$end_day));
-        }
-//        die("<br>".date("m/d H:i",time()));
         $this->data['extension_count']=$extension_count;
+//        The new statistic
+        $this->data['statistic_max_visitors']=$this->general_model->get_statistic_max_visitors();
+        $this->data['statistic']=$this->general_model->get_all_statistic();
+        krsort($this->data['statistic']);
+        $this->data['statistic_total_visits']=$this->general_model->get_statistic_total_visits();
+        $this->data['statistic_total_visitors']=$this->general_model->get_statistic_total_visitors();
+
         $this->data['page_count']=$this->general_model->count_page();
         $this->data['gallery_count']=$this->general_model->count_gallery();
         $this->data['gallery_image_count']=$this->general_model->count_gallery_image();
         $this->data['image_count']=$this->general_model->count_uploaded_image();
         $this->data['users_count']=$this->general_model->count_users();
-        $this->data['visit_bars']=$visit_bars;
         $this->data['content']=$this->load->view('flatlab/main',$this->data,true);
         $this->data['title'] = "home";
         $this->data['page'] = "home";

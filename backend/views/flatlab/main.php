@@ -58,20 +58,43 @@
         <!--user info table end-->
     </div>
     <div class="col-lg-8">
-        <div class="panel dark-chart">
-            <div class="chart-tittle"><?=_l("Visit Statistics",$this)?></div>
+        <div class="panel">
             <div class="panel-body">
-                <div class="chart">
-                    <div class="heading">
-                        <span><?=date("M | Y",time())?></span>
-                        <strong><?=date("d - D",time())?></strong>
-                    </div>
-                    <div id="barchart"></div>
+                <div class="task-progress">
+                    <h1><?=_l("Visit & Visitors Statistics",$this)?></h1>
+                    <p>
+                        <?php echo _l("Total Visits",$this)?>: <?php echo isset($statistic_total_visits)?$statistic_total_visits:0; ?> |
+                        <?php echo _l("Total Visitors",$this)?>: <?php echo isset($statistic_total_visitors)?$statistic_total_visitors:0; ?>
+                    </p>
                 </div>
             </div>
-            <div class="chart-tittle">
-                <span class="title"><?=_l("Total Visits",$this)?>:</span>
-                <span class="value"><?=$visits_count?></span>
+            <div class="panel-body">
+                <div class="custom-bar-chart">
+                    <ul class="y-axis">
+                        <?php if(isset($statistic_max_visitors) && $statistic_max_visitors!=0){ ?>
+                            <?php if($statistic_max_visitors>=4){ ?>
+                                <?php $counterPlus = round($statistic_max_visitors/4); ?>
+                                <?php for($i=$statistic_max_visitors;$i>=0;$i-=$counterPlus){ ?>
+                                    <li><span><?php echo $i; ?></span></li>
+                                <?php } ?>
+                            <?php }else{ ?>
+                                <li><span><?php echo $statistic_max_visitors; ?></span></li>
+                            <?php } ?>
+                        <?php } ?>
+                    </ul>
+                    <?php if(isset($statistic) && count($statistic)!=0){ ?>
+                        <?php foreach($statistic as $item){ ?>
+                            <div class="bar">
+                                <div class="title">
+                                    <?php echo date("D",$item["statistic_date"]); ?><br>
+                                    <?php echo date("d.m",$item["statistic_date"]); ?><br>
+                                    <?php echo date("Y",$item["statistic_date"]); ?>
+                                </div>
+                                <div class="value tooltips" data-original-title="<?php echo $item["visitors"]?>&nbsp;Visitors <?php echo $item["visits"]?>&nbsp;Visits" data-toggle="tooltip" data-placement="top"><?php echo round(($item["visitors"]*100)/$statistic_max_visitors); ?>%</div>
+                            </div>
+                        <?php } ?>
+                    <?php } ?>
+                </div>
             </div>
         </div>
     </div>
@@ -162,14 +185,6 @@
                     show: false
                 }
             });
-        });
-
-        $("#barchart").sparkline([<?=implode(",",$visit_bars)?>], {
-            type: 'bar',
-            height: '190',
-            barWidth: 20,
-            barSpacing: 5,
-            barColor: '#eee'
         });
     }();
 </script>

@@ -45,7 +45,6 @@ CREATE TABLE IF NOT EXISTS `extensions` (
   `count_view` int(10) unsigned DEFAULT NULL,
   `count_comment` int(10) unsigned NOT NULL DEFAULT '0',
   `extension_order` int(10) unsigned NOT NULL DEFAULT '0',
-  `Column 24` int(10) unsigned NOT NULL DEFAULT '0',
   `extension_more` text NOT NULL,
   PRIMARY KEY (`extension_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -419,4 +418,19 @@ CREATE TABLE IF NOT EXISTS `visitors` (
   `country` varchar(255) DEFAULT NULL,
   `request_url` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`visit_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Dumping structure for table nodcms_demo.statistic
+CREATE TABLE IF NOT EXISTS `statistic` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `created_date` int(11) unsigned DEFAULT NULL,
+  `statistic_date` int(11) unsigned DEFAULT NULL,
+  `visitors` int(11) unsigned DEFAULT NULL,
+  `visits` int(11) unsigned DEFAULT NULL,
+  `popular_url` varchar(255) DEFAULT NULL,
+  `popular_url_count` int(11) unsigned DEFAULT NULL,
+  `popular_lang` int(10) unsigned DEFAULT NULL,
+  `popular_lang_count` int(11) unsigned DEFAULT NULL,
+  `popular_lang_percent` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

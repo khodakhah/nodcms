@@ -797,9 +797,8 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
     width: 100%;
     font-weight: 300;
 }
-
 .custom-bar-chart {
-    height: 290px;
+    height: 180px;
     margin-top: 20px;
     margin-left: 10px;
     position: relative;
@@ -809,8 +808,8 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
 .custom-bar-chart .bar {
     height: 100%;
     position: relative;
-    width: 4.3%;
-    margin: 0px 2%;
+    width: 35px;
+    margin: 0 5px;
     float: left;
     text-align: center;
     -webkit-border-radius: 5px 5px 0 0;
@@ -821,7 +820,7 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
 
 .custom-bar-chart .bar .title {
     position: absolute;
-    bottom: -30px;
+    top: 100%;
     width: 100%;
     text-align: center;
     font-size: 12px;
@@ -830,7 +829,7 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
 .custom-bar-chart .bar .value {
     position: absolute;
     bottom: 0;
-    background: #bfc2cd;
+    background: #3877c0;
     color: #bfc2cd;
     width: 100%;
     -webkit-border-radius: 5px 5px 0 0;
@@ -854,19 +853,17 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
     color: #555555;
     position: absolute;
     text-align: right;
+    height: 100%;
     width: 100%;
 }
 
 .y-axis li {
     border-top: 1px dashed #dbdce0;
     display: block;
-    height: 58px;
+    height: 25%;
     width: 100%;
 }
 
-.y-axis li:last-child {
-    border-top: none;
-}
 
 .y-axis li span {
     display: block;
@@ -879,9 +876,6 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
     color: #555555;
     text-align: right;
 }
-
-
-
 
 /*spark line*/
 .chart {

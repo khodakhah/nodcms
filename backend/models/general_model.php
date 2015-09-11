@@ -942,26 +942,6 @@ class General_Model extends CI_Model
         $result = $query->result_array();
         return isset($result[0]["count(*)"])?$result[0]["count(*)"]:0;
     }
-    function count_visits($where = null,$start_date = null,$end_date = null,$group_by=null)
-    {
-        $this->db->select("count(*)");
-        $this->db->from('visitors');
-        if($where!=null){
-            foreach($where as $key=>$value){
-                $this->db->where($key,$value);
-            }
-        }
-        if($start_date!=null && $end_date!=null){
-            $this->db->where("created_date > $start_date");
-            $this->db->where("created_date <= $end_date");
-        }
-        if($group_by!=null){
-            $this->db->group_by($group_by);
-        }
-        $query = $this->db->get();
-        $result = $query->result_array();
-        return isset($result[0]["count(*)"])?$result[0]["count(*)"]:0;
-    }
     function get_all_setting_options(){
         $this->db->select("*");
         $this->db->from('setting_options_per_lang');
@@ -983,5 +963,46 @@ class General_Model extends CI_Model
     function insert_setting_options($language_id,$data){
         $data['language_id']= $language_id;
         $this->db->insert('setting_options_per_lang', $data);
+    }
+    function get_all_statistic(){
+        $this->db->select("*");
+        $this->db->from('statistic');
+        $this->db->order_by('statistic_date','DESC');
+        $this->db->limit(14);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+    function get_statistic_max_visitors(){
+        $this->db->select("max(visitors)");
+        $this->db->from('statistic');
+        $query = $this->db->get();
+        $result = $query->result_array();
+        return isset($result[0]["max(visitors)"])?$result[0]["max(visitors)"]:0;
+    }
+    function get_statistic_total_visits(){
+        $this->db->select("sum(visits)");
+        $this->db->from('statistic');
+        $query = $this->db->get();
+        $result = $query->result_array();
+        $return = isset($result[0]["sum(visits)"])?$result[0]["sum(visits)"]:0;
+        $this->db->select("sum(count_view)");
+        $this->db->from('visitors');
+        $query = $this->db->get();
+        $result = $query->result_array();
+        $return += isset($result[0]["sum(count_view)"])?$result[0]["sum(count_view)"]:0;
+        return $return;
+    }
+    function get_statistic_total_visitors(){
+        $this->db->select("sum(visitors)");
+        $this->db->from('statistic');
+        $query = $this->db->get();
+        $result = $query->result_array();
+        $return = isset($result[0]["sum(visitors)"])?$result[0]["sum(visitors)"]:0;
+        $this->db->select("count(*)");
+        $this->db->from('visitors');
+        $query = $this->db->get();
+        $result = $query->result_array();
+        $return += isset($result[0]["count(*)"])?$result[0]["count(*)"]:0;
+        return $return;
     }
 }
