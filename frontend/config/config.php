@@ -24,7 +24,7 @@ $config['base_url']	= 'http://'.$_SERVER['HTTP_HOST'].str_replace(basename($_SER
 | This item is the name of your main view file
 |
 */
-$config['templateName'] = 'flatlab';
+$config['templateName'] = 'nodcms_general';
 
 /*
 |--------------------------------------------------------------------------

@@ -291,7 +291,7 @@ class Pages extends CI_Controller {
                         "body"=>_l("We make a new account for you, for active your it and choose your password click on this link",$this).
                             "<a href='".base_url().$lang."/active_account/".$email_hash."/".$active_code."'>"._l("Active account & Choose your password",$this)."</a>"
                     );
-                    $email_body = $this->load->view('flatlab/email-template-public',$body_data,true);
+                    $email_body = $this->load->view($this->mainTemplate.'/email-template-public',$body_data,true);
                     $this->sendEmailAutomatic($_POST["email"],_l("Welcome to",$this),$email_body);
                     redirect(base_url().$lang."/register?success");
                 }
@@ -320,7 +320,7 @@ class Pages extends CI_Controller {
                         "body"=>_l("You want to change your password, for active your it and choose your new password click on this link",$this).
                             "<a href='".base_url().$lang."/reset-password/".md5($_POST["email"])."/".$active_code."'>"._l("Active account & Choose your password",$this)."</a>"
                     );
-                    $email_body = $this->load->view('flatlab/email-template-public',$body_data,true);
+                    $email_body = $this->load->view($this->mainTemplate.'/email-template-public',$body_data,true);
                     $this->sendEmailAutomatic($_POST["email"],_l("Welcome to",$this),$email_body);
                     $this->session->set_flashdata('message_success', _l("We send you a link to your email, please check your email inbox and spam, and flow that.",$this));
                 }else{
@@ -580,7 +580,7 @@ class Pages extends CI_Controller {
         $this->data['data'] = $page;
         $this->data['title']=$page['title_caption'];
         if(isset($_GET["ajax"]) && allowed_theme_page_ajax($page["page_type"],$page_type)){
-            echo $this->load->view('flatlab/'.get_theme_page_ajax($page["page_type"],$page_type),$this->data,true);
+            echo $this->load->view($this->mainTemplate.'/'.get_theme_page_ajax($page["page_type"],$page_type),$this->data,true);
         }else{
             $this->data['content']=get_theme_page($page["page_type"],$page_type);
             $this->load->view($this->mainTemplate,$this->data,'');
@@ -609,7 +609,7 @@ class Pages extends CI_Controller {
         }
         $this->data['title']=str_replace("_"," ",$search_text);
         if(isset($_GET["ajax"])){
-            echo $this->load->view('flatlab/search_ajax',$this->data,true);
+            echo $this->load->view($this->mainTemplate.'/search_ajax',$this->data,true);
         }else{
             $this->data['content']="search";
             $this->load->view($this->mainTemplate,$this->data,'');
@@ -632,7 +632,7 @@ class Pages extends CI_Controller {
                     "title"=>$_POST["data"]["name"],
                     "body"=>$_POST["data"]["text"]
                 );
-                $email_body = $this->load->view('flatlab/email-template-public',$body_data,true);
+                $email_body = $this->load->view($this->mainTemplate.'/email-template-public',$body_data,true);
                 $this->sendEmailAutomatic($this->data["settings"]["email"],_l("Contact Form",$this).": ".$_POST["data"]["subject"],$email_body,$_POST["data"]["email"]);
             }else{
                 $this->session->set_flashdata('message_error', "Email is not correct");

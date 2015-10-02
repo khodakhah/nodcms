@@ -1,0 +1,145 @@
+::-moz-selection { /* Code for Firefox */
+    color: #6FA2A6;
+    background: #C4E3E6;
+}
+
+::selection {
+    color: #6FA2A6;
+    background: #C4E3E6;
+}
+
+.btn-group:not(.btn-link), .btn.btn-default, .btn.btn-primary, .btn.btn-info, .btn.btn-success, .btn.btn-warning, .btn.btn-danger,
+.alert,.carousel
+{
+    -webkit-box-shadow: 0px 2px 4px 0px rgba(50, 50, 50, 0.5);
+    -moz-box-shadow:    0px 2px 4px 0px rgba(50, 50, 50, 0.5);
+    box-shadow:         0px 2px 4px 0px rgba(50, 50, 50, 0.5);
+}
+.pagination, .panel, .jumbotron, .list-group, .pager a,.navbar, .thumbnail
+{
+    -webkit-box-shadow: 0px 2px 4px 0px rgba(50, 50, 50, 0.3);
+    -moz-box-shadow:    0px 2px 4px 0px rgba(50, 50, 50, 0.3);
+    box-shadow:         0px 2px 4px 0px rgba(50, 50, 50, 0.3);
+}
+.form-control, .input-group, .breadcrumb,.has-success .form-control,.has-warning .form-control,.has-error .form-control ,.well,.progress, .navbar .btn
+{
+    -webkit-box-shadow: 0px 2px 4px 0px rgba(50, 50, 50, 0.15);
+    -moz-box-shadow:    0px 2px 4px 0px rgba(50, 50, 50, 0.15);
+    box-shadow:         0px 2px 4px 0px rgba(50, 50, 50, 0.15);
+}
+.tabbable .nav-tabs li.active a
+{
+    -webkit-box-shadow: 0px -2px 4px 0px rgba(50, 50, 50, 0.2);
+    -moz-box-shadow:    0px -2px 4px 0px rgba(50, 50, 50, 0.2);
+    box-shadow:         0px -2px 4px 0px rgba(50, 50, 50, 0.2);
+}
+.tabbable.tabs-below .nav-tabs li.active a
+{
+    -webkit-box-shadow: 0px 2px 4px 0px rgba(50, 50, 50, 0.2);
+    -moz-box-shadow:    0px 2px 4px 0px rgba(50, 50, 50, 0.2);
+    box-shadow:         0px 2px 4px 0px rgba(50, 50, 50, 0.2);
+}
+.tabbable.tabs-right .nav-tabs li.active a
+{
+    -webkit-box-shadow: 3px 0px 6px 0px rgba(50, 50, 50, 0.2);
+    -moz-box-shadow:    3px 0px 6px 0px rgba(50, 50, 50, 0.2);
+    box-shadow:         3px 0px 6px 0px rgba(50, 50, 50, 0.2);
+}
+.tabbable.tabs-left .nav-tabs li.active a
+{
+    -webkit-box-shadow: -2px 0px 4px 0px rgba(50, 50, 50, 0.2);
+    -moz-box-shadow:    -2px 0px 4px 0px rgba(50, 50, 50, 0.2);
+    box-shadow:         -2px 0px 4px 0px rgba(50, 50, 50, 0.2);
+}
+.panel{border: transparent;}
+.btn-group > .btn, .input-group > .form-control, .input-group > .btn
+{
+    -webkit-box-shadow: none;
+    -moz-box-shadow:    none;
+    box-shadow:         none;
+}
+.input-group .btn{border: 1px solid #dddddd;}
+.breadcrumb{border: 1px solid #ededed;}
+.input-group .btn:hover,.input-group .btn:active,.input-group .btn:focus{background-color: #dad7cf;}
+
+.tabs-below .nav-tabs{border: 0;border-top: 1px solid #cccccc;}
+.tabs-below .nav-tabs li.active a{border: 1px solid #eeeeee;border-top: 0;margin-top: -1px;}
+.tabs-below .nav-tabs li:hover a{border-color: transparent}
+
+.tabs-right .nav-tabs{float: right;border: 0;border-left: 1px solid #cccccc;width: 130px;}
+.tabs-right .nav-tabs li{display: block;float: none;margin: 0;}
+.tabs-right .nav-tabs li.active{border: 1px solid #eeeeee;border-left: 0;margin-left: -3px;}
+.tabs-right .nav-tabs li.active:hover a {border: 0}
+.tabs-right .nav-tabs li:hover a {border-color: transparent}
+.tabs-right .nav-tabs li.active a{border: 0;margin: 0;}
+.tabs-right .tab-content{padding-right: 150px;}
+
+.tabs-left .nav-tabs{float: left;border: 0;border-right: 1px solid #cccccc;width: 130px;}
+.tabs-left .nav-tabs li{display: block;float: none;margin: 0;}
+.tabs-left .nav-tabs li.active{border: 1px solid #eeeeee;border-right: 0;margin-right: -3px;}
+.tabs-left .nav-tabs li.active:hover a {border: 0}
+.tabs-left .nav-tabs li:hover a {border-color: transparent}
+.tabs-left .nav-tabs li.active a{border: 0;margin: 0;}
+.tabs-left .tab-content{padding-left: 150px;}
+.btn, .breadcrumb a,.pagination > li > a,.pager > li > a, .list-group .list-group-item,.nav a,option{
+    -webkit-transition: background 0.5s !important; /* For Safari 3.1 to 6.0 */
+    transition: background 0.5s;
+}
+button.close,.breadcrumb a{
+    -webkit-transition: color 0.5s !important; /* For Safari 3.1 to 6.0 */
+    transition: color 0.5s;
+}
+.thumbnail-right, .thumbnail-left{display: table;}
+.thumbnail-right img{float: right;width: 50%;}
+.thumbnail-right .caption{float: left;width: 50%;}
+.thumbnail-left img{float: left;width: 50%;}
+.thumbnail-left .caption{float: right;width: 50%;}
+
+.thumbnail-hover-top, .thumbnail-hover-bottom , .thumbnail-hover-right , .thumbnail-hover-left {position: relative;overflow: hidden;}
+.thumbnail-hover-top:hover .caption{top: 0;}
+.thumbnail-hover-bottom:hover .caption{bottom: 0;}
+.thumbnail-hover-left:hover .caption{right: 0;}
+.thumbnail-hover-right:hover .caption{left: 0;}
+.thumbnail-hover-top .caption{
+    top: 100%;
+    left: 0;
+    -webkit-transition: top 0.5s !important; /* For Safari 3.1 to 6.0 */
+    transition: top 0.5s;
+}
+.thumbnail-hover-bottom .caption{
+    bottom: 100%;
+    left: 0;
+    -webkit-transition: bottom 0.5s !important; /* For Safari 3.1 to 6.0 */
+    transition: bottom 0.5s;
+}
+.thumbnail-hover-right .caption{
+    bottom: 0;
+    left: 100%;
+    -webkit-transition: left 0.5s !important; /* For Safari 3.1 to 6.0 */
+    transition: left 0.5s;
+}
+.thumbnail-hover-left .caption{
+    bottom: 0;
+    right: 100%;
+    -webkit-transition: right 0.5s !important; /* For Safari 3.1 to 6.0 */
+    transition: right 0.5s;
+}
+.thumbnail-hover-top .caption, .thumbnail-hover-bottom .caption, .thumbnail-hover-right .caption, .thumbnail-hover-left .caption{
+    text-align: center;
+    background: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+.thumbnail-hover-top .caption .btn:hover, .thumbnail-hover-bottom .caption .btn:hover, .thumbnail-hover-right .caption .btn:hover, .thumbnail-hover-left .caption .btn:hover{
+    background: rgba(0, 0, 0, 0.5);
+}
+.thumbnail-hover-top .caption .btn, .thumbnail-hover-bottom .caption .btn, .thumbnail-hover-right .caption .btn, .thumbnail-hover-left .caption .btn{
+    font-size: 2em;
+    color: #ffffff;
+    border: 1px solid #aaaaaa;
+    background: rgba(0, 0, 0, 0.3);
+    -webkit-transition: background 0.5s !important; /* For Safari 3.1 to 6.0 */
+    transition: background 0.5s;
+}
+.thumbnail-hover-top .caption-btn .btn, .thumbnail-hover-bottom .caption-btn .btn, .thumbnail-hover-right .caption-btn .btn, .thumbnail-hover-left .caption-btn .btn{margin-top: 40%;}
