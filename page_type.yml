@@ -20,7 +20,7 @@
 101:
   id: 101
   dynamic: 1
-  name: "news type with big picture"
+  name: "News"
   fields:
     extension:
       image
