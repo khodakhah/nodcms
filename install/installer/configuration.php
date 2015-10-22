@@ -337,8 +337,7 @@
 		'autoskip'     =>  true,
 		'updateonzero' =>  true,
 		'maskname'     =>  'database.php',
-		'savetofolder' =>  '../frontend/config/',
-		'savetofolder1' => '../backend/config/', 
+		'savetofolder' =>  '../nodcms/config/',
 		),
 		
 //	STEP_WRITECONFIG_ADMIN => array(
