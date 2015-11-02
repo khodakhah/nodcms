@@ -22,7 +22,6 @@ class NodCMS_admin_sign extends CI_Controller {
 
     function index()
     {
-        echo "aaaatest";
         if ($this->session->userdata('logged_in_status') == TRUE)
         {
             redirect('/admin/');
