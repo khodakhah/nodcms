@@ -11,10 +11,34 @@ if ( ! function_exists('_l')){
     function _l($label, $obj)
     {
         $return = $obj->lang->line($label);
-        if($return)
+        if ($return){
             return $return;
-        else
+        }else{
+            if($obj->router->fetch_class()=="NodCMS_general"){
+                if(!in_array($label,$obj->langArray)){
+                    $file = getcwd()."/nodcms/language/".$_SESSION["language"]["language_name"].'/'.$_SESSION["language"]["code"]."_lang.php";
+                    if(file_exists($file)){
+                        $current = file_get_contents($file);
+                        $current .= "\n";
+                        $current .= '$lang["'.$label.'"] = "'.$label.'";';
+                        file_put_contents($file, $current);
+                        $obj->langArray[$label] = $label;
+                    }
+                }
+            }elseif($obj->router->fetch_class()=="NodCMS_general_admin"){
+                if(!in_array($label,$obj->langArray)){
+                    $file = getcwd()."/nodcms/language/".$_SESSION["language"]["language_name"]."/backend_lang.php";
+                    if(file_exists($file)){
+                        $current = file_get_contents($file);
+                        $current .= "\n";
+                        $current .= '$lang["'.$label.'"] = "'.$label.'";';
+                        file_put_contents($file, $current);
+                        $obj->langArray[$label] = $label;
+                    }
+                }
+            }
             return $label;
+        }
     }
 }
 if ( ! function_exists('substr_string')){

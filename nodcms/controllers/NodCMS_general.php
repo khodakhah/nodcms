@@ -10,6 +10,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class NodCMS_general extends CI_Controller {
     private $data,$mainTemplate;
+    public $langArray=array();
     function __construct(){
         parent::__construct();
         $this->load->model("NodCMS_general_model");
