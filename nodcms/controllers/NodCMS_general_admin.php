@@ -24,7 +24,7 @@ class NodCMS_general_admin extends CI_Controller {
         if(!isset($this->session->userdata['user_id'])) redirect(base_url()."admin-sign");
 
         $_SESSION['language'] = $language = $this->NodCMS_general_admin_model->get_language_detail($this->_website_info["language_id"]);
-        $this->lang->load($language["code"], $language["language_name"]);
+        $this->lang->load('backend', $language["language_name"]);
 
         $this->data['settings'] = $this->_website_info;
         $this->data['base_url'] = base_url()."admin/";
