@@ -130,3 +130,4 @@ $lang["use link"] = "استفاده از لینک";
 $lang["URL"] = "URL";
 $lang["Items list"] = "لیست آیتم ها";
 $lang["Name"] = "نام";
+$lang["Your Setting has been updated successfully!"] = "تنظیمات سایت شما با موفقیت انجام شد!";
