@@ -170,7 +170,7 @@
                 return false;            
             
             // The $database contains legal values 
-            $query = "CREATE DATABASE ".$database.";";
+            $query = "CREATE DATABASE ".$database." DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;";
             $result = $this->RunQuery($query);
             if(mysql_affected_rows($this->connection) > 0)
                  return true;
