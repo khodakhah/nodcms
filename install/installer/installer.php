@@ -944,42 +944,42 @@
 
 			// If a request has been made to run SQL installation script on the selected database,
 			// run the script and set installation status to sessions
-			$databaseErrorMessage = '';
-			if($steps[STEP_RUNSQL]['enabled'] && isset($_REQUEST['runsql']) && $dbase->GetDatabaseName() == $_REQUEST['runsql'])
-			{
-				// Get the installation queries and split them by the "next query" separator,
-				// and then run each query and get an array of results. If there is no split
-				// then the query will be an array with only one cell - still an array :)
-				$results = $dbase->RunQuery( $mask->GetSqlInstallQueries(TRUE) );
+            if($steps[STEP_RUNSQL]['enabled'] && isset($_REQUEST['runsql']) && $dbase->GetDatabaseName() == $_REQUEST['runsql'])
+            {
+                // Get the installation queries and split them by the "next query" separator,
+                // and then run each query and get an array of results. If there is no split
+                // then the query will be an array with only one cell - still an array :)
+                $results = $dbase->RunQuery( $mask->GetSqlInstallQueries(TRUE) );
 
-				// Go through all the results, and every one of them must be 'true'
-				// othervice some query failed and installation is incomplete!
-				$databaseSuccessCount = 0;
-				$databaseFailedCount = 0;
-				foreach($results as $result)
-				{
-					if($result['success'])
-						$databaseSuccessCount++;
-					else 
-					{
-						$databaseFailedCount++;
-						$databaseErrorMessage .= $result['error']."<br />\n";
-					}
-				}
-				// If some query failed					
-				if($databaseFailedCount == 0)
-					 $state = 'success';
-				else $state = 'failed';
-					
-				// Save the installation status to sessions, with database name, the prefix
-				// used to during installation and how many queries where successful and failed
-				SetDatabaseInstallStatus($dbase->GetDatabaseName(), $state, $keywords['connection']['dbprefix'],
-						$databaseSuccessCount, $databaseFailedCount);
-			}
-			
-			// Will contain the name of a valid database installations
-			$successInstall = array();
-			$failedInstall = array();
+                // Go through all the results, and every one of them must be 'true'
+                // othervice some query failed and installation is incomplete!
+                $databaseSuccessCount = 0;
+                $databaseFailedCount = 0;
+                foreach($results as $result)
+                {
+                    if($result['success'])
+                        $databaseSuccessCount++;
+                    else
+                    {
+                        $databaseFailedCount++;
+                        $databaseErrorMessage .= $result['error']."<br />\n";
+                    }
+                }
+                // If some query failed
+                if($databaseFailedCount == 0)
+                    $state = 'success';
+                else $state = 'failed';
+
+                // Save the installation status to sessions, with database name, the prefix
+                // used to during installation and how many queries where successful and failed
+                SetDatabaseInstallStatus($dbase->GetDatabaseName(), $state, $keywords['connection']['dbprefix'],
+                    $databaseSuccessCount, $databaseFailedCount);
+            }
+
+            // Will contain the name of a valid database installations
+            $successInstall = array();
+            $failedInstall = array();
+            $databaseErrorMessage = '';
 			$databaseList = $dbase->GetDatabaseNameList();
 
 			// Go through the list of databases to see if any database has 
