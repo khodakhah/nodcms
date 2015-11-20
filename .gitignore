@@ -4,3 +4,4 @@
 */cache/*
 */cache/!index.html
 */cache/!.htaccess
+nodcms/config/database.php
