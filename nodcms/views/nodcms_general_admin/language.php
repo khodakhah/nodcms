@@ -10,6 +10,7 @@
             <table  class="display table table-bordered table-striped" id="data_list">
                 <thead>
                     <tr>
+                        <th>#</th>
                         <th><?=_l("Language Name",$this)?></th>
                         <th><?=_l("Language Code",$this)?></th>
                         <th><?=_l("Public",$this)?></th>
@@ -18,15 +19,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($data_list as $data){ ?>
+                    <?php $i=0; foreach($data_list as $data){ $i++; ?>
                     <tr class="gradeX">
-                        <td><?=$data["language_name"]?> <?=$data["default"]==1?"("._l('Default',$this).")":""?></td>
+                        <td><?php echo $i; ?>.</td>
+                        <td>
+                            <?php if($data["image"]!=''){ ?>
+                                <img style="width: 24px;" src="<?php echo base_url().$data["image"]; ?>">
+                            <?php } ?>
+                            <?=$data["language_name"]?> <?=$data["default"]==1?"("._l('Default',$this).")":""?>
+                        </td>
                         <td><?=$data["code"]?></td>
                         <td><i class="fa <?=$data["public"]==1?"fa-check":"fa-minus-circle"?>"</td>
                         <td><?=$data["sort_order"]?></td>
                         <td>
-                            <a href="<?=$base_url?>edit<?=$page?>/<?=$data["language_id"]?>" class="btn btn-primary btn-sm" title="<?=_l('Edit',$this)?>"><i title="<?=_l('Edit',$this)?>" class="fa fa-pencil"></i></a>
-                            <a href="<?=$base_url?>delete<?=$page?>/<?=$data["language_id"]?>" class="btn btn-danger btn-sm" title="<?=_l('Delete',$this)?>"><i title="<?=_l('Delete',$this)?>" class="fa fa-trash-o"></i></a>
+                            <div class="dropdown btn-group">
+                                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="action" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <i class="fa fa-cog"></i>
+                                    <i class="fa fa-caret-down"></i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="action">
+                                    <li><a href="<?=$base_url?>edit<?=$page?>/<?=$data["language_id"]?>"><i class="fa fa-pencil"></i> <?=_l('Edit',$this)?></a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="<?=$base_url?>edit_lang_file/<?=$data["language_id"]?>/<?=$data["code"]?>"><i class="fa fa-language"></i> <?=_l('Edit Language',$this)?> (<?=$data["code"]?>_lang.php)</a></li>
+                                    <li><a href="<?=$base_url?>edit_lang_file/<?=$data["language_id"]?>/backend"><i class="fa fa-language"></i> <?=_l('Edit Language',$this)?> (backend_lang.php)</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="<?=$base_url?>delete<?=$page?>/<?=$data["language_id"]?>"><i class="fa fa-trash-o"></i> <?=_l('Delete',$this)?></a></li>
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                     <?php } ?>
@@ -43,7 +62,7 @@
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function() {
         $('#data_list').dataTable( {
-            "aaSorting": [[ 1, "desc" ]],
+            "aaSorting": [],
             "oLanguage": {
                 "sSearch": "<?=_l("Search",$this)?>:",
                 "oPaginate":{

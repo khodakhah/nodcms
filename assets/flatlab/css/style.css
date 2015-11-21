@@ -5491,3 +5491,20 @@ a.guest-on i {
 .lobby {
     padding: 0 !important;
 }
+
+.dropdown-menu{
+    padding: 0;
+}
+.dropdown-menu > li > a, .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+    padding: 6px 15px;
+}
+.dropdown-menu .divider{
+    margin:0;
+}
+td:last-child .dropdown-menu{
+    left: auto;
+    right:0;
+}
+.form-horizontal .control-label{
+    text-align: left;
+}

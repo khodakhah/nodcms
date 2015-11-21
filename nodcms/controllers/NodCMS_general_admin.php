@@ -190,6 +190,24 @@ class NodCMS_general_admin extends CI_Controller {
         if ($this->session->userdata['group']==1) {
             if ($this->NodCMS_general_admin_model->language_manipulate($_POST["data"],$id))
             {
+                $dir = getcwd().'/nodcms/language/'.$_POST["data"]['language_name'].'/';
+                $file = $dir.$_POST["data"]['code'].'_lang.php';
+                if(!file_exists($dir)){
+                    mkdir($dir);
+                }
+                if(!file_exists($file)){
+                    $myfile = fopen($file, "w") or die("Unable to open file!");
+                    $txt = "<?php\n";
+                    fwrite($myfile, $txt);
+                    fclose($myfile);
+                }
+                $file = $dir.'backend_lang.php';
+                if(!file_exists($file)){
+                    $myfile = fopen($file, "w") or die("Unable to open file!");
+                    $txt = "<?php\n";
+                    fwrite($myfile, $txt);
+                    fclose($myfile);
+                }
                 $this->session->set_flashdata('success', _l('Updated Language',$this));
             }
             else
@@ -212,6 +230,48 @@ class NodCMS_general_admin extends CI_Controller {
             $this->session->set_flashdata('error', _l('This request is just fore real admin.',$this));
         }
         redirect(base_url()."admin/language/");
+    }
+    function edit_lang_file($id,$file_name)
+    {
+        $this->data['data']=$this->NodCMS_general_admin_model->get_language_detail($id);
+        if($this->data['data']==null || !file_exists(getcwd().'/nodcms/language/'.$this->data['data']['language_name'].'/'.$file_name.'_lang.php')){
+            $this->session->set_flashdata('error', _l('URL-Request was not exists!',$this));
+            redirect(base_url()."admin/language");
+        }
+        $this->load->library('getLangInArray');
+        $CI = new getLangInArray();
+        $this->data['lang_list'] = $CI->load($file_name,$this->data['data']['language_name']);
+        if(count($this->data['lang_list'])==0){
+            $defaultLangFileName = strlen($file_name)==2?$_SESSION['language']['code']:$file_name;
+            $this->data['lang_list'] = $CI->load($defaultLangFileName,$_SESSION['language']['language_name']);
+        }
+        if(isset($_POST['data'])){
+            if ($this->session->userdata['group']==1) {
+                $post_data = $this->input->post('data');
+                $i=0;
+                $fileContent = "<?php\n";
+                foreach ($this->data['lang_list'] as $key=>&$val) {
+                    $fileContent .= '$lang["'.$key.'"] = "'.$post_data[$i].'";'."\n";
+                    $val = $post_data[$i];
+                    $i++;
+                }
+                $file = getcwd().'/nodcms/language/'.$this->data['data']['language_name'].'/'.$file_name.'_lang.php';
+                if(file_exists($file)){
+                    file_put_contents($file, $fileContent);
+                }
+                $this->session->set_flashdata('success', _l('Edit language file successfully!',$this));
+                redirect(base_url()."admin/edit_lang_file/".$id.'/'.$file_name);
+            }else{
+                $this->session->set_flashdata('error', _l('This request is just fore real admin.',$this));
+                redirect(base_url()."admin/language");
+            }
+        }
+        $this->data['file_name'] = $file_name;
+        $this->data['languages']=$this->NodCMS_general_admin_model->get_all_language();
+        $this->data['title'] = _l("Edit language file",$this);
+        $this->data['page'] = "edit lang file";
+        $this->data['content']=$this->load->view($this->mainTemplate.'/language_edit_file',$this->data,true);
+        $this->load->view($this->mainTemplate,$this->data);
     }
 
     function comment()

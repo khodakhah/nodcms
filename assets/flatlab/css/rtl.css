@@ -242,3 +242,5 @@ ul.ft-link li:last-child {
 .dropdown-menu{left: auto;right:0;}
 .btn-group > .btn, .btn-group-vertical > .btn{float: right;}
 .btn-group > .btn:first-child{margin-left: auto;margin-right: 0;}
+td:last-child .dropdown-menu{right:auto;left:0;}
+.form-horizontal .control-label{text-align: right;}

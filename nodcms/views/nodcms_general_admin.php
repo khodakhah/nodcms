@@ -12,7 +12,6 @@
 
     <!-- Bootstrap core CSS -->
     <link href="<?php echo base_url(); ?>assets/flatlab/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?php echo base_url(); ?>assets/flatlab/css/bootstrap-reset.css" rel="stylesheet">
     <!--external css-->
     <link href="<?php echo base_url(); ?>assets/flatlab/assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
     <link href="<?php echo base_url(); ?>assets/flatlab/assets/jquery-easy-pie-chart/jquery.easy-pie-chart.css" rel="stylesheet" type="text/css" media="screen"/>
@@ -52,7 +51,7 @@
         <div class="btn-group">
             <button data-toggle="dropdown" class="btn btn-link dropdown-toggle" href="#">
                 <span class="username"><?=$this->session->userdata('username')?></span>
-                <b class="caret"></b>
+                <i class="fa fa-caret-down"></i>
             </button>
             <ul class="dropdown-menu extended logout">
                 <div class="log-arrow-up"></div>
