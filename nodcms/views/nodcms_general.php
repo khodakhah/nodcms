@@ -80,8 +80,19 @@
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
                             <?php if(isset($data_menu) && count($data_menu)!=0) {?>
-                                <?php foreach($data_menu as $menu) {?>
-                                    <li><a href="<?=$menu["url"]?>"><?=$menu['name']?></a></li>
+                                <?php foreach($data_menu as $menu) { ?>
+                                    <?php if(isset($menu["sub_menu_data"]) && count($menu["sub_menu_data"])!=0){ ?>
+                                        <li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $menu['name']; ?> <i class="fa fa-caret-down"></i></a>
+                                            <ul class="dropdown-menu">
+                                                <?php foreach($menu["sub_menu"] as $suh_menu){ ?>
+                                                    <li><a href="<?php echo $suh_menu['url']; ?>"><?php echo $suh_menu['name']; ?></a></li>
+                                                <?php } ?>
+                                            </ul>
+                                        </li>
+                                    <?php }else{ ?>
+                                        <li><a href="<?=$menu["url"]?>"><?=$menu['name']?></a></li>
+                                    <?php } ?>
                                 <?php } ?>
                             <?php } ?>
                             <li><a href="<?=base_url().$lang?>/contact"><?=_l("Contact us",$this)?></a></li>

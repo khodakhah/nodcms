@@ -34,7 +34,7 @@ class NodCMS_general_model extends CI_Model {
         return count($return)?$return[0]:0;
     }
 
-    function get_menu()
+    function get_menu($conditions=null)
     {
         $this->db->select('*');
         $this->db->from('menu');
@@ -42,6 +42,7 @@ class NodCMS_general_model extends CI_Model {
         $this->db->where('titles.data_type',"menu");
         $this->db->where('titles.language_id',$_SESSION["language"]["language_id"]);
         $this->db->where('public',1);
+        if($conditions!=null) $this->db->where($conditions);
         $query = $this->db->get();
         return $query->result_array();
     }

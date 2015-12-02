@@ -127,7 +127,11 @@ class NodCMS_general_admin extends CI_Controller {
         $this->data['faicons'] = $icons["fa"];
 
         $this->data['titles'] = $titles;
-        $this->data['data_list'] = $this->NodCMS_general_admin_model->get_all_menu();
+        $this->data['data_list'] = $this->NodCMS_general_admin_model->get_all_menu(array('sub_menu'=>0));
+        foreach($this->data['data_list'] as &$item){
+            $item['sub_menu_data'] = $this->NodCMS_general_admin_model->get_all_menu(array('sub_menu'=>$item['menu_id']));
+        }
+        $this->data['parents'] = $this->NodCMS_general_admin_model->get_all_menu(array('sub_menu'=>0));
         $this->data['pages'] = $this->NodCMS_general_admin_model->get_all_page();
         $this->data['languages'] = $this->NodCMS_general_admin_model->get_all_language();
         $this->data['title'] = _l("menu manager",$this);

@@ -40,16 +40,19 @@ class NodCMS_general extends CI_Controller {
 
         frontendStatisticCalc($this,$language);
 
-        $data_menu = array();
-        $menu = $this->NodCMS_general_model->get_menu();
+        $this->data['data_menu'] = $this->NodCMS_general_model->get_menu(array('sub_menu'=>0));
         $i=0;
-        foreach($menu as $menu)
+        foreach($this->data['data_menu'] as &$menu)
         {
-            $data_menu[$i] = array(
-                'id'	=> $menu['page_id'],
-                'name' =>$menu['title_caption'],
-                'url' =>$menu['page_id']!=0?base_url().$lang."/page/".$menu['page_id']:$menu['menu_url'],
-            );
+            $menu['sub_menu_data'] = $this->NodCMS_general_model->get_menu(array('sub_menu'=>$menu['menu_id']));
+            $menu['id']=$menu['page_id'];
+            $menu['name']=$menu['title_caption'];
+            $menu['url']=$menu['page_id']!=0?base_url().$lang."/page/".$menu['page_id']:((substr($menu['menu_url'],0,7)!='http://' && substr($menu['menu_url'],0,8)!='https://')?base_url().$menu['menu_url']:$menu['menu_url']);
+            foreach($menu['sub_menu_data'] as &$subMenu){
+                $subMenu['id']=$subMenu['page_id'];
+                $subMenu['name']=$subMenu['title_caption'];
+                $subMenu['url']=$subMenu['page_id']!=0?base_url().$lang."/page/".$subMenu['page_id']:((substr($subMenu['menu_url'],0,7)!='http://' && substr($subMenu['menu_url'],0,8)!='https://')?base_url().$subMenu['menu_url']:$subMenu['menu_url']);
+            }
             $i++;
         }
         $this->data['languages'] = $this->NodCMS_general_model->get_languages();
@@ -59,7 +62,6 @@ class NodCMS_general extends CI_Controller {
             $value["lang_url"] = implode("/",$url_array);
         }
 
-        $this->data['data_menu'] = $data_menu;
         $this->data['link_contact'] = base_url()."contact";
     }
     function ajax_submit_email(){

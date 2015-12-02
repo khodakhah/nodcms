@@ -96,10 +96,11 @@ class NodCMS_general_admin_model extends CI_Model
         }
     }
 
-    function get_all_menu()
+    function get_all_menu($conditions=null)
     {
         $this->db->select('*');
         $this->db->from('menu');
+        if($conditions!=null) $this->db->where($conditions);
         $query = $this->db->get();
         return $query->result_array();
     }
