@@ -16,7 +16,7 @@
                             <ul class="dropdown-menu" aria-labelledby="chooseLanguage">
                                 <?php foreach($languages as $item){ ?>
                                     <?php if($item['language_id']!=$data['language_id']){ ?>
-                                        <li><a href="<?php echo $base_url."edit_lang_file/".$item['language_id']."/".$file_name; ?>"><?php echo $item['language_name']; ?></a></li>
+                                        <li><a href="<?php echo $base_url."edit_lang_file/".$item['language_id']."/".($file_name!=$data['code']?$file_name:$item['code']); ?>"><?php echo $item['language_name']; ?></a></li>
                                     <?php } ?>
                                 <?php } ?>
                             </ul>
