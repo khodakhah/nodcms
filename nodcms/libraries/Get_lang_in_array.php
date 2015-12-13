@@ -8,7 +8,7 @@
  * Website: http://www.nodcms.com
  */
 
-class getLangInArray {
+class Get_lang_in_array {
     var $language = array();
 
     /**

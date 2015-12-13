@@ -242,8 +242,8 @@ class Nodcms_general_admin extends CI_Controller {
             $this->session->set_flashdata('error', _l('URL-Request was not exists!',$this));
             redirect(base_url()."admin/language");
         }
-        $this->load->library('getLangInArray');
-        $CI = new getLangInArray();
+        $this->load->library('Get_lang_in_array');
+        $CI = new Get_lang_in_array();
         $this->data['lang_list'] = $CI->load($file_name,$this->data['data']['language_name']);
         if(count($this->data['lang_list'])==0){
             $defaultLangFileName = strlen($file_name)==2?$_SESSION['language']['code']:$file_name;
