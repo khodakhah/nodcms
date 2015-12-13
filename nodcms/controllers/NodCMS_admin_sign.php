@@ -9,7 +9,7 @@
  */
 
 defined('BASEPATH') OR exit('No direct script access allowed');
-class NodCMS_admin_sign extends CI_Controller {
+class Nodcms_admin_sign extends CI_Controller {
     function __construct()
     {
         parent::__construct();

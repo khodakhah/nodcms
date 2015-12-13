@@ -9,7 +9,7 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class NodCMS_general_model extends CI_Model {
+class Nodcms_general_model extends CI_Model {
     public function __construct()
     {
         // Call the CI_Model constructor

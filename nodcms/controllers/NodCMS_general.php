@@ -8,7 +8,7 @@
  * Website: http://www.nodcms.com
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
-class NodCMS_general extends CI_Controller {
+class Nodcms_general extends CI_Controller {
     private $data,$mainTemplate;
     public $langArray=array();
     function __construct(){

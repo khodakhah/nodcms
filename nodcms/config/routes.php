@@ -49,29 +49,29 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = "NodCMS_general";
+$route['default_controller'] = "Nodcms_general";
 $route['404_override'] = '';
 
-$route['([a-z][a-z])'] = 'NodCMS_general/index/$1';
-$route['([a-z][a-z])/page/([0-9]+)'] = 'NodCMS_general/page/$1/$2';
-$route['([a-z][a-z])/extension/([0-9]+)'] = 'NodCMS_general/extension_detail/$1/$2';
-$route['([a-z][a-z])/register'] = 'NodCMS_general/register/$1';
-$route['([a-z][a-z])/login'] = 'NodCMS_general/login/$1';
-$route['([a-z][a-z])/forget-password'] = 'NodCMS_general/forget_password/$1';
-$route['([a-z][a-z])/login/([a-zA-Z0-9-]+)'] = 'NodCMS_general/login/$1/$2';
-$route['([a-z][a-z])/active_account/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)'] = 'NodCMS_general/reset_password/$1/$2/$3';
-$route['([a-z][a-z])/reset-password/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)'] = 'NodCMS_general/reset_password/$1/$2/$3';
-$route['([a-z][a-z])/profile-password'] = 'NodCMS_general/profile_password/$1';
-$route['([a-z][a-z])/contact'] = 'NodCMS_general/contact/$1';
-$route['([a-z][a-z])/ajax/addcomment'] = 'NodCMS_general/extension_addcomment/$1';
-$route['([a-z][a-z])/search'] = 'NodCMS_general/search/$1';
-$route['([a-z][a-z])/new-feeds'] = 'NodCMS_general/rss/$1';
-$route['([a-z][a-z])/sitemap.xml'] = 'NodCMS_general/sitemap_xml/$1';
+$route['([a-z][a-z])'] = 'Nodcms_general/index/$1';
+$route['([a-z][a-z])/page/([0-9]+)'] = 'Nodcms_general/page/$1/$2';
+$route['([a-z][a-z])/extension/([0-9]+)'] = 'Nodcms_general/extension_detail/$1/$2';
+$route['([a-z][a-z])/register'] = 'Nodcms_general/register/$1';
+$route['([a-z][a-z])/login'] = 'Nodcms_general/login/$1';
+$route['([a-z][a-z])/forget-password'] = 'Nodcms_general/forget_password/$1';
+$route['([a-z][a-z])/login/([a-zA-Z0-9-]+)'] = 'Nodcms_general/login/$1/$2';
+$route['([a-z][a-z])/active_account/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)'] = 'Nodcms_general/reset_password/$1/$2/$3';
+$route['([a-z][a-z])/reset-password/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)'] = 'Nodcms_general/reset_password/$1/$2/$3';
+$route['([a-z][a-z])/profile-password'] = 'Nodcms_general/profile_password/$1';
+$route['([a-z][a-z])/contact'] = 'Nodcms_general/contact/$1';
+$route['([a-z][a-z])/ajax/addcomment'] = 'Nodcms_general/extension_addcomment/$1';
+$route['([a-z][a-z])/search'] = 'Nodcms_general/search/$1';
+$route['([a-z][a-z])/new-feeds'] = 'Nodcms_general/rss/$1';
+$route['([a-z][a-z])/sitemap.xml'] = 'Nodcms_general/sitemap_xml/$1';
 
 //$route['([a-z][a-z])/(.*)']= $route['default_controller']."/$2/$1";
-$route['admin-sign']= "NodCMS_admin_sign/index";
-$route['admin-sign/login']= "NodCMS_admin_sign/login";
-$route['admin-sign/logout']= "NodCMS_admin_sign/logout";
-$route['admin']= "NodCMS_general_admin/index";
-$route['admin/(.*)']= "NodCMS_general_admin/$1";
+$route['admin-sign']= "Nodcms_admin_sign/index";
+$route['admin-sign/login']= "Nodcms_admin_sign/login";
+$route['admin-sign/logout']= "Nodcms_admin_sign/logout";
+$route['admin']= "Nodcms_general_admin/index";
+$route['admin/(.*)']= "Nodcms_general_admin/$1";
 $route['translate_uri_dashes'] = FALSE;

@@ -9,7 +9,7 @@
  */
 
 defined('BASEPATH') OR exit('No direct script access allowed');
-class NodCMS_general_admin extends CI_Controller {
+class Nodcms_general_admin extends CI_Controller {
     private $_website_info,$mainTemplate;
     public $langArray=array();
     function __construct()

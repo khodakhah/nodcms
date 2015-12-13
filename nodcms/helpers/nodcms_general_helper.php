@@ -14,7 +14,7 @@ if ( ! function_exists('_l')){
         if ($return){
             return $return;
         }else{
-            if($obj->router->fetch_class()=="NodCMS_general"){
+            if($obj->router->fetch_class()=="Nodcms_general"){
                 if(!in_array($label,$obj->langArray)){
                     $file = getcwd()."/nodcms/language/".$_SESSION["language"]["language_name"].'/'.$_SESSION["language"]["code"]."_lang.php";
                     if(file_exists($file)){
@@ -25,7 +25,7 @@ if ( ! function_exists('_l')){
                         $obj->langArray[$label] = $label;
                     }
                 }
-            }elseif($obj->router->fetch_class()=="NodCMS_general_admin"){
+            }elseif($obj->router->fetch_class()=="Nodcms_general_admin"){
                 if(!in_array($label,$obj->langArray)){
                     $file = getcwd()."/nodcms/language/".$_SESSION["language"]["language_name"]."/backend_lang.php";
                     if(file_exists($file)){

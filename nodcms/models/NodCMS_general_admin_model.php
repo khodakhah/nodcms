@@ -8,7 +8,7 @@
  * Website: http://www.nodcms.com
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
-class NodCMS_general_admin_model extends CI_Model
+class Nodcms_general_admin_model extends CI_Model
 {
     function __construct()
     {
