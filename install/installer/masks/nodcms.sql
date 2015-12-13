@@ -1,5 +1,11 @@
-
 SET FOREIGN_KEY_CHECKS=0;
+CREATE TABLE IF NOT EXISTS `ci_sessions` (
+  `id` varchar(40) NOT NULL,
+  `ip_address` varchar(45) NOT NULL,
+  `timestamp` int(10) unsigned NOT NULL DEFAULT '0',
+  `data` blob NOT NULL,
+  KEY `ci_sessions_timestamp` (`timestamp`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping structure for table nodcms_demo.comments
 DROP TABLE IF EXISTS `comments`;
