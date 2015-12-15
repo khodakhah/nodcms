@@ -136,6 +136,19 @@ INSERT INTO `gallery` (`gallery_id`, `gallery_name`, `user_id`, `relation_id`, `
 
 
 -- Dumping structure for table nodcms_demo.gallery_image
+-- --------------------------------------------------------
+-- Host:                         127.0.0.1
+-- Server version:               5.6.24 - MySQL Community Server (GPL)
+-- Server OS:                    Win32
+-- HeidiSQL Version:             9.3.0.4984
+-- --------------------------------------------------------
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+
+-- Dumping structure for table nodcms_github3.gallery_image
 DROP TABLE IF EXISTS `gallery_image`;
 CREATE TABLE IF NOT EXISTS `gallery_image` (
   `image_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -150,15 +163,34 @@ CREATE TABLE IF NOT EXISTS `gallery_image` (
   `count_view` int(10) unsigned NOT NULL,
   `created_date` int(10) unsigned NOT NULL,
   PRIMARY KEY (`image_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
 
+-- Dumping data for table nodcms_github3.gallery_image: 23 rows
+DELETE FROM `gallery_image`;
 INSERT INTO `gallery_image` (`image_id`, `relation_id`, `data_type`, `gallery_id`, `image`, `name`, `size`, `width`, `height`, `count_view`, `created_date`) VALUES
-(16, 4, 'page', 1, 'upload_file/images/37bb4ba0482387d82a2223a641956263.png', '37bb4ba0482387d82a2223a641956263.png', 68.47, 667, 754, 0, 1408790447),
-(12, 4, 'page', 2, 'upload_file/images/41f7790e74d164e6d8815ef77aa0abc8.png', '41f7790e74d164e6d8815ef77aa0abc8.png', 81.17, 1583, 895, 0, 1408790398),
-(13, 4, 'page', 2, 'upload_file/images/0d28f3bc8b9a1de40be2db55938cff49.png', '0d28f3bc8b9a1de40be2db55938cff49.png', 137.02, 1583, 1793, 0, 1408790401),
-(14, 4, 'page', 1, 'upload_file/images/5b8d1da20496427658317a38d613bbb9.png', '5b8d1da20496427658317a38d613bbb9.png', 119.19, 1583, 782, 0, 1408790431),
-(15, 4, 'page', 1, 'upload_file/images/63c9afddbae9038860219e67af5d618a.png', '63c9afddbae9038860219e67af5d618a.png', 67.4, 1583, 782, 0, 1408790439);
-
+  (28, 4, 'page', 1, 'upload_file/images/a3a3780f54ff8399cdccdad2e6b129dd.png', 'a3a3780f54ff8399cdccdad2e6b129dd.png', 165.1, 1280, 600, 0, 1450196006),
+  (19, 4, 'page', 2, 'upload_file/images/2557ae0612e7dc43d51ee4ace5bcd3d4.png', '2557ae0612e7dc43d51ee4ace5bcd3d4.png', 36.11, 1280, 600, 0, 1450195949),
+  (18, 4, 'page', 2, 'upload_file/images/fd18c833995aab5e09c38076636f4985.png', 'fd18c833995aab5e09c38076636f4985.png', 44.39, 1280, 600, 0, 1450195949),
+  (26, 4, 'page', 1, 'upload_file/images/4821b41c8c23d3b53b8d1ccd7ff05bed.png', '4821b41c8c23d3b53b8d1ccd7ff05bed.png', 435.32, 1280, 600, 0, 1450196005),
+  (27, 4, 'page', 1, 'upload_file/images/680d59f3e79533f528f18a8d3d5cc302.png', '680d59f3e79533f528f18a8d3d5cc302.png', 521.49, 1280, 600, 0, 1450196005),
+  (17, 4, 'page', 2, 'upload_file/images/6bfd32e40090a2674376c1afcfbf8920.png', '6bfd32e40090a2674376c1afcfbf8920.png', 40.16, 1280, 600, 0, 1450195886),
+  (20, 4, 'page', 2, 'upload_file/images/2a1ffa5c250747d7ac2ad5d5e73e8d74.png', '2a1ffa5c250747d7ac2ad5d5e73e8d74.png', 48.81, 1280, 600, 0, 1450195950),
+  (21, 4, 'page', 2, 'upload_file/images/009a144230984137d0b0e53fc97ffbda.png', '009a144230984137d0b0e53fc97ffbda.png', 557.48, 1280, 600, 0, 1450195950),
+  (22, 4, 'page', 2, 'upload_file/images/9371802989e822d208d5093e6b422399.png', '9371802989e822d208d5093e6b422399.png', 30.81, 1280, 600, 0, 1450195950),
+  (23, 4, 'page', 2, 'upload_file/images/575bcbeb8c92c3ad17c6ec66c6ef340e.png', '575bcbeb8c92c3ad17c6ec66c6ef340e.png', 34.19, 1280, 600, 0, 1450195951),
+  (24, 4, 'page', 2, 'upload_file/images/980f76eefdeb6102a77774949ef8e193.png', '980f76eefdeb6102a77774949ef8e193.png', 47.65, 1280, 600, 0, 1450195951),
+  (25, 4, 'page', 2, 'upload_file/images/6f3afd777f962a2c9e7da8df2e056c15.png', '6f3afd777f962a2c9e7da8df2e056c15.png', 47.65, 1280, 600, 0, 1450195951),
+  (29, 4, 'page', 1, 'upload_file/images/a5793564df223877a706e04ce576b7d2.png', 'a5793564df223877a706e04ce576b7d2.png', 28.56, 1280, 600, 0, 1450196006),
+  (30, 4, 'page', 1, 'upload_file/images/5df46b1cfc5c7b99670c05213bfb2c64.png', '5df46b1cfc5c7b99670c05213bfb2c64.png', 365.44, 1280, 600, 0, 1450196007),
+  (31, 4, 'page', 1, 'upload_file/images/440db2974ded20b41abb3ca7a873c473.png', '440db2974ded20b41abb3ca7a873c473.png', 917.52, 1280, 600, 0, 1450196007),
+  (32, 4, 'page', 1, 'upload_file/images/e18fe6fdefa22e01c1bfdf6ae39abe14.png', 'e18fe6fdefa22e01c1bfdf6ae39abe14.png', 316.03, 1280, 600, 0, 1450196007),
+  (33, 4, 'page', 1, 'upload_file/images/4ca0e1c5e102e4192ff1d4dbe7d4b155.png', '4ca0e1c5e102e4192ff1d4dbe7d4b155.png', 43.27, 1280, 600, 0, 1450196008),
+  (34, 4, 'page', 1, 'upload_file/images/3df72773fd0b5bd5b61e343e8d3d6e2c.png', '3df72773fd0b5bd5b61e343e8d3d6e2c.png', 25.04, 1280, 600, 0, 1450196008),
+  (35, 4, 'page', 1, 'upload_file/images/5b511c48ffbc08ca4f594e191bcac4b6.png', '5b511c48ffbc08ca4f594e191bcac4b6.png', 223.75, 1280, 600, 0, 1450196008),
+  (36, 4, 'page', 1, 'upload_file/images/994075994e0effa69444ff342618bcf9.png', '994075994e0effa69444ff342618bcf9.png', 24.56, 1280, 600, 0, 1450196008),
+  (37, 4, 'page', 1, 'upload_file/images/e532df6e5a38e0d6bfa368dd187c7a73.png', 'e532df6e5a38e0d6bfa368dd187c7a73.png', 441.04, 1280, 600, 0, 1450196008),
+  (38, 4, 'page', 1, 'upload_file/images/285d685fb97554ddc9ba81af0c903ec5.png', '285d685fb97554ddc9ba81af0c903ec5.png', 438.73, 1280, 600, 0, 1450196009),
+  (39, 4, 'page', 2, 'upload_file/images/99367080652536fa9757c731dfc4f4fe.png', '99367080652536fa9757c731dfc4f4fe.png', 10.44, 1280, 600, 0, 1450196023);
 
 -- Dumping structure for table nodcms_demo.groups
 DROP TABLE IF EXISTS `groups`;
