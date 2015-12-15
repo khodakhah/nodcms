@@ -9,3 +9,4 @@
  */
 $config['NodCMS_general_templateFolderName'] = 'nodcms_general';
 $config['NodCMS_general_admin_templateFolderName'] = 'nodcms_general_admin';
+$config['max_upload_size'] = 20000; // KG
