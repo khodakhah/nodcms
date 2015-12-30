@@ -22,6 +22,9 @@
                     <p><?php echo _l('You can use your email address or username for sign.',$this); ?></p>
                 </li>
             </ul>
+            <?php if($this->session->flashdata('message_success')){ ?>
+                <div class="alert alert-success"><?php echo $this->session->flashdata('message_success'); ?></div>
+            <?php } ?>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
             <form class="form-horizontal" action="" method="post" id="post_form" style="width: 300px">
