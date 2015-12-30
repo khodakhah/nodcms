@@ -85,7 +85,7 @@
                                         <li class="dropdown">
                                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $menu['name']; ?> <i class="fa fa-caret-down"></i></a>
                                             <ul class="dropdown-menu">
-                                                <?php foreach($menu["sub_menu"] as $suh_menu){ ?>
+                                                <?php foreach($menu["sub_menu_data"] as $suh_menu){ ?>
                                                     <li><a href="<?php echo $suh_menu['url']; ?>"><?php echo $suh_menu['name']; ?></a></li>
                                                 <?php } ?>
                                             </ul>
