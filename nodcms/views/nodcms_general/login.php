@@ -27,7 +27,7 @@
             <?php } ?>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-            <form class="form-horizontal" action="" method="post" id="post_form" style="width: 300px">
+            <form class="" action="" method="post" id="post_form" style="width: 300px">
                 <div class="form-group">
                     <label for="email"><?php echo _l('Username or Email',$this); ?></label>
                     <input type="text" class="form-control" name="data[email]" id="email" placeholder="<?=_l('Email',$this);?>" autofocus>
