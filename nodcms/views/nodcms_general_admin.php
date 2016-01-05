@@ -92,7 +92,7 @@
                 <li><a <?=($page == "user")?'class="active"':''?> href="<?php echo base_url(); ?>admin/user"><i class="fa fa-users"></i><span><?=_l("Members",$this)?></span></a></li>
                 <li><a <?=($page == "language")?'class="active"':''?> href="<?php echo base_url(); ?>admin/language"><i class="fa fa-globe"></i><span><?=_l("Languages",$this)?></span></a></li>
                 <li><a <?=($page == "menu")?'class="active"':''?> href="<?php echo base_url(); ?>admin/editmenu"><i class="fa fa-sitemap"></i><span><?=_l("Menu manager",$this)?></span></a></li>
-                <li><a <?=($page == "setting")?'class="active"':''?> href="<?php echo base_url(); ?>admin/admin_setting"><i class="fa fa-gears"></i><span><?=_l("Settings",$this)?></span></a></li>
+                <li><a <?=($page == "setting")?'class="active"':''?> href="<?php echo base_url(); ?>admin/settings"><i class="fa fa-gears"></i><span><?=_l("Settings",$this)?></span></a></li>
                 <!--multi level menu end-->
             </ul>
             <!-- sidebar menu end-->

@@ -11,7 +11,7 @@
             $pageURL .= $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
         }
         ?>
-    <title><?=isset($settings["options"]["company"])?$settings["options"]["company"]:$settings["company"]?><?php echo isset($title)?" - ".$title:""; ?></title>
+    <title><?=isset($settings["company"])?$settings["company"]:''?><?php echo isset($title)?" - ".$title:""; ?></title>
     <meta name="robots" content="index, follow" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0" />
     <meta name="keywords" content="<?php if(isset($keyword)) echo $keyword; ?>" />

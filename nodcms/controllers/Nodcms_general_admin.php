@@ -10,8 +10,8 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Nodcms_general_admin extends CI_Controller {
-    private $_website_info,$mainTemplate;
-    public $langArray=array();
+    private $_website_info, $mainTemplate;
+    public $langArray = array();
     function __construct()
     {
         parent::__construct();
@@ -61,11 +61,10 @@ class Nodcms_general_admin extends CI_Controller {
         $this->data['page'] = "home";
         $this->load->view($this->mainTemplate,$this->data);
     }
-    function admin_setting()
-    {
+    function settings($sub_page='general'){
         if(isset($_POST['data'])){
             if ($this->session->userdata['group']==1) {
-                $data = $_POST['data'];
+                $data = $this->input->post('data');
                 if(isset($data["options"])){
                     foreach($data["options"] as $key=>$value){
                         if($this->NodCMS_general_admin_model->check_setting_options($key)){
@@ -81,7 +80,7 @@ class Nodcms_general_admin extends CI_Controller {
             }else{
                 $this->session->set_flashdata('error', _l('This request is just fore real admin.',$this));
             }
-            redirect(base_url().'admin/admin_setting', 'refresh');
+            redirect(base_url().'admin/settings/'.$sub_page, 'refresh');
         }
         $data_options = array();
         $setting_options = $this->NodCMS_general_admin_model->get_all_setting_options();
@@ -90,8 +89,44 @@ class Nodcms_general_admin extends CI_Controller {
         }
         $this->data['options'] = $data_options;
         $this->data['languages'] = $this->NodCMS_general_admin_model->get_all_language();
-        $this->data['content']=$this->load->view($this->mainTemplate.'/admin_setting',$this->data,true);
-        $this->data['title'] = "home";
+        if($sub_page=='general'){
+            $this->data['title'] = _l('General settings',$this);
+            $this->data['content']=$this->load->view($this->mainTemplate.'/setting',$this->data,true);
+        }elseif($sub_page=='seo'){
+            $this->data['title'] = _l('SEO optimise',$this);
+            $this->data['content']=$this->load->view($this->mainTemplate.'/setting_seo',$this->data,true);
+        }elseif($sub_page=='contact'){
+            $this->data['title'] = _l('Contact settings',$this);
+            $this->data['content']=$this->load->view($this->mainTemplate.'/setting_contact',$this->data,true);
+        }elseif($sub_page=='mail'){
+            $this->data['public_keys'] = array(
+                array('label'=>_l('Company name',$this),'value'=>'[--$company--]'),
+                array('label'=>_l('Site Email',$this),'value'=>'[--$smail--]'),
+                array('label'=>_l('Date',$this),'value'=>'[--$date--]'),
+            );
+            $this->data['register_keys'] = array(
+                array('label'=>_l('Company name',$this),'value'=>'[--$company--]'),
+                array('label'=>_l('Username',$this),'value'=>'[--$username--]'),
+                array('label'=>_l('Email address',$this),'value'=>'[--$email--]'),
+                array('label'=>_l('User activate URL',$this),'value'=>'[--$refurl--]'),
+                array('label'=>_l('Date',$this),'value'=>'[--$date--]'),
+                array('label'=>_l('User created date',$this),'value'=>'[--$cdate--]'),
+            );
+            $this->data['activate_keys'] = array(
+                array('label'=>_l('Company name',$this),'value'=>'[--$company--]'),
+                array('label'=>_l('Username',$this),'value'=>'[--$username--]'),
+                array('label'=>_l('Email address',$this),'value'=>'[--$email--]'),
+                array('label'=>_l('Date',$this),'value'=>'[--$date--]'),
+            );
+            $this->data['reset_pass_keys'] = array(
+                array('label'=>_l('Company name',$this),'value'=>'[--$company--]'),
+                array('label'=>_l('Username',$this),'value'=>'[--$username--]'),
+                array('label'=>_l('Email address',$this),'value'=>'[--$email--]'),
+                array('label'=>_l('Make new password URL',$this),'value'=>'[--$refurl--]'),
+            );
+            $this->data['title'] = _l('Send mail settings',$this);
+            $this->data['content']=$this->load->view($this->mainTemplate.'/setting_mail',$this->data,true);
+        }
         $this->data['page'] = "setting";
         $this->load->view($this->mainTemplate,$this->data);
     }

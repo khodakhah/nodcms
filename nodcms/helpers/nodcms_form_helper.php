@@ -165,7 +165,24 @@ function mk_htextarea($name,$caption="",$value="",$options=''){
         <label for="<?=$name?>" class="control-label col-lg-2"><?=$caption?></label>
         <div class="col-lg-10">
             <textarea class=" form-control" id="<?=$name?>" name="<?=$name?>" <?=$options?>><?=$value?></textarea>
+            <?php if(isset($help)){ ?><p><?php echo $help; ?></p><?php } ?>
         </div>
+    </div>
+    <?php
+}
+function mk_vtextarea_shortkeys($id,$name,$caption="",$value="",$options='',$shortkeys=array()){
+    ?>
+    <div class="form-group ">
+        <label for="<?=$id?>" class="control-label"><?=$caption?></label>
+        <?php if(count($shortkeys)!=0){ ?>
+        <p>
+            <?php foreach($shortkeys as $item){ ?>
+                <button type="button" class="btn btn-default btn-sm" onclick="insertAtCaret('<?=$id?>','<?php echo $item['value']; ?>');"><?php echo $item['label']; ?></button>
+            <?php } ?>
+        </p>
+        <?php } ?>
+        <textarea class="form-control" id="<?=$id?>" name="<?=$name?>" <?=$options?>><?=$value?></textarea>
+        <?php if(isset($help)){ ?><p><?php echo $help; ?></p><?php } ?>
     </div>
     <?php
 }

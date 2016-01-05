@@ -37,6 +37,8 @@ class Nodcms_general extends CI_Controller {
 
         $this->data['settings'] =  $this->NodCMS_general_model->get_website_info();
         $this->data['settings']["options"] =  $this->NodCMS_general_model->get_website_info_options($language["language_id"]);
+        $this->data['settings']["company"] =  isset($this->data['settings']["options"]["company"])?$this->data['settings']["options"]["company"]:$this->data['settings']["company"];
+        $_SESSION['settings']=$this->data['settings'];
 
         frontendStatisticCalc($this,$language);
 
@@ -207,13 +209,11 @@ class Nodcms_general extends CI_Controller {
                         );
                         $this->NodCMS_general_model->insert_user($user);
                     }
-                    $body_data = array(
-                        "title"=>_l("Welcome to our website members",$this),
-                        "body"=>_l("We made a new account for you, for active your it and choose your password click on this link",$this).
-                            " <a href='".base_url().$lang."/active_account/".$email_hash."/".$active_code."'>"._l("Active account & Choose your password",$this)."</a>"
-                    );
-                    $email_body = $this->load->view('flatlab/email-template-public',$body_data,true);
-                    $this->sendEmailAutomatic($_POST["email"],_l("Welcome to",$this).' '.$this->data['settings']['company'],$email_body);
+                    $search = array('[--$company--]','[--$date--]','[--$username--]','[--$email--]','[--$cdate--]','[--$refurl--]');
+                    $replace = array($this->data['settings']["company"],my_int_date(time()),$user['username'],$user['email'],$user['created_date'],base_url().$lang.'/active_account/'.$user['email_hash'].'/'.$user['active_code']);
+                    $body_data = str_replace($search,$replace,$this->data['settings']['options']['msg_reset_pass']);
+                    $email_body = $this->load->view('nodcms_general/email-template-public',array('body'=>$body_data),true);
+                    $this->sendEmailAutomatic($_POST["email"],_l("Confirm your account",$this),$email_body);
                     $this->session->set_flashdata('message_success', _l("We send you a link to your email, please check your email inbox and spam, and flow that.",$this));
                     redirect(base_url().$lang."/register?success");
                 }
@@ -234,13 +234,12 @@ class Nodcms_general extends CI_Controller {
                     $active_code = md5(substr(md5(time()),4,6));
                     $user = array("active_code"=>$active_code,"active"=>0,"reset_pass_exp"=>time()+18000);
                     $this->NodCMS_general_model->update_user_by_email($user,$_POST["email"]);
-                    $body_data = array(
-                        "title"=>_l("Reset your password",$this),
-                        "body"=>_l("You want to change your password, for active your it and choose your new password click on this link",$this).
-                            "<a href='".base_url().$lang."/reset-password/".md5($_POST["email"])."/".$active_code."'>"._l("Active account & Choose your password",$this)."</a>"
-                    );
-                    $email_body = $this->load->view('flatlab/email-template-public',$body_data,true);
-                    $this->sendEmailAutomatic($_POST["email"],_l("Welcome to",$this),$email_body);
+//                    Send email
+                    $search = array('[--$company--]','[--$date--]','[--$username--]','[--$email--]','[--$cdate--]','[--$refurl--]');
+                    $replace = array($this->data['settings']["company"],my_int_date(time()),$user['username'],$user['email'],$user['created_date'],base_url().$lang.'/reset-password/'.md5($_POST["email"])."/".$active_code);
+                    $body_data = str_replace($search,$replace,$this->data['settings']['options']['msg_reset_pass']);
+                    $email_body = $this->load->view('nodcms_general/email-template-public',array('body'=>$body_data),true);
+                    $this->sendEmailAutomatic($_POST["email"],_l("Password Reset",$this),$email_body);
                     $this->session->set_flashdata('message_success', _l("We send you a link to your email, please check your email inbox and spam, and flow that.",$this));
                     redirect(base_url().$lang."/login");
                 }else{
@@ -266,6 +265,13 @@ class Nodcms_general extends CI_Controller {
                     if(strlen($_POST["password"])>5 && strlen($_POST["password"])<13){
                         if(isset($_POST["confirm_password"]) && $_POST["confirm_password"]==$_POST["password"]){
                             $this->NodCMS_general_model->user_set_new_password($user["user_id"],md5($_POST["password"]));
+                            // Send email
+                            $search = array('[--$company--]','[--$date--]','[--$username--]','[--$email--]','[--$cdate--]');
+                            $replace = array($this->data['settings']["company"],my_int_date(time()),$user['username'],$user['email'],$user['created_date']);
+                            $body_data = str_replace($search,$replace,$this->data['settings']['options']['msg_active']);
+                            $email_body = $this->load->view('nodcms_general/email-template-public',array('body'=>$body_data),true);
+                            $this->sendEmailAutomatic($user["email"],_l("Change password confirmation!",$this),$email_body);
+
                             $this->session->set_flashdata('message_success', _l("Your account is active now.",$this));
                             redirect(base_url().$lang."/login");
                         }else{
@@ -277,7 +283,7 @@ class Nodcms_general extends CI_Controller {
                     redirect(base_url().$lang."/".$redirect."/".$email_hash."/".$active_code);
                 }
             }else{
-                $this->session->set_flashdata('message_error', _l("Your request is not valid.",$this));
+                show_404();
             }
         }
         $this->data['title']=_l("Set password",$this);
@@ -436,7 +442,7 @@ class Nodcms_general extends CI_Controller {
                     "title"=>$_POST["data"]["name"],
                     "body"=>$_POST["data"]["text"]
                 );
-                $email_body = $this->load->view('flatlab/email-template-public',$body_data,true);
+                $email_body = $this->load->view('nodcms_general/email-template-public',$body_data,true);
                 $this->sendEmailAutomatic($this->data["settings"]["email"],_l("Contact Form",$this).": ".$_POST["data"]["subject"],$email_body,$_POST["data"]["email"]);
             }else{
                 $this->session->set_flashdata('message_error', "Email is not correct");
@@ -451,24 +457,27 @@ class Nodcms_general extends CI_Controller {
     {
         if ($_SERVER['SERVER_NAME'] != 'localhost') {
             $setting =  $this->data['settings'];
-    //	   	$config = array(
-    //			  	'protocol' => 'smtp',
-    //			    'smtp_host' => $setting['smtp_host'],
-    //			    'smtp_port' => $setting['smtp_port'],
-    //			    'smtp_user' => $setting['smtp_username'],
-    //			    'smtp_pass' => $setting['smtp_password'],
-    //			    'mailtype'  => 'html',
-    //			    'charset'   => 'iso-8859-1',
-    //	   			'starttls'  => true,
-    //            	'newline'   => "\r\n"
-    //		);
-            $config = array(
-                'protocol' => 'mail',
-                'mailtype'  => $mailType,
-                'charset'   => 'utf8',
-                'starttls'  => true,
-                'newline'   => "\r\n"
-            );
+            if(isset($setting['use_smtp']) && $setting['use_smtp']==1){
+                $config = array(
+                    'protocol' => 'smtp',
+                    'smtp_host' => $setting['smtp_host'],
+                    'smtp_port' => $setting['smtp_port'],
+                    'smtp_user' => $setting['smtp_username'],
+                    'smtp_pass' => $setting['smtp_password'],
+                    'mailtype'  => 'html',
+                    'charset'   => 'iso-8859-1',
+                    'starttls'  => true,
+                    'newline'   => "\r\n"
+                );
+            }else{
+                $config = array(
+                    'protocol' => 'mail',
+                    'mailtype'  => 'html',
+                    'charset'   => 'utf8',
+                    'starttls'  => true,
+                    'newline'   => "\r\n"
+                );
+            }
             $this->load->library('email',$config);
             //$this->email->initialize($config);
             try {

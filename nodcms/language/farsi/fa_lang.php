@@ -38,3 +38,13 @@ $lang["Please send us your feedback"] = "لطفا بازخورد خود را ب�
 $lang["Read More"] = "ادامه مطلب";
 $lang["Search result"] = "نتیجه جستجو";
 $lang["loading..."] = "لودینگ...";
+$lang["Forget password"] = "فراموشی رمز عبور";
+$lang["Return password"] = "بازیابی رمز";
+$lang["If you forgot your password, you can enter the email address you used to register below. You'll receive an email from us which you can use to retrieve your password."] = "در صورتی که رمز خود را فراموش کرده اید، آدرس ایمیل خود را در محل زیر وارد کنید و روی دکمه تایید کلیک کنید. امیلی به صورت خودکار برای شما ارسال می شود. لطفا به دستورالعمل های ایمیل ارسال شده توجه کنید.";
+$lang["Submit"] = "تایید";
+$lang["This email already exists, choose another email address or click on forget password."] = "آدرس ایمیل وارد شده تکراری است. لطفا یک آدرس ایمیل دیگر وارد کنید و یا با استفاده از بازیابی رمز، رمز حساب کاربری قبلی خود به دست آورید.";
+$lang["Confirm your account"] = "تایید حساب کاربری شما";
+$lang["We send you a link to your email, please check your email inbox and spam, and flow that."] = "ما به آدرس ایمیل شما یک لینک ارسال کرده ایم. لطفا قسمت های inbox و spam امیل خود را برسی کنید و بر روی لینک کلیک کنید.";
+$lang["Login now"] = "ورود به حساب کاربری";
+$lang["Back to home"] = "بازگشت به صفحه اصلی";
+$lang["Password Reset"] = "بازیابی رمز";

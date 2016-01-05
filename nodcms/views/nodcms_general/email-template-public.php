@@ -1,40 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
-<!-- Define Charset -->
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<!-- Responsive Meta Tag -->
-<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
+<html lang="<?php echo $_SESSION['settings']["code"]; ?>">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
 </head>
-<body leftmargin="0" topmargin="0" marginheight="0" marginwidth="0">
-<table class="container-middle" align="center" border="0" cellpadding="0" cellspacing="0" width="560">
-
-
-    <tr ><td height="7"></td></tr>
-
-    <tr ><td height="20"></td></tr>
-    <tr >
-        <td>
-            <table class="mainContent" align="center" border="0" cellpadding="0" cellspacing="0" width="528">
-                <tbody>
-                <tr><td><?=$title?></td></tr>
-                <tr><td height="20"></td></tr>
-                <tr><td><?=$body?></td></tr>
-                <tr><td height="20"></td></tr>
-                <tr><td><?=_l("If this email not yours, then there is some problem, so please delete this email.",$this)?>:</td></tr>
-                <tr><td height="20"></td></tr>
-                <tr><td><?=_l("This message is automatically generated, please do not respond to it.",$this)?>:</td></tr>
-                <tr><td height="20"></td></tr>
-                </tbody></table>
-        </td>
-    </tr>
-    <tr ><td height="25"></td></tr>
-</table>
-</tbody>
-</table>
-
-
+<body leftmargin="0" topmargin="0" marginheight="0" marginwidth="0" style="direction: <?php echo $_SESSION['settings']["rtl"]=1?'rtl':'ltr'; ?>;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="560" style="direction: <?php echo $_SESSION['settings']["rtl"]=1?'rtl':'ltr'; ?>;">
+        <tr ><td height="10"></td></tr>
+        <tr >
+            <td>
+                <table class="mainContent" align="center" border="0" cellpadding="0" cellspacing="0" width="528" style="direction: <?php echo $_SESSION['settings']["rtl"]=1?'rtl':'ltr'; ?>;">
+                    <tbody>
+                    <?php if(isset($_SESSION['settings']["options"]["msg_header"])){ ?>
+                        <tr><td><?php echo str_replace(array('[--$company--]','[--$date--]','[--$smail--]'),array($_SESSION['settings']["company"],my_int_date(time()),$_SESSION['settings']["email"]),$_SESSION['settings']["options"]["msg_header"]); ?></td></tr>
+                        <tr><td height="10"></td></tr>
+                    <?php } ?>
+                    <tr><td><?=$body?></td></tr>
+                    <?php if(isset($_SESSION['settings']["options"]["msg_footer"])){ ?>
+                    <tr><td height="10"></td></tr>
+                    <tr><td><?php echo str_replace(array('[--$company--]','[--$date--]','[--$smail--]'),array($_SESSION['settings']["company"],my_int_date(time()),$_SESSION['settings']["email"]),$_SESSION['settings']["options"]["msg_footer"]); ?></td></tr>
+                    <?php } ?>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        <tr ><td height="10"></td></tr>
+    </table>
 </body>
-
-<!-- Mirrored from thevectorlab.net/flatlab/email_template.html by HTTrack Website Copier/3.x [XR&CO'2010], Sun, 09 Feb 2014 08:47:44 GMT -->
 </html>
 

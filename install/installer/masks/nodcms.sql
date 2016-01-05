@@ -333,6 +333,7 @@ CREATE TABLE IF NOT EXISTS `setting` (
   `language_id` int(11) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `description` text,
+  `use_smtp` int(1) NOT NULL DEFAULT '0',
   `smtp_host` varchar(255) NOT NULL,
   `smtp_port` int(11) NOT NULL,
   `smtp_username` varchar(255) NOT NULL,
@@ -343,8 +344,8 @@ CREATE TABLE IF NOT EXISTS `setting` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `setting` (`id`, `email`, `company`, `logo`, `fav_icon`, `address`, `location`, `zip_code`, `country_id`, `language_id`, `phone`, `description`, `smtp_host`, `smtp_port`, `smtp_username`, `smtp_password`, `default_image`, `fb_api`, `site_name`) VALUES
-(1, 'info@nodcms.com', 'nod-CMS', 'upload_file/logo/windows_live_language_setting6.png', 'upload_file/logo/windows_live_language_setting6.png', 'Wien, 1150 Sechshause strasse', '+48.137769, +16.276226', 1230, 1, 1, '068860114434', '', '', 0, '', '', 'assets/frontend/img/noimage.jpg', '486992334724444', NULL);
+INSERT INTO `setting` (`id`, `email`, `company`, `logo`, `fav_icon`, `address`, `location`, `zip_code`, `country_id`, `language_id`, `phone`, `description`, `use_smtp`, `smtp_host`, `smtp_port`, `smtp_username`, `smtp_password`, `default_image`, `fb_api`, `site_name`) VALUES
+(1, 'info@nodcms.com', 'nod-CMS', 'upload_file/logo/windows_live_language_setting6.png', 'upload_file/logo/windows_live_language_setting6.png', 'Wien, 1150 Sechshause strasse', '+48.137769, +16.276226', 1230, 1, 1, '068860114434', '', 0, '', 0, '', '', 'assets/frontend/img/noimage.jpg', '486992334724444', NULL);
 
 
 
@@ -354,17 +355,21 @@ CREATE TABLE IF NOT EXISTS `setting_options_per_lang` (
   `option_id` int(11) NOT NULL AUTO_INCREMENT,
   `language_id` int(11) NOT NULL,
   `site_title` varchar(255) DEFAULT NULL,
-  `company` varchar(255) DEFAULT NULL,
+  `company` varchar(255) NOT NULL,
   `site_description` text,
   `site_keyword` text,
+  `msg_register` text NOT NULL,
+  `msg_active` text NOT NULL,
+  `msg_reset_pass` text NOT NULL,
+  `msg_header` text NOT NULL,
+  `msg_footer` text NOT NULL,
   PRIMARY KEY (`option_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
-INSERT INTO `setting_options_per_lang` (`option_id`, `language_id`, `site_title`, `company`, `site_description`, `site_keyword`) VALUES
-(1, 1, 'Free download multi language CMS - nodCMS', 'nod-CMS', 'Free download multi language CMS - nodCMS', 'Free download multi language CMS - nodCMS'),
-(2, 2, 'دانلود رایگان سی ام اس چند زبانه نود سی ام اس', 'نود سی ام اس', 'دانلود رایگان سی ام اس چند زبانه نود سی ام اس', 'دانلود رایگان سی ام اس چند زبانه نود سی ام اس'),
-(3, 3, 'Frei download mehrsprachige CMS - nodCMS', 'nod-CMS', 'Frei download mehrsprachige CMS - nodCMS', 'Frei download mehrsprachige CMS - nodCMS');
-
+INSERT INTO `setting_options_per_lang` (`option_id`, `language_id`, `site_title`, `company`, `site_description`, `site_keyword`, `msg_register`, `msg_active`, `msg_reset_pass`, `msg_header`, `msg_footer`) VALUES
+  (1, 1, 'Free PHP multilingual CMS - DEMO', 'NodCMS', 'NodCMS is a free PHP script or CMS that made by powerful Codeigniter PHP framework.', 'NodCMS, CMS, PHP script,  Codeigniter CMS, Codeigniter sample, Codeigniter admin,free CMS, free Codeigniter CMS', '<p>Welcome to [--$company--]</p>\r\n<b>\r\n<p>We made a new account for you in our website</p>\r\n<p>To activate your account and set a password please click on below link:</p>\r\n<a href="[--$refurl--]">Account activate & Set a password</a>\r\n<p>Your Username: <b>[--$username--]</b></p>\r\n<p>Your Email address: <b>[--$email--]</b></p>', '<div style="background:#dff0d8;color:#3c763d;border-left:4px solid #3c763d;padding:10px;"><p>Your password successfully changed.</p></div>\r\n<br>\r\n<p>Thank you for your registration!</p>\r\n<p>Your username: <strong style="background:#f7ecb5">[--$username--]</strong></p>\r\n<p>Your email address: <strong style="background:#f7ecb5">[--$email--]</strong></p>\r\n<p>By below link you can sign in:</p>\r\n<p><a href="http://demo.nodcms.com/en/login">Login</a></p>', '<p>We had a request from you to change your password.</p>\r\n<p>By below link you can set your new password:</p>\r\n<p><a href="[--$refurl--]">Set a new password</a></p>', '<p>Hi dear,</p>\r\n<br><br>', '<br><br>\r\n<p>Thanks</p>\r\n<p>[--$company--]</p>'),
+  (2, 2, 'دانلود رایگان سیستم مدیریت محتوای نود سی ام اس NodCMS', 'نود سی ام اس NodCMS', 'NodCMS یک سیستم مدیریت محتوای رایگان است توسط فریم ورک قدرتمند Codeigniter ساخته شده است', 'سی ام اس رایگان، سیستم مدیریت محتوای رایگان، NodCMS, Codeigniter, نمونه Codeigniter', '<p>به [--$company--] خوش آمدید.</p>\r\n<br>\r\n<p>یک حساب کاربری  در تاریخ [--$date--] در سایت ما برای شما ایجاد شده است.</p>\r\n<p>برای فعال سازی حساب کاربری خود بر روی لینک زیر کلیک کنید:</p>\r\n<p><a href="[--$refurl--]">فعال سازی و انتخاب رمز</a></p>', '<div style="background:#dff0d8;color:#3c763d;border-left:4px solid #3c763d;padding:10px;"><p>رمز حساب کاربری شما با موفقیت تغییر کرده است.</p></div>\r\n<br>\r\n<p>با تشکر از عضویت شما!</p>\r\n<p>نام کاربری شما: <strong style="background:#f7ecb5">[--$username--]</strong></p>\r\n<p>آدرس ایمیل شما: <strong style="background:#f7ecb5">[--$email--]</strong></p>\r\n<p>با استفاده از لینک زیر می توانید وارد حساب کاربری خود شوید:</p>\r\n<p><a href="http://demo.nodcms.com/fa/login">فرم ورود</a></p>', '<p>شما در سایت ما خواستار تغییر رمز عبور خود شده اید.</p>\r\n<p>با استفاده از لینک زیر می توانید رمز حساب کاربری خود را تغییر دهید:</p>\r\n<p><a href="[--$refurl--]">تغییر رمز عبور</a></p>', '<p>با سلام،</p>\r\n<br><br>', '<br><br>\r\n<p>با تشکر</p>\r\n<p>[--$company--]</p>'),
+  (3, 3, 'Frei mehrsprachige Codeigniter CMS', 'NodCMS', 'NodCMS ist eine frei und mehrsprachige PHP script oder CMS, die mit starke Codeigniter aufgebaut wird.', 'NodCMS, frei CMS, frei PHP script, Codeigniter CMS, Codeigniter Beispiel.', '<p>Willkommen bei [--$company--]</p>\r\n<br>\r\n<p>Ein Konto wurde am [--$cdate--] Ihnen geöffnet. Sie sollen Ihres Konto aktivieren und selbst ein Password wählen.</p>\r\n<p><a href="[--$refurl--]">Kontobetätigung und Auswahlpassword</a></p>', '<div style="background:#dff0d8;color:#3c763d;border-left:4px solid #3c763d;padding:10px;"><p>Ihr Passwort wurde erfolgreich gewechselt.</p></div>\r\n<br>\r\n<p>Vielen Dank für Ihre Anmeldung!</p>\r\n<p>Ihr Benutzername: <strong style="background:#f7ecb5">[--$username--]</strong></p>\r\n<p>Ihre Email-Adresse: <strong style="background:#f7ecb5">[--$email--]</strong></p>\r\n<p>Mit folgenden Link konnen Sie unsere Website einloggen:</p>\r\n<p><a href="http://demo.nodcms.com/de/login">einloggen</a></p>', '<p>Sie möchten Ihr Passwort auf unsere Website wechseln.</p>\r\n<p>Mit folgenden Link konnen Sie Ihr Passwort wechseln:</p>\r\n<p><a href="[--$refurl--]">Passwort wechseln</a></p>', '<p>Sehr geehrte Damen und Herren,</p>\r\n<br><br>', '<b><b>\r\n<p>Mit freundliche Grüßen</p>\r\n<p>[--$company--]</p>');
 
 
 -- Dumping structure for table nodcms_demo.titles
