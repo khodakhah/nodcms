@@ -8,15 +8,11 @@
  * Website: http://www.nodcms.com
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Nodcms_general extends CI_Controller {
-    private $data,$mainTemplate;
-    public $langArray=array();
+class Nodcms_general extends NodCMS_Controller {
     function __construct(){
-        parent::__construct();
-        $this->load->model("NodCMS_general_model");
+        parent::__construct('frontend');
     }
     public function preset($lang){
-        $this->mainTemplate = $this->config->item('NodCMS_general_templateFolderName');
         $language = $this->NodCMS_general_model->get_language_by_code($lang);
         if($language!=0){
             $_SESSION["language"] = $language;
