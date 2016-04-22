@@ -28,10 +28,9 @@ If you cannot install nodcms automatic with wizard form, please try the manual w
 2. Import the nodcms.sql file `nodcms/install/installer/masks/nodcms.sql` from in your database
 3. Rename the file `database_manual.php` to `database.php` in `nodcms/nodcms/config/`
 4. Inter your database name in line 81 of `database.php` between the last two quotation marks (`'database' => 'YOUR DATABASE NAME',`)
+5. Set your host username on line 79 instead of root(`'username' => 'root',`)
+6. Inter your password in line 80 between the last two quotation marks.(`'password' => 'YOUR PASSWORD',`)
 
-#### If your your MySQL on your local host have a password:
-
-5. Inter your password in line 80 between the last two quotation marks.(`'password' => 'YOUR PASSWORD',`)
 
 After install, you can access the admin side on this URL www.your-domain.com/admin
 
