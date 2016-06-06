@@ -72,21 +72,21 @@ if ( ! function_exists('my_int_justTime')){
 if ( ! function_exists('frontendStatisticCalc')){
     function frontendStatisticCalc($obj,$language){
         //        Statistic
-        $visitorMinDate = $obj->NodCMS_general_model->get_min_date_visitor();
+        $visitorMinDate = $obj->NodCMS_general_model->getMinDateVisitor();
         if($visitorMinDate!=0){
-            $visitorMaxDate = $obj->NodCMS_general_model->get_max_date_visitor();
+            $visitorMaxDate = $obj->NodCMS_general_model->getMaxDateVisitor();
             $times = $visitorMaxDate - $visitorMinDate;
             if($times >= 86400){
                 $days = round($times / 86400);
                 $visitorMinDate = (mktime(0,0,0,date("m",$visitorMinDate),(date("j",$visitorMinDate)),date("Y",$visitorMinDate)));
                 for($d=0;$d<$days;$d++){
                     $maxTime = (mktime(0,0,0,date("m",$visitorMinDate),(date("j",$visitorMinDate)),date("Y",$visitorMinDate))) + 86400;
-                    $obj->NodCMS_general_model->update_statistic(strtotime(date("d.m.Y",$visitorMinDate)),$maxTime);
+                    $obj->NodCMS_general_model->updateStatistic(strtotime(date("d.m.Y",$visitorMinDate)),$maxTime);
                     $visitorMinDate = $maxTime;
                 }
             }
         }
-        $visitor = $obj->NodCMS_general_model->get_duplicate_visitor(session_id(),$_SERVER["REQUEST_URI"]);
+        $visitor = $obj->NodCMS_general_model->getDuplicateVisitor(session_id(),$_SERVER["REQUEST_URI"]);
         if(count($visitor) == 0){
             // Get IP address
             if ( isset($_SERVER['HTTP_CLIENT_IP']) && ! empty($_SERVER['HTTP_CLIENT_IP'])) {
@@ -113,7 +113,7 @@ if ( ! function_exists('frontendStatisticCalc')){
                 "request_url"=>$_SERVER['REQUEST_URI'],
                 "count_view"=>1
             );
-            $obj->NodCMS_general_model->insert_visitors($visitor_data);
+            $obj->NodCMS_general_model->insertVisitors($visitor_data);
         }else{
             $visitor = @reset($visitor);
             $visitor_data = array(
@@ -121,7 +121,7 @@ if ( ! function_exists('frontendStatisticCalc')){
                 "updated_date"=>time(),
                 "count_view"=>$visitor["count_view"]+1
             );
-            $obj->NodCMS_general_model->update_duplicate_visitor(session_id(),$_SERVER["REQUEST_URI"],$visitor_data);
+            $obj->NodCMS_general_model->updateDuplicateVisitor(session_id(),$_SERVER["REQUEST_URI"],$visitor_data);
         }
     }
 }

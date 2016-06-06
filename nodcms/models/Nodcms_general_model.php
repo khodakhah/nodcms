@@ -10,12 +10,15 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Nodcms_general_model extends CI_Model {
+
     public function __construct()
     {
         // Call the CI_Model constructor
         parent::__construct();
     }
-    function get_website_info()
+
+    // Select from "setting" table
+    function getWebsiteInfo()
     {
         $this->db->select('*');
         $this->db->from('setting');
@@ -23,7 +26,9 @@ class Nodcms_general_model extends CI_Model {
         $return = $query->result_array();
         return count($return)?$return[0]:0;
     }
-    function get_website_info_options($language_id=null)
+
+    // Select setting's options in one language from "setting_options_per_lang" table
+    function getWebsiteInfoOptions($language_id=null)
     {
         $this->db->select('*');
         $this->db->from('setting_options_per_lang');
@@ -34,7 +39,8 @@ class Nodcms_general_model extends CI_Model {
         return count($return)?$return[0]:0;
     }
 
-    function get_menu($conditions=null)
+    // Select a list from "menu" table
+    function getMenu($conditions=null)
     {
         $this->db->select('*');
         $this->db->from('menu');
@@ -47,7 +53,8 @@ class Nodcms_general_model extends CI_Model {
         return $query->result_array();
     }
 
-    function get_languages()
+    // Select a list from "languages" table
+    function getLanguages()
     {
         $this->db->select('*');
         $this->db->from('languages');
@@ -55,7 +62,9 @@ class Nodcms_general_model extends CI_Model {
         $query = $this->db->get();
         return $query->result_array();
     }
-    function get_language_by_code($code)
+
+    // Select a row with "code" field from "languages" table
+    function getLanguageByCode($code)
     {
         $this->db->select('*');
         $this->db->from('languages');
@@ -65,7 +74,9 @@ class Nodcms_general_model extends CI_Model {
         $return = $query->result_array();
         return count($return)?$return[0]:0;
     }
-    function get_language_default()
+
+    // Select a row from "languages" table (main condition: default = 0)
+    function getLanguageDefault()
     {
         $this->db->select('*');
         $this->db->from('languages');
@@ -76,7 +87,8 @@ class Nodcms_general_model extends CI_Model {
         return count($return)?$return[0]:0;
     }
 
-    function get_preview_pages()
+    // Select a list from "pages" table if preview = 1
+    function getPreviewPages()
     {
         $this->db->select('*');
         $this->db->from('page');
@@ -90,7 +102,8 @@ class Nodcms_general_model extends CI_Model {
         return $query->result_array();
     }
 
-    function get_extensions_by_page_id($page_id,$order_by="created_date",$sort="DESC",$limit=null,$offset=0)
+    // Select a list from "extensions" table
+    function getExtensionsByPageId($page_id,$order_by="created_date",$sort="DESC",$limit=null,$offset=0)
     {
         $this->db->select('*');
         $this->db->from('extensions');
@@ -104,7 +117,9 @@ class Nodcms_general_model extends CI_Model {
         $query = $this->db->get();
         return $query->result_array();
     }
-    function get_extension_related($page_id,$extension_id,$order_by="created_date",$sort="DESC",$limit=null,$offset=0)
+
+    // Select a list from "extensions" table
+    function getExtensionRelated($page_id,$extension_id,$order_by="created_date",$sort="DESC",$limit=null,$offset=0)
     {
         $this->db->select('*');
         $this->db->from('extensions');
@@ -119,7 +134,9 @@ class Nodcms_general_model extends CI_Model {
         $query = $this->db->get();
         return $query->result_array();
     }
-    function get_extension_by_extension_id($id)
+
+    // Select a row from "extensions" table with extension_id
+    function getExtensionByExtensionId($id)
     {
         $this->db->select('*,extensions.image');
         $this->db->from('extensions');
@@ -137,7 +154,9 @@ class Nodcms_general_model extends CI_Model {
         $return = $query->result_array();
         return count($return)?$return[0]:0;
     }
-    function search_extension($texts,$limit=null,$offset=0)
+
+    // Select a list form "extensions" table (extensions search results)
+    function searchExtension($texts,$limit=null,$offset=0)
     {
         $this->db->from('extensions');
         $this->db->join('users', 'extensions.user_id = users.user_id',"left");
@@ -168,7 +187,8 @@ class Nodcms_general_model extends CI_Model {
         return $query->result_array();
     }
 
-    function get_page_detail($id)
+    // Select a row from "page" table with page_id
+    function getPageDetail($id)
     {
         $this->db->select('*,page.avatar');
         $this->db->from('page');
@@ -181,7 +201,8 @@ class Nodcms_general_model extends CI_Model {
         return count($return)?$return[0]:0;
     }
 
-    function get_user_by_email_hash_and_active_code($email_hash,$active_code)
+    // Select a row form "users" table with "email_hash" and "active_code"
+    function getUserByEmailHashAndActiveCode($email_hash,$active_code)
     {
         $this->db->select('*');
         $this->db->from('users');
@@ -191,7 +212,9 @@ class Nodcms_general_model extends CI_Model {
         $return = $query->result_array();
         return count($return)!=0?$return[0]:0;
     }
-    function get_user_by_email_and_password($email,$password)
+
+    // Select a row form "users" table with "email" and "password" (for login)
+    function getUserByEmailAndPassword($email,$password)
     {
         $this->db->select('*');
         $this->db->from('users');
@@ -201,7 +224,10 @@ class Nodcms_general_model extends CI_Model {
         $return = $query->result_array();
         return count($return)!=0?$return[0]:0;
     }
-    function check_username_exists($text){
+
+    // Return 1 if a "username" exists in "users" table, else return 0
+    function checkUsernameExists($text)
+    {
         $this->db->select('*');
         $this->db->from('users');
         $this->db->where('username',$text);
@@ -210,7 +236,10 @@ class Nodcms_general_model extends CI_Model {
         $return = $query->result_array();
         return count($return)!=0?1:0;
     }
-    function check_email_exists($text,$active_register=true){
+
+    // Return 1 if a "email" exists in "users" table, else return 0
+    function checkEmailExists($text,$active_register=true)
+    {
         $this->db->select('*');
         $this->db->from('users');
         $this->db->where('email',$text);
@@ -222,21 +251,32 @@ class Nodcms_general_model extends CI_Model {
         $return = $query->result_array();
         return count($return)!=0?1:0;
     }
-    function update_user_by_email($data,$email){
+
+    // Update "users" table with "email" condition
+    function updateUserByEmail($data,$email)
+    {
         $this->db->where('email',$email);
         $this->db->update('users',$data);
     }
-    function insert_user($data){
+
+    // Insert into "users" (for register form)
+    function insertUser($data)
+    {
         $this->db->insert('users',$data);
     }
 
-    function update_user_login($user_id,$keep_me_time,$user_agent){
+    // Update "users" table (for keep a user login)
+    function updateUserLogin($user_id,$keep_me_time,$user_agent)
+    {
         $this->db->where('user_id',$user_id);
         $this->db->set('keep_me_time',$keep_me_time);
         $this->db->set('user_agent',$user_agent);
         $this->db->update('users');
     }
-    function user_set_new_password($user_id,$new_password){
+
+    // Update "users" table (set a new password form return password form)
+    function userSetNewPassword($user_id,$new_password)
+    {
         $this->db->where('user_id',$user_id);
         $this->db->set('password',$new_password);
         $this->db->set('active_register',1);
@@ -244,13 +284,17 @@ class Nodcms_general_model extends CI_Model {
         $this->db->set('active_code',"");
         $this->db->update('users');
     }
-    function user_edit_password($user_id,$new_password){
+
+    // Update "users" table (set a new password from profile change password form)
+    function userEditPassword($user_id,$new_password)
+    {
         $this->db->where('user_id',$user_id);
         $this->db->set('password',$new_password);
         $this->db->update('users');
     }
 
-    function check_comment_by_session_id($session_id,$content,$extension_id)
+    // Return 1 if a comment exists in "comments" table, else return 0
+    function checkCommentBySessionId($session_id,$content,$extension_id)
     {
         $this->db->select('count(*)');
         $this->db->from('comments');
@@ -261,7 +305,9 @@ class Nodcms_general_model extends CI_Model {
         $return = $result->result_array();
         return $return[0]["count(*)"]!=0?1:0;
     }
-    function check_extension_exists($extension_id)
+
+    // Return 1 if an extension exists in "extensions" table, else return 0
+    function checkExtensionExists($extension_id)
     {
         $this->db->select('count(*)');
         $this->db->from('extensions');
@@ -270,12 +316,17 @@ class Nodcms_general_model extends CI_Model {
         $return = $result->result_array();
         return $return[0]["count(*)"]!=0?1:0;
     }
-    function insert_comment($data=null){
+
+    // Insert into "comments" table
+    function insertComment($data=null)
+    {
         $this->db->insert('comments', $data);
         $comment_id = $this->db->insert_id();
         return $comment_id;
     }
-    function get_comments_by_extension_id($id)
+
+    // Select a list form "comments" table
+    function getCommentsByExtensionId($id)
     {
         $this->db->select('*,comments.created_date');
         $this->db->from('comments');
@@ -287,7 +338,9 @@ class Nodcms_general_model extends CI_Model {
         $query = $this->db->get();
         return $query->result_array();
     }
-    function get_replay_comments($id)
+
+    // Select a list form "comments" table
+    function getReplayComments($id)
     {
         $this->db->select('*,comments.created_date');
         $this->db->from('comments');
@@ -299,7 +352,8 @@ class Nodcms_general_model extends CI_Model {
         return $query->result_array();
     }
 
-    function get_gallery_by_page_id($page_id,$order_by="gallery_order",$sort="ASC",$limit=null,$offset=0)
+    // Select a list form "gallery" table
+    function getGalleryByPageId($page_id,$order_by="gallery_order",$sort="ASC",$limit=null,$offset=0)
     {
         $this->db->select('*');
         $this->db->from('gallery');
@@ -314,7 +368,9 @@ class Nodcms_general_model extends CI_Model {
         $query = $this->db->get();
         return $query->result_array();
     }
-    function get_gallery_image_by_page_id($page_id,$order_by="created_date",$sort="DESC",$limit=null,$offset=0)
+
+    // Select a list form "gallery_image" table
+    function getGalleryImageByPageId($page_id,$order_by="created_date",$sort="DESC",$limit=null,$offset=0)
     {
         $this->db->select('*,gallery_image.image,gallery_image.created_date');
         $this->db->from('gallery_image');
@@ -330,7 +386,12 @@ class Nodcms_general_model extends CI_Model {
         $query = $this->db->get();
         return $query->result_array();
     }
-    function get_duplicate_visitor($session_id,$request_url)
+
+    /*
+     * Calculating visits and visitors!
+     * This methods used in nodcms_general_helper.php
+     */
+    function getDuplicateVisitor($session_id,$request_url)
     {
         $this->db->select('*');
         $this->db->from('visitors');
@@ -339,19 +400,22 @@ class Nodcms_general_model extends CI_Model {
         $query = $this->db->get();
         return $query->result_array();
     }
-    function update_duplicate_visitor($session_id,$request_url,$data)
+
+    function updateDuplicateVisitor($session_id,$request_url,$data)
     {
         $this->db->where('session_id',$session_id);
         $this->db->where('request_url',$request_url);
         $this->db->update('visitors',$data);
     }
-    function insert_visitors($data)
+
+    function insertVisitors($data)
     {
         $this->db->insert('visitors', $data);
         $insert_id = $this->db->insert_id();
         return $insert_id;
     }
-    function get_max_date_visitor()
+
+    function getMaxDateVisitor()
     {
         $this->db->select('max(created_date)');
         $this->db->from('visitors');
@@ -360,7 +424,8 @@ class Nodcms_general_model extends CI_Model {
         $result = $query->result_array();
         return count($result)!=0?$result[0]["max(created_date)"]:0;
     }
-    function get_min_date_visitor()
+
+    function getMinDateVisitor()
     {
         $this->db->select('min(created_date)');
         $this->db->from('visitors');
@@ -369,9 +434,10 @@ class Nodcms_general_model extends CI_Model {
         $result = $query->result_array();
         return count($result)!=0?$result[0]["min(created_date)"]:0;
     }
-    function update_statistic($minDate,$maxDate)
+
+    function updateStatistic($minDate,$maxDate)
     {
-//            Initial data get
+        // Initial data get
         $this->db->select('count(*), sum(count_view)');
         $this->db->from('visitors');
         $this->db->where('created_date >= "'.$minDate.'"');
@@ -379,13 +445,13 @@ class Nodcms_general_model extends CI_Model {
         $query = $this->db->get();
         $result = $query->result_array();
         if(count($result)!=0 && $result[0]["count(*)"]){
-//            Initial data set
+           // Initial data set
             $data = array(
                 "created_date"=>time(),
                 "statistic_date"=>$minDate,
                 "visits"=>$result[0]["sum(count_view)"],
             );
-//            Get visitors count
+           // Get visitors count
             $this->db->select('session_id');
             $this->db->from('visitors');
             $this->db->where('created_date >= "'.$minDate.'"');
@@ -393,9 +459,9 @@ class Nodcms_general_model extends CI_Model {
             $this->db->group_by('session_id');
             $query = $this->db->get();
             $result = $query->result_array();
-//            Set visitors count
+            // Set visitors count
             $data["visitors"]=count($result);
-//            Get popular URL info
+            // Get popular URL info
             $this->db->select('request_url, count(request_url) as url_count');
             $this->db->from('visitors');
             $this->db->where('created_date >= "'.$minDate.'"');
@@ -405,10 +471,10 @@ class Nodcms_general_model extends CI_Model {
             $this->db->limit(1);
             $query = $this->db->get();
             $result = $query->result_array();
-//            Set popular URL info
+            // Set popular URL info
             $data["popular_url"]=$result[0]["request_url"];
             $data["popular_url_count"]=$result[0]["url_count"];
-//            Get popular Language info
+            // Get popular Language info
             $this->db->select('language_id, count(language_id) as language_count');
             $this->db->from('visitors');
             $this->db->where('created_date >= "'.$minDate.'"');
@@ -418,24 +484,24 @@ class Nodcms_general_model extends CI_Model {
             $this->db->limit(1);
             $query = $this->db->get();
             $result = $query->result_array();
-//            Set popular Language info
+            // Set popular Language info
             $data["popular_lang"]=$result[0]["language_id"];
             $data["popular_lang_count"]=$result[0]["language_count"];
-//            Get popular Language visits percent
+           // Get popular Language visits percent
             $this->db->select('count(*)');
             $this->db->from('visitors');
             $this->db->where('created_date >= "'.$minDate.'"');
             $this->db->where('created_date < "'.$maxDate.'"');
             $query = $this->db->get();
             $result = $query->result_array();
-//            Set popular Language visits percent
+            // Set popular Language visits percent
             $data["popular_lang_percent"]=round((100*$data["popular_lang_count"])/$result[0]["count(*)"]);
-//            Insert in statistic's table
+            // Insert in statistic's table
             $this->db->insert('statistic',$data);
-//            Delete unused records from visitors table
+            // Delete unused records from visitors table
             $this->db->delete('visitors','created_date >= "'.$minDate.'" AND created_date < "'.$maxDate.'"');
         }else{
-//            Set data for statistic table if doesn't exists eny data in visitors table in the period time
+            // Set data for statistic table if doesn't exists eny data in visitors table in the period time
             $data = array(
                 "created_date"=>time(),
                 "statistic_date"=>$minDate,
@@ -447,7 +513,7 @@ class Nodcms_general_model extends CI_Model {
                 "popular_lang_count"=>0,
                 "popular_lang_percent"=>0,
             );
-//            Insert in statistic's table
+           // Insert in statistic's table
             $this->db->insert('statistic',$data);
         }
     }

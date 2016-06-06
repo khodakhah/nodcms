@@ -54,19 +54,19 @@ $route['404_override'] = '';
 
 $route['([a-z][a-z])'] = 'Nodcms_general/index/$1';
 $route['([a-z][a-z])/page/([0-9]+)'] = 'Nodcms_general/page/$1/$2';
-$route['([a-z][a-z])/extension/([0-9]+)'] = 'Nodcms_general/extension_detail/$1/$2';
+$route['([a-z][a-z])/extension/([0-9]+)'] = 'Nodcms_general/extensionDetail/$1/$2';
 $route['([a-z][a-z])/register'] = 'Nodcms_general/register/$1';
 $route['([a-z][a-z])/login'] = 'Nodcms_general/login/$1';
-$route['([a-z][a-z])/forget-password'] = 'Nodcms_general/forget_password/$1';
+$route['([a-z][a-z])/forget-password'] = 'Nodcms_general/forgetPassword/$1';
 $route['([a-z][a-z])/login/([a-zA-Z0-9-]+)'] = 'Nodcms_general/login/$1/$2';
-$route['([a-z][a-z])/active_account/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)'] = 'Nodcms_general/reset_password/$1/$2/$3';
-$route['([a-z][a-z])/reset-password/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)'] = 'Nodcms_general/reset_password/$1/$2/$3';
-$route['([a-z][a-z])/profile-password'] = 'Nodcms_general/profile_password/$1';
+$route['([a-z][a-z])/active_account/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)'] = 'Nodcms_general/resetPassword/$1/$2/$3';
+$route['([a-z][a-z])/reset-password/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)'] = 'Nodcms_general/resetPassword/$1/$2/$3';
+$route['([a-z][a-z])/profile-password'] = 'Nodcms_general/profilePassword/$1';
 $route['([a-z][a-z])/contact'] = 'Nodcms_general/contact/$1';
-$route['([a-z][a-z])/ajax/addcomment'] = 'Nodcms_general/extension_addcomment/$1';
+$route['([a-z][a-z])/ajax/addcomment'] = 'Nodcms_general/extensionAddComment/$1';
 $route['([a-z][a-z])/search'] = 'Nodcms_general/search/$1';
 $route['([a-z][a-z])/new-feeds'] = 'Nodcms_general/rss/$1';
-$route['([a-z][a-z])/sitemap.xml'] = 'Nodcms_general/sitemap_xml/$1';
+$route['([a-z][a-z])/sitemap.xml'] = 'Nodcms_general/siteMapXML/$1';
 
 //$route['([a-z][a-z])/(.*)']= $route['default_controller']."/$2/$1";
 $route['admin-sign']= "Nodcms_admin_sign/index";
