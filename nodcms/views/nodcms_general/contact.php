@@ -66,7 +66,7 @@ function check_request(){
                       </div>
                       <?php } ?>
 
-                      <form class="" id="contact" onsubmit="return check_request();" action="<?=base_url()?>sendemail" method="post" enctype="multipart/form-data">
+                      <form class="" id="contact" onsubmit="return check_request();" action="" method="post" enctype="multipart/form-data">
                           <div class="row">
                               <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                   <div class="form-group">
