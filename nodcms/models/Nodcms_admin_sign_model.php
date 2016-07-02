@@ -17,8 +17,8 @@ class Nodcms_admin_sign_model extends CI_Model
     }
     function check_login($username,$pass)
     {
-        $this->db->like('username', $username);
-        $this->db->like('password', $pass);
+        $this->db->where('username', $username);
+        $this->db->where('password', $pass);
         $query = $this->db->get('users');
         return $query;
     }
