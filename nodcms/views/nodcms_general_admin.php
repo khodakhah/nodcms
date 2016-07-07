@@ -46,7 +46,7 @@
     </div>
         <a href="<?php echo $base_url; ?>" class="logo"><?=isset($settings["company"])?$settings["company"]:""?></a>
     <div class="nav notify-row" id="top_menu"></div>
-    <div class="container" style="padding-top:10px; ">
+    <div class="pull-right" style="padding-top:10px; ">
         <a target="_blank" href="<?php echo base_url(); ?>" class="btn btn-link" style="color: #333;text-decoration: none;font-weight: bold"><?=_l("View Website",$this)?></a>
         <div class="btn-group">
             <button data-toggle="dropdown" class="btn btn-link dropdown-toggle" href="#">
@@ -55,7 +55,7 @@
             </button>
             <ul class="dropdown-menu extended logout">
                 <div class="log-arrow-up"></div>
-                <li><a href="<?php echo base_url(); ?>admin/admin_setting"><i class=" fa fa-cog"></i><?=_l('Settings',$this);?></a></li>
+                <li><a href="<?php echo base_url(); ?>admin/settings"><i class=" fa fa-cog"></i><?=_l('Settings',$this);?></a></li>
                 <li><a href="<?php echo base_url(); ?>admin-sign/logout"><i class="fa fa-key"></i><?=_l('Log Out',$this);?></a></li>
             </ul>
         </div>
