@@ -7,10 +7,203 @@
  * Project: NodCMS
  * Website: http://www.nodcms.com
  */
-$config['NodCMS_general_templateFolderName'] = 'nodcms_general';
-$config['NodCMS_general_admin_templateFolderName'] = 'nodcms_general_admin';
+
+/**
+ * Display the product copyright sign and info in footer
+ */
+$config['production_copyright'] = TRUE;
+/**
+ * Clean page clean frame template
+ */
+$config['clean_template_frame'] = 'nodcms-clean';
+/**
+ * Frontend pages frame template name
+ */
+$config['frontend_template_frame'] = 'nodcms-frontend';
+/**
+ * Frontend pages template folder name
+ */
+$config['frontend_template'] = 'frontend';
+
+/**
+ * Backend pages template folder name
+ */
+$config['backend_template'] = 'admin';
+/**
+ * Backend pages frame template name
+ */
+$config['backend_template_frame'] = 'admin';
+
+/**
+ * Membership/Users pages template folder name
+ */
+$config['membership_template'] = 'membership';
+/**
+ * Membership/Users pages frame template name
+ */
+$config['membership_template_frame'] = 'nodcms-membership';
+
+/**
+ * Maximum upload file size for whole system
+ * *    It shall be under your server configured limit.
+ */
 $config['max_upload_size'] = 20000; // KG
-$config['backend_models'] = array('NodCMS_general_admin_model');
-$config['backend_helpers'] = array('admin_page_type','nodcms_form');
-$config['frontend_models'] = array('NodCMS_general_model');
-$config['frontend_helpers'] = array();
+
+/**
+ * Backend auto loading models
+ */
+$config['backend_models'] = array('Nodcms_admin_model', 'Packages_model', 'Packages_dashboard_model', 'Languages_model', 'Email_messages_model');
+
+/**
+ * Backend pages auto loading helpers
+ */
+$config['backend_helpers'] = array('nodcms_general', 'metronic', 'view');
+
+/**
+ * Frontend auto loading models
+ */
+$config['frontend_models'] = array('Nodcms_general_model', 'Packages_model', 'Languages_model', 'Email_messages_model');
+
+/**
+ * Frontend auto loading helpers
+ */
+$config['frontend_helpers'] = array('nodcms_general');
+
+/**
+ * Membership auto loading models
+ */
+$config['membership_models'] = array('Nodcms_general_model', 'Languages_model', 'Email_messages_model');
+
+/**
+ * Membership auto loading helpers
+ */
+$config['membership_helpers'] = array('nodcms_general');
+
+$config['api_models'] = array('Nodcms_general_model', 'Languages_model', 'Email_messages_model');
+
+$config['api_helpers'] = array('nodcms_general');
+
+/**
+ * System automatic out going emails
+ *
+ * | All content of this array will be display on your admin side-> settings -> Auto emails messages
+ * | as an option to enter a text/HTML code as the template of the outgoing email message.
+ * | This items of this array should set like the bellow temp:
+ * |    $config['autoEmailMessages'] = array(
+ * |        [the key of the message template to save in database]=>array(
+ * |            'label'=>"[The label of this option that will display in admin side as describe this option]"
+ * |            'keys'=>array(
+ * |                // All replace keys that will be replace with a dynamic value.
+ * |                // The replace keys will defined in the send_notification_email() to replace with the dynamic values.
+ * |                // We define the same keys to display in admin side as describe the key.
+ * |                array(
+ * |                    'label'=>"[Describe of the value that you will replace instead of key]",
+ * |                    'value'=>"[--$[The key that will replace with a dynamic value]--]",
+ * |                );
+ * |        );
+ * |    );
+ */
+$config['autoEmailMessages'] = array(
+    'contact_form'=> array(
+        'label'=>'Contact form',
+        'keys'=>array(
+            array('label'=>'Username','value'=>'[--$username--]'),
+            array('label'=>'Email','value'=>'[--$email--]'),
+            array('label'=>'Date','value'=>'[--$date--]'),
+            array('label'=>'Name','value'=>'[--$name--]'),
+            array('label'=>'Message','value'=>'[--$message--]'),
+        ),
+    ),
+    'registration_confirm'=> array(
+        'label'=>'Registration confirmation email',
+        'keys'=>array(
+            array('label'=>'Company Name','value'=>'[--$company--]'),
+            array('label'=>'Username','value'=>'[--$username--]'),
+            array('label'=>'Email','value'=>'[--$email--]'),
+            array('label'=>'Date','value'=>'[--$date--]'),
+            array('label'=>'First name','value'=>'[--$first_name--]'),
+            array('label'=>'Last name','value'=>'[--$last_name--]'),
+            array('label'=>'Request reference','value'=>'[--$refurl--]'),
+        ),
+    ),
+    'reset_password'=> array(
+        'label'=>'Reset password',
+        'keys'=>array(
+            array('label'=>'Company Name','value'=>'[--$company--]'),
+            array('label'=>'Username','value'=>'[--$username--]'),
+            array('label'=>'Email','value'=>'[--$email--]'),
+            array('label'=>'Date','value'=>'[--$date--]'),
+            array('label'=>'First name','value'=>'[--$firstname--]'),
+            array('label'=>'Last name','value'=>'[--$lastname--]'),
+            array('label'=>'Set new password link','value'=>'[--$reference_url--]'),
+        )
+    ),
+);
+
+/**
+ * Default settings value
+ *
+ * | The settings of system will save in the database whit using admin side.
+ * | For a new installed system, that didn't configuration, these default settings will help the system to run without
+ * | any problem and/or error.
+ */
+$config['settings_default'] = array(
+    'default_image'=>"upload_file/no-images.png",
+    'company'=>"ChicTheme",
+    'logo'=>"upload_file/logo/ChicTheme-Web-App.png",
+    'index_logo'=>"upload_file/logo/ChicTheme-Web-App.png",
+    'fav_icon'=>"",
+    'site_title'=>"ChicTheme Web-Application production and service",
+    'site_author'=>"Mojtaba Khodakhah",
+    'site_description'=>"",
+    'site_keyword'=>"",
+    'timezone'=>"Europe/Vienna",
+    'date_format'=>"d.m.Y",
+    'time_format'=>"H:i",
+    'currency_format'=>"1,234.56",
+    'currency_code'=>"EUR",
+    'currency_sign'=>"€",
+    'currency_sign_before'=>"1",
+    'invoice_vat_type'=>0,
+    'invoice_vat'=>0,
+    'invoice_discount'=>0,
+    'invoice_account_holder'=>"",
+    'invoice_iban'=>"",
+    'invoice_bic'=>"",
+    'invoice_prepaid_fix'=>"",
+    'invoice_description_fix'=>"",
+    'invoice_rules_fix'=>"",
+    'appointment_non_repeating'=>"0",
+    'simple_mode'=>"1",
+    'registration'=>"1",
+    'prefooter'=>"1",
+    'prefooter_title'=>"",
+    'prefooter_description'=>"",
+    'provider_style'=>"imagic",
+    'use_smtp'=>"0",
+    'smtp_host'=>"",
+    'smtp_port'=>"0",
+    'smtp_username'=>"",
+    'smtp_password'=>"",
+    'send_email'=>"do-not-replay@chictheme.com",
+    'google_map_url'=>"",
+    'google_map'=>"",
+    'address'=>"Vienna",
+    'email'=>"info@chictheme.com",
+    'phone'=>"+43 0123 1234567",
+    'fax'=>"+43 0123 1234567",
+    'contact_form'=>1,
+    'add_on_header'=>"",
+    'add_on_script'=>"",
+    'dynamic_timezone'=>0,
+    'captcha'=>0,
+    'terms_accept_required'=>0,
+    'terms_and_conditions_title'=>"Terms & Conditions",
+    'terms_and_conditions_content'=>"At the moment there is no content for this page.",
+    'privacy_policy_title'=>"Privacy Policy",
+    'privacy_policy_content'=>"At the moment there is no content for this page.",
+    'homepage_type'=>"default",
+    'homepage_redirect'=>"",
+    'homepage_display_file'=>"",
+    'homepage_display_page'=>"",
+);

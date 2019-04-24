@@ -49,29 +49,49 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = "Nodcms_general";
-$route['404_override'] = '';
+$route['default_controller'] = "General/setLanguagePrefix";
+$route['404_override'] = 'General/showError';
 
-$route['([a-z][a-z])'] = 'Nodcms_general/index/$1';
-$route['([a-z][a-z])/page/([0-9]+)'] = 'Nodcms_general/page/$1/$2';
-$route['([a-z][a-z])/extension/([0-9]+)'] = 'Nodcms_general/extensionDetail/$1/$2';
-$route['([a-z][a-z])/register'] = 'Nodcms_general/register/$1';
-$route['([a-z][a-z])/login'] = 'Nodcms_general/login/$1';
-$route['([a-z][a-z])/forget-password'] = 'Nodcms_general/forgetPassword/$1';
-$route['([a-z][a-z])/login/([a-zA-Z0-9-]+)'] = 'Nodcms_general/login/$1/$2';
-$route['([a-z][a-z])/active_account/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)'] = 'Nodcms_general/resetPassword/$1/$2/$3';
-$route['([a-z][a-z])/reset-password/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)'] = 'Nodcms_general/resetPassword/$1/$2/$3';
-$route['([a-z][a-z])/profile-password'] = 'Nodcms_general/profilePassword/$1';
-$route['([a-z][a-z])/contact'] = 'Nodcms_general/contact/$1';
-$route['([a-z][a-z])/ajax/addcomment'] = 'Nodcms_general/extensionAddComment/$1';
-$route['([a-z][a-z])/search'] = 'Nodcms_general/search/$1';
-$route['([a-z][a-z])/new-feeds'] = 'Nodcms_general/rss/$1';
-$route['([a-z][a-z])/sitemap.xml'] = 'Nodcms_general/siteMapXML/$1';
+// Admin URLs
+$route['admin-sign']= "Registration/login";
+$route['logout']= "General/logout";
+$route['logout/([a-z]{2})']= "General/logout/$1";
+//$route['admin']= "Providers_admin/index";
+$route['admin']= "General_admin/dashboard";
+$route['admin/(.+)']= "General_admin/$1";
+$route['admin-provider']= "Providers_admin/index";
+$route['admin-provider/(.+)']= "Providers_admin/$1";
 
-//$route['([a-z][a-z])/(.*)']= $route['default_controller']."/$2/$1";
-$route['admin-sign']= "Nodcms_admin_sign/index";
-$route['admin-sign/login']= "Nodcms_admin_sign/login";
-$route['admin-sign/logout']= "Nodcms_admin_sign/logout";
-$route['admin']= "Nodcms_general_admin/index";
-$route['admin/(.*)']= "Nodcms_general_admin/$1";
+$route['get-new-captcha']= "General/resetCaptcha";
+
+$route['user/dashboard'] = "General_members/dashboard";
+$route['user/account']= "General_members/account";
+$route['user/account/personal-info']= "General_members/accountPersonalInfo";
+$route['user/account/change-password']= "General_members/accountChangePassword";
+$route['user/account/change-avatar']= "General_members/accountChangeAvatar";
+$route['user/account/remove-avatar']= "General_members/accountRemoveAvatar";
+$route['user/account/remove-avatar-confirmed']= "General_members/accountRemoveAvatar/1";
+
+$route['user/account-avatar-change']= "General_members/accountAvatarChange";
+$route['user/account-avatar-upload']= "General_members/accountAvatarUpload";
+//$route['user-([A-Za-z\_]+)/dashboard'] = '$1/dashboard';
+//General URLs
+$route['(file|image)-([0-9]+)-([A-Za-z0-9\_]+)'] = 'General/$1/$2/$3';
+$route['noimage-([0-9]+)-([0-9]+)-([A-Za-z0-9\_]+)'] = 'General/noimage/$1/$2/$3';
+$route['noimage-([0-9]+)-([0-9]+)'] = 'General/noimage/$1/$2';
+$route['remove-my-file/([0-9]+)-([A-Za-z0-9\_]+)'] = 'General/removeMyFile/$1/$2';
+// General Pages
+$route['([a-z]{2})'] = 'General/index/$1';
+$route['([a-z]{2})/([A-Za-z\_]+)-index'] = '$2/index/$1';
+$route['([a-z]{2})/contact'] = 'General/contact/$1';
+$route['([a-z]{2})/contact-home'] = 'General/contact/$1/home';
+$route['([a-z][a-z])/(terms-and-conditions|privacy-policy)']= "General/staticSettingsPages/$1/$2";
+// Registration
+$route['([a-z][a-z])/(login|logout)']= "Registration/$2/$1";
+$route['([a-z][a-z])/user-registration']= "Registration/userRegistration/$1";
+$route['([a-z][a-z])/return-password']= "Registration/returnPassword/$1";
+$route['([a-z][a-z])/user-registration/message']= "Registration/userRegistrationMessage/$1";
+$route['([a-z][a-z])/user-registration/active/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)']= "Registration/activeAccount/$1/$2/$3";
+$route['([a-z][a-z])/set-new-password/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)']= "Registration/setNewPassword/$1/$2/$3";
+
 $route['translate_uri_dashes'] = FALSE;

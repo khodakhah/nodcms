@@ -1,6 +1,6 @@
 <?php
 
-function mk_use_uploadbox($this){
+function mk_use_uploadbox($CI){
     ?>
     <script src="<?=base_url()?>assets/mini-upload-image/js/jquery.knob.js"></script>
     <script src="<?=base_url()?>assets/mini-upload-image/js/jquery.ui.widget.js"></script>
@@ -23,13 +23,13 @@ function mk_use_uploadbox($this){
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title"><?=_l("Choose uploaded image",$this)?></h4>
+                    <h4 class="modal-title"><?=_l("Choose uploaded image",$CI)?></h4>
                 </div>
                 <div class="modal-body">
                     <div class="image_list"></div>
                 </div>
                 <div class="modal-footer text-center">
-                    <button data-dismiss="modal" class="btn btn-danger btn-lg" type="button"><?=_l("Close",$this)?></button>
+                    <button data-dismiss="modal" class="btn btn-danger btn-lg" type="button"><?=_l("Close",$CI)?></button>
                 </div>
             </div>
         </div>
