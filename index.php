@@ -36,6 +36,21 @@
  * @filesource
  */
 
+// Allow a test url to check online payment process
+define("ALLOW_TEST_PAYMENT",1);
+//define("ALLOW_TEST_PAYMENT",0);
+define("URL_PROTOCOL",isset($_SERVER['HTTPS'])?"https://":"http://");
+define("SSL_PROTOCOL",isset($_SERVER['HTTPS'])?1:0);
+$host  = URL_PROTOCOL.$_SERVER['HTTP_HOST'];
+$uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+define("CONFIG_BASE_URL", "$host$uri/");
+if(filesize('nodcms/config/database.php')==0){
+    $host  = URL_PROTOCOL.$_SERVER['HTTP_HOST'];
+    $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+    $extra = 'install';
+    header("Location: $host$uri/$extra");
+    exit();
+}
 /*
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT
