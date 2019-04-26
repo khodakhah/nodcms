@@ -1,0 +1,2 @@
+<input onchange="$('#<?php echo $field_id; ?>').val(this.checked?1:0)" value="1" class="make-switch <?php echo $class; ?>" <?php echo $default; ?> type="checkbox" data-on-text="<i class='fa fa-check'></i>" data-off-text="<i class='fa fa-times'></i>" <?php foreach ($attr as $key=>$value){ echo $key.' = "'.$value.'"'; } ?>>
+<input name="<?php echo $name; ?>" id="<?php echo $field_id; ?>" type="hidden" value="<?php echo $default!=''?1:0; ?>">

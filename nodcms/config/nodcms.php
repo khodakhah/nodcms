@@ -149,11 +149,11 @@ $config['autoEmailMessages'] = array(
  */
 $config['settings_default'] = array(
     'default_image'=>"upload_file/no-images.png",
-    'company'=>"ChicTheme",
-    'logo'=>"upload_file/logo/ChicTheme-Web-App.png",
-    'index_logo'=>"upload_file/logo/ChicTheme-Web-App.png",
-    'fav_icon'=>"",
-    'site_title'=>"ChicTheme Web-Application production and service",
+    'company'=>"NodCMS",
+    'logo'=>"upload_file/logo/logo.png",
+    'index_logo'=>"upload_file/logo/logo.png",
+    'fav_icon'=>"upload_file/logo/fav.png",
+    'site_title'=>"NodCMS is a Content Management System based on Codeigniter",
     'site_author'=>"Mojtaba Khodakhah",
     'site_description'=>"",
     'site_keyword'=>"",
