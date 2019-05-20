@@ -24,9 +24,14 @@ class Languages_model extends NodCMS_Model
             'sort_order'=>"int(11) DEFAULT NULL",
             'created_date'=>"int(11) DEFAULT NULL",
             'default'=>"int(11) DEFAULT '0'",
+            'image'=>"varchar(255) DEFAULT NULL",
         );
         $foreign_tables = null;
         $translation_fields = null;
+        $defaults = array(
+            array(1, 'english', 'English', 'en', 1, 0, 1, 1369730191, 1, 'upload_file/lang/united_states_flag.png'),
+            array(2, 'german', 'Deutsch', 'de', 1, 0, 2, 1518750675, 0, 'upload_file/lang/austria.png'),
+        );
         parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
 }
