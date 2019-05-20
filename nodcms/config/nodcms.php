@@ -32,7 +32,7 @@ $config['backend_template'] = 'admin';
 /**
  * Backend pages frame template name
  */
-$config['backend_template_frame'] = 'admin';
+$config['backend_template_frame'] = 'nodcms-admin';
 
 /**
  * Membership/Users pages template folder name
@@ -57,7 +57,7 @@ $config['backend_models'] = array('Nodcms_admin_model', 'Packages_model', 'Packa
 /**
  * Backend pages auto loading helpers
  */
-$config['backend_helpers'] = array('nodcms_general', 'metronic', 'view');
+$config['backend_helpers'] = array('nodcms_general');
 
 /**
  * Frontend auto loading models
