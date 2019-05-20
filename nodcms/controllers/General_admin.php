@@ -549,7 +549,7 @@ class General_admin extends NodCMS_Controller{
         $this->data['breadcrumb'] = array(array('title'=>$this->data['title']),
             array('title'=>$this->data['sub_title']));
         $this->data['content'] = $myform->fetch();
-        $this->load->view($this->mainTemplate,$this->data);
+        $this->load->view($this->frameTemplate,$this->data);
     }
 
     /**
@@ -882,7 +882,7 @@ class General_admin extends NodCMS_Controller{
         $this->data['key_changes'] = findNewLangKeys($this);
         $this->data['page'] = "language";
         $this->data['content'] = $this->load->view($this->mainTemplate.'/language_sort',$this->data,true);
-        $this->load->view($this->mainTemplate,$this->data);
+        $this->load->view($this->frameTemplate,$this->data);
     }
 
     /**
@@ -1546,7 +1546,7 @@ class General_admin extends NodCMS_Controller{
 
         $this->data['data_list'] = $this->Nodcms_admin_model->getAllUser($page, $config['per_page']);
         $this->data['content']=$this->load->view($this->mainTemplate.'/user',$this->data,true);
-        $this->load->view($this->mainTemplate,$this->data);
+        $this->load->view($this->frameTemplate,$this->data);
     }
 
     /**
@@ -1608,7 +1608,7 @@ class General_admin extends NodCMS_Controller{
             array('title'=>_l("Edit", $this),'url'=>ADMIN_URL."userEdit/$id"),
         );
         $this->data['content'] = $this->load->view($this->mainTemplate.'/user_profile',$this->data, true);
-        $this->load->view($this->mainTemplate,$this->data);
+        $this->load->view($this->frameTemplate,$this->data);
     }
 
     /**
@@ -1954,7 +1954,7 @@ class General_admin extends NodCMS_Controller{
         $this->data['title'] = _l("Members",$this);
         $this->data['page'] = "user";
         $this->data['content'] = $myform->fetch('',$form_attr);
-        $this->load->view($this->mainTemplate,$this->data);
+        $this->load->view($this->frameTemplate,$this->data);
     }
 
     /**
@@ -2015,7 +2015,7 @@ class General_admin extends NodCMS_Controller{
         $this->data['page'] = "uploaded_images";
         $this->data['title'] = _l("Images",$this);
         $this->data['content']= $this->load->view($this->mainTemplate.'/uploaded_images_manager',$this->data,true);
-        $this->load->view($this->mainTemplate,$this->data);
+        $this->load->view($this->frameTemplate,$this->data);
     }
     function deleteuploaded_image($id=0)
     {
@@ -2377,7 +2377,7 @@ class General_admin extends NodCMS_Controller{
             array('title'=>$this->data['sub_title']));
         $this->data['content'] = $this->load->view($this->mainTemplate."/homepage_sort_includes", $this->data, true).
             $myform->fetch();
-        $this->load->view($this->mainTemplate,$this->data);
+        $this->load->view($this->frameTemplate,$this->data);
     }
 
     /**
@@ -2457,7 +2457,7 @@ class General_admin extends NodCMS_Controller{
             array('title'=>_l("Homepage", $this), 'url'=>ADMIN_URL."settingsHomepage"),
             array('title'=>$this->data['sub_title']));
         $this->data['content'] = $this->load->view($this->mainTemplate."/homepage_sort", $this->data, true);
-        $this->load->view($this->mainTemplate,$this->data);
+        $this->load->view($this->frameTemplate,$this->data);
     }
 
     /**
