@@ -4,7 +4,7 @@
     </div>
     <div class="clearfix"></div>
     <div class="col-xs-9">
-        <input onchange="$('#<?php echo $field_id; ?>_image').attr('src', $(this).val()!=''?('<?php echo base_url(); ?>'+$(this).val()):$('#<?php echo $field_id; ?>_image').attr('data-preview'));" name="<?php echo $name; ?>" id="<?php echo $field_id; ?>" class="form-control <?php echo $class; ?>" type="text" value="<?php echo $default; ?>" <?php foreach ($attr as $key=>$value){ echo $key.' = "'.$value.'"'; } ?>>
+        <input role="image-library" data-target="<?php echo $field_id; ?>_image" name="<?php echo $name; ?>" id="<?php echo $field_id; ?>" class="form-control <?php echo $class; ?>" type="text" value="<?php echo $default; ?>" <?php foreach ($attr as $key=>$value){ echo $key.' = "'.$value.'"'; } ?>>
     </div>
     <div class="col-xs-3">
         <button onclick="$.loadInModal('<?php echo ADMIN_URL.'getImagesLibrary/'.$field_id; ?>', 'modal-lg');" type="button" class="btn default"><?php echo _l("Brows", $this); ?></button>

@@ -539,8 +539,8 @@ class Form
         }
 
         if(in_array('image', $all_types)){
-            $this->CI->load->addCssFile("assets/metronic/global/plugins/bootstrap-fileinput/bootstrap-fileinput");
-            $this->CI->load->addJsFile("assets/metronic/global/plugins/bootstrap-fileinput/bootstrap-fileinput");
+            $this->CI->load->addCssFile("assets/plugins/bootstrap-fileinput/bootstrap-fileinput");
+            $this->CI->load->addJsFile("assets/plugins/bootstrap-fileinput/bootstrap-fileinput");
         }
         if(in_array('image-library', $all_types)){
             $this->CI->load->addCssFile("assets/mini-upload-image/css/style");
@@ -549,43 +549,44 @@ class Form
             $this->CI->load->addJsFile("assets/mini-upload-image/js/jquery.iframe-transport");
             $this->CI->load->addJsFile("assets/mini-upload-image/js/jquery.fileupload");
             $this->CI->load->addJsFile("assets/mini-upload-image/js/script");
+            $this->CI->load->addJsFile("assets/nodcms/form-handler/input-image-library.min");
         }
 
         if(in_array('icons', $all_types)){
             $this->CI->load->addJsFile("assets/nodcms/form-handler/select-icons");
         }
         if(in_array('texteditor', $all_types)){
-            $this->CI->load->addJsFile("assets/ckeditor/ckeditor");
+            $this->CI->load->addJsFile("assets/plugins/ckeditor/ckeditor");
         }
         if(in_array('texteditor-quick', $all_types)){
-//            $this->CI->load->addCssFile("assets/metronic/global/plugins/bootstrap-summernote/summernote");
-//            $this->CI->load->addJsFile("assets/metronic/global/plugins/bootstrap-summernote/summernote.min");
-            $this->CI->load->addJsFile("assets/ckeditor/ckeditor");
-            $this->CI->load->addJsFile("assets/ckeditor/ckeditor-quick");
+//            $this->CI->load->addCssFile("assets/plugins/bootstrap-summernote/summernote");
+//            $this->CI->load->addJsFile("assets/plugins/bootstrap-summernote/summernote.min");
+            $this->CI->load->addJsFile("assets/plugins/ckeditor/ckeditor");
+            $this->CI->load->addJsFile("assets/plugins/ckeditor/ckeditor-quick");
         }
         if(in_array('codeeditor', $all_types)){
-            $this->CI->load->addCssFile("assets/metronic/global/plugins/codemirror/lib/codemirror");
-            $this->CI->load->addCssFile("assets/metronic/global/plugins/codemirror/theme/neat");
-            $this->CI->load->addCssFile("assets/metronic/global/plugins/codemirror/theme/ambiance");
-            $this->CI->load->addCssFile("assets/metronic/global/plugins/codemirror/theme/material");
-            $this->CI->load->addCssFile("assets/metronic/global/plugins/codemirror/theme/neo");
+            $this->CI->load->addCssFile("assets/plugins/codemirror/lib/codemirror");
+            $this->CI->load->addCssFile("assets/plugins/codemirror/theme/neat");
+            $this->CI->load->addCssFile("assets/plugins/codemirror/theme/ambiance");
+            $this->CI->load->addCssFile("assets/plugins/codemirror/theme/material");
+            $this->CI->load->addCssFile("assets/plugins/codemirror/theme/neo");
 
-            $this->CI->load->addJsFile("assets/metronic/global/plugins/codemirror/lib/codemirror");
-            $this->CI->load->addJsFile("assets/metronic/global/plugins/codemirror/mode/javascript/javascript");
-            $this->CI->load->addJsFile("assets/metronic/global/plugins/codemirror/mode/htmlmixed/htmlmixed");
-//            $this->CI->load->addJsFile("assets/metronic/global/plugins/codemirror/mode/htmlembedded/htmlembedded");
-            $this->CI->load->addJsFile("assets/metronic/global/plugins/codemirror/mode/css/css");
+            $this->CI->load->addJsFile("assets/plugins/codemirror/lib/codemirror");
+            $this->CI->load->addJsFile("assets/plugins/codemirror/mode/javascript/javascript");
+            $this->CI->load->addJsFile("assets/plugins/codemirror/mode/htmlmixed/htmlmixed");
+//            $this->CI->load->addJsFile("assets/plugins/codemirror/mode/htmlembedded/htmlembedded");
+            $this->CI->load->addJsFile("assets/plugins/codemirror/mode/css/css");
         }
         // Multi upload files
         if(in_array('files', $all_types)){
-            $this->CI->load->addCssFile("assets/dropzone/dropzone");
-            $this->CI->load->addCssFile("assets/dropzone/basic");
-            $this->CI->load->addJsFile("assets/dropzone/dropzone");
+            $this->CI->load->addCssFile("assets/plugins/dropzone/dropzone");
+            $this->CI->load->addCssFile("assets/plugins/dropzone/basic");
+            $this->CI->load->addJsFile("assets/plugins/dropzone/dropzone");
             $this->CI->load->addJsFile("assets/nodcms/form-handler/files");
         }
 
         if(in_array('jquery-repeater', $all_types)){
-            $this->CI->load->addJsFile("assets/metronic/global/plugins/jquery-repeater/jquery.repeater");
+            $this->CI->load->addJsFile("assets/plugins/jquery-repeater/jquery.repeater");
         }
         if(in_array('currency', $all_types)){
             $this->CI->load->addJsFile("assets/nodcms/form-handler/input-currency");
@@ -604,13 +605,13 @@ class Form
             $this->CI->load->addJsFile("assets/nodcms/form-handler/input-range");
         }
 
-        $this->CI->load->addCssFile("assets/metronic/global/plugins/icheck/skins/all");
-        $this->CI->load->addJsFile("assets/metronic/global/plugins/icheck/icheck.min");
-        $this->CI->load->addCssFile("assets/metronic/global/plugins/bootstrap-touchspin/bootstrap.touchspin");
-        $this->CI->load->addJsFile("assets/metronic/global/plugins/bootstrap-touchspin/bootstrap.touchspin");
+        $this->CI->load->addCssFile("assets/plugins/icheck/skins/all");
+        $this->CI->load->addJsFile("assets/plugins/icheck/icheck.min");
+        $this->CI->load->addCssFile("assets/plugins/bootstrap-touchspin/bootstrap.touchspin");
+        $this->CI->load->addJsFile("assets/plugins/bootstrap-touchspin/bootstrap.touchspin");
         // Switch
-        $this->CI->load->addCssFile("assets/metronic/global/plugins/bootstrap-switch/css/bootstrap-switch.min", "assets/metronic/global/plugins/bootstrap-switch/css/bootstrap-switch-rtl.min");
-        $this->CI->load->addJsFile("assets/metronic/global/plugins/bootstrap-switch/js/bootstrap-switch.min");
+        $this->CI->load->addCssFile("assets/plugins/bootstrap-switch/css/bootstrap-switch.min", "assets/plugins/bootstrap-switch/css/bootstrap-switch-rtl.min");
+        $this->CI->load->addJsFile("assets/plugins/bootstrap-switch/js/bootstrap-switch.min");
         // Global js
         $this->CI->load->addJsFile("assets/nodcms/form-handler/form-handler");
 

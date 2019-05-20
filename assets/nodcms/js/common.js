@@ -1,7 +1,7 @@
 /**
  * Created by Mojtaba on 5/24/2017.
  */
-window.CKEDITOR_BASEPATH = $('body').attr('data-base-url')+'assets/ckeditor/';
+window.CKEDITOR_BASEPATH = $('body').attr('data-base-url')+'assets/plugins/ckeditor/';
 
 /**
  * Static translation texts
@@ -86,6 +86,10 @@ function translate(value){
         if(typeof CKEDITOR!=='undefined'){
             $(this).find('.ckeditor').each(function () {
                 var $myTextArea = $(this);
+                if (CKEDITOR.instances[$myTextArea.attr('id')]) {
+                    $($myTextArea.attr('data-loading')).remove();
+                    return;
+                }
                 CKEDITOR.replace($myTextArea.attr('id'), {
                     on: {
                         instanceReady: function(evt) {
