@@ -206,7 +206,7 @@ class NodCMS_Controller extends CI_Controller{
                 'dashboard'=>array(
                     'url'=>ADMIN_URL.'',
                     'title'=>_l("Control Panel",$this),
-                    'icon'=>'icon-grid'
+                    'icon'=>'fas fa-th-large'
                 ),
             );
             $this->addToAdminSidebar($sidebar);
@@ -226,25 +226,25 @@ class NodCMS_Controller extends CI_Controller{
         // Admin sidebar all general items
         if(in_array($this->session->userdata('group'), array(1, 100))){
             $sidebar = array(
-                'user'=>array(
+                'users'=>array(
                     'url'=>ADMIN_URL.'user',
                     'title'=>_l("Members",$this),
-                    'icon'=>'icon-users'
+                    'icon'=>'fas fa-users'
                 ),
                 'language'=>array(
                     'url'=>ADMIN_URL.'language',
                     'title'=>_l("Languages",$this),
-                    'icon'=>'icon-globe'
+                    'icon'=>'fas fa-language'
                 ),
                 'menu'=>array(
                     'url'=>ADMIN_URL.'menu',
                     'title'=>_l("Menus",$this),
-                    'icon'=>'icon-directions'
+                    'icon'=>'fas fa-link'
                 ),
                 'uploaded_images'=>array(
-                    'url'=>ADMIN_URL.'uploaded_images_manager',
+                    'url'=>ADMIN_URL.'imagesLibrary',
                     'title'=>_l("Images",$this),
-                    'icon'=>'icon-picture'
+                    'icon'=>'far fa-images'
                 ),
                 'tcpp_setting'=>array(
                     'url'=>ADMIN_URL.'settings/tcpp',
@@ -254,7 +254,7 @@ class NodCMS_Controller extends CI_Controller{
                 'settings'=>array(
                     'url'=>'javascript:;',
                     'title'=>_l("Settings",$this),
-                    'icon'=>'icon-settings',
+                    'icon'=>'fas fa-cogs',
                     'sub_menu'=>array(
                         'setting'=>array(
                             'url'=>ADMIN_URL.'settings',
