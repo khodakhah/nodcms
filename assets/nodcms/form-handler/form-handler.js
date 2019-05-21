@@ -444,6 +444,9 @@
             });
         });
 
+        // Handle switches
+        $this_form.find('.make-switch').bootstrapSwitch();
+
         $this_form.nodcmsFormMultiCheckboxSelect();
 
         if($.isFunction('TouchSpin')){

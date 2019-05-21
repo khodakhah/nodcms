@@ -995,8 +995,10 @@ class Form
             'default'=>"",
             'remove_url'=>"",
             'not_set_preview'=>base_url()."noimage-200-50-Not_Set",
+            'library_type'=>"images-library",
         );
         $data = array_merge($data_default, $data);
+        $data['image_library_url'] = ADMIN_URL."getImagesLibrary/$data[name]/$data[library_type]";
         $data['img_src'] = base_url().($data['default']!=""?$data['default']:"noimage-200-50-Not_Set");
         $input = $this->CI->load->view($this->theme_patch.$data['type'], $data, true);
         return $this->addInput($data, $input);

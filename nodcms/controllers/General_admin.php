@@ -10,6 +10,22 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 class General_admin extends NodCMS_Controller{
+
+    private $image_library_types = array(
+        'logo'=>array(
+            'dir'=>"logo",
+            'encrypt_name'=>false,
+        ),
+        'language'=>array(
+            'dir'=>"lang",
+            'encrypt_name'=>false,
+        ),
+        'images-library'=>array(
+            'dir'=>"images-library",
+            'encrypt_name'=>true,
+        ),
+    );
+
     function __construct(){
 //        Load NodCMS_Controller construct
         parent::__construct("backend");
@@ -1133,7 +1149,7 @@ class General_admin extends NodCMS_Controller{
                 mkdir($dir);
             }
             // Create index file
-            $file = $dir.'index.html';
+            $file = $dir.'index.php';
             if(!file_exists($file)){
                 $myfile = fopen($file, "w") or die("Unable to open file!");
                 $txt = "<?php\n" ."header('Location: " . base_url()."'); ";
@@ -1990,15 +2006,30 @@ class General_admin extends NodCMS_Controller{
         }
     }
 
-    function getImagesLibrary($input_id)
+    /**
+     * Load images library for ajax requests
+     *
+     * @param $input_id
+     * @param null $type
+     */
+    function getImagesLibrary($input_id, $type = null)
     {
-        $this->data["library_type"] = 20;
+        if($type==null)
+            $type = "images-library";
+        if(!key_exists($type, $this->image_library_types)){
+            echo json_encode(array(
+                'status'=>"error",
+                'error'=>_l("Library type is undefined.", $this)
+            ));
+            return;
+        }
+        $this->data["upload_url"] = ADMIN_URL."uploadImage/".$this->image_library_types[$type]['dir'];
         $this->data['input_id'] = $input_id;
-        $this->data['images'] = $this->Nodcms_admin_model->get_all_images();
+        $this->data['images'] = $this->Images_model->getAll(array('folder'=>$this->image_library_types[$type]['dir']));
         $data = array(
             'status'=>"success",
             'content'=>$this->load->view($this->mainTemplate.'/images_library',$this->data, true),
-            'title'=>_l("Site Library", $this),
+            'title'=>_l("Image Library", $this),
             'closeBtnLable'=>_l("Close", $this),
         );
         echo json_encode($data);
@@ -2037,155 +2068,75 @@ class General_admin extends NodCMS_Controller{
         }
     }
 
-    function upload_image($type=null,$data_type=null,$relation_id=null,$gallery_id=null)
+    /**
+     * Upload images on images library
+     *
+     * @param null|string $type
+     */
+    function uploadImage($type=null)
     {
-        if ($this->session->userdata['group']==1) {
-            if($type==null){
-                echo json_encode(array("status"=>"error","errors"=>"empty"));
-            }elseif($type==1){
-                $folder = "logo/";
-                $config['upload_path'] ='upload_file/'.$folder;
-                $config['allowed_types'] = 'gif|jpg|png';
-                $this->load->library('upload', $config);
-                if ( ! $this->upload->do_upload("file"))
-                {
-                    echo json_encode(array("status"=>"error","errors"=>$this->upload->display_errors('<p>', '</p>')));
-                }
-                else
-                {
-                    $data = $this->upload->data();
-                    $data_image = array(
-                        "image"=>$config['upload_path'].$data["file_name"],
-                        "width"=>$data["image_width"],
-                        "height"=>$data["image_height"],
-                        "name"=>$data["file_name"],
-                        "root"=>$config["upload_path"],
-                        "folder"=>$folder,
-                        "size"=>$data["file_size"]
-                    );
-                    $getid = $this->Nodcms_admin_model->insert_image($data_image);
-                    if($getid!=0){
-                        echo json_encode(array("status"=>"success","file_patch"=>$config['upload_path'].$data["file_name"],"file_url"=>base_url().$config['upload_path'].$data["file_name"]));
-                    }else{
-                        unlink(getcwd()."/".$data_image["image"]);
-                        echo json_encode(array("status"=>"error","errors"=>_l("Data Set error 1!",$this)));
-                    }
-                }
-            }elseif($type==2){
-                $folder = "lang/";
-                $config['upload_path'] ='upload_file/'.$folder;
-                $config['allowed_types'] = 'gif|jpg|png';
-
-                $this->load->library('upload', $config);
-
-                if ( ! $this->upload->do_upload("file"))
-                {
-                    echo json_encode(array("status"=>"error","errors"=>$this->upload->display_errors('<p>', '</p>')));
-                }
-                else
-                {
-                    $data = $this->upload->data();
-                    $data_image = array(
-                        "image"=>$config['upload_path'].$data["file_name"],
-                        "width"=>$data["image_width"],
-                        "height"=>$data["image_height"],
-                        "name"=>$data["file_name"],
-                        "root"=>$config['upload_path'],
-                        "folder"=>$folder,
-                        "size"=>$data["file_size"]
-                    );
-                    $getid = $this->Nodcms_admin_model->insert_image($data_image);
-                    if($getid!=0){
-                        echo json_encode(array("status"=>"success","file_patch"=>$config['upload_path'].$data["file_name"],"file_url"=>base_url().$config['upload_path'].$data["file_name"]));
-                    }else{
-                        unlink(getcwd()."/".$data_image["image"]);
-                        echo json_encode(array("status"=>"error","errors"=>_l("Data Set error 2!",$this)));
-                    }
-                }
-            }elseif($type=="10" && $data_type!=null && $relation_id!=null && is_numeric($relation_id) && $gallery_id!=null && is_numeric($gallery_id)){
-                $accept_type = array("city","tours","page");
-                if(in_array($data_type,$accept_type)){
-                    $folder = "images/";
-                    $config['upload_path'] ='upload_file/'.$folder;
-                    $config['allowed_types'] = 'gif|jpg|png';
-                    $config['encrypt_name'] = true;
-
-                    $this->load->library('upload', $config);
-
-                    if ( ! $this->upload->do_upload("file"))
-                    {
-                        echo json_encode(array("status"=>"error","errors"=>$this->upload->display_errors('<p>', '</p>')));
-                    }
-                    else
-                    {
-                        $data = $this->upload->data();
-                        $data_gallery = array(
-                            "gallery_id"=>$gallery_id,
-                            "relation_id"=>$relation_id,
-                            "data_type"=>$data_type,
-                            "image"=>$config['upload_path'].$data["file_name"],
-                            "width"=>$data["image_width"],
-                            "height"=>$data["image_height"],
-                            "name"=>$data["file_name"],
-                            "size"=>$data["file_size"]
-                        );
-                        $getid = $this->Nodcms_admin_model->get_insert_gallery_image($data_gallery);
-                        if($getid!=0){
-                            echo json_encode(array("status"=>"success","getid"=>$getid,"file_patch"=>$config['upload_path'].$data["file_name"],"file_url"=>base_url().$config['upload_path'].$data["file_name"]));
-                        }else{
-                            echo json_encode(array("status"=>"error","errors"=>_l("System problem!",$this)));
-                        }
-                    }
-                }else{
-                    echo json_encode(array("status"=>"error","errors"=>_l('Your request is problem!',$this)));
-                }
-            }elseif($type=="20"){
-                $folder = "images20/";
-                $config['upload_path'] ='upload_file/'.$folder;
-                $config['allowed_types'] = 'gif|jpg|png';
-                $config['encrypt_name'] = true;
-                $current_file_name = basename($_FILES["file"]["name"]);
-
-                $this->load->library('upload', $config);
-
-                if ( ! $this->upload->do_upload("file"))
-                {
-                    echo json_encode(array("status"=>"error","errors"=>$this->upload->display_errors('<p>', '</p>')));
-                }
-                else
-                {
-                    $data = $this->upload->data();
-                    $data_image = array(
-                        "image"=>$config['upload_path'].$data["file_name"],
-                        "width"=>$data["image_width"],
-                        "height"=>$data["image_height"],
-                        "name"=>$current_file_name,
-                        "root"=>$config["upload_path"],
-                        "folder"=>$folder,
-                        "size"=>$data["file_size"]
-                    );
-                    $getid = $this->Nodcms_admin_model->insert_image($data_image);
-                    if($getid!=0){
-                        echo json_encode(array(
-                            "status"=>"success",
-                            "file_patch"=>$config['upload_path'].$data["file_name"],
-                            "file_url"=>base_url().$config['upload_path'].$data["file_name"],
-                            "width"=>$data["image_width"],
-                            "height"=>$data["image_height"],
-                            "image_id"=>$getid,
-                            "image_name"=>$current_file_name,
-                            "size"=>$data["file_size"]));
-                    }else{
-                        unlink(getcwd()."/".$data_image["image"]);
-                        echo json_encode(array("status"=>"error","errors"=>_l("Data Set error 10!",$this)));
-                    }
-                }
-            }else{
-                echo json_encode(array("status"=>"error","errors"=>_l('Cannot find url!',$this)));
-            }
-        }else{
-            echo json_encode(array("status"=>"error","errors"=>_l('This request just for real admin!',$this)));
+        if (!$this->checkAccessGroup(1))
+            return;
+        $types = $this->image_library_types;
+        if(!key_exists($type, $types)){
+            echo json_encode(array("status"=>"error","errors"=>_l("Type of upload is not defined.", $this)));
+            return;
         }
+
+        $type_dir = $types[$type]['dir'];
+        $dir = FCPATH."upload_file/$type_dir/";
+        // Make directory
+        if(!file_exists($dir)){
+            mkdir($dir);
+        }
+        // Create index file
+        $file = $dir.'index.php';
+        if(!file_exists($file)){
+            $myfile = fopen($file, "w") or die("Unable to open file!");
+            $txt = "<?php\n" ."header('Location: " . base_url()."'); ";
+            fwrite($myfile, $txt);
+            fclose($myfile);
+        }
+
+        $current_file_name = basename($_FILES["file"]["name"]);
+        $config = array(
+            'upload_path'=>"upload_file/$type_dir/",
+            'allowed_types'=>"gif|jpg|png",
+            'encrypt_name'=> $types[$type]['encrypt_name'],
+        );
+        $this->load->library('upload', $config);
+        if ( ! $this->upload->do_upload("file"))
+        {
+            echo json_encode(array("status"=>"error","errors"=>$this->upload->display_errors('<p>', '</p>')));
+            return;
+        }
+
+        $data = $this->upload->data();
+        $data_image = array(
+            "image"=>$config['upload_path'].$data["file_name"],
+            "width"=>$data["image_width"],
+            "height"=>$data["image_height"],
+            "name"=>$current_file_name,
+            "root"=>$config["upload_path"],
+            "folder"=>$type_dir,
+            "size"=>$data["file_size"],
+            'user_id'=>$this->userdata['user_id']
+        );
+        $image_id = $this->Images_model->add($data_image);
+        if($image_id!=0) {
+            echo json_encode(array(
+                "status" => "success",
+                "file_patch" => $config['upload_path'] . $data["file_name"],
+                "file_url" => base_url() . $config['upload_path'] . $data["file_name"],
+                "width" => $data["image_width"],
+                "height" => $data["image_height"],
+                "image_id" => $image_id,
+                "image_name" => $current_file_name,
+                "size" => $data["file_size"]));
+            return;
+        }
+        unlink(FCPATH.$data_image["image"]);
+        echo json_encode(array("status"=>"error","errors"=>_l("Could not save images data in database.",$this)));
     }
 
     /**
