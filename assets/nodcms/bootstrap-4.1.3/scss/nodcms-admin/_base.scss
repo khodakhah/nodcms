@@ -4,11 +4,25 @@ body{
 h1,h2,h3,h4,h5,h6{
   font-weight: 100;
 }
+input[type="checkbox"],input[type="radio"]{
+  width: 20px; /*Desired width*/
+  height: 20px; /*Desired height*/
+  cursor: pointer;
+  //-webkit-appearance: none;
+  //appearance: none;
+}
+.hidden{
+  display: none !important;
+}
 .page-logo{
   display: inline-block;
   img{
     max-height:$header-top-height;
   }
+}
+.page-title{
+  font-size:$page-title-font-size !important;
+  color:$page-title-color;
 }
 
 .dropdown-menu{
@@ -223,6 +237,9 @@ h1,h2,h3,h4,h5,h6{
   height:100%;
   background: $sidebar-bg-color;
   color: $sidebar-menu-heading-font-color;
+  .nav-link{
+    font-size: $sidebar-font-size;
+  }
   > .nav-item{
     .nav-link{
       color: $sidebar-menu-link-font-color;
@@ -500,6 +517,39 @@ h1,h2,h3,h4,h5,h6{
   }
 }
 
+//breadcrumb
+.page-bar{
+  .page-toolbar{
+    background-color:  $breadcrumb-bg;
+    .btn{
+      margin:0;
+    }
+  }
+}
+.breadcrumb{
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  padding: 0.5rem 0.75rem;
+  > .breadcrumb-item{
+    font-size: $breadcrumb-font-size;
+  }
+}
+
+// .dd-list nestable list
+.dd3-content{
+  > .btn{
+    float: right;
+    margin-top:0;
+    margin-bottom:0;
+    font-size :$xs-font-size;
+    margin-left:20px;
+    &.btn-link{
+      padding:0;
+    }
+  }
+}
+
 .page-head{
   position: relative;
   overflow: hidden;
@@ -508,10 +558,6 @@ h1,h2,h3,h4,h5,h6{
   color: $brand-light-font-color;
   padding: 40px 0 80px 0;
 
-  .breadcrumb{
-    display: inline-flex;
-    background: transparent;
-  }
 
   .image-logo{
     max-height: 100px;
@@ -594,25 +640,6 @@ h1,h2,h3,h4,h5,h6{
 }
 .bg-white-blur{
   background-color: rgba(255,255,255,0.5);
-}
-.pre-footer{
-  background: $footer-bg-color;
-  p{
-    color: #ffffff;
-  }
-  a{
-    color: darken($brand-main-color, 20%);
-    &:hover{
-      color: darken($brand-main-color,30%);
-    }
-  }
-  svg.curve{
-    height: 40px;
-    width: 100%;
-    path{
-      fill: darken($footer-bg-color, 2%);
-    }
-  }
 }
 @include media-breakpoint-down(xs){
   .pre-footer{

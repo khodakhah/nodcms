@@ -1,6 +1,6 @@
 //@import url("//fonts.googleapis.com/css?family=Lato:100,300,400&&subset=all");
 // Main settings
-$theme-name:                                                    		"nodcms-admin";
+$theme-name: "nodcms-admin";
 $brand-font-family: 'Dosis', sans-serif;
 $brand-header-font-family: "";
 $brand-font-awesome: "Font Awesome 5 Free";
@@ -16,6 +16,14 @@ $shopping-cart-border-color: $brand-main-color;
 $shopping-cart-icon-color: $brand-main-color;
 $shopping-cart-icon-hover-color: $shopping-cart-background-color;
 $shopping-cart-badge-color: #ff4d37 !default;
+
+$base-font-size: 1em;
+$xs-font-size: .75rem;
+
+$page-title-font-size: $base-font-size * 1.5;
+$page-title-color: $brand-light-color;
+
+$breadcrumb-font-size: $base-font-size * 0.9;
 
 //Navbar
 $header-top-height: 60px;
@@ -95,6 +103,7 @@ $header-top-menu-dropdown-head-font-color:                              darken(#
 $header-top-menu-dropdown-border-color:                                 darken(#3D4A53, 60%);
 
 // Sidebar menu
+$sidebar-font-size: 0.9em;
 $sidebar-bg-color: #4c5467 !default;
 $sidebar-width:250px;
 $sidebar-minimized-width:50px;

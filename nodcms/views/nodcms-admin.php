@@ -24,9 +24,7 @@
     <script src="<?php echo base_url(); ?>assets/jquery-3.4.0.min.js" type="text/javascript"></script>
 </head>
 <body data-base-url="<?php echo base_url(); ?>">
-
 <?php $this->load->view("nodcms-top-menu"); ?>
-<?php echo isset($cart)?$cart:""; ?>
 <!-- END HEADER -->
 <div class="clearfix"></div>
 <!-- BEGIN CONTAINER -->
@@ -48,7 +46,93 @@
     <!-- BEGIN CONTENT -->
     <div class="col">
         <div class="container-fluid margin-top-10 margin-bottom-10">
-            <!-- BEGIN DASHBOARD STATS -->
+            <h1 class="page-title">
+                <?php echo $title; ?>
+                <small><?php echo isset($sub_title)?$sub_title:''; ?></small>
+            </h1>
+            <?php if(isset($breadcrumb) && count($breadcrumb)!=0){ ?>
+                <div class="page-bar">
+                    <div class="row no-gutters">
+                        <div class="col-md">
+                            <nav aria-label="breadcrumb">
+                                <ul class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <i class="icon-grid"></i>
+                                        <a href="<?php echo ADMIN_URL; ?>"><?php echo _l('Control Panel', $this); ?></a>
+                                    </li>
+                                    <?php foreach($breadcrumb as $item){ ?>
+                                        <li class="breadcrumb-item">
+                                            <?php if(isset($item['url'])){ ?>
+                                                <a href="<?php echo $item['url']; ?>"><?php echo $item['title']; ?></a>
+                                            <?php }else{ ?>
+                                                <span><?php echo $item['title']; ?></span>
+                                            <?php } ?>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                            </nav>
+                        </div>
+                        <?php if(isset($breadcrumb_options) && count($breadcrumb_options)!=0){ ?>
+                            <div class="col-md">
+                                <div class="page-toolbar text-right">
+                                    <div class="btn-group">
+                                        <?php foreach($breadcrumb_options as $item){ ?>
+                                            <?php if(!isset($item['sub_links'])){ ?>
+                                                <a href="<?php echo $item['url']; ?>" class="btn btn-fit-height grey-salt <?php echo (isset($item['active']) && $item['active']==1)?"active":""; ?>" <?php echo isset($item['target'])?'target="'.$item['target'].'"':''; ?>>
+                                                    <?php if(isset($item['icon'])){ ?>
+                                                        <i class="<?php echo $item['icon']; ?>"></i>
+                                                    <?php } ?>
+                                                    <?php echo $item['title']; ?>
+                                                </a>
+                                            <?php }else{ ?>
+                                                <div class="btn-group">
+                                                    <button class="btn btn-fit-height grey-salt dropdown-toggle <?php echo (isset($item['active']) && $item['active']==1)?"active":""; ?>" type="button" data-toggle="dropdown" data-close-others="true" data-hover="dropdown" data-delay="1000">
+                                                        <?php if(isset($item['icon'])){ ?>
+                                                            <i class="<?php echo $item['icon']; ?>"></i>
+                                                        <?php } ?>
+                                                        <?php echo $item['title']; ?> <i class="fa fa-angle-down"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu pull-right" role="menu">
+                                                        <?php foreach($item['sub_links'] as $sub_item){ ?>
+                                                            <li>
+                                                                <a href="<?php echo $sub_item['url']; ?>">
+                                                                    <?php if(isset($sub_item['icon'])){ ?>
+                                                                        <i class="<?php echo $sub_item['icon']; ?>"></i>
+                                                                    <?php } ?>
+                                                                    <?php echo $sub_item['title']; ?>
+                                                                </a>
+                                                            </li>
+                                                        <?php } ?>
+                                                    </ul>
+                                                </div>
+                                            <?php } ?>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
+            <?php } ?>
+
+            <?php if(isset($page_tabs) && count($page_tabs)!=0){ ?>
+                <div class="tabbable-line">
+                    <ul class="nav nav-tabs nav-justified">
+                        <?php foreach($page_tabs as $item){ ?>
+                            <li <?php echo (isset($item['active']) && $item['active']==1)?'class="active"':""; ?>>
+                                <a href="<?php echo isset($item['url'])?$item['url']:'#'; ?>">
+                                    <?php if(isset($item['icon'])){ ?>
+                                        <i class="<?php echo $item['icon']; ?>"></i>
+                                    <?php } ?>
+                                    <?php echo $item['title']; ?>
+                                </a>
+                            </li>
+                        <?php } ?>
+                    </ul>
+                </div>
+                <br>
+            <?php } ?>
+
             <?php if($this->session->flashdata('static_error')){ ?>
                 <div class="alert alert-block alert-danger fade in">
                     <button data-dismiss="alert" class="close" type="button"></button>
@@ -70,7 +154,7 @@
     <div class="scroll-to-top">
         <i class="icon-arrow-up"></i>
     </div>
-    <div class="page-footer-inner text-center margin-bottom-20 ">
+    <div class="page-footer-inner margin-bottom-20 ">
         <?php $this->load->view("copyright"); ?>
     </div>
 </div>

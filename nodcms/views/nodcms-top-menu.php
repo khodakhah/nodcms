@@ -18,7 +18,7 @@
                                 <div class="dropdown-menu">
                                     <?php foreach($languages as $item) {?>
                                         <?php if($item["language_id"]!=$_SESSION["language"]["language_id"]){ ?>
-                                            <a class="dropdown-item" href="<?=$item["lang_url"]?>">
+                                            <a class="dropdown-item" href="<?php echo isset($item["lang_url"])?$item["lang_url"]:"javascript:;"; ?>">
                                                 <?php echo $item['language_title']; ?>
                                             </a>
                                         <?php } ?>
