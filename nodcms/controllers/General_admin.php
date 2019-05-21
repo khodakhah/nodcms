@@ -404,8 +404,8 @@ class General_admin extends NodCMS_Controller{
             ),
         );
 
-        $this->data['languages'] = $this->Nodcms_admin_model->get_all_language();
-        foreach($this->data['languages'] as $language){
+        $languages = $this->Languages_model->getAll();
+        foreach($languages as $language){
             $setting = $this->Public_model->getSettings($language['language_id']);
             $language_head = array(
                 'label'=>$language['language_title'],
@@ -1464,7 +1464,7 @@ class General_admin extends NodCMS_Controller{
             array('title'=>"VK", 'class'=>'vk'),
             array('title'=>"Instagram", 'class'=>'instagram'),
             array('title'=>"Reddit", 'class'=>'reddit'),
-            array('title'=>"Aboutme", 'class'=>'aboutme'),
+            array('title'=>"Aboutme", 'class'=> 'About'),
             array('title'=>"Flickr", 'class'=>'flickr'),
             array('title'=>"Foursquare", 'class'=>'foursquare'),
             array('title'=>"Gravatar", 'class'=>'gravatar'),
@@ -1545,7 +1545,7 @@ class General_admin extends NodCMS_Controller{
     {
         $this->data['title'] = _l("Users",$this);
         $this->data['sub_title'] = _l("User's list",$this);
-        $this->data['page'] = "user";
+        $this->data['page'] = "users";
         if(!$this->checkAccessGroup(1))
             return;
         $this->load->helper('date');
@@ -1575,10 +1575,16 @@ class General_admin extends NodCMS_Controller{
         if(!$this->checkAccessGroup(1))
             return;
 
-        $user = $this->Nodcms_admin_model->getUserDetail($id);
-        if(count($user)==0){
-            $this->systemError("User not found!", ADMIN_URL."user");
+        $user = $this->Users_model->getOne($id);
+        if(!is_array($user) || count($user)==0){
+            $this->systemError("The user is not exists.", ADMIN_URL."user");
             return;
+        }
+        $user_group = $this->Groups_model->getOne($user['group_id']);
+        if(!is_array($user) || count($user)==0){
+            $user['group_name'] = "undefined";
+        }else{
+            $user['group_name'] = $user_group['group_name'];
         }
 
         if($user['avatar']=='')
@@ -2040,32 +2046,54 @@ class General_admin extends NodCMS_Controller{
         $this->data["data_list"] = $this->Nodcms_admin_model->get_all_images();
         echo $this->load->view($this->mainTemplate.'/uploaded_images',$this->data, true);
     }
-    function uploaded_images_manager()
+    function imagesLibrary()
     {
-        $this->data["data_list"] = $this->Nodcms_admin_model->get_all_images();
+        $this->data["data_list"] = $this->Images_model->getAll(null, null, 1, array('image_id','DESC'));
+        $this->data['upload_url'] = ADMIN_URL."uploadImage/images-library";
         $this->data['page'] = "uploaded_images";
-        $this->data['title'] = _l("Images",$this);
+        $this->data['title'] = _l("Images Library",$this);
         $this->data['content']= $this->load->view($this->mainTemplate.'/uploaded_images_manager',$this->data,true);
         $this->load->view($this->frameTemplate,$this->data);
     }
-    function deleteuploaded_image($id=0)
+
+    function imageDelete($id=0, $confirm = 0)
     {
-        if ($this->session->userdata['group']==1) {
-            $image = $this->Nodcms_admin_model->get_image_detail($id);
-            if($image!=0){
-                if(file_exists($image["image"])){
-                    unlink($image["image"]);
-                }
-                $this->db->trans_start();
-                $this->db->delete('images', array('image_id' => $id));
-                $this->db->trans_complete();
-                echo json_encode(array("status"=>"success"));
-            }else{
-                echo json_encode(array("status"=>"error","errors"=>_l('Your request is problem!',$this)));
-            }
-        }else{
-            echo json_encode(array("status"=>"error","errors"=>_l('Your request is problem!',$this)));
+        if(!$this->checkAccessGroup(1))
+            return;
+
+        $current_data = $this->Images_model->getOne($id);
+        if(!is_array($current_data) || count($current_data)==0){
+            $this->systemError("Image not found.", ADMIN_URL."imagesLibrary");
+            return;
         }
+
+        $back_url = ADMIN_URL."imagesLibrary";
+        $self_url = ADMIN_URL."imageDelete/$id";
+
+        if($confirm!=1){
+            echo json_encode(array(
+                'status'=>'success',
+                'content'=>'<p class="text-center">' .
+                    str_replace("{data}", "<strong>$current_data[name]</strong>",_l("This action will delete the image file '{data}' and record from database.", $this)) .' '.
+                    _l("You can't restore it after this action.", $this) .
+                    '</p>'.
+                    '<p class="text-center bold">' .
+                    _l("Are you sure to delete the file?", $this) .
+                    '</p>',
+                'title'=>_l("Delete confirmation", $this),
+                'noBtnLabel'=>_l("Cancel", $this),
+                'yesBtnLabel'=>_l("Yes, delete it.", $this),
+                'confirmUrl'=>$self_url."/1",
+                'redirect'=>1,
+            ));
+            return;
+        }
+
+        if(file_exists(FCPATH.$current_data["image"])){
+            unlink(FCPATH.$current_data["image"]);
+        }
+        $this->Images_model->remove($id);
+        $this->systemSuccess("Language has been deleted successfully.", $back_url, array('removed'=>$id));
     }
 
     /**

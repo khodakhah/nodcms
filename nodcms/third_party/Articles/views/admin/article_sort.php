@@ -1,7 +1,7 @@
-<div class="portlet">
-    <div class="portlet-title">
-        <div class="actions">
-            <button type="button" id="save-sort" class="btn green hidden"><?php echo _l("Save new sorts", $this); ?></button>
+<div class="card">
+    <div class="card-header">
+        <div class="text-right">
+            <button type="button" id="save-sort" class="btn btn-success hidden"><i class="far fa-save"></i> <?php echo _l("Save new sorts", $this); ?></button>
             <a href="<?php echo ARTICLES_ADMIN_URL; ?>articleForm" class="btn blue load-form">
                 <i class="fa fa-plus"></i> <?php echo _l("Add",$this); ?>
             </a>
@@ -9,7 +9,7 @@
             <button type="button" onclick="$('#data_list').nestable('expandAll');" class="btn default" title="<?php echo _l("Expand All", $this); ?>"><i class="fa fa-expand"></i></button>
         </div>
     </div>
-    <div class="portlet-body">
+    <div class="card-body">
         <?php if(isset($data_list) && count($data_list)!=0){ ?>
             <div class="dd" id="data_list">
                 <ol class="dd-list">
@@ -42,7 +42,7 @@
                 </ol>
             </div>
         <?php }else{ ?>
-            <div class="note note-info"><i class="fa fa-exclamation"></i> <?php echo _l("Empty",$this); ?></div>
+            <div class="alert alert-info"><i class="fa fa-exclamation"></i> <?php echo _l("Empty",$this); ?></div>
         <?php } ?>
     </div>
 </div>

@@ -76,6 +76,7 @@ class Articles_admin extends NodCMS_Controller {
                 'rules' => 'required|callback_validURI|callback_isUnique[article,article_uri'.(isset($current_data)?",article_id,$current_data[article_id]":"").']',
                 'type' => "text",
                 'default'=>isset($current_data)?$current_data["article_uri"]:'',
+                'input_prefix'=>base_url().$this->language['code']."/article/",
                 'help'=>_l("The unique text that will be in URL to open this article.", $this),
             ),
             array(
