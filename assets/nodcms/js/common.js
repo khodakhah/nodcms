@@ -187,7 +187,9 @@ function translate(value){
                             width: null
                         });
                     });
-                    myModal.find('.dropzone').makeDropzone();
+                    if($.fn.makeDropzone){
+                        myModal.find('.dropzone').makeDropzone();
+                    }
                     // Handel auto-loading the pages
                     // TODO: Should test
                     if(myModal.find('.next-page').length > 0){
@@ -443,7 +445,9 @@ function translate(value){
                         $this.find('.plot-pie-statistics').each(function () {
                             $(this).handelPlotPieStatistic();
                         });
-                        $this.find('.dropzone').makeDropzone();
+                        if($.fn.makeDropzone){
+                            $this.find('.dropzone').makeDropzone();
+                        }
                     }
                 }
                 else{

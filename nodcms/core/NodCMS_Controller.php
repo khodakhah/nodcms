@@ -112,8 +112,11 @@ class NodCMS_Controller extends CI_Controller{
 
         // * Load Models and Helpers
         $models = $this->config->item($controllerType.'_models');
+        $general_models = $this->config->item('general_models');
+        if(is_array($general_models) && count($general_models)!=null){
+            $models = array_merge($general_models, $models);
+        }
         $this->load->model($models);
-        $this->load->model('Public_model');
         $helpers = $this->config->item($controllerType.'_helpers');
         $this->load->helper($helpers);
 

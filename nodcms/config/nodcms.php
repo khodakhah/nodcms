@@ -50,6 +50,28 @@ $config['membership_template_frame'] = 'nodcms-membership';
 $config['max_upload_size'] = 20000; // KG
 
 /**
+ * General auto loading models to load the same models for all type of controllers
+ */
+$config['general_models'] = array(
+    'Email_messages_model',
+    'Gallery_image_model',
+    'Gallery_model',
+    'Groups_model',
+    'Images_model',
+    'Languages_model',
+    'Menu_model',
+    'Packages_model',
+    'Public_model',
+    'Settings_model',
+    'Social_links_model',
+    'Titles_model',
+    'Translates_model',
+    'Translations_model',
+    'Upload_files_model',
+    'Users_model',
+);
+
+/**
  * Backend auto loading models
  */
 $config['backend_models'] = array('Nodcms_admin_model', 'Packages_model', 'Packages_dashboard_model', 'Languages_model', 'Email_messages_model');
