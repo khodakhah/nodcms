@@ -7,6 +7,7 @@
  * Website: http://www.nodcms.com
  */
 
+defined('BASEPATH') OR exit('No direct script access allowed');
 class Blog_admin extends NodCMS_Controller
 {
     function __construct()
@@ -345,7 +346,7 @@ class Blog_admin extends NodCMS_Controller
 
         $this->data['the_list'] = $myList->getPage();
         $this->data['content'] = $this->load->view($this->mainTemplate."/data_list", $this->data, true);
-        $this->data['page'] = "blog_categories_list";
+        $this->data['page'] = "blog_categories";
         $this->load->view($this->frameTemplate,$this->data);
     }
 

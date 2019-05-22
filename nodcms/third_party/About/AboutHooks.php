@@ -26,7 +26,7 @@ class AboutHooks extends NodcmsHooks
 
         if($this->CI->userdata["group_id"]==1){
             $addon_sidebar = array(
-                'aboutme_list' => array(
+                'about_profiles' => array(
                     'url'=>ABOUT_ADMIN_URL."profiles",
                     'icon'=>'far fa-id-card',
                     'title'=>_l("AboutMe profiles", $this->CI),

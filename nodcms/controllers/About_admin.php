@@ -25,7 +25,7 @@ class About_admin extends NodCMS_Controller
             array('title'=>$this->data['title']),
         );
         $this->data['data_list']=$this->About_model->getAll();
-        $this->data['page'] = "aboutme_list";
+        $this->data['page'] = "about_profiles";
         $this->data['content'] = $this->load->view($this->mainTemplate."/about_sort",$this->data,true);
         $this->load->view($this->frameTemplate,$this->data);
     }
@@ -56,7 +56,7 @@ class About_admin extends NodCMS_Controller
             array(
                 'field' => 'profile_uri',
                 'label' => _l("Page URI", $this),
-                'rules' => 'required|callback_validURI|callback_isUnique[aboutme_profiles,profile_uri'.(isset($current_data)?",profile_id,$current_data[profile_id]":"").']',
+                'rules' => 'required|callback_validURI|callback_isUnique[about_profiles,profile_uri'.(isset($current_data)?",profile_id,$current_data[profile_id]":"").']',
                 'type' => "text",
                 'default'=>isset($current_data)?$current_data["profile_uri"]:'',
                 'input_prefix'=>base_url().$this->language['code']."/about-",

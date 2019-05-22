@@ -7,6 +7,7 @@
  * Website: http://www.nodcms.com
  */
 
+defined('BASEPATH') OR exit('No direct script access allowed');
 class BlogHooks extends NodcmsHooks
 {
     function backend()
@@ -18,19 +19,17 @@ class BlogHooks extends NodcmsHooks
 
         if($this->CI->userdata["group_id"]==1){
             $addon_sidebar = array(
-                'shipping' => array(
+                'blog' => array(
                     'url'=>'javascript:;',
                     'icon'=>'far fa-window-maximize',
                     'title'=>_l("Blog", $this->CI),
                     'sub_menu'=>array(
                         'blog_posts' => array(
                             'url'=>BLOG_ADMIN_URL.'posts',
-                            'icon'=>'far fa-window-restore',
                             'title'=>_l("Posts", $this->CI),
                         ),
                         'blog_categories' => array(
                             'url'=>BLOG_ADMIN_URL.'categories',
-                            'icon'=>'fas fa-layer-group',
                             'title'=>_l("Categories", $this->CI),
                         ),
                     )

@@ -6,6 +6,7 @@
  * Project: NodCMS
  * Website: http://www.nodcms.com
  */
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 $route['admin-blog/(.+)'] = "Blog_admin/$1";
