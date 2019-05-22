@@ -1,0 +1,262 @@
+<?php
+/**
+ * Created by Mojtaba Khodakhah.
+ * Date: 22-May-19
+ * Time: 11:16 AM
+ * Project: NodCMS
+ * Website: http://www.nodcms.com
+ */
+
+class Services_admin extends NodCMS_Controller
+{
+    function __construct()
+    {
+        parent::__construct('backend');
+    }
+
+    /**
+     * Sortable list display
+     */
+    function services()
+    {
+        $this->data['title'] = _l("Services",$this);
+        $this->data['breadcrumb']=array(
+            array('title'=>$this->data['title'])
+        );
+        $this->data['add_url'] = SERVICES_ADMIN_URL."serviceSubmit";
+        $this->data['edit_url'] = SERVICES_ADMIN_URL."serviceSubmit/";
+        $this->data['delete_url'] = SERVICES_ADMIN_URL."deleteService/";
+        $this->data['save_sort_url'] = SERVICES_ADMIN_URL."sortSubmit/";
+        $this->data['field_key'] = "service_id";
+        $this->data['field_title'] = "service_name";
+        $this->data['field_public'] = "service_public";
+        $this->data['page'] = "services";
+        $this->data['data_list']=$this->Services_model->getAll(null,null,1,array('sort_order','asc'));
+        $this->data['content'] = $this->load->view($this->mainTemplate.'/list_sort',$this->data,true);
+        $this->load->view($this->frameTemplate,$this->data);
+    }
+
+    /**
+     * Add/Edit submit form
+     *
+     * @param null|int $id
+     */
+    function serviceSubmit($id = null)
+    {
+        $self_url = SERVICES_ADMIN_URL."serviceSubmit";
+        $back_url = SERVICES_ADMIN_URL."services";
+        $this->data['title'] = _l("Services",$this);
+        if($id!=null)
+        {
+            $current_data = $this->Services_model->getOne($id);
+            if($current_data==null || count($current_data)==0){
+                $this->systemError("Service not found.", $back_url);
+                return;
+            }
+            $form_attr = array();
+            $this->data['sub_title'] = _l("Edit",$this);
+            $self_url .= "/$id";
+        }
+        else{
+            $form_attr = array('data-redirect'=>1);
+            $this->data['sub_title'] = _l("Add",$this);
+        }
+
+        $config = array(
+            array(
+                'field' => 'service_uri',
+                'label' => _l("Service URI", $this),
+                'rules' => 'required|callback_validURI|callback_isUnique[services,service_uri'.(isset($current_data)?",service_id,$current_data[service_id]":"").']',
+                'type' => "text",
+                'default'=>isset($current_data)?$current_data["service_uri"]:'',
+                'input_prefix'=>base_url().$this->language['code']."/service/",
+            ),
+            array(
+                'field' => 'service_name',
+                'label' => _l("Name", $this),
+                'rules' => 'required',
+                'type' => "text",
+                'default'=>isset($current_data)?$current_data["service_name"]:''
+            ),
+            array(
+                'field' => 'service_icon',
+                'label' => _l("Font Icon", $this),
+                'rules' => '',
+                'type' => "icons",
+                'default'=>isset($current_data)?$current_data["service_icon"]:''
+            ),
+            array(
+                'field' => 'service_image',
+                'label' => _l("Image", $this),
+                'rules' => '',
+                'type' => "image-library",
+                'default'=>isset($current_data)?$current_data["service_image"]:''
+            ),
+            array(
+                'field' => 'service_public',
+                'label' => _l("Public", $this),
+                'rules' => 'in_list[0,1]',
+                'type' => "switch",
+                'default'=>isset($current_data)?$current_data["service_public"]:''
+            ),
+            array(
+                'label'=>_l('Page content',$this),
+                'type'=>"h3",
+            ),
+        );
+
+        $myform = new Form();
+        $myform->config($config, $self_url, 'post', 'ajax');
+        $languages = $this->Public_model->getAllLanguages();
+        foreach($languages as $language){
+            $translate = $this->Services_model->getTranslations($id, $language['language_id']);
+            // Add language title
+            array_push($config,array(
+                'prefix_language'=>$language,
+                'label'=>$language['language_title'],
+                'type'=>"h4",
+            ));
+            $prefix = "translate[$language[language_id]]";
+            array_push($config, array(
+                'field'=>$prefix."[title]",
+                'label'=>_l('Title',$this),
+                'rules'=>"",
+                'type'=>"text",
+                'default'=>isset($translate['title'])?$translate['title']:'',
+            ));
+            array_push($config, array(
+                'field'=>$prefix."[home_preview]",
+                'label'=>_l("Home Preview", $this),
+                'rules'=>"",
+                'type'=>"textarea",
+                'default'=>isset($translate['home_preview'])?$translate['home_preview']:'',
+            ));
+            array_push($config, array(
+                'field'=>$prefix."[description]",
+                'label'=>_l("Description", $this),
+                'rules'=>"",
+                'type'=>"textarea",
+                'default'=>isset($translate['description'])?$translate['description']:'',
+            ));
+            array_push($config, array(
+                'field'=>$prefix."[keywords]",
+                'label'=>_l("Keywords", $this),
+                'rules'=>"",
+                'type'=>"textarea",
+                'default'=>isset($translate['keywords'])?$translate['keywords']:'',
+            ));
+            array_push($config, array(
+                'field'=>$prefix."[content]",
+                'label'=>_l("Page Content", $this),
+                'rules'=>"",
+                'type'=>"texteditor",
+                'default'=>isset($translate['content'])?$translate['content']:'',
+            ));
+        }
+
+        $myform = new Form();
+        $myform->config($config, $self_url, 'post', 'ajax');
+
+        if($myform->ispost()){
+            if(!$this->checkAccessGroup(1)){
+                return;
+            }
+            $post_data = $myform->getPost();
+            // Stop Page
+            if($post_data === false || !is_array($post_data)){
+                return;
+            }
+
+            if(key_exists('translate',$post_data)){
+                $translates = $post_data['translate'];
+                unset($post_data['translate']);
+            }
+
+            if($id!=null){
+                $this->Services_model->edit($id, $post_data);
+                if(isset($translates)){
+                    $this->Services_model->updateTranslations($id,$translates,$languages);
+                }
+                $this->systemSuccess("Service has been edited successfully.", $back_url);
+            }
+            else{
+                $new_id = $this->Services_model->add($post_data);
+                if(isset($translates)){
+                    $this->Services_model->updateTranslations($new_id,$translates,$languages);
+                }
+                $this->systemSuccess("Service has been sent successfully.", $back_url);
+            }
+            return;
+        }
+
+        $this->data['breadcrumb'] = array(
+            array('title'=>_l("Services", $this),'url'=>$back_url),
+            array('title'=>$this->data['sub_title']),
+        );
+
+        $this->data['page'] = "service_submit_form";
+        $this->data['content']=$myform->fetch('', $form_attr);
+        $this->load->view($this->frameTemplate,$this->data);
+    }
+
+    /**
+     * Save new sort
+     */
+    function sortSubmit()
+    {
+        $back_url = SERVICES_ADMIN_URL."services";
+        if(!$this->checkAccessGroup(1))
+            return;
+        $post_data = $this->input->post("data");
+        if($post_data == null) {
+            $this->systemError("Sort data shouldn't be empty.", $back_url);
+            return;
+        }
+        $post_data = json_decode($post_data);
+        foreach($post_data as $i=>$item){
+            $update_data = array(
+                'sort_order'=>$i,
+            );
+            $this->Services_model->edit($item->id, $update_data);
+        }
+        $this->systemSuccess("Languages have been successfully sorted.", $back_url);
+    }
+
+    /**
+     * Delete a service
+     *
+     * @param $id
+     * @param int $confirm
+     */
+    function deleteService($id, $confirm = 0)
+    {
+        if(!$this->checkAccessGroup(1))
+            return;
+
+        $back_url = SERVICES_ADMIN_URL."services";
+        $self_url = SERVICES_ADMIN_URL."deleteService/$id";
+        $data = $this->Services_model->getOne($id);
+        if(count($data)==0){
+            $this->systemError("The service couldn't find.", $back_url);
+            return;
+        }
+
+        if($confirm!=1){
+            echo json_encode(array(
+                'status'=>'success',
+                'content'=>'<p class="text-center">'._l("This action will delete the service from database.", $this).
+                    '<br>'._l("After this, you will not to able to restore it.", $this).'</p>'.
+                    '<p class="text-center font-lg bold">'._l("Are you sure to delete this?", $this).'</p>',
+                'title'=>_l("Delete confirmation", $this),
+                'noBtnLabel'=>_l("Cancel", $this),
+                'yesBtnLabel'=>_l("Yes, delete it.", $this),
+                'confirmUrl'=>"$self_url/1",
+                'redirect'=>1,
+            ));
+            return;
+        }
+
+        $this->Services_model->remove($id);
+        $this->systemSuccess("Service has been deleted successfully.", $back_url);
+    }
+}
