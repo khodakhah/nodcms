@@ -5,5 +5,5 @@ echo button_toggle_action(array(
     'default'=>$data[$config['default']],
     'caption1'=>'<i class="icon-envelope-open"></i> '._l("Make read", $this),
     'caption2'=>'<i class="icon-envelope"></i> '._l("Make unread", $this),
-    'class'=>"btn btn-link btn-xs",
+    'class'=>"btn btn-link btn-sm",
 ));
