@@ -278,8 +278,6 @@ class Blog_admin extends NodCMS_Controller
             return;
         }
 
-        $myForm = new Form();
-        $myForm->removeFiles($data['file_id']);
         $this->Blog_posts_model->remove($id);
         $this->systemSuccess("Blog post has been deleted successfully.", $back_url);
     }
