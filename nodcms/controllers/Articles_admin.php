@@ -154,7 +154,7 @@ class Articles_admin extends NodCMS_Controller {
             }
             $post_data = $myform->getPost();
             // Stop Page
-            if($post_data === false){
+            if($post_data === false || !is_array($post_data)){
                 return;
             }
 
@@ -163,8 +163,6 @@ class Articles_admin extends NodCMS_Controller {
                 unset($post_data['translate']);
             }
 
-            $URL = ARTICLES_ADMIN_URL."article/";
-            $this->checkAccessGroup(1);
             if($id!=null){
                 $this->Articles_model->edit($id, $post_data);
                 if(isset($translates)){
