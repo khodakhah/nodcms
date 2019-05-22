@@ -538,6 +538,14 @@ class Form
             $all_types = array_merge($all_types, $sub_inputs_types);
         }
 
+        if(in_array('datepicker', $all_types)){
+            $this->CI->load->addCssFile("assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min");
+            $this->CI->load->addJsFile("assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min");
+        }
+        if(in_array('date', $all_types)){
+            $this->CI->load->addCssFile("assets/plugins/jquery-ui-1.12.1/jquery-ui.min");
+            $this->CI->load->addJsFile("assets/plugins/jquery-ui-1.12.1/jquery-ui.min");
+        }
         if(in_array('image', $all_types)){
             $this->CI->load->addCssFile("assets/plugins/bootstrap-fileinput/bootstrap-fileinput");
             $this->CI->load->addJsFile("assets/plugins/bootstrap-fileinput/bootstrap-fileinput");

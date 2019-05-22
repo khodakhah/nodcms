@@ -123,7 +123,7 @@ class NodCMS_Controller extends CI_Controller{
         $this->settings_default = $this->config->item('settings_default');
         // * Get settings from Database
         $this->settings = array_merge($this->settings_default, $this->Public_model->getSettings());
-        $this->settings['datepicker_date_format'] = str_replace(array('d', 'm', 'y', 'Y'), array('dd', 'mm', 'yy', 'yyyy'), $this->settings['date_format']);
+        $this->settings['datepicker_date_format'] = str_replace(array('d', 'm', 'y', 'Y'), array('dd', 'mm', 'y', 'yy'), $this->settings['date_format']);
 //        if($this->settings["dynamic_timezone"]==1) {
 //            $picked_timezone = get_cookie('my_timezone');
 //            $this->data['timezone_list'] = DateTimeZone::listIdentifiers();
@@ -1194,7 +1194,7 @@ class NodCMS_Controller extends CI_Controller{
     }
 
     // Validation date format function
-    public function formRulesDateFormat($value)
+    public function validDate($value)
     {
         if($value=='')
             return true;
@@ -1210,7 +1210,7 @@ class NodCMS_Controller extends CI_Controller{
             || $d3 && $d3->format("Y-m-d") == $value)
             return true;
         else{
-            $this->form_validation->set_message('formRulesDateFormat', _l("The {field} field is not in the correct date format.", $this));
+            $this->form_validation->set_message('validDate', _l("The {field} field is not in the correct date format.", $this));
             return false;
         }
     }
