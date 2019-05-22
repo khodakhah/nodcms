@@ -23,7 +23,7 @@
                                     <img style="height: 18px;" src="<?php echo base_url().$item["image"]; ?>">
                                 <?php } ?>
                                 <?=$item["language_title"]?> <?=$item["default"]==1?"("._l('Default',$this).")":""?>
-                                <button type="button" class="btn btn-xs btn-link font-red" data-parent="#item<?php echo $item['language_id']; ?>" onclick="$(this).removeAnItemFromList('<?php echo ADMIN_URL."languageDelete/$item[language_id]"; ?>');"><i class="fa fa-trash-o"></i> <?=_l('Delete',$this)?></button>
+                                <button type="button" class="btn btn-xs btn-link font-red" data-target="#item<?php echo $item['language_id']; ?>" onclick="$(this).removeAnItemFromList('<?php echo ADMIN_URL."languageDelete/$item[language_id]"; ?>');"><i class="fa fa-trash-o"></i> <?=_l('Delete',$this)?></button>
                                 <a class="btn btn-xs btn-link font-blue" href="<?php ADMIN_URL; ?>languageSubmit/<?=$item["language_id"]?>"><i class="fa fa-pencil"></i> <?=_l('Edit',$this)?></a>
                                 <a class="btn btn-xs btn-link font-blue-steel" href="<?php ADMIN_URL; ?>languageTranslation/<?=$item["language_id"]?>"><i class="fa fa-language"></i> <?php echo _l('Translation',$this); ?></a>
                             </div>

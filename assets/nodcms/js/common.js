@@ -510,16 +510,23 @@ function translate(value){
 
     $.fn.removeAnItemFromList = function (url, type) {
         var the_element = $(this);
-        var removeItem = function () {
+        var removeItem = function (result, myModal) {
             if(typeof type !== 'undefined' && type == "refresh"){
                 location.reload();
                 return;
             }
             if(typeof the_element.data('parent') !== 'undefined'){
                 $(the_element.data('parent')+' .box-item[data-id='+the_element.data('id')+']').parent().slideUp(500).delay(500).remove();
+                myModal.modal('hide');
+                return;
+            }
+            if(typeof the_element.data('target') !== 'undefined'){
+                $(the_element.data('target')).slideUp(500).delay(500).remove();
+                myModal.modal('hide');
                 return;
             }
             toastr.success(result.msg, 'Success');
+            myModal.modal('hide');
         };
         $.loadConfirmModal(url, removeItem);
     };

@@ -1068,6 +1068,7 @@ class General_admin extends NodCMS_Controller{
                 'label'=>_l("Flag", $this),
                 'type'=>"image-library",
                 'rules'=>"",
+                'library_type'=>"language",
                 'default'=>isset($current_data['image'])?$current_data['image']:"",
             ),
             array(
@@ -1078,7 +1079,7 @@ class General_admin extends NodCMS_Controller{
                 'options'=>$language_codes,
                 'option_name'=>"title",
                 'option_value'=>"code",
-                'rules'=>"required|in_list[".join(',', array_column($language_codes, 'key'))."]",
+                'rules'=>"required|in_list[".join(',', array_column($language_codes, 'code'))."]",
                 'default'=>isset($current_data['code'])?$current_data['code']:"",
             ),
             array(
@@ -1152,7 +1153,7 @@ class General_admin extends NodCMS_Controller{
             $file = $dir.'index.php';
             if(!file_exists($file)){
                 $myfile = fopen($file, "w") or die("Unable to open file!");
-                $txt = "<?php\n" ."header('Location: " . base_url()."'); ";
+                $txt = "<?php\n http_response_code(404)";
                 fwrite($myfile, $txt);
                 fclose($myfile);
             }
@@ -2029,7 +2030,7 @@ class General_admin extends NodCMS_Controller{
             ));
             return;
         }
-        $this->data["upload_url"] = ADMIN_URL."uploadImage/".$this->image_library_types[$type]['dir'];
+        $this->data["upload_url"] = ADMIN_URL."uploadImage/$type";
         $this->data['input_id'] = $input_id;
         $this->data['images'] = $this->Images_model->getAll(array('folder'=>$this->image_library_types[$type]['dir']));
         $data = array(
@@ -2107,7 +2108,7 @@ class General_admin extends NodCMS_Controller{
             return;
         $types = $this->image_library_types;
         if(!key_exists($type, $types)){
-            echo json_encode(array("status"=>"error","errors"=>_l("Type of upload is not defined.", $this)));
+            echo json_encode(array("status"=>"error","errors"=>str_replace("{data}", "'<strong>$type</strong>'",  _l("The {data} upload type is undefined.", $this))));
             return;
         }
 
@@ -2121,7 +2122,7 @@ class General_admin extends NodCMS_Controller{
         $file = $dir.'index.php';
         if(!file_exists($file)){
             $myfile = fopen($file, "w") or die("Unable to open file!");
-            $txt = "<?php\n" ."header('Location: " . base_url()."'); ";
+            $txt = "<?php\n http_response_code(404); ";
             fwrite($myfile, $txt);
             fclose($myfile);
         }

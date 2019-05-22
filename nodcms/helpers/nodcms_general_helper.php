@@ -317,7 +317,9 @@ if( ! function_exists('resetLanguageTempFile')){
         $packages = get_instance()->load->packageList();
         foreach($packages as $item){
             $third_party = get_all_php_files(APPPATH."third_party/$item/views");
-            $dirs = array_merge($dirs, $third_party);
+            if(is_array($third_party)){
+                $dirs = array_merge($dirs, $third_party);
+            }
             array_push($dirs, APPPATH."third_party/$item/$item".'Hooks.php');
         }
 
@@ -356,7 +358,9 @@ if( ! function_exists('resetLanguageTempFile')){
             foreach ($lang_files as $file_item){
                 if(!file_exists($file_item))
                     continue;
-                preg_match('/.*\/([A-Za-z0-9\-\_]+)\_lang.php/', $file_item, $my_match_file_name);
+                if(!preg_match('/.*\/([A-Za-z0-9\-\_]+)\_lang.php/', $file_item, $my_match_file_name)){
+                    continue;
+                }
                 $new_lang = $CI->load($my_match_file_name[1], $my_match[1]);
                 if(is_array($new_lang))
                     $lang = array_merge($lang, $new_lang);
