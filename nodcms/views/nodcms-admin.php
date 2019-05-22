@@ -14,7 +14,7 @@
     <?php echo $this->settings['add_on_header']; ?>
 
     <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
     <?php if($this->language["rtl"]!=1){ ?>
         <link href="<?php echo base_url(); ?>assets/nodcms/bootstrap-4.1.3/css/nodcms-admin.min.css" rel="stylesheet" type="text/css"/>
    <?php }else{ ?>
