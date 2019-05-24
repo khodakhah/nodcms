@@ -5,12 +5,15 @@ h1,h2,h3,h4,h5,h6{
   font-weight: 100;
 }
 input[type="checkbox"],input[type="radio"]{
-  width: 20px; /*Desired width*/
-  height: 20px; /*Desired height*/
+  width: 20px;
+  height: 20px;
   cursor: pointer;
-  //-webkit-appearance: none;
-  //appearance: none;
 }
+*[data-public="0"]{
+  opacity: 0.5;
+  -moz-opacity: 0.5;
+}
+
 .hidden{
   display: none !important;
 }
