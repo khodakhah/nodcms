@@ -1,9 +1,34 @@
-# [nodCMS](http://nodcms.com) 
+# [NodCMS](http://nodcms.com) 
 NodCMS – A Free CMS powered by CodeIgniter
 
-### Welcome to my GitHub Repository
+## NodCMS v2.0
+After some years I'm developing a public version of NodCMS again. 
 
-NodCMS is a free, Multi-Language, simple and powerful CMS powered by CodeIgniter.
+The new version of NodCMS is under development.
+In the new version:
+ 
+- database has totally redesigned
+- the <strong>ADMIN SIDE</strong> theme is totally changed (using a quick customize of bootstrap 4.1.3)
+- the <strong>FRONTEND SIDE</strong> theme is totally changed (using a quick customize of bootstrap 4.1.3)
+- Codeigniter version is upgraded to 3.1.10
+- created a modular system to add or remove different features
+- created a Controller core to manage different type of controllers such as: 
+    - <strong>backend</strong>: for admin side pages
+    - <strong>frontend</strong>: for frontend side pages
+    - <strong>membership</strong>: for the pages thad are using only for members
+- created a Model core to use database tables as objects instead of writing a method for each query.
+- created a Load core to use to manage modular system and load the CSS and JS file in different pages only when they are necessary
+- created a library to create and manage forms, and keep them in one style
+- created a library to create and manage data table lists and keep theme in one style
+- and all over the system has been reviewed and rewritten.
+
+I have predicted that the new version will be available to use until <strong>24 June 2019</strong>.
+
+I apologize for a possible delay.
+
+### What is NodCMS
+
+NodCMS is a <strong>free</strong>, Multilingual, simple and powerful CMS powered by CodeIgniter.
 
 More information can be found at [nodcms.com](http://nodcms.com/).
 
