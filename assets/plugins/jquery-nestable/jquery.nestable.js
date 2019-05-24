@@ -387,10 +387,17 @@
             /**
              * move horizontal
              */
+            var el = this.dragEl.children(this.options.itemNodeName).first();
+
             if (mouse.dirAx && mouse.distAxX >= opt.threshold) {
                 // reset move distance on x-axis for new phase
                 mouse.distAxX = 0;
                 prev = this.placeEl.prev(opt.itemNodeName);
+
+                if(mouse.distX < 0 && el.hasClass('child-only')){
+                    return;
+                }
+
                 // increase horizontal level if previous sibling exists and is not collapsed
                 if (mouse.distX > 0 && prev.length && !prev.hasClass(opt.collapsedClass)) {
                     // cannot increase level when item above is collapsed
@@ -412,7 +419,7 @@
                     }
                 }
                 // decrease horizontal level
-                if (mouse.distX < 0) {
+                if (mouse.distX < 0 || el.hasClass('parent-only')) {
                     // we can't decrease a level if an item preceeds the current one
                     next = this.placeEl.next(opt.itemNodeName);
                     if (!next.length) {
@@ -470,12 +477,48 @@
                     list.append(this.placeEl);
                     this.pointEl.replaceWith(list);
                 }
+                // else if (el.hasClass("child-only")) {
+                //     this.pointEl.append(this.placeEl);
+                // }
                 else if (before) {
-                    this.pointEl.before(this.placeEl);
+                    // Check if the element is child-only
+                    if(el.hasClass("child-only") && !this.pointEl.hasClass("child-only")){
+                        // Add as a child
+                        list = this.pointEl.find(opt.listNodeName).last();
+                        if (!list.length) {
+                            list = $('<' + opt.listNodeName + '/>').addClass(opt.listClass);
+                            list.append(this.placeEl);
+                            this.pointEl.append(list);
+                            this.setParent(this.pointEl);
+                        } else {
+                            // else append to next level up
+                            list = this.pointEl.children(opt.listNodeName).last();
+                            list.append(this.placeEl);
+                        }
+                    }else {
+                        this.pointEl.before(this.placeEl);
+                    }
                 }
                 else {
-                    this.pointEl.after(this.placeEl);
+                    // Check if the element is child-only
+                    if(el.hasClass("child-only") && !this.pointEl.hasClass("child-only")){
+                        // Add as a child
+                        list = this.pointEl.find(opt.listNodeName).last();
+                        if (!list.length) {
+                            list = $('<' + opt.listNodeName + '/>').addClass(opt.listClass);
+                            list.append(this.placeEl);
+                            this.pointEl.append(list);
+                            this.setParent(this.pointEl);
+                        } else {
+                            // else append to next level up
+                            list = this.pointEl.children(opt.listNodeName).last();
+                            list.append(this.placeEl);
+                        }
+                    }else{
+                        this.pointEl.after(this.placeEl);
+                    }
                 }
+
                 if (!parent.children().length) {
                     this.unsetParent(parent.parent());
                 }
