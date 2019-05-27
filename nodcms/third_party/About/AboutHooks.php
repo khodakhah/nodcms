@@ -29,7 +29,7 @@ class AboutHooks extends NodcmsHooks
                 'about_profiles' => array(
                     'url'=>ABOUT_ADMIN_URL."profiles",
                     'icon'=>'far fa-id-card',
-                    'title'=>_l("AboutMe profiles", $this->CI),
+                    'title'=>_l("About profiles", $this->CI),
                 ),
             );
             $this->CI->addToAdminSidebar($addon_sidebar);

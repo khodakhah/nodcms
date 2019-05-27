@@ -52,11 +52,18 @@ class About_admin extends NodCMS_Controller
             $form_attr = array('data-redirect'=>1);
         }
 
+        $themes = array(
+            array('theme'=>"default", 'name'=>_l("Default", $this)),
+            array('theme'=>"half_image", 'name'=>_l("Half image", $this)),
+            array('theme'=>"big_image", 'name'=>_l("Big image", $this)),
+            array('theme'=>"bg_image", 'name'=>_l("Background image", $this)),
+            array('theme'=>"card", 'name'=>_l("Card", $this)),
+        );
         $config = array(
             array(
                 'field' => 'profile_uri',
                 'label' => _l("Page URI", $this),
-                'rules' => 'required|callback_validURI|callback_isUnique[about_profiles,profile_uri'.(isset($current_data)?",profile_id,$current_data[profile_id]":"").']',
+                'rules' => 'callback_validURI|callback_isUnique[about_profiles,profile_uri'.(isset($current_data)?",profile_id,$current_data[profile_id]":"").']',
                 'type' => "text",
                 'default'=>isset($current_data)?$current_data["profile_uri"]:'',
                 'input_prefix'=>base_url().$this->language['code']."/about-",
@@ -75,6 +82,16 @@ class About_admin extends NodCMS_Controller
                 'rules' => '',
                 'type' => "image-library",
                 'default'=>isset($current_data)?$current_data["profile_image"]:''
+            ),
+            array(
+                'field' => 'profile_theme',
+                'label' => _l("Display Theme", $this),
+                'rules' => 'required|in_list['.join(',', array_column($themes, 'theme')).']',
+                'type' => "select",
+                'options'=>$themes,
+                'option_name'=>"name",
+                'option_value'=>"theme",
+                'default'=>isset($current_data)?$current_data["profile_theme"]:''
             ),
             array(
                 'field' => 'public',
