@@ -408,6 +408,7 @@ function translate(value){
                 if(data.status == "success") {
                     if(typeof data.content !== 'undefined'){
                         $this.html($(data.content));
+                        var btn, $form = $this.find('form');
                         if(typeof data.footerLinks !== 'undefined'){
                             var default_options = {
                                 color: '',
@@ -417,7 +418,12 @@ function translate(value){
                             };
                             $.each(data.footerLinks, function (key, val) {
                                 val = $.extend(default_options, val);
-                                $('<a class="btn '+val.color+'" href="'+val.url+'" target="'+val.target+'">'+val.caption+'</a>').appendTo($this);
+                                btn = $('<a class="btn '+val.color+'" href="'+val.url+'" target="'+val.target+'">'+val.caption+'</a>');
+                                if($form.length > 0){
+                                    btn.appendTo($form);
+                                }else{
+                                    btn.appendTo($this);
+                                }
                             });
                         }
                         if(typeof data.footerButtons !== 'undefined'){
@@ -429,7 +435,12 @@ function translate(value){
                             };
                             $.each(data.footerButtons, function (key, val) {
                                 val = $.extend(default_options, val);
-                                $('<button type="button" class="btn '+val.color+'" onclick="'+val.onclick+'">'+val.caption+'</button>').appendTo($this);
+                                btn = $('<button type="button" class="btn '+val.color+'" onclick="'+val.onclick+'">'+val.caption+'</button>');
+                                if($form.length > 0){
+                                    btn.appendTo($form);
+                                }else{
+                                    btn.appendTo($this);
+                                }
                             });
                         }
                         $this.checkEditorLoad().handleAutomatics();

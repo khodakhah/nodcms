@@ -445,7 +445,7 @@ class Form
                 'title'=>isset($this->data["form_title"])?$this->data["form_title"]:_l("Form", $this->CI),
                 'closeBtnLabel'=>_l("Cancel", $this->CI),
                 'footerButtons'=>array(
-                    array('color'=>"btn-primary", 'onclick'=>"$('#$form_id').submit();", 'caption'=>"<i class='fas fa-check'></i> "._l("Submit", $this->CI)),
+                    array('color'=>"btn-primary", 'onclick'=>"$('#$form_id').submit();", 'caption'=>"<i class='fas fa-check'></i> ".(isset($data_output['submit_label'])?$data_output['submit_label']:_l("Submit", $this->CI))),
                 ),
             ));
         }
