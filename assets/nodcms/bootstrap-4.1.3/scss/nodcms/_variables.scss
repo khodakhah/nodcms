@@ -151,8 +151,10 @@ $box-size:(
 
 $component-colors: (
         "white":	(base:#ffffff, font: #666),
+        "white-fade":	(base:rgba(255, 255, 255, 0.5), font: #666),
         "default":	(base:#e1e5ec, font: #666),
         "dark":	(base:#2f353b, font: #FFFFFF),
+        "dark-fade":	(base:rgba(47, 53, 59, 0.5), font: #FFFFFF),
         "blue":	(base:#3598dc, font: #FFFFFF),
         "blue-madison":	(base:#578ebe, font: #FFFFFF),
         "blue-chambray":	(base:#2C3E50, font: #FFFFFF),
