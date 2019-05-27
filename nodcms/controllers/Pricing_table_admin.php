@@ -63,6 +63,7 @@ class Pricing_table_admin extends NodCMS_Controller
         }
         $this->data['data_list'] = $data_list;
 
+        $this->data['max_depth'] = 2;
         $this->data['list_items'] = join("\n", $list_items);
 
         $this->data['add_urls'] = array(
@@ -72,7 +73,7 @@ class Pricing_table_admin extends NodCMS_Controller
         $this->data['save_sort_url'] = PRICING_TABLE_ADMIN_URL."sortSubmit/";
         $this->data['page'] = "pricing_tables";
 
-        $this->data['content'] = $this->load->view($this->mainTemplate.'/list_sort_x',$this->data,true);
+        $this->data['content'] = $this->load->view($this->mainTemplate.'/list_sort',$this->data,true);
         $this->load->view($this->frameTemplate,$this->data);
     }
 

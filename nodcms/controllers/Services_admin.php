@@ -23,15 +23,30 @@ class Services_admin extends NodCMS_Controller
         $this->data['breadcrumb']=array(
             array('title'=>$this->data['title'])
         );
-        $this->data['add_url'] = SERVICES_ADMIN_URL."serviceSubmit";
-        $this->data['edit_url'] = SERVICES_ADMIN_URL."serviceSubmit/";
-        $this->data['delete_url'] = SERVICES_ADMIN_URL."deleteService/";
-        $this->data['save_sort_url'] = SERVICES_ADMIN_URL."sortSubmit/";
-        $this->data['field_key'] = "service_id";
-        $this->data['field_title'] = "service_name";
-        $this->data['field_public'] = "service_public";
+        $this->data['add_urls'] = array(
+            array('label'=>_l("Add", $this), 'url'=>SERVICES_ADMIN_URL."serviceSubmit"),
+        );
+
+        $list_items = array();
+        $data_list = $this->Services_model->getAll(null,null,1,array('sort_order','asc'));
+        foreach ($data_list as &$item){
+            $data = array(
+                'id'=>$item['service_id'],
+                'element_id'=>"services-item".$item['service_id'],
+                'visibility'=>$item['service_public'],
+                'class'=>"parent-only",
+                'title'=>$item['service_name'],
+                'edit_url'=>SERVICES_ADMIN_URL."serviceSubmit/$item[service_id]",
+                'remove_url'=>SERVICES_ADMIN_URL."deleteService/$item[service_id]",
+                'visibility_url'=>SERVICES_ADMIN_URL."serviceVisibility/$item[service_id]",
+            );
+            $list_items[] = $this->load->view($this->mainTemplate."/list_sort_item", $data, true);
+        }
+        $this->data['save_sort_url'] = SERVICES_ADMIN_URL."sortSubmit";
+        $this->data['max_depth'] = 1;
+        $this->data['list_items'] = join("\n", $list_items);
+
         $this->data['page'] = "services";
-        $this->data['data_list']=$this->Services_model->getAll(null,null,1,array('sort_order','asc'));
         $this->data['content'] = $this->load->view($this->mainTemplate.'/list_sort',$this->data,true);
         $this->load->view($this->frameTemplate,$this->data);
     }
@@ -107,7 +122,7 @@ class Services_admin extends NodCMS_Controller
 
         $myform = new Form();
         $myform->config($config, $self_url, 'post', 'ajax');
-        $languages = $this->Public_model->getAllLanguages();
+        $languages = $this->Languages_model->getAll();
         foreach($languages as $language){
             $translate = $this->Services_model->getTranslations($id, $language['language_id']);
             // Add language title
@@ -219,7 +234,7 @@ class Services_admin extends NodCMS_Controller
             );
             $this->Services_model->edit($item->id, $update_data);
         }
-        $this->systemSuccess("Languages have been successfully sorted.", $back_url);
+        $this->systemSuccess("Services have been successfully sorted.", $back_url);
     }
 
     /**
