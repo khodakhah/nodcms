@@ -54,8 +54,6 @@ $config['max_upload_size'] = 20000; // KG
  */
 $config['general_models'] = array(
     'Email_messages_model',
-    'Gallery_image_model',
-    'Gallery_model',
     'Groups_model',
     'Images_model',
     'Languages_model',
