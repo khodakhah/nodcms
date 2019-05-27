@@ -16,9 +16,14 @@ class About extends NodCMS_Controller
     }
 
     static function home($CI){
-        $data_list = $CI->About_model->getAllTrans();
-        $CI->data['data_list'] = $data_list;
-        return $CI->load->view($CI->mainTemplate."/about_home", $CI->data, true);
+        $result = "";
+        $data_list = $CI->About_model->getAllTrans(array('profile_theme<>'=>"card"));
+        foreach($data_list as $item){
+            $result .= $CI->load->view($CI->mainTemplate."/about_item_$item[profile_theme]", array('item'=>$item), true);
+        }
+        $CI->data['data_list'] = $CI->About_model->getAllTrans(array('profile_theme'=>"card"));
+        $result .= $CI->load->view($CI->mainTemplate."/about_home", $CI->data, true);
+        return $result;
     }
 
     /**
@@ -49,7 +54,7 @@ class About extends NodCMS_Controller
         $this->data['title'] = $data['name'];
         $this->data['description'] = $data['description'];
         $this->data['keyword'] = $data['keywords'];
-        $this->data['content'] = $this->load->view($this->mainTemplate."/about", $this->data, true);
+        $this->data['content'] = $this->load->view($this->mainTemplate."/about_$data[profile_theme]", $this->data, true);
         $this->load->view($this->frameTemplate, $this->data);
     }
 }

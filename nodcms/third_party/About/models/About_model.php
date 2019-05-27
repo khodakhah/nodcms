@@ -19,6 +19,7 @@ class About_model extends NodCMS_Model
             'profile_name'=>"varchar(255) DEFAULT NULL",
             'profile_image'=>"varchar(255) DEFAULT NULL",
             'profile_uri'=>"varchar(255) DEFAULT NULL",
+            'profile_theme'=>"varchar(255) DEFAULT NULL",
             'created_date'=>"int(11) unsigned NOT NULL",
             'public'=>"int(1) unsigned NOT NULL DEFAULT '0'",
         );
