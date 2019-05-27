@@ -19,6 +19,13 @@
                 <?php } ?>
             </button>
         <?php } ?>
+        <?php if(isset($btn_urls) && count($btn_urls)!=0){ ?>
+            <?php foreach($btn_urls as $item){ ?>
+                <a href="<?php echo $item['url']; ?>" class="btn btn-link">
+                    <?php echo $item['label']; ?>
+                </a>
+            <?php } ?>
+        <?php } ?>
     </div>
     <?php if(isset($sub_items) && $sub_items!=""){ ?>
         <ol class="dd-list">
