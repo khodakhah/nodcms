@@ -59,12 +59,14 @@ class General extends NodCMS_Controller
             if(!file_exists(APPPATH."controllers/$item.php")){
                 continue;
             }
-            $url = strtolower($item)."-index";
-            $data = $this->curlWebPage(base_url()."$lang/$url");
-            if(!preg_match("/\<title\>[\s]?Error 404[\s]?\<\/title>/",$data))
-                $index_content .= $data;
-            else
-                $index_content .= "<p style='background: #ff1f00;border:1px solid #b51600;text-align:center;color:#ffffff;font-weight: bold;padding:10px;'>There isn't any index() method in controller/$item.php</p>";
+
+            require_once APPPATH."controllers/$item.php";
+            // Load controller in system
+            if ( ! class_exists($item, FALSE) || !method_exists($item, 'home'))
+            {
+                continue;
+            }
+            $index_content .= $item::home($this);
         }
 
         // Contact page
