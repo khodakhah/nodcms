@@ -63,17 +63,18 @@ class NodCMS_Controller extends CI_Controller{
     function mkPagination($config)
     {
         $this->load->library('pagination');
-        $config["full_tag_open"] = "<nav class='text-center'><ul class='pagination pagination-sm'>";
+        $config["full_tag_open"] = "<nav class='text-center'><ul class='pagination'>";
         $config["full_tag_close"] = "</ul></nav>";
-        $config["first_tag_open"] = $config["last_tag_open"] = $config["next_tag_open"] = $config["prev_tag_open"] = $config["num_tag_open"] = "<li>";
+        $config["first_tag_open"] = $config["last_tag_open"] = $config["next_tag_open"] = $config["prev_tag_open"] = $config["num_tag_open"] = "<li class='page-item'>";
         $config["first_tag_close"] = $config["last_tag_close"] = $config["next_tag_close"] = $config["prev_tag_close"] = $config["num_tag_close"] = "</li>";
         $config["first_link"] = _l("First",$this);
         $config["last_link"] = _l("Last",$this);
         $config["prev_link"] = "<span aria-hidden='TRUE'>&laquo;</span>";
         $config["next_link"] = "<span aria-hidden='TRUE'>&raquo;</span>";
-        $config["cur_tag_open"] = "<li class='active'><span>";
-        $config["cur_tag_close"] = "<span class='sr-only'>(current)</span></span></li>";
+        $config["cur_tag_open"] = "<li class='page-item active'><a href='javascript:;' class='page-link'>";
+        $config["cur_tag_close"] = "<span class='sr-only'>(current)</span></a></li>";
         $config['use_page_numbers']  = TRUE;
+        $config['attributes']  = array('class'=>'page-link');
         $this->pagination->initialize($config);
         $this->data['pagination'] = $this->pagination->create_links();
     }
@@ -668,13 +669,14 @@ class NodCMS_Controller extends CI_Controller{
      */
     function showError($message = null, $status_code = 404, $heading = null, $buttons = array())
     {
+        http_response_code($status_code);
         $this->data["title"] = _l("Error", $this)." $status_code";
         $this->data["status_code"] = $status_code;
         $this->data["heading"] = $heading!=null?$heading:_l("Page not found!", $this);
         $this->data["message"] = $message!=null?$message:_l("Your requested page nof found.", $this);
         $this->data["buttons"] = $buttons;
         $this->data["content"] = $this->load->view("common/show_error", $this->data, true);
-        echo $this->load->view($this->frameTemplate, $this->data, true);
+        echo $this->load->view($this->cleanFrame, $this->data, true);
         exit;
     }
 

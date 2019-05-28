@@ -1019,3 +1019,10 @@ Timeline
     margin-left: 80px; }
   .timeline .timeline-body-arrow {
     top: 17px; } }
+
+// Pagination
+nav.text-center{
+  > ul.pagination{
+    display:inline-flex !important;
+  }
+}
