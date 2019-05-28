@@ -2390,10 +2390,10 @@ class General_admin extends NodCMS_Controller{
                 unset($packages[$key]);
                 continue;
             }
-            $url = strtolower($item)."-index";
-            $data = $this->curlWebPage(base_url().$this->language['code']."/$url");
-            if(!preg_match("/\<title\>[\s]?Error 404[\s]?\<\/title>/",$data) && $data!="")
+            require_once APPPATH."controllers/$item.php";
+            if ( class_exists($item, FALSE) && method_exists($item, 'home')){
                 continue;
+            }
             unset($packages[$key]);
         }
         // Get packages from DB
