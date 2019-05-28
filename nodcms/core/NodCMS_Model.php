@@ -113,7 +113,8 @@ class NodCMS_Model extends CI_Model
     function getCount($conditions = null)
     {
         $this->db->from($this->table_name);
-        if ($conditions != null) $this->db->where($conditions);
+        if ($conditions != null)
+            $this->searchDecode($conditions);
         return $this->db->count_all_results();
     }
 
@@ -128,7 +129,8 @@ class NodCMS_Model extends CI_Model
     {
         $this->db->select("sum($field)");
         $this->db->from($this->table_name);
-        if ($conditions != null) $this->db->where($conditions);
+        if ($conditions != null)
+            $this->db->searchDecode($conditions);
         $query = $this->db->get();
         $result = $query->row_array();
         return count($result)!=0?$result["sum($field)"]:0;
@@ -195,13 +197,13 @@ class NodCMS_Model extends CI_Model
                 if($value == 'null'){
                     continue;
                 }
-                if(preg_match('/^([A-Za-z\_]+)\_\_(like|not_like|or_like|or_not_like)$/', $key, $parameters) == true){
+                if(preg_match('/^([A-Za-z\_]+)(\_\_|\s)(like|not_like|or_like|or_not_like)$/', strtolower($key), $parameters) == true){
                     if($value=='')
                         continue;
                     $values = explode(' ',$value);
                     $this->db->group_start();
                     foreach ($values as $item){
-                        $this->db->$parameters[2]($parameters[1],$item);
+                        $this->db->$parameters[3]($parameters[1],$item);
                     }
                     $this->db->group_end();
                     continue;
@@ -215,7 +217,7 @@ class NodCMS_Model extends CI_Model
                 if($value == 'null'){
                     continue;
                 }
-                if(preg_match('/^([A-Za-z\_]+)\_\_(like|not_like|or_like|or_not_like)$/', $key, $parameters) == true){
+                if(preg_match('/^([a-z\_\.]+)(\_\_|\s)(like|not_like|or_like|or_not_like)$/', strtolower($key), $parameters) == true){
                     if($value=='')
                         continue;
                     $values = explode(' ',$value);
@@ -229,7 +231,7 @@ class NodCMS_Model extends CI_Model
                     $where = "";
                     foreach ($values as $item){
                         if($where!=""){
-                            $where .= $connector[$parameters[2]];
+                            $where .= $connector[$parameters[3]];
                         }else{
                             $where .= "translated_text ";
                         }
@@ -243,6 +245,16 @@ class NodCMS_Model extends CI_Model
                 $this->db->where($this->primary_key." IN (SELECT table_id FROM translations WHERE field_name = '$key' AND translated_text = '$value' AND table_name = '".$this->table_name."' AND language_id = ".$this->language['language_id'].")");
             }
             unset($conditions['trans_search']);
+        }
+        foreach($conditions as $key=>$val){
+            $matches = array();
+            $is_match = preg_match('/^([a-z\_\.]+)[\s](IN|in|NOT IN|not in)/', $key, $matches);
+            if(!$is_match)
+                continue;
+            if(is_array($val))
+                $val = join(',', array_unique($val));
+            $this->db->where("$matches[1] $matches[2] ($val)");
+            unset($conditions[$key]);
         }
         if(count($conditions)!=0){
             $this->db->where($conditions);
