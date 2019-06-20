@@ -98,11 +98,15 @@ class Blog_admin extends NodCMS_Controller
         if($id!=null){
             $data = $this->Blog_posts_model->getOne($id);
             if(count($data)==0){
-                $this->systemError("The post couldn't find.", $back_url);
+                $this->systemError("Couldn't find the post.", $back_url);
                 return;
             }
             $this->data['sub_title'] = _l("Edit", $this);
             $form_attr = array('data-redirect'=>1);
+            $saved_categories = $this->Blog_posts_category_model->getAll(array('post_id'=>$id));
+            if(is_array($saved_categories) && count($saved_categories)!=0){
+                $default_categories = array_column($saved_categories, 'category_id');
+            }
         }else{
             $this->data['sub_title'] = _l("Add", $this);
             $form_attr = array('data-reset'=>1,'data-redirect'=>1);
@@ -156,8 +160,8 @@ class Blog_admin extends NodCMS_Controller
                 'options' => $categories,
                 'option_name' => "category_name",
                 'option_value' => "category_id",
-                'rules' => 'in_list['.join(',',array_column($categories, 'category_id')).']',
-                'default'=>isset($data)?$data['post_categories']:"",
+                'rules' => 'callback_validNumberListExists[Blog_category_model,idExists]',
+                'default'=>isset($default_categories)?$default_categories:"",
             );
         }
         $languages = $this->Public_model->getAllLanguages();
@@ -214,8 +218,9 @@ class Blog_admin extends NodCMS_Controller
                 unset($post_data['translate']);
             }
 
-            if(key_exists('post_categories', $post_data) && is_array($post_data['post_categories'])){
-                $post_data['post_categories'] = join(',', $post_data['post_categories']);
+            if(key_exists('post_categories', $post_data)){
+                $post_categories = explode(',',$post_data['post_categories']);
+                unset($post_data['post_categories']);
             }
 
             if($id!=null){
@@ -223,12 +228,23 @@ class Blog_admin extends NodCMS_Controller
                 if(isset($translates)){
                     $this->Blog_posts_model->updateTranslations($id,$translates,$languages);
                 }
+                if(isset($post_categories)){
+                    $this->Blog_posts_category_model->clean(array('post_id'=>$id));
+                    foreach($post_categories as $category){
+                        $this->Blog_posts_category_model->add(array('category_id'=>$category,'post_id'=>$id));
+                    }
+                }
                 $this->systemSuccess("The post has been edited successfully.", $back_url);
             }
             else{
                 $new_id = $this->Blog_posts_model->add($post_data);
                 if(isset($translates)){
                     $this->Blog_posts_model->updateTranslations($new_id,$translates,$languages);
+                }
+                if(isset($post_categories)){
+                    foreach($post_categories as $category){
+                        $this->Blog_posts_category_model->add(array('category_id'=>$category,'post_id'=>$new_id));
+                    }
                 }
                 $this->systemSuccess("A new post has been added successfully.", $back_url);
             }
@@ -239,6 +255,12 @@ class Blog_admin extends NodCMS_Controller
         $this->data['breadcrumb'] = array(
             array('title'=>_l("Blog Posts", $this), 'url'=>$back_url),
             array('title'=>$this->data['sub_title']));
+        if(isset($data)){
+            $this->data['breadcrumb_options'] = array(
+                array('title'=>$this->data['sub_title'], 'url'=>BLOG_ADMIN_URL."postComments/$data[post_id]", 'active'=>0),
+                array('title'=> _l("Edit", $this), 'url'=>$self_url, 'active'=>1)
+            );
+        }
         $this->data['content'] = $myform->fetch(null,$form_attr);
         $this->data['page'] = "blog_post_submit";
         $this->load->view($this->frameTemplate,$this->data);
@@ -484,5 +506,440 @@ class Blog_admin extends NodCMS_Controller
 
         $this->Blog_category_model->remove($id);
         $this->systemSuccess("The category has been deleted successfully.", $back_url);
+    }
+
+    /**
+     * Comments of a post
+     *
+     * @param $id
+     */
+    function postComments($id)
+    {
+        $back_url = BLOG_ADMIN_URL."posts";
+        $self_url = BLOG_ADMIN_URL."postComments/$id";
+
+        $data = $this->Blog_posts_model->getOne($id);
+        if(count($data)==0){
+            $this->systemError("Couldn't find the post.", $back_url);
+            return;
+        }
+        $this->data['sub_title'] = _l("Comments", $this);
+        $comments = $this->Blog_comments_model->getAll(array('post_id'=>$id, 'reply_to'=>0));
+        foreach ($comments as &$item){
+            $item['language'] = $this->Languages_model->getOne($item['language_id']);
+            $item['reply_url'] = BLOG_ADMIN_URL."commentReply/$item[comment_id]";
+            $item['edit_url'] = BLOG_ADMIN_URL."commentSubmit/$id/$item[comment_id]";
+            $sub_comments = $this->Blog_comments_model->getAll(array('post_id'=>$id, 'reply_to'=>$item['comment_id']));
+            if(is_array($sub_comments) && count($sub_comments)!=0){
+                foreach ($sub_comments as &$sub_item){
+                    $sub_item['language'] = $this->Languages_model->getOne($sub_item['language_id']);
+                    $sub_item['edit_url'] = BLOG_ADMIN_URL."commentSubmit/$id/$sub_item[comment_id]";
+                }
+                $item['sub_items'] = $sub_comments;
+            }
+        }
+
+        $this->data['comments'] = $comments;
+
+        $this->data['title'] = _l("Blog Posts", $this);
+        $this->data['breadcrumb'] = array(
+            array('title'=>_l("Blog Posts", $this), 'url'=>$back_url),
+            array('title'=>$data['post_name']),
+            array('title'=>$this->data['sub_title']));
+        $this->data['breadcrumb_options'] = array(
+            array('title'=>$this->data['sub_title'], 'url'=>$self_url, 'active'=>1),
+            array('title'=> _l("Edit", $this), 'url'=>BLOG_ADMIN_URL."postSubmit/$data[post_id]", 'active'=>0)
+        );
+        $this->data['content'] = $this->load->view($this->mainTemplate."/blog_posts_comments", $this->data, true);
+        $this->data['page'] = "blog_post_submit";
+        $this->load->view($this->frameTemplate,$this->data);
+    }
+
+    /**
+     * Comments list
+     *
+     * @param int $page
+     */
+    function comments($page = 1)
+    {
+        $self_url = BLOG_ADMIN_URL."comments";
+        $config = array(
+            'headers'=>array(
+                array('content'=>"comment_name", 'label'=>_l("Name", $this)),
+                array(
+                    'content'=>"created_date",
+                    'label'=>_l("Date", $this),
+                    'callback_function'=>"my_int_fullDate",
+                ),
+                array(
+                    'label'=>_l("Comment on", $this),
+                    'function'=>function($data){
+                        $_data = $this->Blog_posts_model->getOne($data['post_id']);
+                        if(!is_array($_data) || count($_data)==0){
+                            return "-";
+                        }
+                        return "<a target=\"_blank\" href=\"".BLOG_ADMIN_URL."postComments/$_data[post_id]#comment$data[comment_id]\">$_data[post_name]</a>";
+                    },
+                ),
+                array(
+                    'label'=>_l("User", $this),
+                    'function'=>function($data){
+                        if($data['user_id']==0){
+                            return "-";
+                        }
+                        $_data = $this->Users_model->getOne($data['user_id']);
+                        if(!is_array($_data) || count($_data)==0){
+                            return "-";
+                        }
+                        return "<a href=\"javascript:;\" onclick=\"$.loadInModal('".ADMIN_URL."userProfile/$_data[user_id]');\">$_data[username]</a>";
+                    },
+                ),
+                array(
+                    'content'=>"admin_side",
+                    'label'=>_l("Admin", $this),
+                    'theme'=>"check_icon",
+                ),
+                array(
+                    'content'=>"comment_id",
+                    'label'=>"",
+                    'theme'=>"open_btn",
+                    'url'=>BLOG_ADMIN_URL.'comment/$content#comment$content',
+                ),
+                array(
+                    'content'=>"comment_id",
+                    'label'=>"",
+                    'theme'=>"delete_btn",
+                    'url'=>BLOG_ADMIN_URL.'commentDelete/$content',
+                ),
+            ),
+            'callback_rows'=>array(
+                'check_bold'=>array("comment_read", 0)
+            ),
+            'ajaxURL'=>$self_url,
+            'page'=>$page,
+            'per_page'=>10,
+            'listID'=>"comments-list",
+        );
+        $conditions = null;
+        $search_form = null;
+        $sort_by = array("comment_id", "DESC");
+        $this->load->library("Ajaxlist");
+        $myList = new Ajaxlist;
+
+        $config['total_rows'] = $this->Blog_comments_model->getCount($conditions);
+
+        $myList->setOptions($config);
+
+        if ($this->input->is_ajax_request()) {
+            $result = $this->Blog_comments_model->getAll($conditions, $config['per_page'], $config['page'], $sort_by);
+            echo $myList->ajaxData($result);
+            return;
+        }
+
+        $this->data['title'] = _l("Blog comments", $this);
+        $this->data['sub_title'] = _l('List', $this);
+        $this->data['breadcrumb'] = array(
+            array('title' => $this->data['title']),
+        );
+        $this->data['actions_buttons'] = array(
+            'add'=>BLOG_ADMIN_URL."commentSubmit",
+        );
+
+        $this->data['the_list'] = $myList->getPage();
+        $this->data['content'] = $this->load->view($this->mainTemplate."/data_list", $this->data, true);
+        $this->data['page'] = "blog_comments";
+        $this->load->view($this->frameTemplate,$this->data);
+    }
+
+    /**
+     * View a comment
+     *
+     * @param int $id
+     */
+    function comment($id)
+    {
+        $back_url = BLOG_ADMIN_URL."comments";
+        $self_url = BLOG_ADMIN_URL."comments";
+        $data = $this->Blog_comments_model->getOne($id);
+        if(count($data)==0){
+            $this->systemError("Couldn't find the comment.", $back_url);
+            return;
+        }
+
+        $post = $this->Blog_posts_model->getOne($data['post_id']);
+        if(!is_array($post) || count($post)==0){
+            $this->systemError("Couldn't find the post.", $back_url);
+            return;
+        }
+
+        $language = $this->Languages_model->getOne($data['language_id']);
+
+        if($data['reply_to']==0){
+            $data['language'] = $language;
+            $data['edit_url'] = BLOG_ADMIN_URL."commentSubmit/$post[post_id]/$id";
+            $data['reply_url'] = BLOG_ADMIN_URL."commentReplay/$id";
+            $sub_comments = $this->Blog_comments_model->getAll(array('post_id'=>$id, 'reply_to'=>$data['comment_id']));
+            if(is_array($sub_comments) && count($sub_comments)!=0){
+                foreach ($sub_comments as &$sub_item){
+                    $sub_item['language'] = $this->Languages_model->getOne($sub_item['language_id']);
+                    $sub_item['edit_url'] = BLOG_ADMIN_URL."commentSubmit/$data[post_id]/$sub_item[comment_id]";
+                }
+                $item['sub_items'] = $sub_comments;
+            }
+            $this->data['item'] = $data;
+        }
+        else{
+            $item = $this->Blog_comments_model->getOne($data['reply_to']);
+            $item['language'] = $this->Languages_model->getOne($item['language_id']);
+            $item['edit_url'] = BLOG_ADMIN_URL."commentSubmit/$item[post_id]/$item[comment_id]";
+            $item['reply_url'] = BLOG_ADMIN_URL."commentReplay/$item[comment_id]";
+            $sub_comments = $this->Blog_comments_model->getAll(array('post_id'=>$item['post_id'], 'reply_to'=>$item['comment_id']));
+            if(is_array($sub_comments) && count($sub_comments)!=0){
+                foreach ($sub_comments as &$sub_item){
+                    $sub_item['language'] = $this->Languages_model->getOne($sub_item['language_id']);
+                    $sub_item['edit_url'] = BLOG_ADMIN_URL."commentSubmit/$id/$sub_item[comment_id]";
+                }
+                $item['sub_items'] = $sub_comments;
+            }
+            $this->data['item'] = $item;
+        }
+
+        $this->data['post'] = $post;
+
+        if($data['comment_read']==0){
+            $this->Blog_comments_model->edit($id, array('comment_read'=>1));
+        }
+
+        if($data['reply_to']!=0){
+            $parent = $this->Blog_comments_model->getOne($data['reply_to']);
+            if(!is_array($parent) || count($parent)==0){
+                $this->systemError("Couldn't find the parent's comment.", $back_url);
+                return;
+            }
+            $conditions = array('reply_to'=>$data['reply_to'], 'comment_id<>'=>$id);
+            $childes = $this->Blog_comments_model->getAll($conditions, null, 1, array('comment_id', 'DESC'));
+            if(is_array($childes) && count($childes)!=0){
+                $comments = $childes;
+            }
+        }
+
+        $this->data['data'] = $data;
+        $this->data['comment_post'] = $post;
+
+        $this->data['title'] = _l("Blog's comments",$this);
+        $this->data['breadcrumb'] = array(
+            array('title'=>$this->data['title'], 'url'=>$back_url),
+            array('title'=>str_replace("{data}", $data['comment_name'], _l("{data}'s comment", $this))));
+        $this->data['content'] = $this->load->view($this->mainTemplate."/blog_comment", $this->data, true);
+        $this->data['page'] = "blog_category_submit";
+        $this->load->view($this->frameTemplate,$this->data);
+    }
+
+    /**
+     * Add/Edit a comment
+     *
+     * @param int $post_id
+     * @param null|int $id
+     */
+    function commentSubmit($post_id, $id = null)
+    {
+        $back_url = BLOG_ADMIN_URL."comments";
+        $self_url = BLOG_ADMIN_URL."commentSubmit/$id";
+
+        $post = $this->Blog_posts_model->getOne($post_id);
+        if(!is_array($post) || count($post)==0){
+            $this->systemError("Couldn't find the post.", $back_url);
+            return;
+        }
+
+        if($id!=null){
+            $data = $this->Blog_comments_model->getOne($id);
+            if(count($data)==0){
+                $this->systemError("Couldn't find the comment.", $back_url);
+                return;
+            }
+            $this->data['sub_title'] = _l("Edit", $this);
+            $form_attr = array('data-redirect'=>1);
+        }else{
+            $this->data['sub_title'] = _l("Add", $this);
+            $form_attr = array('data-reset'=>1,'data-redirect'=>1);
+        }
+
+        $myform = new Form();
+        $config = array(
+            array(
+                'field' => 'comment_content',
+                'label' => _l("Comment", $this),
+                'type' => "textarea",
+                'rules' => 'required',
+                'default'=>isset($data)?$data['comment_content']:"",
+            ),
+        );
+        if(isset($data)){
+            array_unshift($config, array(
+                'field' => 'comment_name',
+                'label' => _l("Name", $this),
+                'type' => "text",
+                'rules' => 'required',
+                'default'=>isset($data)?$data['comment_name']:"",
+            ));
+            $language = $this->Languages_model->getOne($data['language_id']);
+            array_unshift($config, array(
+                'field'=>"language_id",
+                'label'=>_l("Language", $this),
+                'type'=>"static",
+                'value'=>$language['language_title'],
+            ));
+        }else{
+            $languages = $this->Languages_model->getAll();
+            array_unshift($config, array(
+                'field'=>"language_id",
+                'label'=>_l("Language", $this),
+                'type'=>"select",
+                'options'=>$languages,
+                'option_name'=>"language_title",
+                'option_value'=>"language_id",
+                'default'=>$this->language['language_id'],
+            ));
+        }
+
+        $myform->config($config, $self_url, 'post', 'ajax');
+        if($myform->ispost()){
+            if(!$this->checkAccessGroup(1))
+                return;
+            $post_data = $myform->getPost();
+            // Stop Page
+            if($post_data === false || !is_array($post_data)){
+                return;
+            }
+
+            if($id!=null){
+                $this->Blog_comments_model->edit($id, $post_data);
+                $this->systemSuccess("The comment has been edited successfully.", $back_url);
+            }
+            else{
+                $post_data['post_id'] = $post_id;
+                $new_id = $this->Blog_comments_model->add($post_data);
+                $this->systemSuccess("A new comment has been added successfully.", $back_url);
+            }
+            return;
+        }
+
+        $myform->data['form_title'] = _l("Blog comments", $this);
+        echo $myform->fetch("", $form_attr);
+    }
+
+    /**
+     * Replay to a comment
+     *
+     * @param int $id
+     */
+    function commentReply($id)
+    {
+        $back_url = BLOG_ADMIN_URL."comments";
+        $self_url = BLOG_ADMIN_URL."commentReply/$id";
+
+        $data = $this->Blog_comments_model->getOne($id);
+        if(count($data)==0){
+            $this->systemError("Couldn't find the comment.", $back_url);
+            return;
+        }
+
+        $this->data['sub_title'] = _l("Replay", $this);
+
+        $language = $this->Languages_model->getOne($data['language_id']);
+        $form_attr = array('data-redirect'=>1);
+        $myform = new Form();
+        $config = array(
+            array(
+                'field'=>"language_id",
+                'label'=>_l("Language", $this),
+                'type'=>"static",
+                'value'=>$language['language_title'],
+            ),
+            array(
+                'field' => 'comment',
+                'label' => _l("Comment", $this),
+                'type' => "static",
+                'value'=>$data['comment_content'],
+            ),
+            array(
+                'field' => 'comment_content',
+                'label' => _l("Replay", $this),
+                'type' => "textarea",
+                'rules' => 'required',
+            ),
+        );
+
+        $myform->config($config, $self_url, 'post', 'ajax');
+        if($myform->ispost()){
+            if(!$this->checkAccessGroup(1))
+                return;
+            $post_data = $myform->getPost();
+            // Stop Page
+            if($post_data === false || !is_array($post_data)){
+                return;
+            }
+
+            $post_data['language_id'] = $data['language_id'];
+            $post_data['reply_to'] = $data['reply_to']!=0?$data['reply_to']:$id;
+            $post_data['user_id'] = $this->userdata['user_id'];
+            $post_data['post_id'] = $data['post_id'];
+            $post_data['admin_side'] = 1;
+            $post_data['comment_read'] = 1;
+            $post_data['comment_name'] = $this->userdata['fullname'];
+
+            $new_id = $this->Blog_comments_model->add($post_data);
+            $this->systemSuccess("The comment's replay has been added successfully.", $back_url);
+            return;
+        }
+
+        if($data['comment_read']==0){
+            $this->Blog_comments_model->edit($id, array('comment_read'=>1));
+        }
+
+        $myform->data['form_title'] = _l("Comment replay", $this);
+        echo $myform->fetch("", $form_attr);
+    }
+
+    /**
+     * Delete a comment
+     *
+     * @param $id
+     * @param int $confirm
+     */
+    function commentDelete($id, $confirm = 0)
+    {
+        if(!$this->checkAccessGroup(1))
+            return;
+
+        $back_url = BLOG_ADMIN_URL."comments";
+        $self_url = BLOG_ADMIN_URL."commentDelete/$id";
+        $data = $this->Blog_comments_model->getOne($id);
+        if(count($data)==0){
+            $this->systemError("Couldn't find the comment.", $back_url);
+            return;
+        }
+
+        if($confirm!=1){
+            echo json_encode(array(
+                'status'=>'success',
+                'content'=>'<p class="text-center">'._l("This action will delete the comment and its sub conversations from database.", $this).
+                    '<br>'._l("After this, you will not to able to restore it.", $this).'</p>'.
+                    '<p class="text-center font-lg bold">'._l("Are you sure to delete this?", $this).'</p>',
+                'title'=>_l("Delete confirmation", $this),
+                'noBtnLabel'=>_l("Cancel", $this),
+                'yesBtnLabel'=>_l("Yes, delete it.", $this),
+                'confirmUrl'=>"$self_url/1",
+                'redirect'=>1,
+            ));
+            return;
+        }
+
+        if($data['reply_to']==0){
+            $this->Blog_comments_model->clean(array('reply_to'=>$id));
+        }
+        $this->Blog_comments_model->remove($id);
+        $this->systemSuccess("The comment has been deleted successfully.", $back_url);
     }
 }
