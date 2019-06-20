@@ -814,9 +814,9 @@ function translate(value){
         // Handle hidden and display elements with checking the check boxes
         the_parent.find('input[type="checkbox"][data-role="toggle-hidden"]').click(function () {
             if($(this).is(":checked"))
-                $($(this).data('target')).removeClass("hidden");
+                $($(this).data('target')).removeClass("d-none");
             else
-                $($(this).data('target')).addClass("hidden");
+                $($(this).data('target')).addClass("d-none");
         });
     };
 }(jQuery));

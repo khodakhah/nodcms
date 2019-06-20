@@ -62,7 +62,7 @@
                 $.each(data, function (key, value) {
                     var row_class = value.row_class;
                     if (value.row_bold == 1)
-                        row_class += ' bold';
+                        row_class += ' font-weight-bold';
                     html_result += '<tr id="' + value.row_id + '" class="' + row_class + ' normal-table-rows">';
                     $.each(value.columns, function (index, item) {
                         html_result += '<td>' + item.content + '</td>';
