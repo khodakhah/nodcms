@@ -25,7 +25,7 @@ class Services_model extends NodCMS_Model
             'sort_order'=>"int(11) unsigned DEFAULT NULL",
         );
         $foreign_tables = null;
-        $translation_fields = array('title','description','keywords','content');
+        $translation_fields = array('title','home_preview','description','keywords','content');
         parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
 }

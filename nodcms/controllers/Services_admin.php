@@ -46,7 +46,7 @@ class Services_admin extends NodCMS_Controller
         $this->data['max_depth'] = 1;
         $this->data['list_items'] = join("\n", $list_items);
 
-        $this->data['page'] = "services";
+        $this->data['page'] = "services_list";
         $this->data['content'] = $this->load->view($this->mainTemplate.'/list_sort',$this->data,true);
         $this->load->view($this->frameTemplate,$this->data);
     }
@@ -79,33 +79,11 @@ class Services_admin extends NodCMS_Controller
 
         $config = array(
             array(
-                'field' => 'service_uri',
-                'label' => _l("Service URI", $this),
-                'rules' => 'required|callback_validURI|callback_isUnique[services,service_uri'.(isset($current_data)?",service_id,$current_data[service_id]":"").']',
-                'type' => "text",
-                'default'=>isset($current_data)?$current_data["service_uri"]:'',
-                'input_prefix'=>base_url().$this->language['code']."/service/",
-            ),
-            array(
                 'field' => 'service_name',
                 'label' => _l("Name", $this),
                 'rules' => 'required',
                 'type' => "text",
                 'default'=>isset($current_data)?$current_data["service_name"]:''
-            ),
-            array(
-                'field' => 'service_icon',
-                'label' => _l("Font Icon", $this),
-                'rules' => '',
-                'type' => "icons",
-                'default'=>isset($current_data)?$current_data["service_icon"]:''
-            ),
-            array(
-                'field' => 'service_image',
-                'label' => _l("Image", $this),
-                'rules' => '',
-                'type' => "image-library",
-                'default'=>isset($current_data)?$current_data["service_image"]:''
             ),
             array(
                 'field' => 'service_public',
@@ -114,14 +92,50 @@ class Services_admin extends NodCMS_Controller
                 'type' => "switch",
                 'default'=>isset($current_data)?$current_data["service_public"]:''
             ),
-            array(
-                'label'=>_l('Page content',$this),
-                'type'=>"h3",
-            ),
         );
 
-        $myform = new Form();
-        $myform->config($config, $self_url, 'post', 'ajax');
+        if($this->settings['services_display_mode']=="icon") {
+            $config[] = array(
+                'field' => 'service_icon',
+                'label' => _l("Font Icon", $this),
+                'rules' => '',
+                'type' => "icons",
+                'default' => isset($current_data) ? $current_data["service_icon"] : ''
+            );
+        }
+        elseif($this->settings['services_display_mode']=="image"){
+            $config[] = array(
+                'field' => 'service_image',
+                'label' => _l("Image", $this),
+                'rules' => '',
+                'type' => "image-library",
+                'default'=>isset($current_data)?$current_data["service_image"]:''
+            );
+        }
+
+        if($this->settings['services_display_price']){
+            $config[] = array(
+                'field' => 'service_price',
+                'label' => _l("Price", $this),
+                'type' => "currency",
+                'rules' => 'callback_validCurrency',
+                'divider' => '.',
+                'after_sign' => $this->settings['currency_code'],
+                'default'=>isset($current_data)?$this->currency->formatFloat($current_data['service_price']):"",
+            );
+        }
+
+        if($this->settings['services_page']){
+            $config[] = array(
+                'field' => 'service_uri',
+                'label' => _l("Service URI", $this),
+                'rules' => 'required|callback_validURI|callback_isUnique[services,service_uri'.(isset($current_data)?",service_id,$current_data[service_id]":"").']',
+                'type' => "text",
+                'default'=>isset($current_data)?$current_data["service_uri"]:'',
+                'input_prefix'=>base_url().$this->language['code']."/service/",
+            );
+        }
+
         $languages = $this->Languages_model->getAll();
         foreach($languages as $language){
             $translate = $this->Services_model->getTranslations($id, $language['language_id']);
@@ -146,27 +160,29 @@ class Services_admin extends NodCMS_Controller
                 'type'=>"textarea",
                 'default'=>isset($translate['home_preview'])?$translate['home_preview']:'',
             ));
-            array_push($config, array(
-                'field'=>$prefix."[description]",
-                'label'=>_l("Description", $this),
-                'rules'=>"",
-                'type'=>"textarea",
-                'default'=>isset($translate['description'])?$translate['description']:'',
-            ));
-            array_push($config, array(
-                'field'=>$prefix."[keywords]",
-                'label'=>_l("Keywords", $this),
-                'rules'=>"",
-                'type'=>"textarea",
-                'default'=>isset($translate['keywords'])?$translate['keywords']:'',
-            ));
-            array_push($config, array(
-                'field'=>$prefix."[content]",
-                'label'=>_l("Page Content", $this),
-                'rules'=>"",
-                'type'=>"texteditor",
-                'default'=>isset($translate['content'])?$translate['content']:'',
-            ));
+            if($this->settings['services_page']) {
+                array_push($config, array(
+                    'field'=>$prefix."[description]",
+                    'label'=>_l("Description", $this),
+                    'rules'=>"",
+                    'type'=>"textarea",
+                    'default'=>isset($translate['description'])?$translate['description']:'',
+                ));
+                array_push($config, array(
+                    'field'=>$prefix."[keywords]",
+                    'label'=>_l("Keywords", $this),
+                    'rules'=>"",
+                    'type'=>"textarea",
+                    'default'=>isset($translate['keywords'])?$translate['keywords']:'',
+                ));
+                array_push($config, array(
+                    'field'=>$prefix."[content]",
+                    'label'=>_l("Page Content", $this),
+                    'rules'=>"",
+                    'type'=>"texteditor",
+                    'default'=>isset($translate['content'])?$translate['content']:'',
+                ));
+            }
         }
 
         $myform = new Form();
@@ -273,5 +289,68 @@ class Services_admin extends NodCMS_Controller
 
         $this->Services_model->remove($id);
         $this->systemSuccess("Service has been deleted successfully.", $back_url);
+    }
+
+    function settings()
+    {
+        $self_url = SERVICES_ADMIN_URL."settings";
+        $back_url = SERVICES_ADMIN_URL."services";
+        $this->data['title'] = _l("Services Settings",$this);
+
+        $display_modes = array(
+            array('name'=>_l("With image", $this),'value'=>"image"),
+            array('name'=>_l("With icon", $this),'value'=>"icon"),
+        );
+        $config = array(
+            array(
+                'field' => 'services_display_mode',
+                'label' => _l('Display mode',$this),
+                'rules' => 'required|in_list['.join(",", array_column($display_modes, "value")).']',
+                'type' => "select-radio",
+                'options'=>$display_modes,
+                'option_name'=>"name",
+                'option_value'=>"value",
+                'default'=>$this->settings["services_display_mode"]
+            ),
+            array(
+                'field' => 'services_display_price',
+                'label' => _l('Display prices',$this),
+                'rules' => 'required|in_list[0,1]',
+                'type' => "switch",
+                'default'=>$this->settings["services_display_price"]
+            ),
+            array(
+                'field' => 'services_page',
+                'label' => _l("Content page", $this),
+                'help' => _l("Create a web page for each service to have some content.", $this),
+                'rules' => 'required|in_list[0,1]',
+                'type' => "switch",
+                'default'=>$this->settings["services_page"]
+            ),
+        );
+
+        $myform = new Form();
+        $myform->config($config, $self_url, 'post', 'ajax');
+
+        if($myform->ispost()){
+            $this->checkAccessGroup(1);
+            $data = $myform->getPost();
+            // Stop Page
+            if($data == null){
+                return;
+            }
+            $this->Nodcms_admin_model->updateSettings($data);
+            $this->systemSuccess("Your Setting has been updated successfully!", $self_url);
+            return;
+        }
+
+        $this->data['breadcrumb'] = array(
+            array('title'=>_l("Services", $this),'url'=>$back_url),
+            array('title'=>$this->data['title']),
+        );
+
+        $this->data['page'] = "services_settings";
+        $this->data['content'] = $myform->fetch();
+        $this->load->view($this->frameTemplate,$this->data);
     }
 }

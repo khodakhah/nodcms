@@ -9,3 +9,4 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 $route['admin-services/(.+)'] = "Services_admin/$1";
+$route['([a-z]{2})/service-([a-z0-9\-\.]+)'] = 'Services/service/$1/$2';
