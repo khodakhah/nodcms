@@ -23,4 +23,14 @@ class Blog_category_model extends NodCMS_Model
         $translation_fields = array('title');
         parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
+
+    function idExists($values)
+    {
+        $this->db->select('category_id');
+        $this->db->from("blog_categories");
+        $this->db->where("category_id IN ($values)");
+        $query = $this->db->get();
+        $result = $query->result_array();
+        return $result!=null?array_column($result, "category_id"):array();
+    }
 }

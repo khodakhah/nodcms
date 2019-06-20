@@ -10,13 +10,23 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class BlogHooks extends NodcmsHooks
 {
-    function backend()
-    {
-        define('BLOG_ADMIN_URL',base_url().'admin-blog/');
+    private function necessary(){
         $this->CI->load->add_package_path(APPPATH."third_party/Blog");
         $this->CI->load->model("Blog_posts_model");
         $this->CI->load->model("Blog_category_model");
+        $this->CI->load->model("Blog_posts_category_model");
+        $this->CI->load->model("Blog_comments_model");
+        $this->CI->settings = array_merge(array(
+            'blog_comments_private'=>0,
+            'blog_private_preview'=>0,
+        ), $this->CI->settings);
+    }
 
+    function backend()
+    {
+        define('BLOG_ADMIN_URL',base_url().'admin-blog/');
+        $this->necessary();
+        $unread_comments_count = $this->CI->Blog_comments_model->getCount(array('comment_read'=>0));
         if($this->CI->userdata["group_id"]==1){
             $addon_sidebar = array(
                 'blog' => array(
@@ -24,6 +34,11 @@ class BlogHooks extends NodcmsHooks
                     'icon'=>'far fa-window-maximize',
                     'title'=>_l("Blog", $this->CI),
                     'sub_menu'=>array(
+                        'blog_comments' => array(
+                            'url'=>BLOG_ADMIN_URL.'comments',
+                            'title'=>_l("Client's Comments", $this->CI).
+                                ($unread_comments_count>0?" <span class='badge badge-danger'>$unread_comments_count</span>":""),
+                        ),
                         'blog_posts' => array(
                             'url'=>BLOG_ADMIN_URL.'posts',
                             'title'=>_l("Posts", $this->CI),
@@ -37,5 +52,10 @@ class BlogHooks extends NodcmsHooks
             );
             $this->CI->addToAdminSidebar($addon_sidebar);
         }
+    }
+
+    function preset($lang)
+    {
+        $this->necessary();
     }
 }
