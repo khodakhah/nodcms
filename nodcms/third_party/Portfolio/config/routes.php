@@ -10,3 +10,4 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 $route['admin-portfolio/(.+)'] = "Portfolio_admin/$1";
+$route['([a-z]{2})/portfolio-([0-9]+)'] = "Portfolio/portfolio/$1/$2";
