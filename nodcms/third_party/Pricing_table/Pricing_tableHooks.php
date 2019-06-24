@@ -10,12 +10,22 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Pricing_tableHooks extends NodcmsHooks
 {
-    function backend()
+    private function necessary()
     {
-        define('PRICING_TABLE_ADMIN_URL',base_url().'admin-pricing-table/');
         $this->CI->load->add_package_path(APPPATH."third_party/Pricing_table");
         $this->CI->load->model("Pricing_table_model");
         $this->CI->load->model("Pricing_table_record_model");
+        $this->CI->settings = array_merge(array(
+            'pricing_table_page_title'=> _l("Prices", $this->CI),
+            'pricing_table_page_description'=>"",
+            'pricing_table_page_keywords'=>"",
+        ), $this->CI->settings);
+    }
+
+    function backend()
+    {
+        define('PRICING_TABLE_ADMIN_URL',base_url().'admin-pricing-table/');
+        $this->necessary();
 
         if($this->CI->userdata["group_id"]==1){
             $addon_sidebar = array(
@@ -27,5 +37,10 @@ class Pricing_tableHooks extends NodcmsHooks
             );
             $this->CI->addToAdminSidebar($addon_sidebar);
         }
+    }
+
+    function preset($lang)
+    {
+        $this->necessary();
     }
 }

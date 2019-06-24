@@ -19,7 +19,7 @@ class Pricing_table_record_model extends NodCMS_Model
             'table_id'=>"INT(11) UNSIGNED NOT NULL DEFAULT '0'",
             'record_name'=>"VARCHAR(255) NULL DEFAULT NULL",
             'sort_order'=>"INT(11) UNSIGNED NULL DEFAULT NULL",
-            'table_public'=>"INT(1) UNSIGNED NOT NULL DEFAULT '0'",
+            'record_public'=>"INT(1) UNSIGNED NOT NULL DEFAULT '0'",
         );
         $foreign_tables = null;
         $translation_fields = array('label');

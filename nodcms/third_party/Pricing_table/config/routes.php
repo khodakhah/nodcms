@@ -10,3 +10,4 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 $route['admin-pricing-table/(.+)'] = "Pricing_table_admin/$1";
+$route['([a-z]{2})/prices'] = "Pricing_table/prices/$1";
