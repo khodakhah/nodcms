@@ -9,12 +9,17 @@
 
 class GalleryHooks extends NodcmsHooks
 {
-    function backend()
+    private function necessary()
     {
-        define('GALLERY_ADMIN_URL',base_url().'admin-gallery/');
         $this->CI->load->add_package_path(APPPATH."third_party/Gallery");
         $this->CI->load->model("Gallery_model");
         $this->CI->load->model("Gallery_images_model");
+    }
+
+    function backend()
+    {
+        define('GALLERY_ADMIN_URL',base_url().'admin-gallery/');
+        $this->necessary();
 
         if($this->CI->userdata["group_id"]==1){
             $addon_sidebar = array(
@@ -26,5 +31,10 @@ class GalleryHooks extends NodcmsHooks
             );
             $this->CI->addToAdminSidebar($addon_sidebar);
         }
+    }
+
+    function preset($lang)
+    {
+        $this->necessary();
     }
 }
