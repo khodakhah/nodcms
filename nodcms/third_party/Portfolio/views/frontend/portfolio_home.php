@@ -9,7 +9,7 @@
         <div class="portfolio-content portfolio-3">
             <div class="clearfix"></div>
             <?php if(isset($data_list) && count($data_list)!=0){ ?>
-                <div id="js-grid-lightbox-gallery" class="cbp">
+                <div data-role="portfolio" class="cbp">
                     <?php foreach($data_list as $item){ ?>
                         <div class="cbp-item print motion">
                             <a href="<?php echo base_url().$this->language['code']."/portfolio-$item[portfolio_id]"; ?>" class="cbp-caption cbp-singlePageInline" data-title="<?php echo $item['title']; ?>" rel="nofollow">
