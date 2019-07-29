@@ -19,6 +19,7 @@ class ServicesHooks extends NodcmsHooks
             'services_display_mode'=>"image", // Or "icon"
             'services_display_price'=>0,
             'services_page'=>0,
+            'services_page_title'=>_l("Services", $this->CI),
         ), $this->CI->settings);
     }
 

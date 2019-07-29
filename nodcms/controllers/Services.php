@@ -32,6 +32,7 @@ class Services extends NodCMS_Controller
                 }
             $CI->data['data_list'] = $data_list;
         }
+        $CI->data['title'] = $CI->settings['services_page_title'];
         return $CI->load->view($CI->mainTemplate."/services_home", $CI->data, true);
     }
 

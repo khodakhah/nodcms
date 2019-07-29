@@ -13,7 +13,7 @@
                                 </div>
                                 <?php if(isset($item['records']) && count($item['records'])!=0){ ?>
                                     <?php foreach($item['records'] as $j=>$record){ ?>
-                                        <div class="<?php echo $j>0?"border-top-1":""; ?>">
+                                        <div class="<?php echo $j>0?"border-top-1":""; ?> padding-top-10 padding-bottom-10">
                                             <?php echo $record['label']; ?>
                                         </div>
                                     <?php } ?>

@@ -1,7 +1,7 @@
 <?php $this->load->addCSSFile("assets/plugins/cubeportfolio/css/cubeportfolio"); ?>
 <?php $this->load->addJsFile("assets/plugins/cubeportfolio/js/jquery.cubeportfolio.min"); ?>
 <?php $this->load->addJsFile("assets/nodcms/Packages/Gallery/gallery-images"); ?>
-<div class="bg-theme padding-top-20 padding-bottom-20">
+<div class="bg-grey-cararra padding-top-20 padding-bottom-20">
     <div class="container">
         <div class="">
             <div class="row">

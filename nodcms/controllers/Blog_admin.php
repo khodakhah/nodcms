@@ -942,4 +942,78 @@ class Blog_admin extends NodCMS_Controller
         $this->Blog_comments_model->remove($id);
         $this->systemSuccess("The comment has been deleted successfully.", $back_url);
     }
+
+    function settings()
+    {
+        $self_url = BLOG_ADMIN_URL."settings";
+        $back_url = BLOG_ADMIN_URL."posts";
+        $this->data['title'] = _l("Blog Settings",$this);
+
+        $config = array();
+
+        $languages = $this->Languages_model->getAll();
+        foreach($languages as $language){
+            $prefix = "options[$language[language_id]]";
+            $setting = $this->Public_model->getSettings($language['language_id']);
+            $config[] = array(
+                'label'=>$language['language_title'],
+                'type'=>"h4",
+                'prefix_language'=>$language,
+            );
+            $config[] = array(
+                'field'=>$prefix."[blog_page_title]",
+                'label' => _l("Page title", $this),
+                'rules' => "",
+                'type' => "text",
+                'default'=>isset($setting['blog_page_title'])?$setting['blog_page_title']:'',
+            );
+            $config[] = array(
+                'field'=>$prefix."[blog_page_description]",
+                'label' => _l("Page description", $this),
+                'rules' => "",
+                'type' => "textarea",
+                'default'=>isset($setting['blog_page_description'])?$setting['blog_page_description']:'',
+            );
+            $config[] = array(
+                'field'=>$prefix."[blog_page_keywords]",
+                'label' => _l("Page keywords", $this),
+                'rules' => "",
+                'type' => "textarea",
+                'default'=>isset($setting['blog_page_keywords'])?$setting['blog_page_keywords']:'',
+            );
+        }
+        $myform = new Form();
+        $myform->config($config, $self_url, 'post', 'ajax');
+
+        if($myform->ispost()){
+            $this->checkAccessGroup(1);
+            $data = $myform->getPost();
+            // Stop Page
+            if($data == null){
+                return;
+            }
+            $this->Nodcms_admin_model->updateSettings($data);
+            if(isset($data["options"])){
+                foreach($data["options"] as $language_id=>$item){
+                    if(!$this->Nodcms_admin_model->updateSettings($item, $language_id)){
+                        $this->systemError("A settings options could not be saved.", $this);
+                        return;
+                    }
+                }
+                unset($data["options"]);
+            }
+            $this->systemSuccess("Your Setting has been updated successfully!", $self_url);
+            return;
+        }
+
+        $this->data['breadcrumb'] = array(
+            array('title'=>_l("Services", $this),'url'=>$back_url),
+            array('title'=>$this->data['title']),
+        );
+
+        $this->data['page'] = "services_settings";
+        $this->data['content'] = $myform->fetch();
+        $this->load->view($this->frameTemplate,$this->data);
+    }
+
 }

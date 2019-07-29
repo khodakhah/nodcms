@@ -1,13 +1,13 @@
-<div class="bg-theme">
+<div class="bg-header navbar-bordered">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-2 col-sm-6">
-                <a class="img-fluid" href="<?php echo base_url(); ?>">
-                    <img src="<?php echo base_url().$this->settings["logo"]; ?>" alt="<?php echo $this->settings["company"]; ?>" title="<?php echo $this->settings["company"]; ?>">
+                <a href="<?php echo base_url(); ?>">
+                    <img class="img-fluid site-logo" src="<?php echo base_url().$this->settings["logo"]; ?>" alt="<?php echo $this->settings["company"]; ?>" title="<?php echo $this->settings["company"]; ?>">
                 </a>
             </div>
             <div class="col-md-2 col-sm-6 order-md-12">
-                <div class="navbar navbar-expand-lg navbar-light navbar-top bg-theme">
+                <div class="navbar navbar-expand-lg navbar-light navbar-top">
                     <ul class="navbar-nav">
                         <?php if(isset($languages) && count($languages)>1){ ?>
                             <li class="nav-item dropdown dropdown-language">

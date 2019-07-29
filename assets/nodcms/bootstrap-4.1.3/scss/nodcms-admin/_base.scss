@@ -172,7 +172,13 @@ input[type="checkbox"],input[type="radio"]{
 .dropdown-user{
   > a{
     > img.user-avatar-img {
-      height: 32px;
+      height: 28px;
+    }
+  }
+  .navbar-nav{
+    color: $navbar-main-font-color;
+    &:hover{
+      color: $navbar-main-font-color-hover;
     }
   }
 }
@@ -202,6 +208,9 @@ input[type="checkbox"],input[type="radio"]{
 // * End user menu
 
 // * Navbar
+.site-logo{
+  max-height: $header-top-height;
+}
 @include media-breakpoint-down(xs){
   .navbar{
     position: relative;
@@ -241,6 +250,22 @@ input[type="checkbox"],input[type="radio"]{
         }
       }
     }
+  }
+}
+.navbar{
+  .navbar-nav{
+    .nav-link{
+      color: $navbar-main-font-color;
+      &:hover{
+        color: $navbar-main-font-color-hover;
+      }
+    }
+  }
+  .dropdown-menu{
+    border-color: $navbar-main-border-color;
+  }
+  .dropdown-item{
+    color: $navbar-main-font-color;
   }
 }
 // * End navbar
@@ -699,8 +724,8 @@ input[type="checkbox"],input[type="radio"]{
   border:0;
 }
 
-.bg-theme{
-  background-color:$brand-main-color;
+.bg-header{
+  background:$header-bg-color;
 }
 .font-theme{
   color:$brand-main-color;

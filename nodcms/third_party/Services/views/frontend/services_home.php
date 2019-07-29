@@ -1,6 +1,7 @@
 <?php if(isset($data_list) && count($data_list)){ ?>
     <div class="padding-top-20 padding-bottom-20">
         <div class="container">
+            <h2 class="text-center margin-bottom-20"><?php echo $title; ?></h2>
             <div class="row justify-content-center">
                 <?php foreach ($data_list as $item){ ?>
                     <div class="col-md-3">

@@ -21,6 +21,7 @@ class Blog extends NodCMS_Controller
             $item['post_url'] = base_url().$CI->language['code']."/blog-post-$item[post_id]";
         }
         $CI->data['data_list'] = $data_list;
+        $CI->data['title'] = $CI->settings['blog_page_title'];
         return $CI->load->view($CI->mainTemplate."/blog_home", $CI->data, true);
     }
 

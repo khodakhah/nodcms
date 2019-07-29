@@ -6,6 +6,7 @@ $brand-header-font-family: "";
 $brand-font-awesome: "Font Awesome 5 Free";
 $brand-main-color: #3c4454 !default;
 $brand-main-font-color: #f3f6ff !default;
+$brand-main-border-color: #f3f6ff !default;
 $brand-light-color: #58677e !default;
 $brand-light-font-color: #ffffff !default;
 $brand-btn-color: $brand-main-color;
@@ -39,8 +40,8 @@ $navbar-main-mobile-border-color: darken($brand-main-color, 3%);
 $navbar-main-mobile-submenu-bg: lighten($navbar-main-mobile-bg, 3%);
 $navbar-main-mobile-submenu-hover-bg: darken($navbar-main-mobile-bg, 3%);
 $navbar-top-bg: #ffffff !default;
-$navbar-top-dropdown-bg: darken($brand-main-color,10%);
-$navbar-top-dropdown-hover-bg: darken($navbar-top-bg, 5%);
+$navbar-top-dropdown-bg: darken($navbar-main-bg,10%);
+$navbar-top-dropdown-hover-bg: darken($navbar-main-bg, 5%);
 // Body and header
 $bg-color: #ffffff !default;
 $header-bg-color:                                                  		$brand-main-color;

@@ -1,6 +1,7 @@
 <?php if(isset($data_list) && count($data_list)!=0){ ?>
     <div class="padding-top-40 padding-bottom-40">
         <div class="container">
+            <h2 class="text-center margin-bottom-20"><?php echo $title; ?></h2>
             <div class="row">
                 <?php foreach($data_list as $i=>$item){ ?>
                     <div class="col-md-4">
@@ -12,7 +13,7 @@
                                 </div>
                                 <?php if(isset($item['records']) && count($item['records'])!=0){ ?>
                                     <?php foreach($item['records'] as $j=>$record){ ?>
-                                        <div class="<?php echo $j>0?"border-top-1":""; ?>">
+                                        <div class="<?php echo $j>0?"border-top-1":""; ?> padding-top-10 padding-bottom-10">
                                             <?php echo $record['label']; ?>
                                         </div>
                                     <?php } ?>

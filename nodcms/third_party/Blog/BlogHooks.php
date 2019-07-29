@@ -19,6 +19,9 @@ class BlogHooks extends NodcmsHooks
         $this->CI->settings = array_merge(array(
             'blog_comments_private'=>0,
             'blog_private_preview'=>0,
+            'blog_page_title'=>_l("Blog", $this->CI),
+            'blog_page_description'=>"",
+            'blog_page_keywords'=>"",
         ), $this->CI->settings);
     }
 

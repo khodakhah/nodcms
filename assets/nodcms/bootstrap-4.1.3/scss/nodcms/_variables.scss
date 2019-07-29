@@ -4,9 +4,10 @@ $theme-name:                                                    		"nodcms";
 $brand-font-family: 'Dosis', sans-serif;
 $brand-header-font-family: "";
 $brand-font-awesome: "Font Awesome 5 Free";
-$brand-main-color: #0080b0 !default;
+$brand-main-color: #4676d2 !default;
 $brand-main-font-color: #ebeef7 !default;
-$brand-light-color: #4ea8d2 !default;
+$brand-main-border-color: #f3f6ff !default;
+$brand-light-color: #8a98db !default;
 $brand-light-font-color: #4d5254 !default;
 $brand-btn-color: $brand-main-color;
 $brand-btn-color-hover: darken($brand-btn-color, 15%);
@@ -18,24 +19,24 @@ $shopping-cart-icon-hover-color: $shopping-cart-background-color;
 $shopping-cart-badge-color: #ff4d37 !default;
 
 //Navbar
-$header-top-height: 80px;
+$header-top-height: 60px;
 $header-navbar-height: 56px;
-$navbar-main-bg: $brand-main-color !default;
-$navbar-main-bg-hover: lighten($brand-main-color, 10%) !default;
-$navbar-main-font-color: lighten($brand-main-color,35%) !default;
-$navbar-main-font-color-hover: #ffffff !default;
-$navbar-main-border-color: darken($brand-main-color,10%);
+$navbar-main-bg: #ffffff !default;
+$navbar-main-bg-hover: darken($navbar-main-bg, 4%) !default;
+$navbar-main-font-color: $brand-main-color !default;
+$navbar-main-font-color-hover: lighten($brand-main-color, 5%) !default;
+$navbar-main-border-color: $brand-light-color;
 $navbar-main-mobile-bg: lighten($brand-main-color, 3%);
 $navbar-main-mobile-link-bg-hover: lighten($brand-main-color, 5%);
 $navbar-main-mobile-border-color: darken($brand-main-color, 3%);
 $navbar-main-mobile-submenu-bg: lighten($navbar-main-mobile-bg, 3%);
 $navbar-main-mobile-submenu-hover-bg: darken($navbar-main-mobile-bg, 3%);
 $navbar-top-bg: #ffffff !default;
-$navbar-top-dropdown-bg: darken($brand-main-color,10%);
-$navbar-top-dropdown-hover-bg: darken($navbar-top-bg, 5%);
+$navbar-top-dropdown-bg: darken($navbar-main-bg,10%);
+$navbar-top-dropdown-hover-bg: darken($navbar-main-bg, 5%);
 // Body and header
 $bg-color: #ffffff !default;
-$header-bg-color:                                                  		$brand-main-color;
+$header-bg-color:                                                  		$navbar-main-bg;
 $header-top-shadow:                                                     0px 1px 10px 0px rgba(50, 50, 50, 0.2);
 $header-mobile-menu-border:                                             lighten($header-bg-color, 3%);
 
@@ -147,6 +148,10 @@ $spaces:(
 
 $box-size:(
         34,100,200,300,400,500,600,700
+);
+
+$borders:(
+        1,2,3,4,5,6,7,8,9,10
 );
 
 $component-colors: (

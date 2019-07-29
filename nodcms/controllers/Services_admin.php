@@ -329,6 +329,23 @@ class Services_admin extends NodCMS_Controller
             ),
         );
 
+        $languages = $this->Languages_model->getAll();
+        foreach($languages as $language){
+            $config[] = array(
+                'label'=>$language['language_title'],
+                'type'=>"h4",
+                'prefix_language'=>$language,
+            );
+            $prefix = "options[$language[language_id]]";
+            $setting = $this->Public_model->getSettings($language['language_id']);
+            $config[] = array(
+                'field'=>$prefix."[services_page_title]",
+                'label' => _l("Page title", $this),
+                'rules' => "",
+                'type' => "text",
+                'default'=>isset($setting['services_page_title'])?$setting['services_page_title']:'',
+            );
+        }
         $myform = new Form();
         $myform->config($config, $self_url, 'post', 'ajax');
 
@@ -340,6 +357,15 @@ class Services_admin extends NodCMS_Controller
                 return;
             }
             $this->Nodcms_admin_model->updateSettings($data);
+            if(isset($data["options"])){
+                foreach($data["options"] as $language_id=>$item){
+                    if(!$this->Nodcms_admin_model->updateSettings($item, $language_id)){
+                        $this->systemError("A settings options could not be saved.", $this);
+                        return;
+                    }
+                }
+                unset($data["options"]);
+            }
             $this->systemSuccess("Your Setting has been updated successfully!", $self_url);
             return;
         }
