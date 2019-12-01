@@ -620,6 +620,21 @@ class Blog_admin extends NodCMS_Controller
             'per_page'=>10,
             'listID'=>"comments-list",
         );
+        if($this->Languages_model->getCount() > 1) {
+            array_unshift($config['headers'],
+                array(
+                    'label'=>"",
+                    'function'=>function($data){
+                        $_data = $this->Languages_model->getOne($data['language_id']);
+                        if(!is_array($_data) || count($_data)==0){
+                            return "-";
+                        }
+                        $url = base_url().$_data['image'];
+                        return "<img src='$url' style='height:20px;' title='{$_data['language_title']}' alt='{$_data['code']}'>";
+                    },
+                )
+            );
+        }
         $conditions = null;
         $search_form = null;
         $sort_by = array("comment_id", "DESC");
@@ -642,7 +657,7 @@ class Blog_admin extends NodCMS_Controller
             array('title' => $this->data['title']),
         );
         $this->data['actions_buttons'] = array(
-            'add'=>BLOG_ADMIN_URL."commentSubmit",
+            'ajax_add'=>BLOG_ADMIN_URL."commentSubmit",
         );
 
         $this->data['the_list'] = $myList->getPage();
@@ -677,7 +692,7 @@ class Blog_admin extends NodCMS_Controller
         if($data['reply_to']==0){
             $data['language'] = $language;
             $data['edit_url'] = BLOG_ADMIN_URL."commentSubmit/$post[post_id]/$id";
-            $data['reply_url'] = BLOG_ADMIN_URL."commentReplay/$id";
+            $data['reply_url'] = BLOG_ADMIN_URL."commentReply/$id";
             $sub_comments = $this->Blog_comments_model->getAll(array('post_id'=>$id, 'reply_to'=>$data['comment_id']));
             if(is_array($sub_comments) && count($sub_comments)!=0){
                 foreach ($sub_comments as &$sub_item){
@@ -692,7 +707,7 @@ class Blog_admin extends NodCMS_Controller
             $item = $this->Blog_comments_model->getOne($data['reply_to']);
             $item['language'] = $this->Languages_model->getOne($item['language_id']);
             $item['edit_url'] = BLOG_ADMIN_URL."commentSubmit/$item[post_id]/$item[comment_id]";
-            $item['reply_url'] = BLOG_ADMIN_URL."commentReplay/$item[comment_id]";
+            $item['reply_url'] = BLOG_ADMIN_URL."commentReply/$item[comment_id]";
             $sub_comments = $this->Blog_comments_model->getAll(array('post_id'=>$item['post_id'], 'reply_to'=>$item['comment_id']));
             if(is_array($sub_comments) && count($sub_comments)!=0){
                 foreach ($sub_comments as &$sub_item){
@@ -741,15 +756,17 @@ class Blog_admin extends NodCMS_Controller
      * @param int $post_id
      * @param null|int $id
      */
-    function commentSubmit($post_id, $id = null)
+    function commentSubmit($post_id = null, $id = null)
     {
         $back_url = BLOG_ADMIN_URL."comments";
         $self_url = BLOG_ADMIN_URL."commentSubmit/$id";
 
-        $post = $this->Blog_posts_model->getOne($post_id);
-        if(!is_array($post) || count($post)==0){
-            $this->systemError("Couldn't find the post.", $back_url);
-            return;
+        if($post_id != null){
+            $post = $this->Blog_posts_model->getOne($post_id);
+            if(!is_array($post) || count($post)==0){
+                $this->systemError("Couldn't find the post.", $back_url);
+                return;
+            }
         }
 
         if($id!=null){
@@ -783,24 +800,52 @@ class Blog_admin extends NodCMS_Controller
                 'rules' => 'required',
                 'default'=>isset($data)?$data['comment_name']:"",
             ));
-            $language = $this->Languages_model->getOne($data['language_id']);
-            array_unshift($config, array(
-                'field'=>"language_id",
-                'label'=>_l("Language", $this),
-                'type'=>"static",
-                'value'=>$language['language_title'],
-            ));
+            if($this->Languages_model->getCount() > 1) {
+                $language = $this->Languages_model->getOne($data['language_id']);
+                array_unshift($config, array(
+                    'field'=>"language_id",
+                    'label'=>_l("Language", $this),
+                    'type'=>"static",
+                    'value'=>$language['language_title'],
+                ));
+            }
         }else{
-            $languages = $this->Languages_model->getAll();
-            array_unshift($config, array(
-                'field'=>"language_id",
-                'label'=>_l("Language", $this),
-                'type'=>"select",
-                'options'=>$languages,
-                'option_name'=>"language_title",
-                'option_value'=>"language_id",
-                'default'=>$this->language['language_id'],
-            ));
+            if($this->Languages_model->getCount() > 1) {
+                $languages = $this->Languages_model->getAll();
+                array_unshift($config, array(
+                    'field'=>"language_id",
+                    'label'=>_l("Language", $this),
+                    'type'=>"select",
+                    'options'=>$languages,
+                    'option_name'=>"language_title",
+                    'option_value'=>"language_id",
+                    'default'=>$this->language['language_id'],
+                ));
+            }
+            else {
+                array_unshift($config, array(
+                    'field'=>"language_id",
+                    'label'=>_l("Language", $this),
+                    'type'=>"hidden",
+                    'value'=>$this->language['code'],
+                ));
+            }
+        }
+
+        if($post_id == null) {
+            $posts = $this->Blog_posts_model->getAll();
+            array_unshift($config,
+                array(
+                    'field' => 'post_id',
+                    'label' => _l("Posts", $this),
+                    'type' => "select",
+                    'options' => $posts,
+                    'option_name' => "post_name",
+                    'option_value' => "post_id",
+                    'rules' => 'required|in_list['.join(',', array_column($posts, 'post_id')).']',
+                    'default'=>isset($data)?$data['post_id']:"",
+                )
+            );
         }
 
         $myform->config($config, $self_url, 'post', 'ajax');
@@ -818,7 +863,12 @@ class Blog_admin extends NodCMS_Controller
                 $this->systemSuccess("The comment has been edited successfully.", $back_url);
             }
             else{
-                $post_data['post_id'] = $post_id;
+                if($post_id != null)
+                    $post_data['post_id'] = $post_id;
+                $post_data['user_id'] = $this->userdata['user_id'];
+                $post_data['admin_side'] = 1;
+                $post_data['comment_name'] = $this->userdata['fullname'];
+
                 $new_id = $this->Blog_comments_model->add($post_data);
                 $this->systemSuccess("A new comment has been added successfully.", $back_url);
             }
