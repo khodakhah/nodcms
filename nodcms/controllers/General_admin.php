@@ -2032,7 +2032,7 @@ class General_admin extends NodCMS_Controller{
         }
         $this->data["upload_url"] = ADMIN_URL."uploadImage/$type";
         $this->data['input_id'] = $input_id;
-        $this->data['images'] = $this->Images_model->getAll(array('folder'=>$this->image_library_types[$type]['dir']));
+        $this->data['images'] = $this->Images_model->getAll(array('folder'=>$this->image_library_types[$type]['dir']), null, 1, array('image_id','DESC'));
         $data = array(
             'status'=>"success",
             'content'=>$this->load->view($this->mainTemplate.'/images_library',$this->data, true),
