@@ -53,7 +53,7 @@ class Gallery_admin extends NodCMS_Controller
         $this->data['max_depth'] = 1;
         $this->data['list_items'] = join("\n", $list_items);
 
-        $this->data['page'] = "services";
+        $this->data['page'] = "galleries";
         $this->data['content'] = $this->load->view($this->mainTemplate.'/list_sort',$this->data,true);
         $this->load->view($this->frameTemplate,$this->data);
     }
