@@ -248,8 +248,6 @@ class Portfolio_admin extends NodCMS_Controller
             return;
         }
 
-        $myForm = new Form();
-        $myForm->removeFiles($data['file_id']);
         $this->Portfolio_model->remove($id);
         $this->systemSuccess("Portfolio post has been deleted successfully.", $back_url);
     }
