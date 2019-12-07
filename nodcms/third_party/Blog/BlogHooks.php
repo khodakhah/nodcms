@@ -54,6 +54,8 @@ class BlogHooks extends NodcmsHooks
                 ),
             );
             $this->CI->addToAdminSidebar($addon_sidebar);
+
+            $this->CI->system_urls[] = array('title'=>_l("Blog", $this->CI), 'url'=>"blog");
         }
     }
 

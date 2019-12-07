@@ -33,6 +33,14 @@ class AboutHooks extends NodcmsHooks
                 ),
             );
             $this->CI->addToAdminSidebar($addon_sidebar);
+
+            $data_list = $this->CI->About_model->getAll();
+            foreach($data_list as $item) {
+                $this->CI->system_urls[] = array(
+                    'title'=>str_replace("{data}", $item['profile_name'], _l("Profile {data}", $this->CI)),
+                    'url'=>"about-".$item['profile_uri']
+                );
+            }
         }
     }
 
