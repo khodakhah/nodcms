@@ -29,7 +29,7 @@
                                             <div class="dd-handle dd3-handle"> </div>
                                             <div class="dd3-content">
                                                 <?php echo $item2["name"]; ?>
-                                                <a href="javascript: $(this).removeItem('<?php echo ARTICLES_ADMIN_URL; ?>articleRemove/<?=$item2["article_id"]?>', <?=$item2["article_id"]?>);" class="btn btn-xs btn-link font-red pull-right btn-ask"><i class="fa fa-trash-o"></i> <?=_l('Delete',$this)?></a>
+                                                <a href="javascript: $(this).removeItem('<?php echo ARTICLES_ADMIN_URL; ?>articleRemove/<?=$item2["article_id"]?>', <?=$item2["article_id"]?>);" class="btn btn-xs btn-link font-red pull-right"><i class="fa fa-trash-o"></i> <?=_l('Delete',$this)?></a>
                                                 <a href="<?php echo ARTICLES_ADMIN_URL; ?>articleForm/<?=$item2["article_id"]?>" class="btn btn-xs btn-link font-blue pull-right load-form"><i class="fa fa-pencil"></i> <?=_l('Edit',$this)?></a>
                                                 <button type="button" data-href="<?php echo ARTICLES_ADMIN_URL; ?>articleVisibility/<?=$item2["article_id"]?>" data-id="<?=$item2["article_id"]?>" class="btn btn-xs btn-link font-grey-gallery pull-right visibility" title="<?=_l('Visibility',$this)?>"><i class="fa fa-eye"></i></button>
                                             </div>
@@ -66,23 +66,11 @@
         };
 
         $.fn.removeItem = function (url, id) {
-            var my_btn = $(this);
-            if(my_btn.hasClass('btn-ask'))
-                return;
-            $.ajax({
-                url: url,
-                dataType: 'json',
-                success: function (result) {
-                    if(result.status=='error') {
-                        toastr.error(resullt.error, '<?php echo _l("Error", $this)?>');
-                    }
-                },
-                error:function () {
-                    toastr.error('Ajax request fail!', 'Error');
-                }
-            });
-            $('.dd-item[data-id="'+id+'"]').hide(500, function () {
-                $(this).remove();
+            $.loadConfirmModal(url, function (result, mymodel) {
+                $('.dd-item[data-id="'+id+'"]').hide(500, function () {
+                    $(this).remove();
+                });
+                mymodel.modal('hide');
             });
         };
 

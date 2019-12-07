@@ -16,7 +16,7 @@
                             <div class="dd-handle dd3-handle"> </div>
                             <div class="dd3-content">
                                 <?php echo $item["profile_name"]; ?>
-                                <a href="javascript: $(this).removeItem('<?php echo ABOUT_ADMIN_URL; ?>profileRemove/<?=$item["profile_id"]?>', <?=$item["profile_id"]?>);" class="btn btn-xs btn-link font-red pull-right btn-ask"><i class="fa fa-trash-o"></i> <?=_l('Delete',$this)?></a>
+                                <a href="javascript: $(this).removeItem('<?php echo ABOUT_ADMIN_URL; ?>profileRemove/<?php echo $item["profile_id"]; ?>', <?=$item["profile_id"]?>);" class="btn btn-xs btn-link font-red pull-right"><i class="fa fa-trash-o"></i> <?=_l('Delete',$this)?></a>
                                 <a href="<?php echo ABOUT_ADMIN_URL; ?>profileForm/<?=$item["profile_id"]?>" class="btn btn-xs btn-link font-blue pull-right load-form"><i class="fa fa-pencil"></i> <?=_l('Edit',$this)?></a>
                                 <button type="button" data-href="<?php echo ABOUT_ADMIN_URL; ?>profileVisibility/<?=$item["profile_id"]?>" data-id="<?=$item["profile_id"]?>" class="btn btn-xs btn-link font-grey-gallery pull-right visibility" title="<?=_l('Visibility',$this)?>"><i class="fa <?php echo (isset($item['public'])&&$item['public']==1)?"fa-eye":"fa-eye-slash"; ?>"></i></button>
                             </div>
@@ -49,23 +49,11 @@
         };
 
         $.fn.removeItem = function (url, id) {
-            var my_btn = $(this);
-            if(my_btn.hasClass('btn-ask'))
-                return;
-            $.ajax({
-                url: url,
-                dataType: 'json',
-                success: function (result) {
-                    if(result.status=='error') {
-                        toastr.error(resullt.error, '<?php echo _l("Error", $this)?>');
-                    }
-                },
-                error:function () {
-                    toastr.error('Ajax request fail!', 'Error');
-                }
-            });
-            $('.dd-item[data-id="'+id+'"]').hide(500, function () {
-                $(this).remove();
+            $.loadConfirmModal(url, function (result, mymodel) {
+                $('.dd-item[data-id="'+id+'"]').hide(500, function () {
+                    $(this).remove();
+                });
+                mymodel.modal('hide');
             });
         };
 
