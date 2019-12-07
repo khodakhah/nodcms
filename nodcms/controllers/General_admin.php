@@ -2234,6 +2234,22 @@ class General_admin extends NodCMS_Controller{
                 'group_class'=>"inputs_default ".($this->settings['homepage_type']!="default"?"hidden":""),
             ),
             array(
+                'field'=>"home_page_title_bg",
+                'label'=>_l('Homepage background',$this),
+                'rules'=>"",
+                'type'=>"image-library",
+                'default'=>$this->settings['home_page_title_bg'],
+                'group_class'=>"inputs_default ".($this->settings['homepage_type']!="default"?"hidden":""),
+            ),
+            array(
+                'field'=>"home_page_title_bg_blur",
+                'label'=>_l('Homepage background blur',$this),
+                'rules'=>"required|in_list[0,1]",
+                'type'=>"switch",
+                'default'=>$this->settings['home_page_title_bg_blur'],
+                'group_class'=>"inputs_default ".($this->settings['homepage_type']!="default"?"hidden":""),
+            ),
+            array(
                 'field'=>"homepage_sort",
                 'label'=>_l('Home preview sort',$this),
                 'type'=>"static",

@@ -1,7 +1,7 @@
 <?php if($this->display_page_title){ ?>
     <div class="page-head short-height d-print-none">
         <?php if(isset($title_bg)){ ?>
-            <img class="bg-image bg-blur" src="<?php echo $title_bg; ?>">
+            <img class="bg-image <?php echo (isset($title_bg_blur)&&$title_bg_blur==1)?"bg-blur":""; ?>" src="<?php echo $title_bg; ?>">
         <?php } ?>
         <div class="text-center">
             <?php if(isset($title_logo)){ ?>
