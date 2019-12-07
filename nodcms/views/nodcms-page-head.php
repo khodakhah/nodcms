@@ -13,7 +13,7 @@
                 <h1 class="margin-bottom-20"><?php echo $title; ?></h1>
             <?php } ?>
             <?php if(isset($sub_title)){ ?>
-                <div class="font-lg margin-bottom-20"><?php echo $sub_title; ?></div>
+                <div class="font-lg margin-bottom-20 font-white"><?php echo $sub_title; ?></div>
             <?php } ?>
         </div>
         <?php if(isset($breadcrumb) && count($breadcrumb)!=0){ ?>
