@@ -167,7 +167,7 @@ class NodCMS_Controller extends CI_Controller{
             $this->currency->setFormat($this->settings["currency_format"]);
         }
 
-        $this->data["social_links"] = $this->Public_model->socialLinks();
+        $this->data["social_links"] = $this->Social_links_model->getAll();
         $this->data["production_copyright"] = $this->config->item('production_copyright');
         $this->data["page"] = "";
     }

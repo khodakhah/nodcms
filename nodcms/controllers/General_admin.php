@@ -1471,6 +1471,9 @@ class General_admin extends NodCMS_Controller{
         $this->data['breadcrumb']=array(
             array('title'=>$this->data['title']),
         );
+        $this->data['actions_buttons'] = array(
+            'add' => ADMIN_URL."socialLinksForm",
+        );
         $this->data['page'] = "social_links";
         $this->data['the_list'] = $theList->getPage();
         $this->data['content'] = $this->load->view($this->mainTemplate."/data_list",$this->data, true);

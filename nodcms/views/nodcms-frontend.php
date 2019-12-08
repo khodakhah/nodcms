@@ -125,6 +125,15 @@
     <!-- END CONTENT -->
 </div>
 
+<?php if(isset($social_links) && count($social_links)!=0) { ?>
+    <div class="container">
+        <div class="padding-top-10 padding-bottom-10">
+            <?php foreach($social_links as $item) { ?>
+                <a class="btn default" href="<?php echo $item['url']; ?>" target="_blank" title="<?php echo $item['title']; ?>"><i class="fab fa-<?php echo $item['class']; ?>"></i></a>
+            <?php } ?>
+        </div>
+    </div>
+<?php } ?>
 <div class="page-footer d-print-none">
     <div class="scroll-to-top">
         <i class="icon-arrow-up"></i>
