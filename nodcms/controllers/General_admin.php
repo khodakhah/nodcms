@@ -124,6 +124,14 @@ class General_admin extends NodCMS_Controller{
                         'default'=>$this->settings['logo'],
                     ),
                     array(
+                        'field'=>"logo_light",
+                        'label'=>_l("Logo light",$this),
+                        'rules'=>"",
+                        'type'=>"image-library",
+                        'default'=>$this->settings['logo_light'],
+                        'help'=>_l("Logo on dark background like admin side.", $this),
+                    ),
+                    array(
                         'field'=>"fav_icon",
                         'label'=>_l('Fav Icon',$this),
                         'rules'=>"",
@@ -1405,9 +1413,58 @@ class General_admin extends NodCMS_Controller{
 
     /**
      * Social links manager page
+     *
+     * @param int $page
      */
-    function socialLinks()
+    function socialLinks($page = 1)
     {
+        $this->load->library("Ajaxlist");
+        $theList = new Ajaxlist();
+        $config = array(
+            'total_rows'=>0,
+            'listID'=>"my-data-list",
+            'headers'=>array(
+                array(
+                    'label'=>_l("Title", $this),
+                    'content'=>"title",
+                ),
+                array(
+                    'label'=>_l("Icon", $this),
+                    'function'=>function($_data) {
+                        return "<i class='fab fa-{$_data['class']}'></i>";
+                    }
+                ),
+                array(
+                    'label'=>_l("URL", $this),
+                    'function'=>function($_data) {
+                        return "<a target='_blank' href='{$_data['url']}'>{$_data['url']}</a>";
+                    }
+                ),
+                array(
+                    'label'=>"",
+                    'theme'=>"open_btn",
+                    'url'=>ADMIN_URL.'socialLinksForm/$content',
+                    'content'=>"id",
+                ),
+                array(
+                    'label'=>"",
+                    'theme'=>"delete_btn",
+                    'url'=>ADMIN_URL.'socialLinksDelete/$content',
+                    'content'=>"id",
+                ),
+            ),
+            'ajaxURL'=>ADMIN_URL."socialLinks",
+            'per_page'=>15,
+            'page'=>$page,
+        );
+        $conditions = null;
+        $config['total_rows'] = $this->Social_links_model->getCount($conditions);
+        $theList->setOptions($config);
+        if($this->input->is_ajax_request()){
+            $data = $this->Social_links_model->getAll($conditions, $config['per_page'], $config['page']);
+            echo $theList->ajaxData($data);
+            return;
+        }
         $this->data['title'] = _l("Social Links", $this);
         $this->data['sub_title'] = _l("List", $this);
         $this->data['data_list'] = $this->Nodcms_admin_model->getSocialLinks();
@@ -1415,7 +1472,8 @@ class General_admin extends NodCMS_Controller{
             array('title'=>$this->data['title']),
         );
         $this->data['page'] = "social_links";
-        $this->data['content']=$this->load->view($this->mainTemplate.'/social_links',$this->data,true);
+        $this->data['the_list'] = $theList->getPage();
+        $this->data['content'] = $this->load->view($this->mainTemplate."/data_list",$this->data, true);
         $this->load->view($this->frameTemplate,$this->data);
     }
 
@@ -1424,19 +1482,25 @@ class General_admin extends NodCMS_Controller{
      *
      * @param int $id
      */
-    function socialLinksForm($id=0)
+    function socialLinksForm($id = 0)
     {
-        if($id!='')
-        {
-            $this->data['data'] = $this->Nodcms_admin_model->getSocialLink($id);
-            if(count($this->data['data'])==0)
-                redirect(ADMIN_URL."socialLinks");
+        $back_url = ADMIN_URL."socialLinks";
+        $self_url = ADMIN_URL."socialLinksForm";
+        if($id > 0){
+            $current_data = $this->Social_links_model->getOne($id);
+            if(!is_array($current_data) || count($current_data) == 0){
+                $this->systemError("Social link not found.", $back_url);
+                return;
+            }
+            $self_url .= "/$id";
             $this->data["sub_title"] = _l("Edit Item", $this);
+            $isUniqueValidationRules = "|callback_isUnique[social_links,class,id,$id]";
         }else{
             $this->data["sub_title"] = _l("Insert New Item", $this);
+            $isUniqueValidationRules = '|callback_isUnique[social_links,class]';
         }
 
-        $this->data['social_types'] = array(
+        $social_types = array(
             array('title'=>"Amazon", 'class'=>'amazon'),
             array('title'=>"Behance", 'class'=>'behance'),
             array('title'=>"Blogger", 'class'=>'blogger'),
@@ -1465,7 +1529,7 @@ class General_admin extends NodCMS_Controller{
             array('title'=>"VK", 'class'=>'vk'),
             array('title'=>"Instagram", 'class'=>'instagram'),
             array('title'=>"Reddit", 'class'=>'reddit'),
-            array('title'=>"Aboutme", 'class'=> 'About'),
+            array('title'=>"Aboutme", 'class'=>'aboutme'),
             array('title'=>"Flickr", 'class'=>'flickr'),
             array('title'=>"Foursquare", 'class'=>'foursquare'),
             array('title'=>"Gravatar", 'class'=>'gravatar'),
@@ -1473,68 +1537,101 @@ class General_admin extends NodCMS_Controller{
             array('title'=>"Myspace", 'class'=>'myspace'),
             array('title'=>"Quora", 'class'=>'quora'),
         );
+
+        $config = array(
+            array(
+                'label' => _l('Type',$this),
+                'field' => 'class',
+                'type'=>'select',
+                'options'=> $social_types,
+                'option_name'=> "title",
+                'option_value'=> "class",
+                'rules' => 'required|in_list['.join(',', array_column($social_types, 'class')).']'.$isUniqueValidationRules,
+                'default'=>isset($current_data)?$current_data['class']:''
+            ),
+            array(
+                'label' => _l('URL',$this),
+                'field' => 'url',
+                'type' => 'text',
+                'rules' => 'required|valid_url',
+                'default'=>isset($current_data)?$current_data['url']:''
+            ),
+        );
+
+        $myform = new Form();
+        $myform->config($config, $self_url, 'post', 'ajax');
+        if($myform->ispost()){
+            if(!$this->checkAccessGroup(1))
+                return;
+            $data = $myform->getPost();
+            // Stop Page
+            if($data === false){
+                return;
+            }
+
+            $titles = array_combine(array_column($social_types, 'class'), array_column($social_types, 'title'));
+            $data['title'] = $titles[$data['class']];
+            if ($id > 0) {
+                $this->Social_links_model->edit($id, $data);
+                $this->systemSuccess("Social link has been updated.", $back_url);
+                return;
+            }
+            $this->Social_links_model->add($data);
+            $this->systemSuccess("Social link has been inserted.", $back_url);
+            return;
+        }
+
         $this->data['title'] = _l("Social Links", $this);
         $this->data['breadcrumb']=array(
-            array('title'=>_l('Social Links',$this),'url'=>ADMIN_URL.'socialLinks'),
+            array('title'=>_l('Social Links',$this),'url'=>$back_url),
             array('title'=>$this->data['sub_title'])
         );
         $this->data['page'] = "social_links_edit";
-        $this->data['content']=$this->load->view($this->mainTemplate.'/social_links_edit',$this->data,true);
-        $this->load->view($this->frameTemplate,$this->data);
-    }
 
-    /**
-     * Social links add and edit post action
-     *
-     * @param null $id
-     */
-    function socialLinksSubmit($id=null)
-    {
-        if(!$this->checkAccessGroup(1))
-            return;
-        $config = array(
-            array(
-                'field' => 'class',
-                'label' => _l('Type',$this),
-                'rules' => 'required'
-            ),
-            array(
-                'field' => 'url',
-                'label' => _l('URL',$this),
-                'rules' => 'required|valid_url'
-            ),
-        );
-        if(!$this->formValidation($config, ADMIN_URL."socialLinksForm/$id"))
-            return;
-        $post_data = array(
-            'title'=>$this->input->post('title',TRUE),
-            'class'=>$this->input->post('class',TRUE),
-            'url'=>$this->input->post('url',TRUE),
-        );
-        if ($this->Nodcms_admin_model->socialLinksManipulate($post_data, $id))
-        {
-            $this->session->set_flashdata('success', _l('Updated menu',$this));
-        }
-        else
-        {
-            $this->session->set_flashdata('error', _l('Updated menu error. Please try later',$this));
-        }
-        redirect(ADMIN_URL."socialLinks");
+        $this->data['content'] = $myform->fetch('', array('data-redirect'=>1));
+        $this->load->view($this->frameTemplate,$this->data);
     }
 
     /**
      * Remove a menu item
      *
      * @param int $id
+     * @param int $confirm
      */
-    function socialLinksDelete($id=0)
-    {
-        if(!$this->checkAccessGroup(1))
+    function socialLinksDelete($id, $confirm = 0)
+    {if(!$this->checkAccessGroup(1))
+        return;
+
+        $current_data = $this->Social_links_model->getOne($id);
+        if(count($current_data)==0){
+            $this->systemError("Link not found!", ADMIN_URL."user");
             return;
-        $this->db->trans_start();
-        $this->db->delete('social_links', array('id' => $id));
-        $this->db->trans_complete();
-        $this->systemSuccess(NULL, ADMIN_URL."socialLinks");
+        }
+
+        $back_url = ADMIN_URL."socialLinks";
+        $self_url = ADMIN_URL."socialLinksDelete/$id";
+
+        if($confirm!=1){
+            echo json_encode(array(
+                'status'=>'success',
+                'content'=>'<p class="text-center">' .
+                    str_replace("{data}", "<strong>$current_data[url]</strong>",_l("This action will delete the social link '{data}' from database.", $this)) .' '.
+                    _l("This action cannot be restored!", $this) .
+                    '</p>'.
+                    '<p class="text-center bold">' .
+                    _l("Are you sure to delete the file?", $this) .
+                    '</p>',
+                'title'=>_l("Delete confirmation", $this),
+                'noBtnLabel'=>_l("Cancel", $this),
+                'yesBtnLabel'=>_l("Yes, delete it.", $this),
+                'confirmUrl'=>$self_url."/1",
+                'redirect'=>1,
+            ));
+            return;
+        }
+
+        $this->Social_links_model->remove($id);
+        $this->systemSuccess("The social link has been deleted successfully.", $back_url);
     }
 
     /**

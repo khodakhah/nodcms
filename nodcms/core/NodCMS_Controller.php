@@ -189,8 +189,8 @@ class NodCMS_Controller extends CI_Controller{
         if($this->session->has_userdata("user_id")) {
             $this->userdata = $this->Nodcms_admin_model->getUserDetail($this->session->userdata("user_id"));
             if($this->userdata["active"]!=1){
-                $this->load->view("account_lock", array("settings"=>$this->settings));
-                die($this->output->get_output());
+                $this->accountLock();
+                return;
             }
             if(!in_array($this->userdata['group_id'],array(1,100))){
                 $this->systemError("Access denied!", base_url());
@@ -317,8 +317,8 @@ class NodCMS_Controller extends CI_Controller{
         if($this->session->has_userdata("user_id")) {
             $this->userdata = $this->Public_model->getUserDetails($this->session->userdata("user_id"));
             if($this->userdata["active"]!=1 && $this->router->method != "logout"){
-                $this->load->view("account_lock", array("settings"=>$this->settings));
-                die($this->output->get_output());
+                $this->accountLock();
+                return;
             }
         }else
             $this->userdata = NULL;
@@ -347,8 +347,8 @@ class NodCMS_Controller extends CI_Controller{
             $this->showError(_l("Your account is not exists any more.", $this), 500, _l("Not exists account", $this), $buttons);
         }
         if($this->userdata["active"]!=1){
-            $this->load->view("account_lock", array("settings"=>$this->settings));
-            die($this->output->get_output());
+            $this->accountLock();
+            return;
         }
 
         $this->loadLanguageAndSettings($this->userdata['language_id']);
@@ -1114,6 +1114,18 @@ class NodCMS_Controller extends CI_Controller{
             );
         }
         return $json_data;
+    }
+
+    /**
+     * Redirect to the account locked
+     */
+    private function accountLock()
+    {
+        if(in_array($this->router->method, array("logout", "accountLocked"))) {
+            return;
+        }
+        redirect(base_url()."account-locked");
+        die();
     }
 
     /*

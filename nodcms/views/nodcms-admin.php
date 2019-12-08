@@ -25,7 +25,7 @@
     <script src="<?php echo base_url(); ?>assets/jquery-3.4.0.min.js" type="text/javascript"></script>
 </head>
 <body data-base-url="<?php echo base_url(); ?>">
-<?php $this->load->view("nodcms-top-menu"); ?>
+<?php $this->load->view($this->mainTemplate."/top-menu"); ?>
 <!-- END HEADER -->
 <div class="clearfix"></div>
 <!-- BEGIN CONTAINER -->

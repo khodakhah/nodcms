@@ -171,6 +171,7 @@ $config['settings_default'] = array(
     'default_image'=>"upload_file/no-images.png",
     'company'=>"NodCMS",
     'logo'=>"upload_file/logo/logo.png",
+    'logo_light'=>"upload_file/logo/logo-light.png",
     'index_logo'=>"upload_file/logo/logo.png",
     'home_page_title_bg'=>"",
     'home_page_title_bg_blur'=>1,

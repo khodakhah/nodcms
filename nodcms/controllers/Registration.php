@@ -450,4 +450,25 @@ class Registration extends NodCMS_Controller {
             return TRUE;
         }
     }
+
+    /**
+     * Display account lock page
+     *
+     * @param null|string $lang
+     */
+    function accountLocked($lang = NULL)
+    {
+        if($lang==NULL){
+            $language = $this->Nodcms_general_model->get_language_default();
+            if($language==0){
+                show_error("Couldn't find default language.");
+                return;
+            }
+            $lang = $language["code"];
+        }
+        $this->preset($lang);
+        $this->data['title'] = _l("Account locked", $this);
+        $this->data['content'] = $this->load->view($this->mainTemplate.'/account_lock',$this->data, true);
+        $this->load->view($this->frameTemplate, $this->data);
+    }
 }
