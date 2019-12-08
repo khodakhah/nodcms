@@ -83,7 +83,7 @@ $autoload['drivers'] = array();
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-$autoload['helper'] = array('url', 'file', 'form','text','security','language','cookie','captcha','image','page_type','nodcms_general');
+$autoload['helper'] = array('url', 'file', 'form','text','security','language','cookie','captcha','image','nodcms_general');
 
 /*
 | -------------------------------------------------------------------

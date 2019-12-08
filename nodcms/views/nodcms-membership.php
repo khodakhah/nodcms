@@ -78,7 +78,6 @@
     <!-- END CONTENT -->
 </div>
 
-<?php $this->load->view("prefooter"); ?>
 <div class="page-footer d-print-none">
     <svg class="curve" preserveAspectRatio="none" viewBox="0 0 100 100">
         <path d="M0 0 Q 50 50 100 0"></path>
