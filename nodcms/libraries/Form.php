@@ -567,10 +567,7 @@ class Form
             $this->CI->load->addJsFile("assets/plugins/ckeditor/ckeditor");
         }
         if(in_array('texteditor-quick', $all_types)){
-//            $this->CI->load->addCssFile("assets/plugins/bootstrap-summernote/summernote");
-//            $this->CI->load->addJsFile("assets/plugins/bootstrap-summernote/summernote.min");
             $this->CI->load->addJsFile("assets/plugins/ckeditor/ckeditor");
-            $this->CI->load->addJsFile("assets/plugins/ckeditor/ckeditor-quick");
         }
         if(in_array('codeeditor', $all_types)){
             $this->CI->load->addCssFile("assets/plugins/codemirror/lib/codemirror");

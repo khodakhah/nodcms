@@ -470,6 +470,10 @@
 
 }( jQuery ));
 
+function insertAtTexteditor(areaId,text) {
+    CKEDITOR.instances[areaId].insertText(text);
+}
+
 var onSubmit = function(token) {
     $(function () {
         $('form[data-grecaptcha="1"]').each(function () {
