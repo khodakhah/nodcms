@@ -79,18 +79,12 @@
 </div>
 
 <div class="page-footer d-print-none">
-    <svg class="curve" preserveAspectRatio="none" viewBox="0 0 100 100">
-        <path d="M0 0 Q 50 50 100 0"></path>
-    </svg>
     <div class="scroll-to-top">
         <i class="icon-arrow-up"></i>
     </div>
     <div class="page-footer-inner text-center margin-bottom-20 ">
         <?php $this->load->view("copyright"); ?>
     </div>
-    <svg class="curve" preserveAspectRatio="none" viewBox="0 0 100 100">
-        <path d="M0 100 Q 50 -10 100 100"></path>
-    </svg>
 </div>
 <!-- END FOOTER -->
 
