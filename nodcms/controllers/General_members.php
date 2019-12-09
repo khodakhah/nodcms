@@ -25,19 +25,18 @@ class General_members extends NodCMS_Controller{
      */
     function dashboard()
     {
+        if(!$this->userdata['has_dashboard']) {
+            $this->showError();
+            return;
+        }
         $packages = $this->load->packageList();
         $this->data['dashboards'] = array();
         foreach ($packages as $item){
             if(!file_exists(APPPATH."controllers/".$item."_members.php")){
                 continue;
             }
-            $name = strtolower($item);
-            $curl =  $this->curlJSON(base_url()."user-$name/dashboard", null, 0, SSL_PROTOCOL, true);
-            if($curl['status']!="success" || $curl['content'] == ""){
-                continue;
-            }
-            $this->data['dashboards'][] = $curl['content'];
-//            array_push($this->data['dashboards'], base_url()."user-$item/dashboard");
+            $item = strtolower($item);
+            array_push($this->data['dashboards'], base_url()."user-$item/dashboard");
         }
 
         $this->data['title'] = _l("Dashboard", $this);

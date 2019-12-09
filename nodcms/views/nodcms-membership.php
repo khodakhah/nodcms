@@ -35,7 +35,7 @@
     <link rel="stylesheet" href="<?php echo base_url()?>assets/metronic/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css">
     <!-- END PAGE LEVEL PLUGIN STYLES -->
     <?php $this->fetchAllCSS(); ?>
-    <script src="<?php echo base_url(); ?>assets/metronic/global/plugins/jquery.min.js" type="text/javascript"></script>
+    <script src="<?php echo base_url(); ?>assets/jquery-3.4.0.min.js" type="text/javascript"></script>
 </head>
 <body data-base-url="<?php echo base_url(); ?>" class="page-container-bg-solid page-sidebar-closed-hide-logo <?php echo (count($this->page_sidebar_items)==0 || $this->page_sidebar_closed == true)?' page-full-width page-sidebar-closed':''; ?>">
 
@@ -45,7 +45,7 @@
 <div class="clearfix"></div>
 <!-- BEGIN CONTAINER -->
 <div class="row no-gutters">
-    <?php if(count($this->page_sidebar_items)!=0){ ?>
+    <?php if($this->userdata['has_dashboard'] && count($this->page_sidebar_items)!=0){ ?>
         <div class="sidebar-col d-print-none">
             <ul class="nav flex-column nodcms-sidebar">
                 <li class="nav-item sidebar-minimizer">
@@ -98,31 +98,9 @@
 <!-- BEGIN CORE PLUGINS -->
 <!--[if lt IE 9]>
 <![endif]-->
-<!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/plugins/jquery-migrate.min.js" type="text/javascript"></script>-->
-<!-- IMPORTANT! Load jquery-ui.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
-<!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>-->
-<script src="<?php echo base_url(); ?>assets/popper/popper.min.js" type="text/javascript"></script>
-<script src="<?php echo base_url(); ?>assets/nodcms/bootstrap-4.1.3/js/bootstrap.min.js" type="text/javascript"></script>
-<!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/plugins/bootstrap-confirmation/bootstrap-confirmation.min.js"></script>-->
-<!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>-->
-<!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>-->
-<script src="<?php echo base_url(); ?>assets/metronic/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
-<!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/plugins/js.cookie.min.js" type="text/javascript"></script>-->
-<!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>-->
-<script src="<?php echo base_url(); ?>assets/metronic/global/plugins/select2/js/select2.min.js" type="text/javascript"></script>
-<!-- END CORE PLUGINS -->
-<script src="<?php echo base_url()?>assets/metronic/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
-<!-- BEGIN PAGE LEVEL SCRIPTS -->
-<!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/scripts/app.min.js" type="text/javascript"></script>-->
-<!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/layouts/layout4/scripts/layout.js" type="text/javascript"></script>-->
 <script src="<?php echo base_url(); ?>assets/nodcms/js/common.js" type="text/javascript"></script>
-<!-- END PAGE LEVEL SCRIPTS -->
-
-<!-- END JAVASCRIPTS -->
-<script type="text/javascript" src="<?php echo base_url(); ?>assets/metronic/global/plugins/bootstrap-inputmask.min.js"></script>
-<!--script for this page-->
-
-<script src="<?php echo base_url(); ?>assets/metronic/global/plugins/bootstrap-toastr/toastr.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/nodcms/bootstrap-4.1.3/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>assets/toastr/toastr.min.js"></script>
 <script>
     $(function(){
         toastr.options = {
@@ -150,7 +128,8 @@
         <?php } ?>
     });
 </script>
-<script src="<?php echo base_url(); ?>assets/metronic/global/plugins/bootstrap-confirmation/bootstrap-confirmation.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/plugins/popper/popper.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/plugins/bootstrap-confirmation/bootstrap-confirmation.min.js"></script>
 <script>
     $(function(){
         $.fn.makeConfirmationBtn = function () {
@@ -218,7 +197,6 @@
         });
     });
 </script>
-
 <?php $this->fetchAllJS(); ?>
 <?php echo $this->settings['add_on_script']; ?>
 </body>

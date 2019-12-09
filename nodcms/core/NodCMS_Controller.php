@@ -196,6 +196,7 @@ class NodCMS_Controller extends CI_Controller{
                 $this->systemError("Access denied!", base_url());
                 exit;
             }
+            $this->userdata['has_dashboard'] = $this->session->has_userdata("has_dashboard")?$this->session->userdata("has_dashboard"):false;
         }else
             $this->userdata = NULL;
 
@@ -320,6 +321,7 @@ class NodCMS_Controller extends CI_Controller{
                 $this->accountLock();
                 return;
             }
+            $this->userdata['has_dashboard'] = $this->session->has_userdata("has_dashboard")?$this->session->userdata("has_dashboard"):false;
         }else
             $this->userdata = NULL;
     }
@@ -350,6 +352,7 @@ class NodCMS_Controller extends CI_Controller{
             $this->accountLock();
             return;
         }
+        $this->userdata['has_dashboard'] = $this->session->has_userdata("has_dashboard")?$this->session->userdata("has_dashboard"):false;
 
         $this->loadLanguageAndSettings($this->userdata['language_id']);
 
@@ -472,6 +475,7 @@ class NodCMS_Controller extends CI_Controller{
         $this->session->unset_userdata('avatar');
         $this->session->unset_userdata('email');
         $this->session->unset_userdata('logged_in_status');
+        $this->session->unset_userdata('has_dashboard');
     }
 
     /**

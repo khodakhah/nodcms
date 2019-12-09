@@ -33,7 +33,9 @@
                                     <span class="hidden-xs"> <?php echo $this->userdata['username']; ?> </span>
                                 </a>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="<?php echo base_url(); ?>user/dashboard"><i class="icon-speedometer"></i><?php echo _l('Dashboard',$this);?></a>
+                                    <?php if($this->userdata['has_dashboard']){ ?>
+                                        <a class="dropdown-item" href="<?php echo base_url(); ?>user/dashboard"><i class="icon-speedometer"></i><?php echo _l('Dashboard',$this);?></a>
+                                    <?php } ?>
                                     <?php if(in_array($this->userdata['group_id'],array(1,100))){ ?>
                                         <a class="dropdown-item" href="<?php echo base_url(); ?>admin"><i class="icon-grid"></i><?php echo _l('Control Panel',$this);?></a>
                                         <a class="dropdown-item" href="<?php echo base_url(); ?>admin/settings"><i class="icon-settings"></i><?=_l('Settings',$this);?></a>

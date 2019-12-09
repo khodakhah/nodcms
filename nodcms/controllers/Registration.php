@@ -379,6 +379,16 @@ class Registration extends NodCMS_Controller {
                 return;
             }
 
+            $packages = $this->load->packageList();
+            $has_dashboard = false;
+            foreach ($packages as $item){
+                if(!file_exists(APPPATH."controllers/".$item."_members.php")){
+                    continue;
+                }
+                $has_dashboard = true;
+                break;
+            }
+
             $login_data = array(
                 'fullname'  => $user['fullname'],
                 'username'  => $user['username'],
@@ -387,6 +397,7 @@ class Registration extends NodCMS_Controller {
                 'avatar'   => $user['avatar'],
                 'email'   => $user['email'],
                 'logged_in_status'   => true,
+                'has_dashboard'   => $has_dashboard,
 
             );
             $this->session->set_userdata($login_data);
