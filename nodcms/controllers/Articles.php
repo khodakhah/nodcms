@@ -57,7 +57,8 @@ class Articles extends NodCMS_Controller {
      * @param $lang
      * @param $id
      */
-    function article($lang, $id){
+    function article($lang, $id)
+    {
         $this->preset($lang);
         if(!is_numeric($id)){
             $article_url = base_url()."$lang/article/@article_uri@";
@@ -95,21 +96,25 @@ class Articles extends NodCMS_Controller {
 
             $parent_data = $this->Articles_model->getOneTrans($data['parent'], array('public'=>1));
             $this->data['breadcrumb'] = array(
-                array('title'=>$parent_data['name']),
+                array('title'=>$parent_data['name'], 'url' => base_url()."$lang/article/{$parent_data['article_uri']}"),
                 array('title'=>$data['name']),
             );
-            $this->data['tabs'] = $this->Articles_model->getAllTrans(array('parent'=>$data['parent']));
         }
         else{
             $this->data['breadcrumb'] = array(
                 array('title'=>$data['name']),
             );
-            $conditions = array('public'=>1, 'parent'=>0,'article_id <>'=>$data['article_id']);
-            $this->data['other_articles'] = $this->Articles_model->getAll($conditions,null,1,array("order", "ASC"));
-            foreach($this->data['other_articles'] as $key=>$item){
-                $this->data['other_articles'][$key]['article_url'] = base_url()."$lang/article/$item[article_uri]";
-            }
         }
+        $conditions = array(
+            'public'=>1,
+            'parent IN'=>"0".($data['parent']==0?",".$data['article_id']:""),
+            'article_id <>'=>$data['article_id']
+        );
+        $other_articles = $this->Articles_model->getAll($conditions,5,1,array("order", "ASC"));
+        foreach($other_articles as $key=>$item){
+            $other_articles[$key]['article_url'] = base_url()."$lang/article/$item[article_uri]";
+        }
+        $this->data['other_articles'] = $other_articles;
         $this->data['data'] = $data;
         $sub_articles = $this->Articles_model->getAllTrans(array('parent'=>$id));
         foreach($sub_articles as &$item){
@@ -117,6 +122,7 @@ class Articles extends NodCMS_Controller {
         }
         $this->data["sub_articles"] = $sub_articles;
 
+        $this->data['content_type'] = $this->getContentType($data['image']);
         $this->data['title'] = $data['title'];
         $this->data['sub_title'] = "";
         $this->data['description'] = $data['description'];
@@ -188,5 +194,24 @@ class Articles extends NodCMS_Controller {
         $this->data['description'] = $this->settings["options"]['site_description'];
         $this->data["items"] =  $this->articles_model->getArticleFeeds();
         $this->load->view("feeds", $this->data);
+    }
+
+    /**
+     * @param string $image
+     * @return string
+     */
+    private function getContentType($image)
+    {
+        if($image == "" || !file_exists(FCPATH.$image))
+            return "article_no_image";
+
+        $_image = getimagesize(FCPATH.$image);
+//        var_dump($image);
+//        var_dump($_image);
+//        exit;
+        if($_image[1] <= ($_image[0]/2))
+            return "article_row_image";
+
+        return "article_col_image";
     }
 }

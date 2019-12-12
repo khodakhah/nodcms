@@ -33,15 +33,27 @@ class Articles_admin extends NodCMS_Controller {
         );
 
         $this->data['sub_title'] = _l("Sort",$this);
-        $content_page = 'article_sort';
-        $this->data['data_list']=$this->Articles_model->getAll(array('parent'=>0));
-        foreach($this->data['data_list'] as &$item){
-            $item['sub_data']=$this->Articles_model->getAll(array('parent'=>$item['article_id']));
+
+        $list_items = array();
+        $data_list = $this->Articles_model->getAll(array('parent'=>0));
+        foreach($data_list as $item) {
+            $sub_data = array();
+            $sub_data_list = $this->Articles_model->getAll(array('parent'=>$item['article_id']));
+            foreach($sub_data_list as $_item) {
+                $sub_data[] = $this->setSortRow($_item);
+            }
+            $list_items[] = $this->setSortRow($item, $sub_data);
         }
 
-        $this->data['data_list'] = array_merge($this->Articles_model->getAll(array('parent'=>-1)),$this->data['data_list']);
+        $this->data['add_urls'] = array(
+            array('url'=>ARTICLES_ADMIN_URL."articleForm", 'label'=> _l("Add", $this)),
+        );
+        $this->data['max_depth'] = 2;
+        $this->data['save_sort_url'] = ARTICLES_ADMIN_URL."articleSort";
+        $this->data['list_items'] = join("\n", array_merge($this->Articles_model->getAll(array('parent'=>-1)), $list_items));
+
         $this->data['page'] = "article_list";
-        $this->data['content'] = $this->load->view($this->mainTemplate."/$content_page",$this->data,true);
+        $this->data['content'] = $this->load->view($this->mainTemplate."/list_sort",$this->data,true);
         $this->load->view($this->frameTemplate,$this->data);
     }
 
@@ -63,10 +75,8 @@ class Articles_admin extends NodCMS_Controller {
             }
             $self_url.="/$id";
             $this->data['sub_title'] = _l("Edit",$this);
-            $form_attr = array();
         }else{
             $this->data['sub_title'] = _l("Add",$this);
-            $form_attr = array('data-reset'=>1,'data-message'=>1);
         }
 
         $config = array(
@@ -187,7 +197,7 @@ class Articles_admin extends NodCMS_Controller {
 
         $this->data['parents'] = $this->Articles_model->getAll(array('parent'=>0));
         $this->data['page'] = "article_form";
-        $this->data['content']=$myform->fetch('', $form_attr);
+        $this->data['content']=$myform->fetch('', array('data-redirect'=>1));
         $this->load->view($this->frameTemplate,$this->data);
     }
 
@@ -260,7 +270,7 @@ class Articles_admin extends NodCMS_Controller {
     }
 
     /**
-     *
+     * Save sort of articles
      */
     function articleSort()
     {
@@ -289,5 +299,34 @@ class Articles_admin extends NodCMS_Controller {
             $index++;
         }while(isset($children[$index]));
         $this->systemSuccess("Your articles has been successfully sorted.", ARTICLES_ADMIN_URL."article");
+    }
+
+    /**
+     * DB result to sortable list item
+     *
+     * @param array $item
+     * @param array $sub_item
+     * @return string
+     */
+    private function setSortRow($item, $sub_item = array())
+    {
+        $data = array(
+            'id'=>$item['article_id'],
+            'element_id'=>"article-item".$item['article_id'],
+            'visibility'=>$item['public'],
+            'title'=>$item['name'],
+            'edit_url'=>ARTICLES_ADMIN_URL."articleForm/$item[article_id]",
+            'remove_url'=>ARTICLES_ADMIN_URL."articleRemove/$item[article_id]",
+            'visibility_url'=>ARTICLES_ADMIN_URL."articleVisibility/$item[article_id]",
+            'btn_urls'=>array(
+                array(
+                    'url'=>base_url().$this->language['code']."/article/$item[article_uri]",
+                    'label'=>_l("Display", $this)
+                ),
+            ),
+            'sub_items'=>join("\n", $sub_item),
+        );
+
+        return $this->load->view($this->mainTemplate."/list_sort_item", $data, true);
     }
 }
