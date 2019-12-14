@@ -298,8 +298,6 @@ class NodCMS_Controller extends CI_Controller{
                 array('url'=>base_url().$this->language['code'], 'name'=>"View Site")
             );
         }
-        // Help wizard steps to config the system
-        $this->data["wizard_steps"] = json_encode($this->config->item('wizard_steps'));
     }
 
     /**
