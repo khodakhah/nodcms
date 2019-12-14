@@ -22,7 +22,7 @@ In the new version:
 - created a library to create and manage data table lists and keep theme in one style
 - and all over the system has been reviewed and rewritten.
 
-I have predicted that the new version will be available to use until <strong>24 June 2019</strong>.
+I have predicted that the new version will be available to use until <strong>2020</strong>.
 
 I apologize for a possible delay.
 
