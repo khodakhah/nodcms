@@ -513,6 +513,8 @@ if( ! function_exists('findNewLangKeys')){
                     if(!file_exists($file_item))
                         continue;
                     preg_match('/.*\/([A-Za-z0-9\-\_]+)\_lang.php/', $file_item, $my_match_file_name);
+                    if(count($my_match_file_name) < 2)
+                        continue;
                     $new_lang = $CI->load($my_match_file_name[1], $my_match[1]);
                     if(is_array($new_lang))
                         $lang = array_merge($lang, $new_lang);
