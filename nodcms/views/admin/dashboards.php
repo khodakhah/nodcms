@@ -10,13 +10,17 @@
     <div id="dashboards">
         <?php foreach($dashboards as $key=>$item){ ?>
             <div class="card portlet-sortable" data-id="<?php echo $item['package_id']; ?>">
-                <div class="card-header portlet-sortable-title">
-                    <div class="caption"><i class="fas fa-sort"></i> <?php echo $item['package_name']; ?></div>
-                    <div class="tools">
-                        <a href="javascript;" class="package-toggle-active <?php echo $item['active']==1?"collapse":"expand"; ?>" data-original-title="" title="" data-url="<?php echo ADMIN_URL."packageToggleActive/".$item['package_id']; ?>"> </a>
+                <div class="card-header portlet-sortable-title d-flex justify-content-between">
+                    <div class="btn">
+                        <i class="fas fa-sort"></i> <?php echo $item['package_name']; ?>
+                    </div>
+                    <div>
+                        <a class="btn btn-default package-toggle-active" data-url="<?php echo ADMIN_URL."packageToggleActive/".$item['package_id']; ?>" data-toggle="collapse" href="#portlet<?php echo $item['package_id']; ?>" role="button" aria-expanded="false" aria-controls="dashboards">
+                            <i class="far <?php echo $item['active']==1?"fa-minus-square":"fa-plus-square"; ?>"></i>
+                        </a>
                     </div>
                 </div>
-                <div class="card-body <?php echo $item['active']==1?"":"portlet-collapsed"; ?>">
+                <div id="portlet<?php echo $item['package_id']; ?>" class="card-body collapse <?php echo $item['active']==1?"show":""; ?>">
                     <?php echo $item['content']; ?>
                 </div>
             </div>
@@ -69,13 +73,18 @@
                 success: function (data) {
                     if(data.status=="error"){
                         toastr.error(data.error, translate('Error'));
+                        theElement.find('i.far').toggleClass('fa-minus-square fa-plus-square');
                         return false;
                     }
                 },
                 error: function (xhr, status, error) {
                     console.log(xhr.responseText);
                     toastr.error('Send form with ajax failed!', translate('Error'));
+                    theElement.find('i.far').toggleClass('fa-minus-square fa-plus-square');
                     return false;
+                },
+                beforeSend: function () {
+                    theElement.find('i.far').toggleClass('fa-minus-square fa-plus-square');
                 }
             });
         });

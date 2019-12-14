@@ -20,6 +20,7 @@
    <?php }else{ ?>
         <link href="<?php echo base_url(); ?>assets/nodcms/bootstrap-4.1.3/css/nodcms-admin-rtl.min.css" rel="stylesheet" type="text/css"/>
     <?php } ?>
+    <link href="<?php echo base_url(); ?>assets/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
     <?php $this->fetchAllCSS(); ?>
 
     <script src="<?php echo base_url(); ?>assets/jquery-3.4.0.min.js" type="text/javascript"></script>
@@ -163,6 +164,7 @@
 
 <script src="<?php echo base_url(); ?>assets/popper/popper.min.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/nodcms/bootstrap-4.1.3/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>assets/plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
 
 <script src="<?php echo base_url(); ?>assets/nodcms/js/common.js" type="text/javascript"></script>
 <?php $this->load->view("common/bootstrap-toastr"); ?>
