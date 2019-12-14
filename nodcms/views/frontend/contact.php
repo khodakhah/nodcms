@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container mt-4">
     <div class="row">
         <?php if($this->settings['google_map_url']!=""){ ?>
             <div class="col-md">

@@ -48,7 +48,7 @@
                     <?php echo $this->session->flashdata('static_error'); ?>
                 </div>
             <?php } ?>
-            <?php if(isset($breadcrumb) && count($breadcrumb)!=0){ ?>
+            <?php if(!$this->display_page_title && isset($breadcrumb) && count($breadcrumb)!=0){ ?>
                 <div class="">
                     <div class="container">
                         <div class="page-bar">
