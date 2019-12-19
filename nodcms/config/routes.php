@@ -49,8 +49,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
+if(! HAS_DB_CONFIG) {
+    $route['default_controller'] = $route['installer'] = "Installer/start";
+    $route['installer/(overview|authorization|eula|database)'] = "Installer/$1";
+    return;
+}
+else {
+    $route['installer/(.*)'] = 'General/showError';
+}
 $route['default_controller'] = "General/setLanguagePrefix";
 $route['404_override'] = 'General/showError';
+
+$route['installer/complete']= "Installer/complete";
 
 // Admin URLs
 $route['admin-sign']= "Registration/login";

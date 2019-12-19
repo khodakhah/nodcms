@@ -36,21 +36,6 @@
  * @filesource
  */
 
-// Allow a test url to check online payment process
-define("ALLOW_TEST_PAYMENT",1);
-//define("ALLOW_TEST_PAYMENT",0);
-define("URL_PROTOCOL",isset($_SERVER['HTTPS'])?"https://":"http://");
-define("SSL_PROTOCOL",isset($_SERVER['HTTPS'])?1:0);
-$host  = URL_PROTOCOL.$_SERVER['HTTP_HOST'];
-$uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-define("CONFIG_BASE_URL", "$host$uri/");
-if(filesize('nodcms/config/database.php')==0){
-    $host  = URL_PROTOCOL.$_SERVER['HTTP_HOST'];
-    $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-    $extra = 'install';
-    header("Location: $host$uri/$extra");
-    exit();
-}
 /*
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT
@@ -319,6 +304,39 @@ switch (ENVIRONMENT)
 	}
 
 	define('VIEWPATH', $view_folder.DIRECTORY_SEPARATOR);
+
+/*
+ * --------------------------------------------------------------------
+ * NodCMS prepare config
+ * --------------------------------------------------------------------
+ */
+// Allow a test url to check online payment process
+define("ALLOW_TEST_PAYMENT", false);
+
+// Allow run installer if the database connection has been failed
+define("ALLOW_INSTALLER", true);
+
+// Directory name of resources name
+define("RESOURCES_DIR_NAME", "resources");
+
+// Find the requested protocol
+$protocol_status = intval(isset($_SERVER['HTTPS']));
+$protocols = array('protocol0' => "http://", 'protocol1' => "https://");
+define("URL_PROTOCOL", $protocols["protocol$protocol_status"]);
+define("SSL_PROTOCOL", $protocol_status);
+// Find the base url
+$host = URL_PROTOCOL.$_SERVER['HTTP_HOST'];
+$uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+define("CONFIG_BASE_URL", URL_PROTOCOL.$_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . "/");
+
+define("HAS_DB_CONFIG", intval(file_exists(APPPATH.'config/database.php') && filesize(APPPATH.'config/database.php') > 0));
+
+/*
+ * --------------------------------------------------------------------
+ * Resources AUTOLOAD
+ * --------------------------------------------------------------------
+ */
+include_once 'autoload.php';
 
 /*
  * --------------------------------------------------------------------
