@@ -27,4 +27,25 @@ class Settings_model extends NodCMS_Model
         );
         parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
+
+    /**
+     * Update settings storage
+     *
+     * @param null|array $data
+     * @param int $language_id
+     * @return bool
+     */
+    function updateSettings($data = NULL, $language_id = 0){
+        if($data != NULL && is_array($data) && count($data)!=0)
+            foreach($data as $name=>$value){
+                $sql = 'INSERT INTO settings'.
+                    '  (field_name, language_id, field_value)'.
+                    'VALUES'.
+                    '  (?, ?, ?)'.
+                    'ON DUPLICATE KEY UPDATE'.
+                    '  field_value = ?';
+                $this->db->query($sql, array($name, $language_id, $value, $value));
+            }
+        return true;
+    }
 }

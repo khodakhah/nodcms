@@ -177,7 +177,13 @@ class Installer extends CI_Controller
                 'label'=>"Password",
                 'rules'=>"callback_formRulesPassword",
                 'type'=>"password",
-            )
+            ),
+            array(
+                'field'=>"database",
+                'label'=>"Database name",
+                'rules'=>"required|callback_validDatabaseName",
+                'type'=>"text",
+            ),
         );
         $myform = new Form();
         $myform->config($config, $this->self_url, 'post', 'ajax');
@@ -211,20 +217,34 @@ class Installer extends CI_Controller
      */
     public function database()
     {
-        if(!$this->hasAccess() || !$this->hasDbAccess())
+        if(!$this->hasAccess() || !$this->hasDatabase())
             return;
+
+        $tables = $this->getTables();
 
         $this->data['title'] = "{$this->product_name} Installer";
         $this->data['sub_title'] = "Database installation";
+        $this->data['tables'] = $tables;
+
+        $paths = array_column($tables[0], 'path');
+        if(isset($tables[1]) && !empty($tables[1])) {
+            foreach($tables[1] as $path) {
+                $paths = array_merge($paths, array_column($path, 'path'));
+            }
+        }
 
         $config = array(
             array(
-                'field'=>"database",
-                'label'=>"Database name",
-                'rules'=>"required|callback_validDatabaseName",
-                'type'=>"text",
+                'field'=>"path",
+                'label'=>"Path",
+                'rules'=>"required|in_list[".join(',', $paths)."]",
+                'errors'=>array(
+                    'in_list' => "Path not listed!",
+                ),
+                'type'=>"hidden",
             ),
         );
+
         $myform = new Form();
         $myform->config($config, $this->self_url, 'post', 'ajax');
         $myform->setFormTheme("form_only");
@@ -238,26 +258,35 @@ class Installer extends CI_Controller
                 return;
             }
 
-            $mysqli =@ new mysqli($_SESSION['database_connect']['host'], $_SESSION['database_connect']['username'], $_SESSION['database_connect']['password']);
-            $mysqli->select_db($data['database']);
+            include_once BASEPATH."core/Model.php";
+            include_once APPPATH."core/NodCMS_Model.php";
+            include_once $data['path'];
+            $model_name = basename($data['path'],".php");
+            $theModel = new $model_name();
 
-            if(!empty($mysqli->error_list)) {
-                $this->errorMessage("MySQL error: ".join(',', array_column($mysqli->error_list, 'error')), $this->self_url);
+            if($theModel->tableExists()) {
+                $theModel->dropTable();
+            }
+            if(!$theModel->installTable()) {
+                $this->errorMessage("Table couldn't install.", $this->self_url);
                 return;
             }
 
-            $_SESSION['database_connect']['database'] = $data['database'];
+            // Insert first default data
+            if(method_exists($theModel, 'firstData')) {
+                $theModel->firstData();
+            }
 
-            $this->successMessage("Database has been selected successfully.", $this->next_url);
+            $this->successMessage("Database has been created successfully.", $this->next_url);
             return;
         }
-        $this->data['the_form'] = $myform->fetch('login-form', array('data-redirect'=>1));
+
         $this->data['content'] = $this->load->view($this->mainTemplate."/database", $this->data, true);
         $this->load->view($this->frameTemplate, $this->data);
     }
 
     /**
-     *
+     * Prepare settings
      */
     public function settings()
     {
@@ -265,7 +294,17 @@ class Installer extends CI_Controller
             return;
 
         $this->data['title'] = "{$this->product_name} Installer";
-        $this->data['sub_title'] = "Database installation";
+        $this->data['sub_title'] = "Prepare settings";
+
+        $date_formats = array(
+            array("format"=>"d.m.Y", "name"=>"dd.mm.yy"),
+            array("format"=>"m/d/Y", "name"=>"mm/dd/yy"),
+            array("format"=>"Y-m-d", "name"=>"yy-mm-dd"),
+        );
+        $time_formats = array(
+            array("format"=>"H:i", "name"=>"24"),
+            array("format"=>"h:i A", "name"=>"12"),
+        );
 
         $config = array(
             array(
@@ -288,10 +327,11 @@ class Installer extends CI_Controller
                 'rules'=>"required|callback_formRulesPassword",
                 'type'=>"password",
                 'default'=>(isset($current_data) && $current_data['password']) ? $current_data['password'] : "",
-            ),array(
+            ),
+            array(
                 'field'=>"timezone",
                 'label'=>'Timezone',
-                'rules'=>"",
+                'rules'=>"required|in_list[".join(',', DateTimeZone::listIdentifiers())."]",
                 'type'=>"select-array",
                 'default'=>(isset($current_data) && $current_data['timezone']) ? $current_data['timezone'] : "",
                 'options'=>DateTimeZone::listIdentifiers(),
@@ -300,37 +340,22 @@ class Installer extends CI_Controller
             array(
                 'field'=>"date_format",
                 'label'=>'Date Format',
-                'rules'=>"",
+                'rules'=>"required|in_list[".join(',', array_column($date_formats, 'format'))."]",
                 'type'=>"select",
                 'default'=>(isset($current_data) && $current_data['date_format']) ? $current_data['date_format'] : "",
-                'options'=>array(
-                    array("format"=>"d.m.Y", "name"=>"dd.mm.yy"),
-                    array("format"=>"m/d/Y", "name"=>"mm/dd/yy"),
-                    array("format"=>"Y-m-d", "name"=>"yy-mm-dd"),
-                ),
+                'options'=>$date_formats,
                 'option_name'=>'name',
                 'option_value'=>'format',
             ),
             array(
                 'field'=>"time_format",
-                'label'=>'Time Format',
-                'rules'=>"",
+                'label'=>"Time Format",
+                'rules'=>"required|in_list[".join(',', array_column($time_formats, 'format'))."]",
                 'type'=>"select",
-                'default'=>(isset($current_data) && $current_data['time_format']) ? $current_data['time_format'] : "",
-                'options'=>array(
-                    array("format"=>"H:i", "name"=>"24"),
-                    array("format"=>"h:i A", "name"=>"12"),
-                ),
+                'default'=>$this->settings['time_format'],
+                'options'=>$time_formats,
                 'option_name'=>'name',
                 'option_value'=>'format',
-            ),
-            array(
-                'field'=>"send_email",
-                'label'=>'Email',
-                'rules'=>"",
-                'type'=>"email",
-                'default'=>(isset($current_data) && $current_data['send_email']) ? $current_data['send_email'] : "",
-                'help'=>"All system message will send from this email address.",
             ),
         );
         $myform = new Form();
@@ -346,12 +371,35 @@ class Installer extends CI_Controller
                 return;
             }
 
-            // Save the settings
+            $this->load->database("mysqli://{$_SESSION['database_connect']['host']}@{$_SESSION['database_connect']['password']}/{$_SESSION['database_connect']['database']}");
+            $this->load->model('Settings_model');
+            $this->load->model('Users_model');
 
+            $update_data = $data;
+            unset($update_data['password']);
+            $update_data['sent_email'] = $data['email'];
+            $this->Settings_model->updateSettings($update_data);
+
+            $user = $this->Users_model->getOne(null, array('username'=>"admin"));
+            if(!is_array($user) || count($user) == 0) {
+                $this->Users_model->add(array(
+                    'username'=>"admin",
+                    'password'=>md5($data['password']),
+                    'email'=>$data['email'],
+                    'contact_email'=>$data['email'],
+                    'user_unique_key'=>md5($data['email']),
+                    'firstname'=>$data['firstname'],
+                    'lastname'=>$data['firstname'],
+                    'active'=>1,
+                    'status'=>1,
+                    'group_id'=>1,
+                    'language_id'=>1,
+                ));
+            }
             $this->successMessage("Settings has been saved successfully.", $this->next_url);
             return;
         }
-        $this->data['content'] = $myform->fetch();
+        $this->data['content'] = $myform->fetch('',array('data-redirect'=>1));
         $this->load->view($this->frameTemplate, $this->data);
     }
 
@@ -360,15 +408,65 @@ class Installer extends CI_Controller
         echo "Thank you!";
     }
 
-    public function importTables()
+    /**
+     * @return array
+     */
+    private function getTables()
     {
-        header('Content-Type: text/plain; charset=utf-8');
+        $db = $_SESSION['database_connect'];
+        $dsn = "mysqli://{$db['username']}:{$db['password']}@{$db['host']}/{$db['database']}";
+        $this->load->database($dsn);
+
         include_once BASEPATH."core/Model.php";
         include_once APPPATH."core/NodCMS_Model.php";
 
-        include_once APPPATH."models/Menu_model.php";
-        $test = new Menu_model();
-        echo "Table: " . $test->tableName() . "\n";
+        // Base models
+        $models_paths = get_all_php_files(APPPATH . 'models'.DIRECTORY_SEPARATOR);
+        $base_tables = array();
+        foreach($models_paths as $model_path) {
+            include_once $model_path;
+            $model_name = basename($model_path,".php");
+            $theModel = new $model_name();
+            if(method_exists($theModel, 'tableName')) {
+                $base_tables[] = array(
+                    'path' => $model_path,
+                    'table' => $theModel->tableName(),
+                    'exists' => $theModel->tableExists(),
+                );
+            }
+        }
+
+        // Models from "third_party"s
+        $tables = array();
+        $dirs = glob(APPPATH."third_party/*", GLOB_BRACE);
+        foreach ($dirs as $dir) {
+            $models_paths = get_all_php_files($dir . DIRECTORY_SEPARATOR . 'models'.DIRECTORY_SEPARATOR);
+            if(!$models_paths) {
+                continue;
+            }
+
+            foreach($models_paths as $model_path) {
+                include_once $model_path;
+                $model_name = basename($model_path,".php");
+                $theModel = new $model_name();
+                if(!method_exists($theModel, 'tableName')) {
+                    continue;
+                }
+                $base_path = basename($dir);
+                if(!key_exists($base_path, $tables)) {
+                    $tables[$base_path] = array();
+                }
+
+                $tables[$base_path][] = array(
+                    'path' => $model_path,
+                    'table' => $theModel->tableName(),
+                    'exists' => $theModel->tableExists(),
+                );
+            }
+
+        }
+
+        return array($base_tables, $tables);
     }
 
     /**
@@ -435,12 +533,5 @@ class Installer extends CI_Controller
         }
 
         return true;
-    }
-
-    private function showMessage($type, $message)
-    {
-        $this->data['content'] = "<div class=\"mt-3 alert alert-$type\">$message</div>" .
-            "<a href='".base_url()."installer' class='btn default'>Back</a>";
-        $this->load->view($this->frameTemplate, $this->data);
     }
 }

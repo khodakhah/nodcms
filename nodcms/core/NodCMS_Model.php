@@ -496,4 +496,34 @@ class NodCMS_Model extends CI_Model
         $query = $this->db->get();
         return $query->result_array();
     }
+
+    /**
+     * Create table
+     *
+     * @return mixed
+     */
+    public function installTable()
+    {
+        $query_items = array();
+        foreach($this->fields as $field_name => $field_codes) {
+            $query_items[] = "`$field_name` $field_codes";
+        }
+        $query_items[] = "PRIMARY KEY (`{$this->primary_key}`)";
+        $query_items = join(',', $query_items);
+        $sql = "CREATE TABLE IF NOT EXISTS `{$this->table_name}` ($query_items) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;";
+        return $this->db->query($sql);
+    }
+
+    public function dropTable()
+    {
+        $sql = "DROP TABLE IF EXISTS `{$this->table_name}`;";
+        return $this->db->query($sql);
+    }
+
+    public function tableExists()
+    {
+        $sql = "show tables like '{$this->table_name}';";
+        $query = $this->db->query($sql);
+        return count($query->result_array()) > 0;
+    }
 }
