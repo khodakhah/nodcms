@@ -34,4 +34,17 @@ class Languages_model extends NodCMS_Model
         );
         parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
+
+    /**
+     * Insert first data
+     */
+    function defaultData()
+    {
+        $data = array(
+            array('language_id'=>1, 'language_name'=>'english', 'language_title'=>'English', 'code'=>'en', 'public'=>1, 'rtl'=>0, 'sort_order'=>1, 'created_date'=>time(), 'default'=>1, 'image'=>'upload_file/lang/en.png'),
+        );
+        foreach($data as $item) {
+            $this->add($item);
+        }
+    }
 }

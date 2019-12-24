@@ -22,9 +22,7 @@ class Settings_model extends NodCMS_Model
         );
         $foreign_tables = null;
         $translation_fields = null;
-        $unique = array(
-            'field_name_language_id'=>array("field_name","language_id"),
-        );
+        $this->unique_keys = array(array("language_id","field_name"));
         parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
 

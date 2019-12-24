@@ -21,7 +21,28 @@
 </head>
 <body data-base-url="<?php echo base_url(); ?>" class="page-container-bg-solid page-sidebar-closed-hide-logo <?php echo (count($this->page_sidebar_items)==0 || $this->page_sidebar_closed == true)?' page-full-width page-sidebar-closed':''; ?>">
 <div class="container">
-<?php $this->load->view("nodcms-top-menu"); ?>
+    <div class="bg-header navbar-bordered">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-2 col-sm-6">
+                    <a href="<?php echo base_url(); ?>">
+                        <img class="img-fluid site-logo" src="<?php echo base_url().$this->settings["logo"]; ?>" alt="<?php echo $this->settings["company"]; ?>" title="<?php echo $this->settings["company"]; ?>">
+                    </a>
+                </div>
+                <div class="col">
+                    <div class="navbar navbar-expand-lg navbar-light navbar-top">
+                        <ul class="navbar-nav flex-column-reverse">
+                            <li class="nav-item">
+                                <a target="_blank" href="https://chictheme.com/en/article/nodcms-based-applications" class="nav-link" title="<?php echo _l("Help", $this); ?>">
+                                    <i class="far fa-question-circle"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row no-gutters">
         <?php if(count($this->page_sidebar_items)!=0){ ?>
             <div class="sidebar-col d-print-none">

@@ -46,4 +46,77 @@ class Users_model extends NodCMS_Model
         $translation_fields = null;
         parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
+
+    /**
+     * Generate unique code for user accounts
+     *
+     * @return string
+     */
+    public function generateUniqueKey()
+    {
+        $unique_key = md5(time()+rand(100000,999999));
+        while ($this->getCount(array("user_unique_key"=>$unique_key))!=0){
+            $unique_key = md5(time()+rand(100000,999999));
+        }
+        return $unique_key;
+    }
+
+    /**
+     * Some filter on create user account
+     *
+     * @param $data
+     */
+    public function add($data)
+    {
+        $default_data = array(
+            "user_unique_key"=>$this->generateUniqueKey(),
+            "firstname"=>"",
+            "lastname"=>"",
+            "email"=>"",
+            "username"=>"",
+            "password"=>"",
+            "group_id"=>20,
+            "active_register"=>0,
+            "active"=>1,
+            "status"=>0
+        );
+
+        $data = array_merge($default_data, $data);
+
+        if(!key_exists('fullname', $data)) {
+            $data['fullname'] = "$data[firstname] $data[lastname]";
+        }
+
+        $data['password'] = md5($data['password']);
+
+        parent::add($data);
+    }
+
+    /**
+     * Set some filter before update an user account
+     *
+     * @param int $id
+     * @param array $data
+     */
+    public function edit($id, $data)
+    {
+        $_data = $this->getOne($id);
+        if(!is_array($_data) || count($_data) == 0) {
+            return;
+        }
+        $data = array_merge(array(
+            'firstname'=>$_data['firstname'],
+            'lastname'=>$_data['lastname'],
+        ), $data);
+
+        if(!key_exists('fullname', $_data)) {
+            $data['fullname'] = "$data[firstname] $data[lastname]";
+        }
+
+        if(key_exists('password', $_data)) {
+            $data['password'] = md5($data['password']);
+        }
+
+        parent::edit($id, $data);
+    }
 }

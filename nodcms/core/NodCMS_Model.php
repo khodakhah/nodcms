@@ -15,6 +15,8 @@ class NodCMS_Model extends CI_Model
     private $fields;
     private $foreign_tables;
     private $translation_fields;
+    protected $unique_keys;
+    protected $keys;
 
     /**
      * NodCMS_Model constructor.
@@ -508,18 +510,47 @@ class NodCMS_Model extends CI_Model
         foreach($this->fields as $field_name => $field_codes) {
             $query_items[] = "`$field_name` $field_codes";
         }
-        $query_items[] = "PRIMARY KEY (`{$this->primary_key}`)";
+        if(!empty($this->primary_key))
+            $query_items[] = "PRIMARY KEY (`{$this->primary_key}`)";
+
+        if(!empty($this->unique_keys)){
+            foreach($this->unique_keys as $name=>$value) {
+                $_keys = join('`, `', $value);
+                $_name = is_string($name)?$name:join('', $value);
+                $query_items[] = "UNIQUE INDEX `{$_name}` (`{$_keys}`)";
+            }
+        }
+
+        if(!empty($this->keys)){
+            foreach($this->keys as $name=>$value) {
+                $_keys = join('`, `', $value);
+                $_name = is_string($name)?$name:join('', $value);
+                $query_items[] = "KEY `{$_name}` (`{$_keys}`)";
+            }
+        }
+
         $query_items = join(',', $query_items);
-        $sql = "CREATE TABLE IF NOT EXISTS `{$this->table_name}` ($query_items) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;";
+        $auto_increment = !empty($this->primary_key)?" AUTO_INCREMENT=1":"";
+        $sql = "CREATE TABLE IF NOT EXISTS `{$this->table_name}` ($query_items) ENGINE=InnoDB{$auto_increment} DEFAULT CHARSET=utf8;";
         return $this->db->query($sql);
     }
 
+    /**
+     * Drop table
+     *
+     * @return bool
+     */
     public function dropTable()
     {
         $sql = "DROP TABLE IF EXISTS `{$this->table_name}`;";
         return $this->db->query($sql);
     }
 
+    /**
+     * Return true if the table exists
+     *
+     * @return bool
+     */
     public function tableExists()
     {
         $sql = "show tables like '{$this->table_name}';";

@@ -1,7 +1,7 @@
 <?php $this->load->addJsFile("assets/nodcms/js/installer-database.min"); ?>
 <p>In this step database will create.</p>
 <p><strong>NOTE:</strong> Currently NodCMS and NodCMS installation wizard supports only <strong>MySQL database</strong>.</p>
-<p class="font-red"><strong>NOTE:</strong> With submit installation the exists table would be dropped and create again. You may lose your data on these tables.</p>
+<p class="alert alert-warning"><strong class="font-red">NOTE:</strong> With submit installation the exists table would be dropped and create again. You may lose your data on these tables.</p>
 <h2>General tables</h2>
 <div class="border-1 p-3 bg-grey-200">
     <div class="row">

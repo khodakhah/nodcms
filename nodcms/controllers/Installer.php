@@ -62,7 +62,7 @@ class Installer extends CI_Controller
         if($step_key > 0 && $step_key < count($steps)) {
             $this->back_url = base_url()."installer/".$steps[$step_key-1];
             $this->self_url = base_url()."installer/".$steps[$step_key];
-            $this->next_url = base_url()."installer/".$steps[$step_key+1];
+            $this->next_url = base_url().(isset($steps[$step_key+1])?"installer/".$steps[$step_key+1]:"login");
         }
 
         $this->data['steps'] = array();
@@ -198,11 +198,11 @@ class Installer extends CI_Controller
                 return;
             }
 
-            if (!$this->hasDbAccess($data)) {
+            if (!$this->hasDatabase($data)) {
                 return;
             }
-
             $_SESSION['database_connect'] = $data;
+
 
             $this->successMessage("Your entered data was correct.", $this->next_url);
             return;
@@ -273,8 +273,8 @@ class Installer extends CI_Controller
             }
 
             // Insert first default data
-            if(method_exists($theModel, 'firstData')) {
-                $theModel->firstData();
+            if(method_exists($theModel, 'defaultData')) {
+                $theModel->defaultData();
             }
 
             $this->successMessage("Database has been created successfully.", $this->next_url);
@@ -308,32 +308,40 @@ class Installer extends CI_Controller
 
         $config = array(
             array(
+                'field'=>"firstname",
+                'label'=>'First Name',
+                'rules'=>"required|callback_formRulesName",
+                'type'=>"text",
+            ),
+            array(
+                'field'=>"lastname",
+                'label'=>'Last Name',
+                'rules'=>"required|callback_formRulesName",
+                'type'=>"text",
+            ),
+            array(
                 'field'=>"company",
                 'label'=>'Company Name',
                 'rules'=>"required|callback_formRulesName",
                 'type'=>"text",
-                'default'=>(isset($current_data) && $current_data['company']) ? $current_data['company'] : "",
             ),
             array(
                 'field'=>"email",
                 'label'=>"Email",
                 'rules'=>"required|valid_email",
                 'type'=>"text",
-                'default'=>(isset($current_data) && $current_data['email']) ? $current_data['email'] : "",
             ),
             array(
                 'field'=>"password",
                 'label'=>"Password",
                 'rules'=>"required|callback_formRulesPassword",
                 'type'=>"password",
-                'default'=>(isset($current_data) && $current_data['password']) ? $current_data['password'] : "",
             ),
             array(
                 'field'=>"timezone",
                 'label'=>'Timezone',
                 'rules'=>"required|in_list[".join(',', DateTimeZone::listIdentifiers())."]",
                 'type'=>"select-array",
-                'default'=>(isset($current_data) && $current_data['timezone']) ? $current_data['timezone'] : "",
                 'options'=>DateTimeZone::listIdentifiers(),
                 'class'=>"select2me",
             ),
@@ -342,7 +350,6 @@ class Installer extends CI_Controller
                 'label'=>'Date Format',
                 'rules'=>"required|in_list[".join(',', array_column($date_formats, 'format'))."]",
                 'type'=>"select",
-                'default'=>(isset($current_data) && $current_data['date_format']) ? $current_data['date_format'] : "",
                 'options'=>$date_formats,
                 'option_name'=>'name',
                 'option_value'=>'format',
@@ -371,7 +378,9 @@ class Installer extends CI_Controller
                 return;
             }
 
-            $this->load->database("mysqli://{$_SESSION['database_connect']['host']}@{$_SESSION['database_connect']['password']}/{$_SESSION['database_connect']['database']}");
+            $db = $_SESSION['database_connect'];
+            $dsn = "mysqli://{$db['username']}:{$db['password']}@{$db['host']}/{$db['database']}";
+            $this->load->database($dsn);
             $this->load->model('Settings_model');
             $this->load->model('Users_model');
 
@@ -380,21 +389,28 @@ class Installer extends CI_Controller
             $update_data['sent_email'] = $data['email'];
             $this->Settings_model->updateSettings($update_data);
 
-            $user = $this->Users_model->getOne(null, array('username'=>"admin"));
+            $user = $this->Users_model->getOne(1);
             if(!is_array($user) || count($user) == 0) {
-                $this->Users_model->add(array(
-                    'username'=>"admin",
-                    'password'=>md5($data['password']),
-                    'email'=>$data['email'],
-                    'contact_email'=>$data['email'],
-                    'user_unique_key'=>md5($data['email']),
-                    'firstname'=>$data['firstname'],
-                    'lastname'=>$data['firstname'],
-                    'active'=>1,
-                    'status'=>1,
-                    'group_id'=>1,
-                    'language_id'=>1,
-                ));
+                $_data = array(
+                    "firstname"=>$data['firstname'],
+                    "lastname"=>$data['lastname'],
+                    "email"=>$data['email'],
+                    "username"=>"admin",
+                    "password"=>$data['password'],
+                    "group_id"=>1,
+                    "active"=>1,
+                    "status"=>1
+                );
+                $this->Users_model->add($_data);
+            }
+            else {
+                $_data = array(
+                    "firstname"=>$data['firstname'],
+                    "lastname"=>$data['lastname'],
+                    "email"=>$data['email'],
+                    "password"=>$data['password'],
+                );
+                $this->Users_model->edit($user['user_id'], $_data);
             }
             $this->successMessage("Settings has been saved successfully.", $this->next_url);
             return;
@@ -403,9 +419,134 @@ class Installer extends CI_Controller
         $this->load->view($this->frameTemplate, $this->data);
     }
 
+    /**
+     * Last step. Create database config file
+     */
     public function complete()
     {
-        echo "Thank you!";
+        if(!$this->hasAccess() || !$this->hasDatabase())
+            return;
+
+        $db = $_SESSION['database_connect'];
+        $dsn = "mysqli://{$db['username']}:{$db['password']}@{$db['host']}/{$db['database']}";
+        $this->load->database($dsn);
+        $this->load->model('Settings_model');
+        $this->load->model('Users_model');
+
+        $this->data['sub_title'] = "Complete";
+        $admin_user = $this->Users_model->getOne(1);
+        $prepare_settings = $this->Settings_model->getCount() > 0;
+        $config = array(
+            array(
+                'type'=>"h4",
+                'label'=>"Requires to create config file",
+            ),
+            array(
+                'field'=>"data",
+                'type'=>"hidden",
+                'rules'=>"",
+                'default'=>"1",
+            ),
+            array(
+                'field'=>"Database",
+                'label'=>'Database',
+                'type'=>"static",
+                'value'=>'<i class="fa fa-check text-success"></i> '.$_SESSION['database_connect']['database'],
+            ),
+            array(
+                'field'=>"prepare_settings",
+                'label'=>'Prepare settings',
+                'type'=>"static",
+                'value'=>'<i class="fa '.($prepare_settings ? "fa-check text-success" : "fa-times text-danger").'"></i>',
+            ),
+            array(
+                'field'=>"admin_user",
+                'label'=>'Administrator created',
+                'type'=>"static",
+                'value'=>empty($admin_user) ? "<i class=\"fa fa-times text-danger\"></i>" : "<i class='fa fa-check text-success'></i>",
+            ),
+        );
+        if(!empty($admin_user)) {
+            $config = array_merge($config, array(
+                array(
+                    'type'=>"h4",
+                    'label'=>"Administrator account data",
+                ),
+                array(
+                    'field'=>"username",
+                    'label'=>'Username',
+                    'type'=>"static",
+                    'value'=>$admin_user['username'],
+                    'class'=>"font-weight-bold",
+                ),
+                array(
+                    'field'=>"password",
+                    'label'=>'Password',
+                    'type'=>"static",
+                    'value'=>"<span class='text-grey'>******</span>",
+                    'help'=>"This is the password that you entered in the last step \"Settings\"",
+                    'class'=>"font-weight-bold",
+                ),
+            ));
+        }
+        $myform = new Form();
+        $myform->config($config, $this->self_url, 'post', 'ajax');
+        $myform->setFormTheme("form_only");
+
+        $myform->data['submit_label'] = "Confirm & Done";
+        $myform->data['submit_class']="btn-success";
+
+        if($myform->ispost()){
+            $data = $myform->getPost();
+            // Stop Page
+            if($data === false){
+                return;
+            }
+
+            if(!$prepare_settings) {
+                $this->errorMessage("Prepared settings is not set.", $this->back_url);
+                return;
+            }
+
+            if(!is_array($admin_user) || count($admin_user) == 0) {
+                $this->errorMessage("Administration account not found.", $this->back_url);
+                return;
+            }
+
+            $myfile = fopen(DB_CONFIG_PATH, "w");
+            if(!$myfile) {
+                $errors = error_get_last();
+                if(count($errors) > 1) {
+                    $this->errorMessage($errors['message'], $this->self_url);
+                    return;
+                }
+                $this->errorMessage("Unable to open db config file.", $this->self_url);
+                return;
+            }
+
+            $sample_content = file_get_contents(APPPATH."config/database_manual.php");
+            if(!$sample_content) {
+                $this->errorMessage("Unable to open database_manual.php file.", $this->self_url);
+                return;
+            }
+
+            $replace = array();
+            foreach($_SESSION['database_connect'] as $key=>$item) {
+                $replace["@$key@"] = $item;
+            }
+            $content = str_replace(array_keys($replace), array_values($replace), $sample_content);
+            fwrite($myfile, $content);
+            fclose($myfile);
+
+            session_destroy();
+
+            $this->successMessage("Installation has been done.", $this->next_url);
+            return;
+        }
+
+        $this->data['the_form'] = $myform->fetch('',array('data-redirect'=>1));
+        $this->data['content'] = $this->load->view($this->mainTemplate."/complete", $this->data, true);
+        $this->load->view($this->frameTemplate, $this->data);
     }
 
     /**
@@ -484,12 +625,12 @@ class Installer extends CI_Controller
     }
 
     /**
-     * Valid database connection has been set
+     * Check database connection and database exists
      *
      * @param null|array $data
      * @return bool
      */
-    private function hasDbAccess($data = null)
+    public function hasDatabase($data = null)
     {
         if($data == null) {
             if(!isset($_SESSION['database_connect'])) {
@@ -498,34 +639,13 @@ class Installer extends CI_Controller
             }
             $data = $_SESSION['database_connect'];
         }
-
-        $conn =@ new mysqli($data['host'], $data['username'], $data['password']);
-        if ($conn->connect_error) {
-            $this->errorMessage("Connection failed: " . $conn->connect_error, $this->self_url);
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Check database connection and database exists
-     *
-     * @return bool
-     */
-    public function hasDatabase()
-    {
-        if(!isset($_SESSION['database_connect'])) {
-            $this->errorMessage("Database connection data not found.", $this->back_url);
-            return false;
-        }
-        if(!isset($_SESSION['database_connect']['database'])) {
+        if(!isset($data['database'])) {
             $this->errorMessage("Database not found.", $this->back_url);
             return false;
         }
 
-        $mysqli =@ new mysqli($_SESSION['database_connect']['host'], $_SESSION['database_connect']['username'], $_SESSION['database_connect']['password']);
-        $mysqli->select_db($_SESSION['database_connect']['database']);
+        $mysqli =@ new mysqli($data['host'], $data['username'], $data['password']);
+        $mysqli->select_db($data['database']);
 
         if(!empty($mysqli->error_list)) {
             $this->errorMessage("MySQL error: ".join(',', array_column($mysqli->error_list, 'error')), $this->self_url);

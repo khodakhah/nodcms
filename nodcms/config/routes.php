@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 if(! HAS_DB_CONFIG) {
     $route['default_controller'] = $route['installer'] = "Installer/start";
-    $route['installer/(overview|authorization|eula|database)'] = "Installer/$1";
+    $route['installer/(start|authorization|eula|database|complete)'] = "Installer/$1";
     return;
 }
 else {
@@ -60,15 +60,7 @@ else {
 $route['default_controller'] = "General/setLanguagePrefix";
 $route['404_override'] = 'General/showError';
 
-$route['installer/complete']= "Installer/complete";
-
 // Admin URLs
-$route['admin-sign']= "Registration/login";
-$route['logout']= "General/logout";
-$route['logout/([a-z]{2})']= "General/logout/$1";
-$route['account-locked']= "Registration/accountLocked";
-$route['([a-z]{2})/account-locked']= "Registration/accountLocked/$1";
-//$route['admin']= "Providers_admin/index";
 $route['admin']= "General_admin/dashboard";
 $route['admin/(.+)']= "General_admin/$1";
 $route['admin-provider']= "Providers_admin/index";
@@ -99,6 +91,10 @@ $route['([a-z]{2})/contact'] = 'General/contact/$1';
 $route['([a-z]{2})/contact-home'] = 'General/contact/$1/home';
 $route['([a-z][a-z])/(terms-and-conditions|privacy-policy)']= "General/staticSettingsPages/$1/$2";
 // Registration
+$route['admin-sign']= "Registration/login";
+$route['account-locked']= "Registration/accountLocked";
+$route['([a-z]{2})/account-locked']= "Registration/accountLocked/$1";
+$route['(login|logout)']= "Registration/$1";
 $route['([a-z][a-z])/(login|logout)']= "Registration/$2/$1";
 $route['([a-z][a-z])/user-registration']= "Registration/userRegistration/$1";
 $route['([a-z][a-z])/return-password']= "Registration/returnPassword/$1";

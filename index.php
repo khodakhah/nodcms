@@ -329,7 +329,8 @@ $host = URL_PROTOCOL.$_SERVER['HTTP_HOST'];
 $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 define("CONFIG_BASE_URL", URL_PROTOCOL.$_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . "/");
 
-define("HAS_DB_CONFIG", intval(file_exists(APPPATH.'config/database.php') && filesize(APPPATH.'config/database.php') > 0));
+define("DB_CONFIG_PATH", APPPATH.'config/database.php');
+define("HAS_DB_CONFIG", intval(file_exists(DB_CONFIG_PATH) && filesize(DB_CONFIG_PATH) > 0));
 
 /*
  * --------------------------------------------------------------------
