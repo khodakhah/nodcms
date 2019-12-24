@@ -75,8 +75,12 @@ class General extends NodCMS_Controller
 //            $index_content .= $data;
 
 //        $this->display_page_title = false;
-        $this->data['title_logo'] = base_url().$this->settings['index_logo'];
-        $this->data['title_bg'] = isset($this->settings['home_page_title_bg'])?base_url().$this->settings['home_page_title_bg']:"";
+        if(!empty($this->settings['index_logo'])) {
+            $this->data['title_logo'] = base_url().$this->settings['index_logo'];
+        }
+        if(isset($this->settings['home_page_title_bg']) && !empty($this->settings['home_page_title_bg'])) {
+            $this->data['title_bg'] = base_url().$this->settings['home_page_title_bg'];
+        }
         $this->data['title_bg_blur'] = $this->settings['home_page_title_bg_blur'];
         $this->data['title'] = $this->settings['company'];
         $this->data['sub_title'] = isset($this->settings["site_title"])?$this->settings["site_title"]:$this->settings['company'];

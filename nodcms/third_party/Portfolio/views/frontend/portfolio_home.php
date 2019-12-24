@@ -1,14 +1,14 @@
-<?php $this->load->addCSSFile("assets/plugins/cubeportfolio/css/cubeportfolio"); ?>
-<?php $this->load->addJsFile("assets/plugins/cubeportfolio/js/jquery.cubeportfolio.min"); ?>
-<?php $this->load->addJsFile("assets/nodcms/Packages/Portfolio/portfolio-list.min"); ?>
-<?php $this->load->fetchAllCSS(); ?>
-<?php $this->load->fetchAllJS(); ?>
-<div class="padding-top-20 padding-bottom-20">
-    <div class="container-fluid">
-        <h2 class="text-center margin-bottom-20"><?php echo $title; ?></h2>
-        <div class="portfolio-content portfolio-3">
-            <div class="clearfix"></div>
-            <?php if(isset($data_list) && count($data_list)!=0){ ?>
+<?php if(isset($data_list) && count($data_list)!=0){ ?>
+    <?php $this->load->addCSSFile("assets/plugins/cubeportfolio/css/cubeportfolio"); ?>
+    <?php $this->load->addJsFile("assets/plugins/cubeportfolio/js/jquery.cubeportfolio.min"); ?>
+    <?php $this->load->addJsFile("assets/nodcms/Packages/Portfolio/portfolio-list.min"); ?>
+    <?php $this->load->fetchAllCSS(); ?>
+    <?php $this->load->fetchAllJS(); ?>
+    <div class="padding-top-20 padding-bottom-20">
+        <div class="container-fluid">
+            <h2 class="text-center margin-bottom-20"><?php echo $title; ?></h2>
+            <div class="portfolio-content portfolio-3">
+                <div class="clearfix"></div>
                 <div data-role="portfolio" class="cbp">
                     <?php foreach($data_list as $item){ ?>
                         <div class="cbp-item print motion">
@@ -27,7 +27,7 @@
                         </div>
                     <?php } ?>
                 </div>
-            <?php } ?>
+            </div>
         </div>
     </div>
-</div>
+<?php } ?>
