@@ -22,6 +22,7 @@ class About_model extends NodCMS_Model
             'profile_theme'=>"varchar(255) DEFAULT NULL",
             'created_date'=>"int(11) unsigned NOT NULL",
             'public'=>"int(1) unsigned NOT NULL DEFAULT '0'",
+            'order'=>"int(11) unsigned NOT NULL DEFAULT '0'",
         );
         $foreign_tables = null;
         $translation_fields = array("name", "keywords", "description", "content", "preview_description", "name_title");
