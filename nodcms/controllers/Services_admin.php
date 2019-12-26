@@ -356,7 +356,6 @@ class Services_admin extends NodCMS_Controller
             if($data == null){
                 return;
             }
-            $this->Nodcms_admin_model->updateSettings($data);
             if(isset($data["options"])){
                 foreach($data["options"] as $language_id=>$item){
                     if(!$this->Nodcms_admin_model->updateSettings($item, $language_id)){
@@ -366,6 +365,7 @@ class Services_admin extends NodCMS_Controller
                 }
                 unset($data["options"]);
             }
+            $this->Nodcms_admin_model->updateSettings($data);
             $this->systemSuccess("Your Setting has been updated successfully!", $self_url);
             return;
         }
