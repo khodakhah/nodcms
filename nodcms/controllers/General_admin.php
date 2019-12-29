@@ -1076,7 +1076,7 @@ class General_admin extends NodCMS_Controller{
                 'label'=>_l("Flag", $this),
                 'type'=>"image-library",
                 'rules'=>"",
-                'library_type'=>"language",
+                'library_type'=>"lang",
                 'default'=>isset($current_data['image'])?$current_data['image']:"",
             ),
             array(
@@ -1307,7 +1307,6 @@ class General_admin extends NodCMS_Controller{
      * Edit languages translation files
      *
      * @param $id
-     * @param $file_name
      */
     function languageTranslation($id)
     {

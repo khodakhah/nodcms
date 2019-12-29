@@ -261,7 +261,7 @@ class Form
      *
      *
      * @param null $url
-     * @return bool
+     * @return false|array
      */
     function getPost($url = null)
     {
@@ -308,7 +308,7 @@ class Form
                     unset($result[$key]);
             }
         }
-        return $result;
+        return (!is_array($result) || count($result) == 0) ? false : $result;
     }
 
     function getRules()

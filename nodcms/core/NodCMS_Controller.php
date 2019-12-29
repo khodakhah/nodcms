@@ -656,7 +656,7 @@ class NodCMS_Controller extends CI_Controller{
         $this->data["title"] = _l("Error", $this)." $status_code";
         $this->data["status_code"] = $status_code;
         $this->data["heading"] = $heading!=null?$heading:_l("Page not found!", $this);
-        $this->data["message"] = $message!=null?$message:_l("Your requested page nof found.", $this);
+        $this->data["message"] = $message!=null?$message:_l("Your requested page not found.", $this);
         $this->data["buttons"] = $buttons;
         $this->data["content"] = $this->load->view("common/show_error", $this->data, true);
         echo $this->load->view($this->cleanFrame, $this->data, true);

@@ -414,15 +414,7 @@ class General extends NodCMS_Controller
      */
     function logout($lang = "")
     {
-        $this->session->unset_userdata('fullname');
-        $this->session->unset_userdata('username');
-        $this->session->unset_userdata('user_id');
-        $this->session->unset_userdata('group');
-        $this->session->unset_userdata('avatar');
-        $this->session->unset_userdata('email');
-        $this->session->unset_userdata('logged_in_status');
-        $this->session->unset_userdata('provider_id');
-        $this->session->unset_userdata('provider_name');
+        $this->removeUserSessions();
         redirect(base_url().$lang);
     }
 

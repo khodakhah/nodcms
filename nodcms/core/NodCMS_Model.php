@@ -132,7 +132,7 @@ class NodCMS_Model extends CI_Model
         $this->db->select("sum($field)");
         $this->db->from($this->table_name);
         if ($conditions != null)
-            $this->db->searchDecode($conditions);
+            $this->searchDecode($conditions);
         $query = $this->db->get();
         $result = $query->row_array();
         return count($result)!=0?$result["sum($field)"]:0;
