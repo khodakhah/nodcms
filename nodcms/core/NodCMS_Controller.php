@@ -148,6 +148,14 @@ class NodCMS_Controller extends CI_Controller{
             $this->currency->setFormat($this->settings["currency_format"]);
         }
 
+	    // Decode html special chars
+	    if(!empty($this->settings['add_on_header'])){
+		    $this->settings['add_on_header'] = htmlspecialchars_decode($this->settings['add_on_header']);
+	    }
+	    if(!empty($this->settings['add_on_script'])){
+		    $this->settings['add_on_script'] = htmlspecialchars_decode($this->settings['add_on_script']);
+	    }
+
         $this->data["social_links"] = $this->Social_links_model->getAll();
         $this->data["production_copyright"] = $this->config->item('production_copyright');
         $this->data["page"] = "";
@@ -204,7 +212,7 @@ class NodCMS_Controller extends CI_Controller{
             array('title'=>_l("Privacy-Policy", $this), 'url'=>"privacy-policy"),
         );
 
-        $this->load->packageHooks("backend");
+        $this->packageHooks("backend");
 
         // Admin sidebar all general items
         if(in_array($this->session->userdata('group'), array(1, 100))){
@@ -228,6 +236,11 @@ class NodCMS_Controller extends CI_Controller{
                     'url'=>ADMIN_URL.'imagesLibrary',
                     'title'=>_l("Images",$this),
                     'icon'=>'far fa-images'
+                ),
+                'modules'=>array(
+                    'url'=>ADMIN_URL.'modules',
+                    'title'=>_l("Modules", $this),
+                    'icon'=>'fas fa-brain'
                 ),
                 'tcpp_setting'=>array(
                     'url'=>ADMIN_URL.'settings/tcpp',
@@ -339,7 +352,7 @@ class NodCMS_Controller extends CI_Controller{
         $this->setMenus();
 
         // Execute Hooks
-        $this->load->packageHooks("membership");
+        $this->packageHooks("membership");
 
 
         // Add dashboard link in member sidebar if exists any other links
@@ -375,7 +388,7 @@ class NodCMS_Controller extends CI_Controller{
 
         $this->loadLanguageAndSettings($this->userdata['language_id']);
         // Execute Hooks
-        $this->load->packageHooks("api");
+        $this->packageHooks("api");
     }
 
     /**
@@ -745,14 +758,16 @@ class NodCMS_Controller extends CI_Controller{
      * Load sorted packages from DB
      *
      * @param $method
+     * @param mixed $params
+     * @param bool $show_error
      */
-    private function packageHooks($method)
+    protected function packageHooks($method, $params = null, $show_error = false)
     {
-        $packages = $this->Packages_dashboard_model->getAll(null, null, 1, array('package_sort', 'ASC'));
+        $packages = $this->Packages_model->getAll(null, null, 1, array('package_sort', 'ASC'));
         foreach ($packages as $item){
             if(!$this->load->packageExists($item['package_name']))
                 continue;
-            $this->load->packageLoad($item['package_name'], $method);
+            $this->load->packageLoad($item['package_name'], $method, $params, $show_error);
         }
     }
 
@@ -844,7 +859,7 @@ class NodCMS_Controller extends CI_Controller{
 //            }
 //        }
         // Run hooks classes
-        $this->load->packageHooks("preset", $lang);
+        $this->packageHooks("preset", $lang);
     }
 
     /**

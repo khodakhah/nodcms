@@ -13,6 +13,7 @@ class NodCMS_Model extends CI_Model
     private $table_name;
     private $primary_key;
     private $fields;
+    protected $change_fields;
     private $foreign_tables;
     private $translation_fields;
     protected $unique_keys;
@@ -136,6 +137,24 @@ class NodCMS_Model extends CI_Model
         $query = $this->db->get();
         $result = $query->row_array();
         return count($result)!=0?$result["sum($field)"]:0;
+    }
+
+    /**
+     * Universal max query
+     *
+     * @param $field
+     * @param null $conditions
+     * @return int
+     */
+    function getMax($field, $conditions = null)
+    {
+        $this->db->select("max($field)");
+        $this->db->from($this->table_name);
+        if ($conditions != null)
+            $this->searchDecode($conditions);
+        $query = $this->db->get();
+        $result = $query->row_array();
+        return count($result)!=0?$result["max($field)"]:0;
     }
 
     /**
@@ -532,6 +551,47 @@ class NodCMS_Model extends CI_Model
         $query_items = join(',', $query_items);
         $auto_increment = !empty($this->primary_key)?" AUTO_INCREMENT=1":"";
         $sql = "CREATE TABLE IF NOT EXISTS `{$this->table_name}` ($query_items) ENGINE=InnoDB{$auto_increment} DEFAULT CHARSET=utf8;";
+        return $this->db->query($sql);
+    }
+
+    /**
+     * Repair fields of a table
+     *
+     * @return bool
+     */
+    public function repairTable()
+    {
+        $query_items = array();
+        $fields = $this->db->field_data($this->table_name);
+        $_fields = array();
+        foreach ($fields as $field)
+        {
+            $_fields[$field->name] = array(
+                'name'=>$field->name,
+                'type'=>$field->type,
+                'max_length'=>$field->max_length,
+                'primary_key'=>$field->primary_key,
+            );
+            if(!key_exists($field->name,$this->fields)){
+                $query_items[] = "DROP COLUMN `{$field->name}`";
+            }
+        }
+
+        foreach($this->fields as $field_name => $field_codes) {
+            if(key_exists($field_name, $_fields)){
+                if(!empty($this->change_fields) && key_exists($field_name, $this->change_fields)){
+                    $query_items[] = "CHANGE COLUMN `{$this->change_fields[$field_name]}` `$field_name` $field_codes";
+                }
+                continue;
+            }
+            $query_items[] = "ADD COLUMN `$field_name` $field_codes";
+        }
+
+        if(empty($query_items))
+            return true;
+
+        $query_items = join(', ', $query_items);
+        $sql = "ALTER TABLE `{$this->table_name}` $query_items;";
         return $this->db->query($sql);
     }
 

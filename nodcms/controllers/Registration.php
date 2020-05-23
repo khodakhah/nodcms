@@ -482,4 +482,23 @@ class Registration extends NodCMS_Controller {
         $this->data['content'] = $this->load->view($this->mainTemplate.'/account_lock',$this->data, true);
         $this->load->view($this->frameTemplate, $this->data);
     }
+
+    /**
+     * Log out user (remove all user sessions)
+     *
+     * @param string $lang
+     */
+    function logout($lang = "")
+    {
+        $this->session->unset_userdata('fullname');
+        $this->session->unset_userdata('username');
+        $this->session->unset_userdata('user_id');
+        $this->session->unset_userdata('group');
+        $this->session->unset_userdata('avatar');
+        $this->session->unset_userdata('email');
+        $this->session->unset_userdata('logged_in_status');
+        $this->session->unset_userdata('provider_id');
+        $this->session->unset_userdata('provider_name');
+        redirect(base_url().$lang);
+    }
 }

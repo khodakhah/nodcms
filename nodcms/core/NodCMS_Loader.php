@@ -139,11 +139,15 @@ class NodCMS_Loader extends CI_Loader {
     function packageReturn($package_name, $method, $params = NULL, $show_error = FALSE)
     {
         // Check package exists
-        if(!isset($this->packages[$package_name]['hooks']))
+        if(!isset($this->packages[$package_name]['hooks'])){
             if($show_error == TRUE) return array('status'=>"error", 'error'=>"Package '$package_name' isn't found!");
+            return array();
+        }
         // Check method exists
-        if(!method_exists($this->packages[$package_name]['hooks'], $method))
+        if(!method_exists($this->packages[$package_name]['hooks'], $method)){
             if($show_error == TRUE) return array('status'=>"error", 'error'=>"The method $method isn't exists in $package_name!");
+            return array();
+        }
         // Add package path
         $this->add_package_path($package_name);
         // Run method
@@ -212,7 +216,7 @@ class NodCMS_Loader extends CI_Loader {
             return;
         elseif($i==1){
             if(!in_array(base_url().$params[0],$this->css_files))
-                array_push($this->css_files, base_url().$params[0]);
+                array_push($this->css_files, ASSETS_BASE_URL.$params[0]);
         }
         elseif($i==2){
             if(!isset($this->language) || $this->language == null)
@@ -220,11 +224,11 @@ class NodCMS_Loader extends CI_Loader {
 
             if($this->language["rtl"]){
                 if(!in_array(base_url().$params[1],$this->css_files))
-                    array_push($this->css_files, base_url().$params[1]);
+                    array_push($this->css_files, ASSETS_BASE_URL.$params[1]);
             }
             else
                 if(!in_array(base_url().$params[0],$this->css_files))
-                    array_push($this->css_files, base_url().$params[0]);
+                    array_push($this->css_files, ASSETS_BASE_URL.$params[0]);
         }
     }
 
@@ -241,7 +245,7 @@ class NodCMS_Loader extends CI_Loader {
             return;
         elseif($i==1){
             if(!in_array(base_url().$params[0],$this->js_files))
-                array_push($this->js_files, base_url().$params[0]);
+                array_push($this->js_files, ASSETS_BASE_URL.$params[0]);
         }
         elseif($i==2){
             if(!isset($this->language) || $this->language == null)
@@ -249,11 +253,11 @@ class NodCMS_Loader extends CI_Loader {
 
             if($this->language["rtl"]){
                 if(!in_array(base_url().$params[1],$this->js_files))
-                    array_push($this->js_files, base_url().$params[1]);
+                    array_push($this->js_files, ASSETS_BASE_URL.$params[1]);
             }
             else
                 if(!in_array(base_url().$params[0],$this->js_files))
-                    array_push($this->js_files, base_url().$params[0]);
+                    array_push($this->js_files, ASSETS_BASE_URL.$params[0]);
         }
     }
 
@@ -277,5 +281,19 @@ class NodCMS_Loader extends CI_Loader {
         foreach ($this->js_files as $item){
             echo '<script src="'.$item.'.js" type="text/javascript"></script>';
         }
+    }
+
+    /**
+     * Load an external view file
+     *
+     * @param string $path
+     * @param string $view
+     * @param array $vars
+     * @param bool $return
+     * @return object
+     */
+    function externalView($path, $view, $vars = array(), $return = FALSE) {
+        $this->_ci_view_paths = array_merge($this->_ci_view_paths, array($path . '/' => TRUE));
+        return $this->_ci_load(array('_ci_view' => $view, '_ci_vars' => $this->_ci_prepare_view_vars($vars), '_ci_return' => $return));
     }
 }

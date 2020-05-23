@@ -93,5 +93,31 @@ class NodCMS_Router extends CI_Router {
         {
             $this->_set_default_controller();
         }
+
+        if (empty($this->class))
+            return;
+
+        if(! file_exists(APPPATH.'controllers/'.$this->directory.$this->class.'.php')) {
+            // Check controllers in third_party
+            if(is_dir(APPPATH."third_party/")){
+                $dir = scandir(APPPATH."third_party/");
+                unset($dir[0]);
+                unset($dir[1]);
+                foreach ($dir as $item) {
+                    if(preg_match('~([^/]+)\.[A-Za-z0-9]+~', $item)){
+                        continue;
+                    }
+                    if(!file_exists(APPPATH."third_party/".$item."/controllers/{$this->class}.php")){
+                        continue;
+                    }
+                    define('NODCMS_CONTROLLER_PATH', APPPATH."third_party/{$item}/controllers/{$this->class}.php");
+                    define('NODCMS_CONTROLLER_CLASS', $this->class);
+                    $this->class = "Package_controller";
+                    return;
+                }
+            }
+        }
+        define('NODCMS_CONTROLLER_PATH', '');
+        define('NODCMS_CONTROLLER_CLASS', '');
     }
 }
