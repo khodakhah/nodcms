@@ -692,6 +692,10 @@ input[type="checkbox"],input[type="radio"]{
   height: auto;
   padding-top: 0;
 
+  a{
+    color:lighten($brand-main-color, 20%);
+  }
+
   svg.curve{
     height: 40px;
     width: 100%;
