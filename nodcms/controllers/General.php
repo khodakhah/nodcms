@@ -33,7 +33,7 @@ class General extends NodCMS_Controller
 
         // Open and return a file content
         if($this->settings['homepage_type'] == "display_file"){
-            $myfile = fopen(getcwd()."/".$this->settings['homepage_display_file'], "r") or die("Unable to open file!");
+            $myfile = fopen(SELF_PATH.$this->settings['homepage_display_file'], "r") or die("Unable to open file!");
             echo fread($myfile,filesize($this->settings['homepage_display_file']));
             fclose($myfile);
             return;
@@ -45,28 +45,43 @@ class General extends NodCMS_Controller
             return;
         }
 
-        // * System homepage default
-
-        $index_content = $this->load->view($this->mainTemplate."/home",$this->data, true);
+        $packages_home_contents = array();
         $_packages = $this->Packages_model->getAll(array('active'=>1),null,1,array('package_sort','ASC'));
         if($_packages!=null && count($_packages)>0){
             $packages = array_column($_packages, "package_name");
         }else{
-            $packages = $this->load->packageList();
+            $packages = array();//$this->load->packageList();
         }
 
         foreach ($packages as $item){
-            if(!file_exists(APPPATH."controllers/$item.php")){
+            if(file_exists(APPPATH."controllers/$item.php")){
+                require_once APPPATH."controllers/$item.php";
+            }
+            if(file_exists(APPPATH."third_party/$item/controllers/$item.php")){
+                require_once APPPATH."third_party/$item/controllers/$item.php";
+            }
+
+            else{
                 continue;
             }
 
-            require_once APPPATH."controllers/$item.php";
             // Load controller in system
             if ( ! class_exists($item, FALSE) || !method_exists($item, 'home'))
             {
                 continue;
             }
-            $index_content .= $item::home($this);
+            $packages_home_contents[$item] = $item::home($this);
+        }
+
+        $this->data['packages'] = $packages_home_contents;
+        // Custom home view file
+        if($this->settings['homepage_type'] == "custom_view" && file_exists(SELF_PATH . "custom_views/{$this->settings['custom_view_path_home']}.php")){
+            $index_content = $this->load->externalView(SELF_PATH, "custom_views/".$this->settings['custom_view_path_home'], $this->data, true);
+        }
+        // * System homepage default
+        else {
+            // Static home contents
+            $index_content = $this->load->view($this->mainTemplate."/home", $this->data, true);
         }
 
         // Contact page
@@ -74,7 +89,7 @@ class General extends NodCMS_Controller
 //        if(!preg_match("/\<title\>[\s]?Error 404[\s]?\<\/title>/",$data))
 //            $index_content .= $data;
 
-//        $this->display_page_title = false;
+        $this->display_page_title = $this->settings['home_page_title_box'];
         if(!empty($this->settings['index_logo'])) {
             $this->data['title_logo'] = base_url().$this->settings['index_logo'];
         }
@@ -112,7 +127,7 @@ class General extends NodCMS_Controller
         }
         $file = $row['file_path'];
         if(preg_match('/^[ftp|http|https]\:\/\/(.*\.[\a])$/',$row['file_path'])!=1) {
-            $file = FCPATH . $file;
+            $file = SELF_PATH . $file;
         }
         $myForm = new Form();
         $unique_cookie = $myForm->getFileUniqueCookie();
@@ -148,7 +163,7 @@ class General extends NodCMS_Controller
         }
         $file = $row['file_path'];
         if(preg_match('/^[ftp|http|https]\:\/\/(.*\.[\a])$/',$row['file_path'])!=1) {
-            $file = FCPATH . $file;
+            $file = SELF_PATH . $file;
             if (!file_exists($file)) {
                 show_error("The file doesn't exists.");
                 return;
@@ -213,7 +228,7 @@ class General extends NodCMS_Controller
         }
         $file = $row['file_path'];
         if(preg_match('/^[ftp|http|https]\:\/\/(.*\.[\a])$/',$row['file_path'])!=1) {
-            $file = FCPATH . $file;
+            $file = SELF_PATH . $file;
             if (!file_exists($file)) {
                 $this->noimage(400,400,"The file doesn't exists");
                 return;
@@ -359,7 +374,7 @@ class General extends NodCMS_Controller
     {
         $this->preset($lang);
         if($this->userdata==null){
-            $this->error404();
+            $this->showError();
             return;
         }
         if($this->userdata['group_id']==100){
@@ -368,19 +383,17 @@ class General extends NodCMS_Controller
         }
         $this->load->model("Nodcms_admin_model");
         if(is_uploaded_file($_FILES["file"]["tmp_name"])){
-            $config['upload_path'] ='upload_file/users';
-            $dir = getcwd().'/'.$config['upload_path'];
+            $uri = "upload_file/users";
+            $dir = SELF_PATH.$uri;
             if( ! file_exists($dir))
                 mkdir($dir);
-            $config['upload_path'] .= "/user-".$this->userdata["user_id"];
+            $uri .= "/user-".$this->userdata["user_id"];
             $dir .= "/user-".$this->userdata["user_id"];
             if( ! file_exists($dir))
                 mkdir($dir);
             $config['allowed_types'] = 'gif|jpg|png';
             $config['encrypt_name'] = true;
-            $dir = getcwd().'/'.$config['upload_path'];
-            if( ! file_exists($dir))
-                mkdir($dir);
+            $config['upload_path'] = $dir;
             $this->load->library('upload', $config);
             if(! $this->upload->do_upload("file")){
                 $this->systemError($this->upload->display_errors('<p>', '</p>'), base_url()."$lang/account-setting");
@@ -389,11 +402,11 @@ class General extends NodCMS_Controller
 
             $file = $this->upload->data();
             $setData = array(
-                "avatar"=>$config['upload_path']."/".$file['file_name'],
+                "avatar"=>$uri."/".$file['file_name'],
             );
             $this->Nodcms_admin_model->userManipulate($setData, $this->userdata['user_id']);
-            if(isset($this->userdata["avatar"])&&$this->userdata["avatar"]!=null&&$this->userdata["avatar"]!=""&&file_exists(getcwd()."/".$this->userdata["avatar"]))
-                unlink(getcwd()."/".$this->userdata["avatar"]);
+            if(isset($this->userdata["avatar"])&&$this->userdata["avatar"]!=null&&$this->userdata["avatar"]!=""&&file_exists(SELF_PATH.$this->userdata["avatar"]))
+                unlink($dir."/".$this->userdata["avatar"]);
             $this->systemSuccess("Your avatar has updated successfully.", base_url()."$lang/account-setting");
         }
         else{
@@ -401,21 +414,10 @@ class General extends NodCMS_Controller
                 "avatar"=>"",
             );
             $this->Nodcms_admin_model->userManipulate($setData, $this->userdata['user_id']);
-            if(isset($this->userdata["avatar"])&&$this->userdata["avatar"]!=null&&$this->userdata["avatar"]!=""&&file_exists(getcwd()."/".$this->userdata["avatar"]))
-                unlink(getcwd()."/".$this->userdata["avatar"]);
+            if(isset($this->userdata["avatar"])&&$this->userdata["avatar"]!=null&&$this->userdata["avatar"]!=""&&file_exists(SELF_PATH.$this->userdata["avatar"]))
+                unlink(SELF_PATH.$this->userdata["avatar"]);
             $this->systemSuccess("Your avatar has removed successfully.!", base_url()."$lang/account-setting");
         }
-    }
-
-    /**
-     * Log out user (remove all user sessions)
-     *
-     * @param string $lang
-     */
-    function logout($lang = "")
-    {
-        $this->removeUserSessions();
-        redirect(base_url().$lang);
     }
 
     /**

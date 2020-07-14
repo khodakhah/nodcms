@@ -357,10 +357,6 @@ h1,h2,h3,h4,h5,h6{
     background: transparent;
   }
 
-  .image-logo{
-    max-height: 100px;
-  }
-
   img.bg-image{
     opacity: 1;
     width: 100%;
@@ -470,6 +466,10 @@ h1,h2,h3,h4,h5,h6{
   margin-bottom:-20px;
   height: auto;
   padding-top: 0;
+
+  a{
+    color:lighten($footer-bg-color, 30%);
+  }
 
   svg.curve{
     height: 40px;

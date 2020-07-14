@@ -51,6 +51,8 @@ class General_admin extends NodCMS_Controller{
         $packages = $this->Packages_dashboard_model->getAll(null, null, 1, array('package_sort', 'ASC'));
         $this->data['dashboards'] = array();
         foreach ($packages as $item){
+            if($this->Packages_model->getCount(array('package_name'=>$item['package_name'])) == 0)
+                continue;
             $name = strtolower($item['package_name']);
             $curl =  $this->curlJSON(base_url()."admin-$name/dashboard", null, 0, SSL_PROTOCOL, true);
             if($curl['status']!="success" || $curl['content'] == ""){
@@ -539,6 +541,15 @@ class General_admin extends NodCMS_Controller{
             }else{
                 $data['google_map_url'] = "";
             }
+
+            // Encode html special chars
+            if(isset($data['add_on_header']) && !empty($data['add_on_header'])){
+            	$data['add_on_header'] = htmlspecialchars($this->input->post('add_on_header'));
+            }
+            if(isset($data['add_on_script']) && !empty($data['add_on_script'])){
+            	$data['add_on_script'] = htmlspecialchars($this->input->post('add_on_script'));
+            }
+
             // The settings without language_id
             $this->Nodcms_admin_model->updateSettings($data);
             $this->systemSuccess("Your Setting has been updated successfully!", ADMIN_URL."settings/$sub_page");
@@ -1262,7 +1273,7 @@ class General_admin extends NodCMS_Controller{
     function languageEditFile($id,$file_name)
     {
         $this->data['data']=$this->Nodcms_admin_model->get_language_detail($id);
-        if($this->data['data']==null || !file_exists(getcwd().'/nodcms/language/'.$this->data['data']['language_name'].'/'.$file_name.'_lang.php')){
+        if($this->data['data']==null || !file_exists( SELF_PATH.'nodcms/language/'.$this->data['data']['language_name'].'/'.$file_name.'_lang.php')){
             $this->session->set_flashdata('error', _l('URL-Request was not exists!',$this));
             redirect(base_url()."admin/language");
         }
@@ -1284,7 +1295,7 @@ class General_admin extends NodCMS_Controller{
                     $val = $post_data[$i];
                     $i++;
                 }
-                $file = getcwd().'/nodcms/language/'.$this->data['data']['language_name'].'/'.$file_name.'_lang.php';
+                $file = SELF_PATH.'nodcms/language/'.$this->data['data']['language_name'].'/'.$file_name.'_lang.php';
                 if(file_exists($file)){
                     file_put_contents($file, $fileContent);
                 }
@@ -1337,7 +1348,7 @@ class General_admin extends NodCMS_Controller{
             $key = $this->input->post('key');
             $value = $this->input->post('value');
 
-            $file = getcwd().'/nodcms/language/'.$this->data['data']['language_name'].'/nodcms_lang.php';
+            $file = SELF_PATH.'nodcms/language/'.$this->data['data']['language_name'].'/nodcms_lang.php';
             if(!file_exists($file)){
                 $this->systemError("System couldn't find the language file.", ADMIN_URL."language");
             }
@@ -1719,7 +1730,7 @@ class General_admin extends NodCMS_Controller{
         }
 
         // Data from add-ons
-        $this->load->packageHooks("userProfile", $user);
+        $this->packageHooks("userProfile", $user);
 
         $this->data['breadcrumb'] = array(
             array('title'=>_l("Members", $this), 'url'=>ADMIN_URL."user/$id"),
@@ -2189,8 +2200,8 @@ class General_admin extends NodCMS_Controller{
             return;
         }
 
-        if(file_exists(FCPATH.$current_data["image"])){
-            unlink(FCPATH.$current_data["image"]);
+        if(file_exists(SELF_PATH.$current_data["image"])){
+            unlink(SELF_PATH.$current_data["image"]);
         }
         $this->Images_model->remove($id);
         $this->systemSuccess("Language has been deleted successfully.", $back_url, array('removed'=>$id));
@@ -2212,7 +2223,7 @@ class General_admin extends NodCMS_Controller{
         }
 
         $type_dir = $types[$type]['dir'];
-        $dir = FCPATH."upload_file/$type_dir/";
+        $dir = SELF_PATH."upload_file/$type_dir/";
         // Make directory
         if(!file_exists($dir)){
             mkdir($dir);
@@ -2227,8 +2238,9 @@ class General_admin extends NodCMS_Controller{
         }
 
         $current_file_name = basename($_FILES["file"]["name"]);
+        $uri = "upload_file/$type_dir/";
         $config = array(
-            'upload_path'=>"upload_file/$type_dir/",
+            'upload_path'=>SELF_PATH.$uri,
             'allowed_types'=>"gif|jpg|png",
             'encrypt_name'=> $types[$type]['encrypt_name'],
         );
@@ -2241,7 +2253,7 @@ class General_admin extends NodCMS_Controller{
 
         $data = $this->upload->data();
         $data_image = array(
-            "image"=>$config['upload_path'].$data["file_name"],
+            "image"=>$uri.$data["file_name"],
             "width"=>$data["image_width"],
             "height"=>$data["image_height"],
             "name"=>$current_file_name,
@@ -2254,8 +2266,8 @@ class General_admin extends NodCMS_Controller{
         if($image_id!=0) {
             echo json_encode(array(
                 "status" => "success",
-                "file_patch" => $config['upload_path'] . $data["file_name"],
-                "file_url" => base_url() . $config['upload_path'] . $data["file_name"],
+                "file_patch" => $uri . $data["file_name"],
+                "file_url" => base_url() . $uri . $data["file_name"],
                 "width" => $data["image_width"],
                 "height" => $data["image_height"],
                 "image_id" => $image_id,
@@ -2263,7 +2275,7 @@ class General_admin extends NodCMS_Controller{
                 "size" => $data["file_size"]));
             return;
         }
-        unlink(FCPATH.$data_image["image"]);
+        unlink(SELF_PATH.$data_image["image"]);
         echo json_encode(array("status"=>"error","errors"=>_l("Could not save images data in database.",$this)));
     }
 
@@ -2279,6 +2291,14 @@ class General_admin extends NodCMS_Controller{
                 'attr'=>array(
                     'data-role'=>"toggle-hidden",
                     'data-target'=>".inputs_default"
+                ),
+            ),
+            array(
+                'title'=>_l("Local custom view", $this),
+                'key'=>"custom_view",
+                'attr'=>array(
+                    'data-role'=>"toggle-hidden",
+                    'data-target'=>".inputs_custom_view"
                 ),
             ),
             array(
@@ -2307,10 +2327,15 @@ class General_admin extends NodCMS_Controller{
             ),
         );
         $unable_urls = array(base_url(),substr(base_url(),0,-1));
-        $languages = $this->Public_model->getAllLanguages();
+        $languages = $this->Languages_model->getAll();
         foreach($languages as $language){
             $unable_urls[] = base_url().$language['code'];
             $unable_urls[] = base_url().$language['code']."/";
+        }
+
+        $title_box_classes = "inputs_default_title_box inputs_default inputs_custom_view";
+        if(!$this->settings['home_page_title_box'] || !in_array($this->settings['homepage_type'], array("default", "custom_view"))) {
+            $title_box_classes .= " hidden";
         }
 
         $config = array(
@@ -2325,12 +2350,34 @@ class General_admin extends NodCMS_Controller{
                 'default'=>$this->settings['homepage_type'],
             ),
             array(
+                'field'=>"custom_view_path_home",
+                'label'=>_l("Custom view file path", $this),
+                'rules'=>"callback_validateRequiredIf[homepage_type,custom_view]|callback_validateFileExists[".SELF_PATH."custom_views".DIRECTORY_SEPARATOR.",.php]",
+                'type'=>"text",
+                'input_prefix'=>SELF_PATH."custom_views".DIRECTORY_SEPARATOR,
+                'input_postfix'=>".php",
+                'default'=>$this->settings['custom_view_path_home'],
+                'group_class'=>"inputs_custom_view ".($this->settings['homepage_type']!="custom_view"?"hidden":""),
+            ),
+            array(
+                'field'=>"home_page_title_box",
+                'label'=>_l('Homepage title box',$this),
+                'rules'=>"required|in_list[0,1]",
+                'type'=>"checkbox",
+                'default'=>$this->settings['home_page_title_box'],
+                'group_class'=>"inputs_default inputs_custom_view ".(!in_array($this->settings['homepage_type'], array("default", "custom_view"))?"hidden":""),
+                'attr'=>array(
+                    'data-role'=>"toggle-hidden",
+                    'data-target'=>".inputs_default_title_box"
+                ),
+            ),
+            array(
                 'field'=>"index_logo",
                 'label'=>_l('Homepage logo',$this),
                 'rules'=>"",
                 'type'=>"image-library",
                 'default'=>$this->settings['index_logo'],
-                'group_class'=>"inputs_default ".($this->settings['homepage_type']!="default"?"hidden":""),
+                'group_class'=>$title_box_classes,
             ),
             array(
                 'field'=>"home_page_title_bg",
@@ -2338,7 +2385,7 @@ class General_admin extends NodCMS_Controller{
                 'rules'=>"",
                 'type'=>"image-library",
                 'default'=>$this->settings['home_page_title_bg'],
-                'group_class'=>"inputs_default ".($this->settings['homepage_type']!="default"?"hidden":""),
+                'group_class'=>$title_box_classes,
             ),
             array(
                 'field'=>"home_page_title_bg_blur",
@@ -2346,24 +2393,7 @@ class General_admin extends NodCMS_Controller{
                 'rules'=>"required|in_list[0,1]",
                 'type'=>"switch",
                 'default'=>$this->settings['home_page_title_bg_blur'],
-                'group_class'=>"inputs_default ".($this->settings['homepage_type']!="default"?"hidden":""),
-            ),
-            array(
-                'field'=>"homepage_sort",
-                'label'=>_l('Home preview sort',$this),
-                'type'=>"static",
-//                'value'=>'<button type="button" onclick="$.loadInModal(\''.ADMIN_URL.'settingsHomepageSort\');" class="btn default">'.
-//                    _l("Make a system sort", $this).'</button>',
-                'value'=>'Loading',
-                'tag'=>'div',
-                'class'=>"bg-grey-cararra padding-10",
-                'attr'=>array(
-                    'style'=>"width:100%;padding:10px;",
-                    'data-role'=>"auto-load",
-                    'data-url'=>ADMIN_URL."settingsHomepageSort",
-//                    'data-load'=>ADMIN_URL."settingsHomepageSort",
-                ),
-                'group_class'=>"inputs_default ".($this->settings['homepage_type']!="default"?"hidden":""),
+                'group_class'=>$title_box_classes,
             ),
             array(
                 'field'=>"homepage_redirect",
@@ -2376,9 +2406,9 @@ class General_admin extends NodCMS_Controller{
             array(
                 'field'=>"homepage_display_file",
                 'label'=>_l('File patch',$this),
-                'rules'=>"callback_validateRequiredIf[homepage_type,display_file]|callback_validateFileExists",
+                'rules'=>"callback_validateRequiredIf[homepage_type,display_file]|callback_validateFileExists[".SELF_PATH."]",
                 'type'=>"text",
-                'input_prefix'=>getcwd()."\\",
+                'input_prefix'=>SELF_PATH,
                 'default'=>$this->settings['homepage_display_file'],
                 'group_class'=>"inputs_display_file ".($this->settings['homepage_type']!="display_file"?"hidden":""),
             ),
@@ -2392,7 +2422,24 @@ class General_admin extends NodCMS_Controller{
             ),
         );
 
-        $seo_group_class = "inputs_default ".($this->settings['homepage_type']!="default"?"hidden":"");
+        if(count($this->homepageSortedPackages()) > 0){
+            $config[] = array(
+                'field'=>"homepage_sort",
+                'label'=>_l('Home preview sort',$this),
+                'type'=>"static",
+                'value'=>'Loading',
+                'tag'=>'div',
+                'class'=>"bg-grey-cararra padding-10",
+                'attr'=>array(
+                    'style'=>"width:100%;padding:10px;",
+                    'data-role'=>"auto-load",
+                    'data-url'=>ADMIN_URL."settingsHomepageSort",
+                ),
+                'group_class'=>"inputs_default inputs_custom_view ".(!in_array($this->settings['homepage_type'], array("default", "custom_view"))?"hidden":""),
+            );
+        }
+
+        $seo_group_class = "inputs_default inputs_custom_view ".(in_array($this->settings['homepage_type'], array("default", "custom_view"))?"":"hidden");
         foreach($languages as $language){
             $setting = $this->Public_model->getSettings($language['language_id']);
             $language_head = array(
@@ -2496,43 +2543,7 @@ class General_admin extends NodCMS_Controller{
             return;
         }
 
-        // * Update package in database
-        // Get packages list
-        $packages = $this->load->packageList();
-        // Remove packages that doesn't have home preview
-        foreach($packages as $key=>$item){
-            if(!file_exists(APPPATH."controllers/$item.php")){
-                unset($packages[$key]);
-                continue;
-            }
-            require_once APPPATH."controllers/$item.php";
-            if ( class_exists($item, FALSE) && method_exists($item, 'home')){
-                continue;
-            }
-            unset($packages[$key]);
-        }
-        // Get packages from DB
-        $db_packages = $this->Packages_model->getAll(null, null, 1, array('package_sort', 'ASC'));
-        $max = 0;
-        // Remove not exists packages
-        foreach ($db_packages as $item){
-            if(!in_array($item['package_name'], $packages)){
-                $this->Packages_model->remove($item['package_id']);
-                continue;
-            }
-            if($item['package_sort']>$max){
-                $max = $item['package_sort'];
-            }
-        }
-        // Add the packages that not exists in database
-        foreach($packages as $item){
-            $count = $this->Packages_model->getCount(array('package_name'=>$item));
-            if($count == 0){
-                $this->Packages_model->add(array('package_name'=>$item, 'package_sort'=>$max));
-            }
-        }
-
-        $this->data['data_list'] = $this->Packages_model->getAll(null, null, 1, array('package_sort', 'ASC'));
+        $this->data['data_list'] = $this->homepageSortedPackages();
 
         $this->data['page'] = "settings_homepage_sort";
         $this->data['sub_title'] = _l("Sort homepage", $this);
@@ -2569,21 +2580,6 @@ class General_admin extends NodCMS_Controller{
         // * Update package in database
         // Get packages list
         $packages = $this->load->packageList();
-        // Remove packages that doesn't have home preview
-//        foreach($packages as $key=>$item){
-//            if(!file_exists(APPPATH."controllers/".$item."_admin.php")){
-//                unset($packages[$key]);
-//                continue;
-//            }
-//            $url = base_url()."admin-".strtolower($item)."/dashboard";
-//            $data = $this->curlWebPage($url, true);
-//            if($data == "")
-//                continue;
-//            $array_data = json_decode($data, true);
-//            if(json_last_error()!=JSON_ERROR_NONE || $array_data['content']=="")
-//                continue;
-//            unset($packages[$key]);
-//        }
         // Get packages from DB
         $db_packages = $this->Packages_dashboard_model->getAll();
         $max = 0;
@@ -2602,6 +2598,7 @@ class General_admin extends NodCMS_Controller{
             $count = $this->Packages_dashboard_model->getCount(array('package_name'=>$item));
             if($count == 0){
                 $this->Packages_dashboard_model->add(array('package_name'=>$item, 'package_sort'=>$max));
+                $max++;
             }
         }
     }
@@ -2652,5 +2649,289 @@ class General_admin extends NodCMS_Controller{
         }
         $this->Packages_model->edit($id, array('active'=>1));
         $this->systemSuccess("The package has been successfully activated.", ADMIN_URL);
+    }
+
+    /**
+     * Return list of packages that are able to home preview
+     *
+     * @return array
+     */
+    private function homepageSortedPackages()
+    {
+        // Get packages from DB
+        $packages = $this->Packages_model->getAll(null, null, 1, array('package_sort', 'ASC'));
+        // Check packages home method exists.
+        foreach ($packages as $key=>$item){
+            if(file_exists(APPPATH."controllers/{$item['package_name']}.php")){
+                require_once APPPATH."controllers/{$item['package_name']}.php";
+            }
+            if(file_exists(APPPATH."third_party/{$item['package_name']}/controllers/{$item['package_name']}.php")){
+                require_once APPPATH."third_party/{$item['package_name']}/controllers/{$item['package_name']}.php";
+            }
+            else{
+                unset($packages[$key]);
+                continue;
+            }
+            if ( class_exists($item['package_name'], FALSE) && method_exists($item['package_name'], 'home')){
+                continue;
+            }
+            unset($packages[$key]);
+        }
+        return $packages;
+    }
+
+    /**
+     * List of all modules
+     *
+     * @param int $page
+     */
+    public function modules($page = 1)
+    {
+        $_packages = $this->load->packageList();
+        $packages = array();
+        foreach($_packages as $item) {
+            $package = $this->Packages_model->getOne(null, array('package_name'=>$item));
+            $module = $this->load->packageReturn($item, "description");
+            $packages[] = array(
+                'name'=>$item,
+                'title'=>empty($module)?$item:$module['title'],
+                'description'=>empty($module)?"":$module['description'],
+                'installed'=>intval(is_array($package) && count($package) > 0),
+            );
+        }
+
+        $this->load->library("Ajaxlist");
+        $theList = new Ajaxlist();
+        $config = array(
+            'listID'=>"my-data-list",
+            'headers'=>array(
+                array(
+                    'label'=>_l("Title", $this),
+                    'content'=>"title",
+                ),
+                array(
+                    'label'=>_l("Description", $this),
+                    'content'=>"description",
+                ),
+                array(
+                    'label'=>_l("Installed", $this),
+                    'content'=>"installed",
+                    'theme'=>"check_icon",
+                ),
+                array(
+                    'label'=>"",
+                    'function'=>function($data){
+                        if($data['installed']){
+                            return '<button type="button" onclick="$.loadConfirmModal(\''.ADMIN_URL."moduleUninstall/{$data['name']}".'\', function(){ location.reload() })" class="btn btn-sm btn-danger">'._l("Uninstall", $this).'</button>';
+                        }
+                        return '<button type="button" onclick="$.loadConfirmModal(\''.ADMIN_URL."moduleInstall/{$data['name']}".'\', function(){ location.reload() })" class="btn btn-sm btn-success">'._l("Install", $this).'</button>';
+                    },
+                    'url'=>ADMIN_URL.'module/$content',
+                    'content'=>"name",
+                ),
+            ),
+            'type'=>"static",
+            'per_page'=>15,
+            'data'=>$packages,
+            'total_rows'=>count($packages),
+            'page'=>$page,
+        );
+        $conditions = null;
+        $theList->setOptions($config);
+        $this->data['title'] = _l("Social Links", $this);
+        $this->data['sub_title'] = _l("List", $this);
+        $this->data['data_list'] = $this->Nodcms_admin_model->getSocialLinks();
+        $this->data['breadcrumb']=array(
+            array('title'=>$this->data['title']),
+        );
+        $this->data['page'] = "modules";
+        $this->data['the_list'] = $theList->getPage();
+        $this->data['content'] = $this->load->view($this->mainTemplate."/data_list",$this->data, true);
+        $this->load->view($this->frameTemplate,$this->data);
+    }
+
+    public function module($package)
+    {
+        $back_url = ADMIN_URL."modules";
+        if(!$this->load->packageExists($package)){
+            $this->systemError("Module not found.", $back_url);
+            return;
+        }
+        $current_data = $this->Packages_model->getOne(null, array('package_name'=>$package));
+        if(is_array($current_data) && count($current_data) > 0){
+            $this->data['data'] = $current_data;
+        }
+
+        $this->data['tables'] = $this->getModuleTables($package);
+
+        $this->data['package'] = $package;
+        $this->data['title'] = _l("Module", $this);
+        $this->data['sub_title'] = $package;
+        $this->data['breadcrumb'] = array(
+            array('title'=>_l("Modules", $this))
+        );
+        if($this->input->is_ajax_request()){
+            echo json_encode(array(
+                'status'=>'success',
+                'content'=>$this->load->view($this->mainTemplate.'/module',$this->data, true),
+                'title'=>$package,
+                'closeBtnLable'=>_l("Close", $this),
+                'footerLinks'=>array(
+                    array('color'=>"blue", 'url'=>ADMIN_URL."userProfile/$name", 'caption'=>_l("More info", $this)),
+                    array('color'=>"blue", 'url'=>ADMIN_URL."userEdit/$name", 'caption'=>_l("Edit", $this)),
+                ),
+            ));
+            return;
+        }
+        $this->data['page'] = "module";
+        $this->data['content'] = $this->load->view($this->mainTemplate."/module",$this->data, true);
+        $this->load->view($this->frameTemplate,$this->data);
+    }
+
+    /**
+     * Install a module/package
+     *
+     * @param string $name
+     * @param int $confirm
+     */
+    function moduleInstall($name, $confirm = 0)
+    {
+        if(!$this->checkAccessGroup(1))
+            return;
+
+        $back_url = ADMIN_URL."modules";
+
+        if(!key_exists($name, $this->load->packages)){
+            $this->systemError("Module not found.", $back_url);
+            return;
+        }
+        $current_data = $this->Packages_model->getOne(null, array('package_name'=>$name));
+        if(is_array($current_data) && count($current_data)==0){
+            $this->systemError("Module has been installed before.", $back_url);
+            return;
+        }
+
+        $self_url = ADMIN_URL."moduleInstall/$name";
+
+        $tables = $this->getModuleTables($name);
+        if($confirm!=1){
+            echo json_encode(array(
+                'status'=>'success',
+                'content'=>'<p class="text-left">' .
+                    str_replace("{data}", "<strong>$name</strong>",_l("This action will create or repair bellow database tables that required to run module {data}.", $this)) .
+                    '</p>'.
+                    '<ul class="text-left">'.
+                    '<li>'.join('</li><li>', array_column($tables, 'table')).'</li>'.
+                    '</ul>'.
+                    '<p class="text-center font-weight-bold alert alert-warning">' .
+                    str_replace("{data}", "\"$name\"",_l("Are you sure to install {data} module?", $this)) .
+                    '</p>',
+                'title'=>_l("Install confirmation", $this),
+                'noBtnLabel'=>_l("Cancel", $this),
+                'yesBtnLabel'=>_l("Yes, Install", $this),
+                'confirmUrl'=>$self_url."/1",
+                'redirect'=>1,
+            ));
+            return;
+        }
+
+        foreach($tables as $item) {
+            if(!$item['exists']){
+                if(!$item['model']->installTable()) {
+                    $this->systemError("There is some error in module table install.", $back_url);
+                    return;
+                }
+                continue;
+            }
+            if(!$item['model']->repairTable()) {
+                $this->systemError("There is some error in module table repair.", $back_url);
+                return;
+            }
+        }
+
+        $max = $this->Packages_model->getMax('package_sort');
+        $this->Packages_model->add(array('package_name'=>$name, 'package_sort'=>$max+1, 'active'=>1));
+
+        $this->systemSuccess("The module has been successfully installed.", $back_url);
+    }
+
+    /**
+     * Uninstall a module/package
+     *
+     * @param string $name
+     * @param int $confirm
+     */
+    function moduleUninstall($name, $confirm = 0)
+    {
+        if(!$this->checkAccessGroup(1))
+            return;
+
+        $back_url = ADMIN_URL."modules";
+
+        $current_data = $this->Packages_model->getOne(null, array('package_name'=>$name));
+        if(!is_array($current_data) || count($current_data)==0){
+            $this->systemError("Module not found.", $back_url);
+            return;
+        }
+
+        $self_url = ADMIN_URL."moduleUninstall/$name";
+
+        $tables = $this->getModuleTables($name);
+        if($confirm!=1){
+            echo json_encode(array(
+                'status'=>'success',
+                'content'=>'<p class="text-left">' .
+                    str_replace("{data}", "<strong>$name</strong>",_l("This action only make the module {data} de-active.", $this)) .
+                    ' '._l("Database tables of this module wouldn't remove.", $this).
+                    ' '._l("If you want to remove them, you should remove the bellow tables manually from your database.", $this).
+                    '</p>'.
+                    '<ul class="text-left">'.
+                    '<li>'.join('</li><li>', array_column($tables, 'table')).'</li>'.
+                    '</ul>'.
+                    '<p class="text-center font-weight-bold alert alert-warning">' .
+                    str_replace("{data}", "\"$name\"",_l("Are you sure to uninstall {data} module?", $this)) .
+                    '</p>',
+                'title'=>_l("Uninstall confirmation", $this),
+                'noBtnLabel'=>_l("Cancel", $this),
+                'yesBtnLabel'=>_l("Yes, uninstall!", $this),
+                'confirmUrl'=>$self_url."/1",
+                'redirect'=>1,
+            ));
+            return;
+        }
+
+        $this->Packages_model->remove($current_data['package_id']);
+
+        $this->systemSuccess("The module has been successfully uninstalled.", $back_url);
+    }
+
+    /**
+     * Get the list of a module/package tables
+     *
+     * @param string $package
+     * @return array
+     */
+    private function getModuleTables($package)
+    {
+        $tables = array();
+        $models_paths = get_all_php_files(APPPATH."third_party/$package/models/");
+        if($models_paths) {
+            foreach($models_paths as $model_path) {
+                include_once $model_path;
+                $model_name = basename($model_path,".php");
+                $theModel = new $model_name();
+                if(!method_exists($theModel, 'tableName')) {
+                    continue;
+                }
+
+                $tables[] = array(
+                    'path' => $model_path,
+                    'table' => $theModel->tableName(),
+                    'exists' => $theModel->tableExists(),
+                    'model' => $theModel,
+                );
+            }
+        }
+        return $tables;
     }
 }

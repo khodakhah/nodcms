@@ -591,14 +591,38 @@ trait NodCMSValidators
      * Form validation: check a file path
      *
      * @param $value
+     * @param string $param
      * @return bool
      */
-    public function validateFileExists($value)
+    public function validateFileExists($value, $param = "")
     {
         if($value=="")
             return true;
 
-        if(file_exists(getcwd()."\\$value"))
+        if($param != "") {
+            $_param = explode(',', $param);
+            // Has prefix
+            if(count($_param) == 1) {
+                if(file_exists($_param[0].$value))
+                    return true;
+            }
+
+            // Has prefix and postfix
+            if(count($_param) == 2) {
+                if(file_exists($_param[0].$value.$_param[1]))
+                    return true;
+            }
+            if(count($_param) > 2) {
+                $this->form_validation->set_message('validateFileExists', "{field} has incorrect validation inputs.");
+                return false;
+            }
+
+            $this->form_validation->set_message('validateFileExists', _l("The entered path in {field} is not exists.", $this));
+            return false;
+        }
+
+        // Check without prefix and postfix
+        if(file_exists($value))
             return true;
 
         $this->form_validation->set_message('validateFileExists', _l("The entered path in {field} is not exists.", $this));

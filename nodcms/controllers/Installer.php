@@ -645,10 +645,14 @@ class Installer extends CI_Controller
         }
 
         $mysqli =@ new mysqli($data['host'], $data['username'], $data['password']);
+        if($mysqli->connect_error) {
+            $this->errorMessage("MySQL error: " . mysqli_connect_error(), $this->self_url);
+            return false;
+        }
         $mysqli->select_db($data['database']);
 
         if(!empty($mysqli->error_list)) {
-            $this->errorMessage("MySQL error: ".join(',', array_column($mysqli->error_list, 'error')), $this->self_url);
+            $this->errorMessage("MySQL error: " . join(',', array_column($mysqli->error_list, 'error')), $this->self_url);
             return false;
         }
 

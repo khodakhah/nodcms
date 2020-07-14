@@ -261,7 +261,7 @@ class Form
      *
      *
      * @param null $url
-     * @return false|array
+     * @return bool
      */
     function getPost($url = null)
     {
@@ -308,7 +308,7 @@ class Form
                     unset($result[$key]);
             }
         }
-        return (!is_array($result) || count($result) == 0) ? false : $result;
+        return $result;
     }
 
     function getRules()
@@ -604,9 +604,9 @@ class Form
         }
 
         if(in_array('range-select', $all_types) || in_array('range', $all_types)){
-            $this->CI->load->addJsFile("assets/ion.rangeSlider-2.1.7/js/ion-rangeSlider/ion.rangeSlider");
-            $this->CI->load->addCssFile("assets/ion.rangeSlider-2.1.7/css/ion.rangeSlider");
-            $this->CI->load->addCssFile("assets/ion.rangeSlider-2.1.7/css/ion.rangeSlider.skinHTML5");
+            $this->CI->load->addJsFile("assets/plugins/ion.rangeSlider-2.1.7/js/ion-rangeSlider/ion.rangeSlider");
+            $this->CI->load->addCssFile("assets/plugins/ion.rangeSlider-2.1.7/css/ion.rangeSlider");
+            $this->CI->load->addCssFile("assets/plugins/ion.rangeSlider-2.1.7/css/ion.rangeSlider.skinHTML5");
             $this->CI->load->addJsFile("assets/nodcms/form-handler/input-range");
         }
 
@@ -815,6 +815,7 @@ class Form
                 'type'=>"",
                 'default'=>"",
                 'input_prefix'=>"",
+                'input_postfix'=>"",
             );
             $data = array_merge($data_default,$data);
             $input = $this->CI->load->view($this->theme_patch.'input', $data, true);

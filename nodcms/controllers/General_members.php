@@ -32,7 +32,7 @@ class General_members extends NodCMS_Controller{
         $packages = $this->load->packageList();
         $this->data['dashboards'] = array();
         foreach ($packages as $item){
-            if(!file_exists(APPPATH."controllers/".$item."_members.php")){
+            if(!file_exists(APPPATH."controllers/".$item."_members.php") && !file_exists(APPPATH."third_party/$item/controllers/".$item."_members.php")){
                 continue;
             }
             $item = strtolower($item);
