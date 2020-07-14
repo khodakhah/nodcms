@@ -613,7 +613,7 @@ trait NodCMSValidators
      */
     public function validDatabaseName($value)
     {
-        if (preg_match('/^[A-Za-z0-9_]*$/', $value) == FALSE) {
+        if (preg_match('/^[A-Za-z0-9_\.\-\@]*$/', $value) == FALSE) {
             $this->form_validation->set_message('validDatabaseName', _l("The {field} field must contain just English letters and underline only.", $this));
             return false;
         }
@@ -622,7 +622,7 @@ trait NodCMSValidators
 
     public function validHostName($value)
     {
-        if (preg_match('/^[A-Za-z0-9_]*$/', $value) == FALSE) {
+        if (preg_match('/^[A-Za-z0-9_\.\-\@]*$/', $value) == FALSE) {
             $this->form_validation->set_message('validHostName', _l("The {field} field must contain just English letters and underline only.", $this));
             return false;
         }
