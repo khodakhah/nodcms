@@ -40,5 +40,5 @@ define("CONFIG_BASE_URL", URL_PROTOCOL.$_SERVER['HTTP_HOST'] . rtrim(dirname($_S
 define('ASSETS_BASE_URL', CONFIG_BASE_URL);
 define('ASSETS_LOCAL_URL', CONFIG_BASE_URL);
 
-define("DB_CONFIG_PATH", APPPATH.'config/database.php');
+define("DB_CONFIG_PATH", $paths->appDirectory.'config/database.php');
 define("HAS_DB_CONFIG", intval(file_exists(DB_CONFIG_PATH) && filesize(DB_CONFIG_PATH) > 0));
