@@ -8,15 +8,41 @@ if (phpversion() < $minPHPVersion)
 }
 unset($minPHPVersion);
 
+// Acceptable values: development, testing, production
+define('ENVIRONMENT', 'development');
+
+// Allow run installer if the database connection has been failed
+define("ALLOW_INSTALLER", true);
+
 // Path to the front controller (this file)
 define('FCPATH', __DIR__ . DIRECTORY_SEPARATOR);
 
 // Root directory
 define("ROOTPATH", dirname(FCPATH).DIRECTORY_SEPARATOR);
+// CodeIgniter core path
+define("SYSTEMPATH", ROOTPATH."system".DIRECTORY_SEPARATOR);
+// NodCMS core path
+define("COREPATH", ROOTPATH."nodcms-core".DIRECTORY_SEPARATOR);
+
+// Find the requested protocol
+$protocol_status = intval(isset($_SERVER['HTTPS']));
+define("SSL_PROTOCOL", $protocol_status);
+define("URL_PROTOCOL", $protocol_status ? "https://" : "http://");
+
+// Find the base url
+define("CONFIG_BASE_URL", URL_PROTOCOL.$_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . "/");
+define('ASSETS_BASE_URL', CONFIG_BASE_URL);
+define('ASSETS_LOCAL_URL', CONFIG_BASE_URL);
+
+define("DB_CONFIG_PATH", $paths->appDirectory.'config/database.php');
+define("HAS_DB_CONFIG", intval(file_exists(DB_CONFIG_PATH) && filesize(DB_CONFIG_PATH) > 0));
+
+// Location of the NodCMS addon bootstrap file.
+require COREPATH.'bootstrap.php';
 
 // Location of the Paths config file.
 // This is the line that might need to be changed, depending on your folder structure.
-$pathsPath = realpath(FCPATH . '../app/Config/Paths.php');
+$pathsPath = realpath(COREPATH . 'Config/Paths.php');
 // ^^^ Change this if you move your application folder
 
 /*
@@ -33,10 +59,7 @@ chdir(__DIR__);
 
 // Load our paths config file
 require $pathsPath;
-$paths = new Config\Paths();
-
-// NodCMS defines
-require ROOTPATH.'nodcms-defines.php';
+$paths = new NodCMS\Core\Config\Paths();
 
 // Location of the framework bootstrap file.
 $app = require rtrim($paths->systemDirectory, '/ ') . '/bootstrap.php';
