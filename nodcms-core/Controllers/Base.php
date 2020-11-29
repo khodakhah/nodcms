@@ -22,6 +22,7 @@
 namespace NodCMS\Core\Controllers;
 
 use CodeIgniter\Controller;
+use NodCMS\Core\Config\Settings;
 
 abstract class Base extends Controller
 {
@@ -58,7 +59,8 @@ abstract class Base extends Controller
 
     public function __construct()
     {
-        $this->settings = $this->config->item('settings_default');
+        $config = new Settings();
+        $this->settings = $config->settings_default;
     }
 
     /*

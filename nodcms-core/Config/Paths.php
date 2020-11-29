@@ -47,7 +47,7 @@ class Paths
 	 *
 	 * NO TRAILING SLASH!
 	 */
-	public $appDirectory = ROOTPATH . '/app';
+	public $appDirectory = ROOTPATH . 'app';
 
 	/*
 	 * ---------------------------------------------------------------
@@ -60,7 +60,7 @@ class Paths
 	 * for maximum security, keeping it out of the app and/or
 	 * system directories.
 	 */
-	public $writableDirectory = ROOTPATH . '/writable';
+	public $writableDirectory = ROOTPATH . 'writable';
 
 	/*
 	 * ---------------------------------------------------------------
@@ -73,7 +73,7 @@ class Paths
 	 * for maximum security, keeping it out of the app and/or
 	 * system directories.
 	 */
-	public $testsDirectory = ROOTPATH . '/tests';
+	public $testsDirectory = ROOTPATH . 'tests';
 
 	/*
 	 * ---------------------------------------------------------------
@@ -85,5 +85,5 @@ class Paths
 	 * default this is in `app/Views`. This value
 	 * is used when no value is provided to `Services::renderer()`.
 	 */
-	public $viewDirectory = ROOTPATH . '/Views';
+	public $viewDirectory = ROOTPATH . 'Views';
 }

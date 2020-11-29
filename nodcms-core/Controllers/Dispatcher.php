@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * NodCMS
  *
  * Copyright (c) 2015-2020.
@@ -22,29 +22,32 @@
 namespace NodCMS\Core\Controllers;
 
 
-abstract class App extends Base
+class Dispatcher extends App
 {
-    // !Important: undefined $lang keys put in this array to add to language files
-    public $langArray = array();
-    // Class type: backend or frontend
-    public $controllerType;
-    // Admin sidebar menus
-    public $admin_panel_items = array();
+    public function index() {
+        if(file_exists(DB_CONFIG_PATH) && filesize(DB_CONFIG_PATH) > 0) {
+            $language = $this->Nodcms_general_model->get_language_default();
+            if($language!=0){
+                // Redirect to new URL with default language
+                redirect(base_url().$language['code']);
+            }else{
+                $language = $this->Nodcms_general_model->get_languages();
+                if(count($language)!=0){
+                    // Redirect to new URL with default language
+                    redirect(base_url().$language[0]['code']);
+                }else{
+                    // Not exists any language in database
+                    echo "System cannot find any language to load.";
+                    exit;
+                }
+            }
+            echo "system has been installed and shall be redirect to en";
+            return;
+        }
+        return redirect("installer");
+    }
 
-    public $captcha_session_name = 'nodcms_captcha';
-    // Keep the form data for form helpers
-    public $html_form_data = array('form_group'=>"inline_form_group", 'label_col'=>"col-md-2", 'input_col'=>"col-md-10");
-
-    // Controller type
-    public $controller_type;
-
-    // Settings default values
-    public $settings_default;
-
-    /**
-     * @return \CodeIgniter\HTTP\RedirectResponse
-     */
-    protected function defaultLang() {
-
+    public function installer() {
+        echo "redirect accepted.";
     }
 }
