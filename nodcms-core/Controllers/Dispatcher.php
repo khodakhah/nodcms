@@ -31,8 +31,4 @@ class Dispatcher extends App
         }
         return redirect("installer");
     }
-
-    public function installer() {
-        echo "redirect accepted.";
-    }
 }

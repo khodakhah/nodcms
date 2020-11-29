@@ -35,4 +35,25 @@ class DynamicAutoload extends AutoloadConfig
 
         parent::__construct();
     }
+
+    /**
+     * Include modules route files
+     */
+    static function includeModulesRoutes() {
+        if(is_dir(ROOTPATH)){
+            $dir = scandir(ROOTPATH);
+            unset($dir[0]);
+            unset($dir[1]);
+            foreach ($dir as $item) {
+                if(preg_match('~([^/]+)\.[A-Za-z0-9]+~', $item) !== false || preg_match('^nodcms\-[a-z0-9]+$~', $item) === false){
+                    continue;
+                }
+                $route_file_path = ROOTPATH.$item."/Config/Routes.php";
+                if(file_exists($route_file_path)){
+                    echo $route_file_path;
+                    include_once $route_file_path;
+                }
+            }
+        }
+    }
 }

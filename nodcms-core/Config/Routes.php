@@ -53,7 +53,10 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Dispatcher::index');
-$routes->get('/installer', 'Dispatcher::installer');
+
+// Load the route files of all NodCMS modules.
+// NodCMS modules shall be in route in a directory with the prefix "nodcms-".
+DynamicAutoload::includeModulesRoutes();
 
 /**
  * --------------------------------------------------------------------
