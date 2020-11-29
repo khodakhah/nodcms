@@ -26,23 +26,8 @@ class Dispatcher extends App
 {
     public function index() {
         if(file_exists(DB_CONFIG_PATH) && filesize(DB_CONFIG_PATH) > 0) {
-            $language = $this->Nodcms_general_model->get_language_default();
-            if($language!=0){
-                // Redirect to new URL with default language
-                redirect(base_url().$language['code']);
-            }else{
-                $language = $this->Nodcms_general_model->get_languages();
-                if(count($language)!=0){
-                    // Redirect to new URL with default language
-                    redirect(base_url().$language[0]['code']);
-                }else{
-                    // Not exists any language in database
-                    echo "System cannot find any language to load.";
-                    exit;
-                }
-            }
-            echo "system has been installed and shall be redirect to en";
-            return;
+            // Redirect to the url with the default language prefix
+            return redirect($this->defaultLang());
         }
         return redirect("installer");
     }

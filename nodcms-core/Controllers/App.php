@@ -42,9 +42,10 @@ abstract class App extends Base
     public $settings_default;
 
     /**
-     * @return \CodeIgniter\HTTP\RedirectResponse
+     * @return string
      */
-    protected function defaultLang() {
-
+    protected function defaultLang(): string {
+        // Find the default url from database
+        return "en";
     }
 }
