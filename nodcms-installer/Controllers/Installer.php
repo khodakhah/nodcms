@@ -58,7 +58,7 @@ class Installer extends Base
     public function __construct()
     {
         parent::__construct();
-        $this->mainTemplate = 'installer';
+        $this->mainTemplate = 'NodCMS\Installer';
         $this->frameTemplate = 'installer/layout';
 
         $this->language = array(
@@ -69,7 +69,6 @@ class Installer extends Base
         );
         $this->data['page'] = '';
         $this->data['title'] = "{$this->product_name} Installer";
-        $this->settings = $this->config->item('settings_default');
 
         $this->php_version_valid = version_compare(PHP_VERSION, $this->required_php_version, '>=');
         $this->extensions_valid = true;
@@ -89,7 +88,7 @@ class Installer extends Base
             'complete',
         );
 
-        $step_key = array_search($this->router->method, $steps);
+        $step_key = array_search($this->router->methodName(), $steps);
 
         if($step_key > 0 && $step_key < count($steps)) {
             $this->back_url = base_url()."installer/".$steps[$step_key-1];
@@ -136,8 +135,8 @@ class Installer extends Base
             }
         }
         $this->data['requirements_error'] = $requirements_error;
-        $this->data['content'] = $this->load->view($this->mainTemplate."/overview", $this->data, true);
-        $this->load->view($this->frameTemplate, $this->data);
+        $this->data['content'] = view($this->mainTemplate."/overview", $this->data);
+        echo view($this->frameTemplate, $this->data);
     }
 
     /**

@@ -56,11 +56,13 @@ abstract class Base extends Controller
     public $display_title = TRUE;
     public $display_page_title = FALSE;
 
+    protected $router;
 
     public function __construct()
     {
         $config = new Settings();
         $this->settings = $config->settings_default;
+        $this->router = \Config\Services::router();
     }
 
     /*

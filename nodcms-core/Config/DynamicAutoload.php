@@ -22,37 +22,66 @@
 namespace NodCMS\Core\Config;
 
 use CodeIgniter\Config\AutoloadConfig;
+use CodeIgniter\Router\RouteCollection;
 
 class DynamicAutoload extends AutoloadConfig
 {
     public function __construct()
     {
-        // Add the nodcms config
+        // Add the NodCMS core namespace
         $this->psr4 = array_merge($this->psr4, array(
             'NodCMS\Core'      => ROOTPATH . 'nodcms-core',
-            'NodCMS\Installer'      => ROOTPATH . 'nodcms-installer',
         ));
+
+        // Add the NodCMS modules namespace
+        $modules = self::modulesPaths();
+        foreach($modules as $module=>$path) {
+            $_module = ucfirst(str_replace("nodcms-", "", $module));
+            $this->psr4 = array_merge($this->psr4, array(
+                "NodCMS\\$_module"      => $path,
+            ));
+        }
 
         parent::__construct();
     }
 
     /**
-     * Include modules route files
+     * Feth all modules paths
+     *
+     * @return array
      */
-    static function includeModulesRoutes() {
-        if(is_dir(ROOTPATH)){
-            $dir = scandir(ROOTPATH);
-            unset($dir[0]);
-            unset($dir[1]);
-            foreach ($dir as $item) {
-                if(preg_match('~([^/]+)\.[A-Za-z0-9]+~', $item) !== false || preg_match('^nodcms\-[a-z0-9]+$~', $item) === false){
-                    continue;
-                }
-                $route_file_path = ROOTPATH.$item."/Config/Routes.php";
-                if(file_exists($route_file_path)){
-                    echo $route_file_path;
-                    include_once $route_file_path;
-                }
+    private static function modulesPaths(): array {
+        if(!is_dir(ROOTPATH)) {
+            return array();
+        }
+        $paths = array();
+        $dir = scandir(ROOTPATH);
+        unset($dir[0]);
+        unset($dir[1]);
+        foreach ($dir as $item) {
+            if(preg_match('~([^/]+)\.[A-Za-z0-9]+~', $item))
+                continue;
+            if(!preg_match('/^nodcms\-[a-z0-9]+$/', $item))
+                continue;
+            if($item == "nodcms-core")
+                continue;
+            $paths[$item] = ROOTPATH.$item."/";
+        }
+
+        return $paths;
+    }
+
+    /**
+     * Include modules route files
+     *
+     * @param RouteCollection $routes
+     */
+    static function includeModulesRoutes(RouteCollection $routes) {
+        $modules = self::modulesPaths();
+        foreach($modules as $item) {
+            $route_file_path = $item."/Config/Routes.php";
+            if(file_exists($route_file_path)){
+                include_once $route_file_path;
             }
         }
     }

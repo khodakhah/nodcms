@@ -56,7 +56,7 @@ $routes->get('/', 'Dispatcher::index');
 
 // Load the route files of all NodCMS modules.
 // NodCMS modules shall be in route in a directory with the prefix "nodcms-".
-DynamicAutoload::includeModulesRoutes();
+DynamicAutoload::includeModulesRoutes($routes);
 
 /**
  * --------------------------------------------------------------------
