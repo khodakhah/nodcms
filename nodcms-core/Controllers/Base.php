@@ -42,10 +42,6 @@ abstract class Base extends Controller
     public $data;
     // User data from DB
     public $userdata;
-    // All add-ons css files
-    public $css_files = array();
-    // All add-ons js files
-    public $js_files = array();
     // Static sidebar close status
     public $page_sidebar = "frontend_sidebar";
     public $page_sidebar_closed = false;
@@ -71,7 +67,8 @@ abstract class Base extends Controller
         $config = new Settings();
         $this->settings = $config->settings_default;
         $this->router = \Config\Services::router();
-        $this->view = new \NodCMS\Core\View\View(new \NodCMS\Core\Config\View());
+        $this->view = new \NodCMS\Core\View\View();
+        helper("NodCMS\Core\core");
     }
 
     /*

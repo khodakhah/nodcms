@@ -41,7 +41,7 @@ class View extends \CodeIgniter\Config\View
      *
      * @var string
      */
-    public $viewPath = '';
+    public $viewPath = 'NodCMS\Layout';
 
     /**
      * NodCMS variable!
