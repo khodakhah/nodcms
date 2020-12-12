@@ -58,8 +58,8 @@ class Installer extends Base
     public function __construct()
     {
         parent::__construct();
-        $this->mainTemplate = 'NodCMS\Installer';
-        $this->frameTemplate = 'installer/layout';
+
+        $this->view->setConfig(new \NodCMS\Installer\Config\View());
 
         $this->language = array(
             'code' => "en",
@@ -135,8 +135,7 @@ class Installer extends Base
             }
         }
         $this->data['requirements_error'] = $requirements_error;
-        $this->data['content'] = view($this->mainTemplate."/overview", $this->data);
-        echo view($this->frameTemplate, $this->data);
+        echo $this->viewRender("overview");
     }
 
     /**

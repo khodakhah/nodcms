@@ -56,19 +56,28 @@ abstract class Base extends Controller
     public $display_title = TRUE;
     public $display_page_title = FALSE;
 
+    /**
+     * @var \CodeIgniter\Router\Router
+     */
     protected $router;
+
+    /**
+     * @var \NodCMS\Core\View\View
+     */
+    public $view;
 
     public function __construct()
     {
         $config = new Settings();
         $this->settings = $config->settings_default;
         $this->router = \Config\Services::router();
+        $this->view = new \NodCMS\Core\View\View(new \NodCMS\Core\Config\View());
     }
 
     /*
      * This method useful for stop your system with an error
      */
-    function errorMessage($error, $redirect = "")
+    protected function errorMessage($error, $redirect = "")
     {
         if($this->input->is_ajax_request()){
             $data = array(
@@ -87,7 +96,7 @@ abstract class Base extends Controller
     /*
      * This method useful for return successful messages
      */
-    function successMessage($message, $redirect = "" , $add_on_data = null, $translate = false)
+    protected function successMessage($message, $redirect = "" , $add_on_data = null, $translate = false)
     {
         if($this->input->is_ajax_request()){
             $data = array(
@@ -112,7 +121,7 @@ abstract class Base extends Controller
      * @param $internal bool
      * @return mixed
      */
-    function curlWebPage($url, $internal = false)
+    protected function curlWebPage($url, $internal = false)
     {
         $ch = curl_init( $url);
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -156,7 +165,7 @@ abstract class Base extends Controller
      * @param bool $internal
      * @return mixed
      */
-    function curlJSON($url, $data = null, $data_post = 0, $ssl = 0, $internal = false)
+    protected function curlJSON($url, $data = null, $data_post = 0, $ssl = 0, $internal = false)
     {
         $ch = curl_init( $url);
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -207,5 +216,17 @@ abstract class Base extends Controller
             );
         }
         return $json_data;
+    }
+
+    /**
+     * @param string $view_file
+     * @param bool|null $saveData
+     * @return string
+     */
+    protected function viewRender(string $view_file, bool $saveData = null): string
+    {
+        $this->view->loadControllerVars($this);
+        $this->data['content'] =  $this->view->render($view_file, $this->data);
+        return $this->view->renderFrame($this->data, $saveData);
     }
 }
