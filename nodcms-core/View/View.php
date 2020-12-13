@@ -21,6 +21,7 @@
 
 namespace NodCMS\Core\View;
 
+use CodeIgniter\Config\Services;
 use Psr\Log\LoggerInterface;
 
 class View extends \CodeIgniter\View\View
@@ -32,6 +33,11 @@ class View extends \CodeIgniter\View\View
      */
     public $config;
 
+    /**
+     * @var \CodeIgniter\HTTP\IncomingRequest
+     */
+    public $request;
+
     // All add-ons css files in header tag
     public $css_files = array();
 
@@ -40,6 +46,11 @@ class View extends \CodeIgniter\View\View
 
     // All add-ons js files in footer content (append to body tag)
     public $footer_js_files = array();
+
+    /**
+     * @var View
+     */
+    private $_common_view;
 
     /**
      * View constructor.
@@ -53,6 +64,19 @@ class View extends \CodeIgniter\View\View
     {
         $config == null && $config = new \NodCMS\Core\Config\View();
         parent::__construct($config, $viewPath, $loader, $debug, $logger);
+        $this->request = Services::request();
+    }
+
+    /**
+     * The common view uses layout view files
+     *
+     * @return View
+     */
+    public function common()
+    {
+        if(empty($this->_common_view))
+            $this->_common_view = new self();
+        return $this->_common_view;
     }
 
     /**

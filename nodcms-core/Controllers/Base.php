@@ -21,6 +21,7 @@
 
 namespace NodCMS\Core\Controllers;
 
+use CodeIgniter\Config\Services;
 use CodeIgniter\Controller;
 use NodCMS\Core\Config\Settings;
 
@@ -62,12 +63,18 @@ abstract class Base extends Controller
      */
     public $view;
 
+    /**
+     * @var \CodeIgniter\HTTP\IncomingRequest
+     */
+    public $request;
+
     public function __construct()
     {
         $config = new Settings();
         $this->settings = $config->settings_default;
         $this->router = \Config\Services::router();
         $this->view = new \NodCMS\Core\View\View();
+        $this->request = Services::request();
         helper("NodCMS\Core\core");
     }
 
@@ -225,5 +232,45 @@ abstract class Base extends Controller
         $this->view->loadControllerVars($this);
         $this->data['content'] =  $this->view->render($view_file, $this->data);
         return $this->view->renderFrame($this->data, $saveData);
+    }
+
+    /**
+     * Render view with an string content
+     *
+     * @param string $string
+     * @param bool|null $saveData
+     * @return string
+     */
+    protected function viewRenderString(string $string, bool $saveData = null): string
+    {
+        $this->viewPrepare();
+        $this->view->setVar("content", $string);
+        return $this->view->renderFrame(null, $saveData);
+    }
+
+    /**
+     * @param string $view_file
+     * @param array $data
+     * @param string|null $view_path
+     * @return string
+     */
+    public function viewCommon(string $view_file, array $data): string
+    {
+        foreach($data as $key=>$value) {
+            $this->view->common()->setVar($key, $value);
+        }
+        return $this->view->common()->render($view_file);
+    }
+
+    /**
+     * Copy all controller public variables to the view object
+     */
+    private function viewPrepare()
+    {
+        foreach($this->data as $key=>$value) {
+            $this->view->setVar($key, $value);
+        }
+        unset($this->data);
+        $this->view->loadControllerVars($this);
     }
 }
