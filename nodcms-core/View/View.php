@@ -180,7 +180,11 @@ class View extends \CodeIgniter\View\View
      */
     function fetchAllCSS()
     {
-        echo "<style>".$this->assetContents($this->css_files)."</style>\n";
+        foreach ($this->css_files as $item){
+            $file = ROOTPATH . "public/" . $item;
+            if(!file_exists($file)) continue;
+            echo "<link rel='stylesheet' href='".base_url($item)."'>\n";
+        }
     }
 
     /**
@@ -189,7 +193,11 @@ class View extends \CodeIgniter\View\View
      */
     function fetchAllJS()
     {
-        echo "<script type='text/javascript'>".$this->assetContents($this->footer_js_files)."</script>\n";
+        foreach ($this->footer_js_files as $item){
+            $file = ROOTPATH . "public/" . $item;
+            if(!file_exists($file)) continue;
+            echo "<script type='text/javascript' src='".base_url($item)."'></script>\n";
+        }
     }
 
     /**
@@ -198,7 +206,11 @@ class View extends \CodeIgniter\View\View
      */
     function fetchAllHeaderJS()
     {
-        echo "<script type='text/javascript'>".$this->assetContents($this->header_js_files)."</script>\n";
+        foreach ($this->header_js_files as $item){
+            $file = ROOTPATH . "public/" . $item;
+            if(!file_exists($file)) continue;
+            echo "<script type='text/javascript' src='".base_url($item)."'></script>\n";
+        }
     }
 
     /**
@@ -222,21 +234,5 @@ class View extends \CodeIgniter\View\View
 
         if(!in_array($path . $file_type, $variable))
             array_push($variable, $path . $file_type);
-    }
-
-    /**
-     * Convert assets array to string
-     *
-     * @param array $variable
-     * @return string
-     */
-    private function assetContents(array $variable): string {
-        $result = array();
-        foreach ($variable as $item){
-            $file = ROOTPATH . $item;
-            if(!file_exists($file)) continue;
-            $result[] = file_get_contents($file);
-        }
-        return join("\n", $result);
     }
 }

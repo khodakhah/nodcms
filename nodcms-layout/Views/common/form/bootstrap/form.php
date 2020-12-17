@@ -9,7 +9,7 @@
         var import_css_files = <?php echo (isset($this->css_files) && count($this->css_files)!=0)?json_encode($this->css_files):'[]'; ?>;
         if(import_js_files.length > 0){
             $.each(import_js_files, function (key, val) {
-                var url = val+".js";
+                var url = $('body').attr('data-base-url') + '/' + val+".js";
                 if($('script[src="'+url+'"]').length == 0){
                     $.ajax({
                         url: url,
@@ -20,7 +20,7 @@
         }
         if(import_css_files.length > 0){
             $.each(import_css_files, function (key, val) {
-                var url = val+".css";
+                var url = $('body').attr('data-base-url') + '/' + val+".css";
                 if($('link[href="'+url+'"]').length == 0){
                     $('head').append('<link rel="stylesheet" href="'+url+'" type="text/css" />');
                 }
