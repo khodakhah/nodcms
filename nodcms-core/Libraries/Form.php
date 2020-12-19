@@ -21,6 +21,8 @@
 
 namespace NodCMS\Core\Libraries;
 
+use CodeIgniter\Config\Services;
+
 /**
  * Class Form
  * Handle a NodCMS html form
@@ -256,7 +258,7 @@ class Form
      */
     function ispost()
     {
-        if($this->CI->request->getMethod() == 'POST' && count($this->CI->request->getPost()) != 0)
+        if($this->CI->request->getMethod() == 'post' && count($this->CI->request->getPost()) != 0)
             return true;
         return false;
     }
@@ -268,7 +270,7 @@ class Form
      */
     function isget()
     {
-        if($this->CI->request->getMethod() == 'GET' && count($this->CI->request->getGet()) !=0 )
+        if($this->CI->request->getMethod() == 'get' && count($this->CI->request->getGet()) !=0 )
             return true;
         return false;
     }
@@ -281,50 +283,44 @@ class Form
      */
     function getPost($url = null)
     {
+        $validation = Services::validation();
         $method = strtolower($this->data['method']);
+        $input_data = $method == 'get' ? $this->CI->request->getGet() : $this->CI->request->getPost();
         $config = $this->getRules();
         // Check rules empty
         if($config != null){
             if($url != null)
                 $this->data['back_url'] = $url;
-            // Load form_validation library
-            $this->CI->load->library('form_validation');
 
-            if($method == 'get'){
-                $this->CI->form_validation->set_data($this->CI->input->get());
-            }
             // Check form validation
-            $this->CI->form_validation->set_rules($config);
+            $validation->setRules(array_combine(array_column($config, 'field'), $config));
 
             // Form Error
-            if ($this->CI->form_validation->run() != TRUE) {
+            if ($validation->run($input_data) != TRUE) {
                 if($this->CI->request->isAjax()){
                     $data = array(
                         "status"=>"form-error",
                         "url"=>$this->data['back_url'],
-                        "error"=> $this->CI->form_validation->error_array(),
+                        "error"=> $validation->getErrors(),
                     );
                     echo  json_encode($data);
                 }else{
-                    $this->CI->session->set_flashdata('static_error', validation_errors());
+                    $this->CI->session->set_flashdata('static_error', $validation->listErrors());
                     redirect($this->data['back_url']);
                 }
                 return false;
             }
         }
 
-        $method = strtolower($this->data['method']);
-        $result = $this->CI->input->$method(NULL, TRUE);
-
         // Remove unset data
         if($config!=null){
             $config_fields = array_column($config, 'field');
-            foreach ($result as $key=>$val){
+            foreach ($input_data as $key=>$val){
                 if(!is_array($val) && !in_array($key, $config_fields))
-                    unset($result[$key]);
+                    unset($input_data[$key]);
             }
         }
-        return $result;
+        return $input_data;
     }
 
     function getRules()

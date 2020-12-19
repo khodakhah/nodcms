@@ -120,7 +120,7 @@
                         });
                         toastr.error("There is some invalid inputs.", 'Error');
                         // $.showInModal("Error",error_msg);
-                        console.log("Error",error_msg);
+                        // console.log("Error",error_msg);
                     }
                     else{
                         // $.showInModal(translate('Error')+': '+translate('Ajax failed!'), '<div class="alert alert-danger">' +
@@ -133,7 +133,7 @@
                 }
             },
             error: function (xhr, status, error) {
-                console.log(xhr.responseText);
+                // console.log(xhr.responseText);
                 toastr.error('Send form with ajax failed!', 'Error');
             }
         });
