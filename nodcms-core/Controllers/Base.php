@@ -64,6 +64,11 @@ abstract class Base extends Controller
     public $view;
 
     /**
+     * @var \CodeIgniter\Session\Session
+     */
+    public $session;
+
+    /**
      * @var \CodeIgniter\HTTP\IncomingRequest
      */
     public $request;
@@ -75,6 +80,7 @@ abstract class Base extends Controller
         $this->router = \Config\Services::router();
         $this->view = new \NodCMS\Core\View\View();
         $this->request = Services::request();
+        $this->session = Services::session();
         helper("NodCMS\Core\core");
     }
 
@@ -83,7 +89,7 @@ abstract class Base extends Controller
      */
     protected function errorMessage($error, $redirect = "")
     {
-        if($this->input->is_ajax_request()){
+        if($this->request->isAJAX()){
             $data = array(
                 "status"=>"error",
                 "url"=>$redirect,
@@ -92,7 +98,7 @@ abstract class Base extends Controller
             echo  json_encode($data);
             exit;
         }else{
-            $this->session->set_flashdata('error', $error);
+            $this->session->setFlashdata('error', $error);
             redirect($redirect);
         }
     }
@@ -102,7 +108,7 @@ abstract class Base extends Controller
      */
     protected function successMessage($message, $redirect = "" , $add_on_data = null, $translate = false)
     {
-        if($this->input->is_ajax_request()){
+        if($this->request->isAJAX()){
             $data = array(
                 "status"=>"success",
                 "url"=>$redirect,
@@ -113,7 +119,7 @@ abstract class Base extends Controller
             echo  json_encode($data);
             exit;
         }else{
-            $this->session->set_flashdata('success', $message);
+            $this->session->setFlashdata('success', $message);
             redirect($redirect);
         }
     }
@@ -229,9 +235,9 @@ abstract class Base extends Controller
      */
     protected function viewRender(string $view_file, bool $saveData = null): string
     {
-        $this->view->loadControllerVars($this);
-        $this->data['content'] =  $this->view->render($view_file, $this->data);
-        return $this->view->renderFrame($this->data, $saveData);
+        $this->viewPrepare();
+        $this->view->setVar("content", $this->view->render($view_file));
+        return $this->view->renderFrame(null, $saveData);
     }
 
     /**
