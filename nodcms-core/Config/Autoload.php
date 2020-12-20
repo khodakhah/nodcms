@@ -67,11 +67,6 @@ class Autoload extends AutoloadConfig
 
     public function __construct()
     {
-        // Add the NodCMS core namespace
-        $this->psr4 = array_merge($this->psr4, array(
-            'NodCMS\Core'      => ROOTPATH . 'nodcms-core',
-        ));
-
         // Add the NodCMS modules namespace
         $modules = self::modulesPaths();
         foreach($modules as $module=>$path) {
