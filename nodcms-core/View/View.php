@@ -29,7 +29,7 @@ class View extends \CodeIgniter\View\View
     /**
      * Reset Config default
      *
-     * @var \NodCMS\Core\Config\View
+     * @var \Config\View
      */
     public $config;
 
@@ -62,7 +62,7 @@ class View extends \CodeIgniter\View\View
      */
     public function __construct($config = null, string $viewPath = null, $loader = null, bool $debug = null, LoggerInterface $logger = null)
     {
-        $config == null && $config = new \NodCMS\Core\Config\View();
+        $config == null && $config = new \Config\View();
         parent::__construct($config, $viewPath, $loader, $debug, $logger);
         $this->request = Services::request();
     }

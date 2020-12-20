@@ -38,5 +38,5 @@ class Exceptions extends BaseConfig
 	|
 	| Default: APPPATH.'Views/errors'
 	*/
-	public $errorViewPath = APPPATH . 'Views/errors';
+	public $errorViewPath = ROOTPATH . 'nodcms-layout/Views/errors';
 }

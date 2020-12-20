@@ -19,8 +19,7 @@
  *
  */
 
-namespace NodCMS\Core\Config;
-
+namespace Config;
 
 class Settings extends \CodeIgniter\Config\BaseConfig
 {

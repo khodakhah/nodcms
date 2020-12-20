@@ -1,6 +1,6 @@
 <?php
 
-namespace NodCMS\Core\Config;
+namespace Config;
 
 class View extends \CodeIgniter\Config\View
 {

@@ -21,10 +21,5 @@
 
 // Load the Environment settings
 if(defined('ENVIRONMENT')) {
-    require COREPATH."Boot/".ENVIRONMENT.".php";
-}
-
-if (! class_exists(NodCMS\Core\Config\DynamicAutoload::class, false)) {
-    require_once SYSTEMPATH . 'Config/AutoloadConfig.php';
-    require_once COREPATH.'Config/DynamicAutoload.php';
+    require COREPATH."/Config/Boot/".ENVIRONMENT.".php";
 }

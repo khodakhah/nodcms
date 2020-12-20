@@ -19,7 +19,7 @@
  *
  */
 
-namespace NodCMS\Core\Config;
+namespace Config;
 
 class Paths
 {
@@ -47,7 +47,7 @@ class Paths
 	 *
 	 * NO TRAILING SLASH!
 	 */
-	public $appDirectory = ROOTPATH . 'app';
+	public $appDirectory = ROOTPATH . 'nodcms-core';
 
 	/*
 	 * ---------------------------------------------------------------

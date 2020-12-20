@@ -2,7 +2,8 @@
 
 namespace Config;
 
-use NodCMS\Core\Config\DynamicAutoload;
+use CodeIgniter\Config\AutoloadConfig;
+use CodeIgniter\Router\RouteCollection;
 
 /**
  * -------------------------------------------------------------------
@@ -14,7 +15,7 @@ use NodCMS\Core\Config\DynamicAutoload;
  * NOTE: If you use an identical key in $psr4 or $classmap, then
  * the values in this file will overwrite the framework's values.
  */
-class Autoload extends DynamicAutoload
+class Autoload extends AutoloadConfig
 {
 
 	/**
@@ -63,4 +64,64 @@ class Autoload extends DynamicAutoload
 	 * @var array
 	 */
 	public $classmap = [];
+
+    public function __construct()
+    {
+        // Add the NodCMS core namespace
+        $this->psr4 = array_merge($this->psr4, array(
+            'NodCMS\Core'      => ROOTPATH . 'nodcms-core',
+        ));
+
+        // Add the NodCMS modules namespace
+        $modules = self::modulesPaths();
+        foreach($modules as $module=>$path) {
+            $_module = ucfirst(str_replace("nodcms-", "", $module));
+            $this->psr4 = array_merge($this->psr4, array(
+                "NodCMS\\$_module"      => $path,
+            ));
+        }
+
+        parent::__construct();
+    }
+
+    /**
+     * Feth all modules paths
+     *
+     * @return array
+     */
+    private static function modulesPaths(): array {
+        if(!is_dir(ROOTPATH)) {
+            return array();
+        }
+        $paths = array();
+        $dir = scandir(ROOTPATH);
+        unset($dir[0]);
+        unset($dir[1]);
+        foreach ($dir as $item) {
+            if(preg_match('~([^/]+)\.[A-Za-z0-9]+~', $item))
+                continue;
+            if(!preg_match('/^nodcms\-[a-z0-9]+$/', $item))
+                continue;
+            if($item == "nodcms-core")
+                continue;
+            $paths[$item] = ROOTPATH.$item."/";
+        }
+
+        return $paths;
+    }
+
+    /**
+     * Include modules route files
+     *
+     * @param RouteCollection $routes
+     */
+    static function includeModulesRoutes(RouteCollection $routes) {
+        $modules = self::modulesPaths();
+        foreach($modules as $item) {
+            $route_file_path = $item."/Config/Routes.php";
+            if(file_exists($route_file_path)){
+                include_once $route_file_path;
+            }
+        }
+    }
 }

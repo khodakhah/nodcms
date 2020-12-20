@@ -19,7 +19,7 @@
  *
  */
 
-namespace NodCMS\Core\Config;
+namespace Config;
 
 use CodeIgniter\Config\AutoloadConfig;
 use CodeIgniter\Router\RouteCollection;

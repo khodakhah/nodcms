@@ -19,9 +19,8 @@
  *
  */
 
-namespace NodCMS\Core\Config;
+namespace Config;
 // Create a new instance of our RouteCollection class.
-use Config\Services;
 
 $routes = Services::routes();
 
