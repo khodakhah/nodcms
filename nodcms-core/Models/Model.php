@@ -21,6 +21,9 @@
 
 namespace NodCMS\Core\Models;
 
+use CodeIgniter\Database\Exceptions\DatabaseException;
+use Config\Database;
+
 class Model
 {
     private $table_name;
@@ -31,6 +34,12 @@ class Model
     private $translation_fields;
     protected $unique_keys;
     protected $keys;
+    protected $DBGroup;
+
+    /**
+     * @var \CodeIgniter\Database\BaseConnection
+     */
+    protected $db;
 
     /**
      * NodCMS_Model constructor.
@@ -47,34 +56,45 @@ class Model
         $this->fields = $fields;
         $this->foreign_tables = $foreign_tables;
         $this->translation_fields = $translation_fields;
+        $this->db = Database::connect($this->DBGroup);
     }
 
     /**
      * Insert to the database
      *
-     * @param $data
+     * @param array $data
      */
-    function add($data)
+    function add(array $data): int
     {
-        foreach ($data as $key=>$val){
+        foreach($data as $key=>$val){
             if(!key_exists($key, $this->fields))
                 unset($data[$key]);
         }
         if(key_exists('created_date', $this->fields) && !isset($data['created_date']))
             $data['created_date'] = time();
-        $this->db->insert($this->table_name, $data);
-        return $this->db->insert_id();
+        $this->getBuilder()->insert($data);
+        return $this->db->insertID();
     }
 
     /**
-     * Update a database
+     * Update a table in database with id as condition
      *
      * @param $id
      * @param $data
      */
     function edit($id, $data)
     {
-        $this->db->update($this->table_name, $data, array($this->primary_key=>$id));
+        $this->getBuilder()->update($data, array($this->primary_key=>$id));
+    }
+
+    /**
+     * Update a table in database with conditions
+     * @param array $data
+     * @param array|string $conditions
+     */
+    public function update(array $data, $conditions)
+    {
+        $this->getBuilder()->update($data, $conditions);
     }
 
     /**
@@ -87,17 +107,16 @@ class Model
         // Delete Foreign Tables
         if($this->foreign_tables != null && is_array($this->foreign_tables) && count($this->foreign_tables)!=0){
             foreach ($this->foreign_tables as $table_name){
-                $this->db->delete($table_name, array($this->primary_key=>$id));
+                $builder = $this->db->table($table_name);
+                $builder->delete(array($this->primary_key=>$id));
             }
         }
         // Delete from main table
-        $this->db->delete($this->table_name, array($this->primary_key=>$id));
+        $this->getBuilder()->delete(array($this->primary_key=>$id));
         // Delete Translations
         if($this->translation_fields != null && is_array($this->translation_fields) && count($this->translation_fields)!=0){
-            $this->db->where('table_name',$this->table_name);
-            $this->db->where('table_id',$id);
-            $this->db->where('field_name IN ("'.join('","', $this->translation_fields).'")');
-            $this->db->delete("translations");
+            $translations = new Translations_model();
+            $translations->cleanup($this->table_name, $id, $this->translation_fields);
         }
     }
 
@@ -109,12 +128,14 @@ class Model
     function clean($conditions)
     {
         $all = $this->getAll($conditions);
-        $this->db->delete($this->table_name, $conditions);
+        $this->getBuilder()->delete($conditions);
+
         // Delete Foreign Tables
         if($this->foreign_tables != null && is_array($this->foreign_tables) && count($this->foreign_tables)!=0){
             foreach ($this->foreign_tables as $table_name){
                 foreach ($all as $item){
-                    $this->db->delete($table_name, array($this->primary_key=>$item[$this->primary_key]));
+                    $builder = $this->db->table($table_name);
+                    $builder->delete(array($this->primary_key=>$item[$this->primary_key]));
                 }
             }
         }
@@ -128,10 +149,10 @@ class Model
      */
     function getCount($conditions = null)
     {
-        $this->db->from($this->table_name);
+        $builder = $this->getBuilder();
         if ($conditions != null)
-            $this->searchDecode($conditions);
-        return $this->db->count_all_results();
+            $this->searchDecode($conditions, $builder);
+        return $builder->countAllResults();
     }
 
     /**
@@ -141,14 +162,14 @@ class Model
      * @param null $conditions
      * @return int
      */
-    function getSum($field, $conditions = null)
+    function getSum($field, $conditions = null): int
     {
-        $this->db->select("sum($field)");
-        $this->db->from($this->table_name);
+        $builder = $this->getBuilder();
+        $builder->select("sum($field)");
         if ($conditions != null)
-            $this->searchDecode($conditions);
-        $query = $this->db->get();
-        $result = $query->row_array();
+            $this->searchDecode($conditions, $builder);
+        $query = $builder->get();
+        $result = $query->getRowArray();
         return count($result)!=0?$result["sum($field)"]:0;
     }
 
@@ -159,14 +180,14 @@ class Model
      * @param null $conditions
      * @return int
      */
-    function getMax($field, $conditions = null)
+    function getMax($field, $conditions = null): int
     {
-        $this->db->select("max($field)");
-        $this->db->from($this->table_name);
+        $builder = $this->getBuilder();
+        $builder->select("max($field)");
         if ($conditions != null)
-            $this->searchDecode($conditions);
-        $query = $this->db->get();
-        $result = $query->row_array();
+            $this->searchDecode($conditions, $builder);
+        $query = $builder->get();
+        $result = $query->getRowArray();
         return count($result)!=0?$result["max($field)"]:0;
     }
 
@@ -179,22 +200,27 @@ class Model
      * @param null|array $sort_by
      * @return mixed
      */
-    function getAll($conditions = null, $limit=null, $page=1, $sort_by = null)
+    function getAll($conditions = null, $limit=null, $page=1, $sort_by = null): array
     {
-        $this->db->select('*');
-        $this->db->from($this->table_name);
+        $builder = $this->getBuilder();
+        $builder->select('*');
+
         if($conditions!=null) {
-            $this->searchDecode($conditions);
+            $this->searchDecode($conditions, $builder);
         }
+
         if($sort_by=="rand") {
-            $this->db->order_by("RAND()");
+            $builder->orderBy("RAND()");
         }
         elseif($sort_by!=null){
-            $this->db->order_by($sort_by[0], $sort_by[1]);
+            $builder->orderBy($sort_by[0], $sort_by[1]);
         }
-        if($limit!=null) $this->db->limit($limit, ($page-1)*$limit);
-        $query = $this->db->get();
-        return $query->result_array();
+
+        if($limit!=null)
+            $builder->limit($limit, ($page-1)*$limit);
+
+        $query = $builder->get();
+        return $query->getResultArray();
     }
 
     /**
@@ -206,24 +232,29 @@ class Model
      */
     function getOne($id, $conditions = null)
     {
-        $this->db->select('*');
-        $this->db->from($this->table_name);
+        $builder = $this->getBuilder();
+        $builder->select('*');
+
         if($id!=null)
-            $this->db->where($this->primary_key, $id);
-        if ($conditions != null) $this->db->where($conditions);
-        $query = $this->db->get();
-        return $query->row_array();
+            $builder->where($this->primary_key, $id);
+
+        if ($conditions != null)
+            $builder->where($conditions);
+
+        $query = $builder->get();
+        return $query->getRowArray();
     }
 
     /**
      * Decode search data
      *
-     * @param $conditions
+     * @param array $conditions
+     * @param \CodeIgniter\Database\BaseBuilder $builder
      */
-    function searchDecode($conditions)
+    function searchDecode(array $conditions, \CodeIgniter\Database\BaseBuilder $builder)
     {
         if(!is_array($conditions)){
-            $this->db->where($conditions);
+            $builder->where($conditions);
             return;
         }
         if(isset($conditions['search']) && count($conditions['search'])!=0){
@@ -235,14 +266,14 @@ class Model
                     if($value=='')
                         continue;
                     $values = explode(' ',$value);
-                    $this->db->group_start();
+                    $builder->group_start();
                     foreach ($values as $item){
-                        $this->db->$parameters[3]($parameters[1],$item);
+                        $builder->$parameters[3]($parameters[1],$item);
                     }
-                    $this->db->group_end();
+                    $builder->group_end();
                     continue;
                 }
-                $this->db->where($key,$value);
+                $builder->where($key,$value);
             }
             unset($conditions['search']);
         }
@@ -255,7 +286,7 @@ class Model
                     if($value=='')
                         continue;
                     $values = explode(' ',$value);
-                    $this->db->group_start();
+                    $builder->group_start();
                     $connector = array(
                         'like'=>" AND translated_text ",
                         'not_like'=>" AND translated_text NOT ",
@@ -272,11 +303,11 @@ class Model
                         $where .= "LIKE '$item'";
                     }
                     $where = $where!=""?"($where) AND":"";
-                    $this->db->where($this->primary_key." IN (SELECT table_id FROM translations WHERE $where field_name = '$parameters[1]' AND table_name = '".$this->table_name."' AND language_id = ".$this->language['language_id'].")");
-                    $this->db->group_end();
+                    $builder->where($this->primary_key." IN (SELECT table_id FROM translations WHERE $where field_name = '$parameters[1]' AND table_name = '".$this->table_name."' AND language_id = ".$this->language['language_id'].")");
+                    $builder->group_end();
                     continue;
                 }
-                $this->db->where($this->primary_key." IN (SELECT table_id FROM translations WHERE field_name = '$key' AND translated_text = '$value' AND table_name = '".$this->table_name."' AND language_id = ".$this->language['language_id'].")");
+                $builder->where($this->primary_key." IN (SELECT table_id FROM translations WHERE field_name = '$key' AND translated_text = '$value' AND table_name = '".$this->table_name."' AND language_id = ".$this->language['language_id'].")");
             }
             unset($conditions['trans_search']);
         }
@@ -287,11 +318,11 @@ class Model
                 continue;
             if(is_array($val))
                 $val = join(',', array_unique($val));
-            $this->db->where("$matches[1] $matches[2] ($val)");
+            $builder->where("$matches[1] $matches[2] ($val)");
             unset($conditions[$key]);
         }
         if(count($conditions)!=0){
-            $this->db->where($conditions);
+            $builder->where($conditions);
         }
     }
 
@@ -303,45 +334,53 @@ class Model
      * @param null $language_id
      * @return array
      */
-    function getOneTrans($id, $conditions = null, $language_id = null)
+    function getOneTrans($id, $conditions = null, $language_id = null): array
     {
         $default_trans = array_fill_keys($this->translation_fields,"");
         $first_result = $this->getOne($id, $conditions);
+
         if(!is_array($first_result))
             return $first_result;
+
         if($language_id==null)
+            // TODO: Solve this
             $language_id = $this->language['language_id'];
-        $this->db->select("*");
-        $this->db->from('translations');
-        $this->db->where("table_id", $first_result[$this->primary_key]);
-        $this->db->where("table_name", $this->table_name);
-        $this->db->where('field_name IN ("'.join('","',$this->translation_fields).'")');
-        $this->db->where("language_id", $language_id);
-        $query = $this->db->get();
-        $translations = $query->result_array();
+
+        $_translations = new Translations_model();
+        $translations = $_translations->getAllOfATable($this->table_name, $first_result[$this->primary_key], $this->translation_fields, $language_id);
+
         $second_result = array_combine(array_column($translations, 'field_name'),array_column($translations,'translated_text'));
         $second_result = array_merge($default_trans, $second_result);
         return array_merge($first_result, $second_result);
     }
 
-    function getAllTrans($conditions = null, $limit=null, $page=1, $sort_by = null, $language_id = null)
+    /**
+     * Select a list from a database with translation keys
+     *
+     * @param array|null $conditions
+     * @param int|null $limit
+     * @param int $page
+     * @param string|null $sort_by
+     * @param int|null $language_id
+     * @return array
+     */
+    function getAllTrans(array $conditions = null, int $limit = null, int $page = 1, string $sort_by = null, int $language_id = null): array
     {
-
         $first_result = $this->getAll($conditions, $limit, $page, $sort_by);
+
         if($this->translation_fields == null)
             return $first_result;
+
         $default_trans = array_fill_keys($this->translation_fields,"");
+
         if($language_id==null)
+            // TODO: Solve this
             $language_id = $this->language['language_id'];
+
         foreach ($first_result as &$item){
-            $this->db->select("*");
-            $this->db->from('translations');
-            $this->db->where("table_id", $item[$this->primary_key]);
-            $this->db->where("table_name", $this->table_name);
-            $this->db->where('field_name IN ("'.join('","',$this->translation_fields).'")');
-            $this->db->where("language_id", $language_id);
-            $query = $this->db->get();
-            $translations = $query->result_array();
+            $_translations = new Translations_model();
+            $translations = $_translations->getAllOfATable($this->table_name, $first_result[$this->primary_key], $this->translation_fields, $language_id);
+
             $second_result = array_combine(array_column($translations, 'field_name'),array_column($translations,'translated_text'));
             $second_result = array_merge($default_trans, $second_result);
             $item = array_merge($item, $second_result);
@@ -357,18 +396,14 @@ class Model
      * @param null|int $language_id
      * @return array
      */
-    function getTranslation($id, $field, $language_id = null)
+    function getTranslation(int $id, string $field, int $language_id = null): array
     {
         if($language_id==null)
+            // TODO: Solve this
             $language_id = $this->language['language_id'];
-        $this->db->select("*");
-        $this->db->from('translations');
-        $this->db->where("table_id", $id);
-        $this->db->where("table_name", $this->table_name);
-        $this->db->where("field_name", $field);
-        $this->db->where("language_id", $language_id);
-        $query = $this->db->get();
-        return $query->row_array();
+
+        $_translations = new Translations_model();
+        return $_translations->getAllOfATable($this->table_name, $id, array($field), $language_id);
     }
 
     /**
@@ -378,17 +413,19 @@ class Model
      * @param null $language_id
      * @return array
      */
-    function getTranslations($id, $language_id = null)
+    function getTranslations($id, $language_id = null): array
     {
         if($language_id==null)
+            // TODO: Solve this
             $language_id = $this->language['language_id'];
-        $this->db->select("*");
-        $this->db->from('translations');
-        $this->db->where("table_id", $id);
-        $this->db->where("table_name", $this->table_name);
-        $this->db->where("language_id", $language_id);
-        $query = $this->db->get();
-        $result = $query->result_array();
+
+        $_translations = new Translations_model();
+        $result = $_translations->getAll(array(
+            'table_id' => $id,
+            'table_name' => $this->table_name,
+            'language_id' => $language_id,
+        ));
+
         return array_combine(array_column($result, "field_name"), array_column($result, "translated_text"));
     }
 
@@ -403,25 +440,29 @@ class Model
     function updateTranslation($id, $value, $field, $language_id)
     {
         if(!in_array($field, $this->translation_fields)){
-            show_error("The field '$field' doesn't exists in the translation_files of $this->table_name.", 500);
-            return;
+            throw new DatabaseException("The field '$field' doesn't exists in the translation_files of $this->table_name.");
         }
+
         $condition = array(
             'table_name'=>$this->table_name,
             'table_id'=>$id,
             'field_name'=>$field,
             'language_id'=>$language_id,
         );
+
         $data = array('translated_text'=>$value);
 
-        $translation_count = $this->db->from("translations")->where($condition)->count_all_results();
+        $_translations = new Translations_model();
+
+        $translation_count = $_translations->getCount($condition);
+
         // * Update the exists title
         if($translation_count!=0){
-            $this->db->update("translations", $data,$condition);
+            $_translations->update($data, $condition);
         }
         // * Create new title
         else{
-            $this->db->insert("translations", array_merge($condition,$data));
+            $_translations->add(array_merge($condition, $data));
         }
     }
 
@@ -499,9 +540,9 @@ class Model
      * @param $type
      * @param null $sum
      * @param null $conditions
-     * @return array|null
+     * @return array
      */
-    function getDateStatistic($type, $sum = null, $conditions = null)
+    function getDateStatistic($type, $sum = null, $conditions = null): array
     {
         $types = array(
             'weekdays'=>array(
@@ -518,17 +559,16 @@ class Model
             ),
         );
         if(!key_exists($type, $types)){
-            show_error("The statistic \"$type\" has not been defined.");
-            return null;
+            throw new DatabaseException("The statistic \"{$type}\" has not been defined.");
         }
-        $this->db->select("count(*) as count_value, ".($sum!=null?"sum($sum) as sum_value, ":"").$types[$type]['select']);
-        $this->db->from($this->table_name);
+        $builder = $this->getBuilder();
+        $builder->select("count(*) as count_value, ".($sum!=null?"sum($sum) as sum_value, ":"").$types[$type]['select']);
         if($conditions!=null) {
-            $this->searchDecode($conditions);
+            $this->searchDecode($conditions, $builder);
         }
-        $this->db->order_by($types[$type]['order_by']);
-        $query = $this->db->get();
-        return $query->result_array();
+        $builder->orderBy($types[$type]['order_by']);
+        $query = $builder->get();
+        return $query->getResultArray();
     }
 
     /**
@@ -575,7 +615,7 @@ class Model
     public function repairTable()
     {
         $query_items = array();
-        $fields = $this->db->field_data($this->table_name);
+        $fields = $this->db->getFieldData($this->table_name);
         $_fields = array();
         foreach ($fields as $field)
         {
@@ -629,5 +669,16 @@ class Model
         $sql = "show tables like '{$this->table_name}';";
         $query = $this->db->query($sql);
         return count($query->result_array()) > 0;
+    }
+
+    /**
+     * Returns an instance of the query builder for this connection.
+     *
+     * @return \CodeIgniter\Database\BaseBuilder
+     * @throws DatabaseException
+     */
+    protected function getBuilder(): \CodeIgniter\Database\BaseBuilder
+    {
+        return $this->db->table($this->table_name);
     }
 }

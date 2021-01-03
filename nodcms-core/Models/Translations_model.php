@@ -42,4 +42,37 @@ class Translations_model extends Model
         );
         parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
+
+    /**
+     * @param string $tableName
+     * @param int $tableId
+     * @param array $fields
+     * @param int $language_id
+     * @return array
+     */
+    public function getAllOfATable(string $tableName, int $tableId, array $fields, int $language_id): array
+    {
+        $builder = $this->getBuilder();
+        $builder->select("*")
+            ->where("table_id", $tableId)
+            ->where("table_name", $tableName)
+            ->where('field_name IN ("'.join('","',$fields).'")')
+            ->where("language_id", $language_id);
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
+
+    /**
+     * @param string $tableName
+     * @param int $tableId
+     * @param array $fields
+     */
+    public function cleanup(string $tableName, int $tableId, array $fields)
+    {
+        $builder = $this->getBuilder();
+        $builder->where('table_name', $tableName)
+            ->where('table_id', $tableId)
+            ->where('field_name IN ("'.join('","', $fields).'")')
+            ->delete();
+    }
 }
