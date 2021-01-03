@@ -19,11 +19,9 @@
  *
  */
 
-namespace NodCMS\Core\Models;
+namespace NodCMS\Core\Model;
 
-use CodeIgniter\Model;
-
-abstract class Table extends Model
+abstract class Model extends \CodeIgniter\Model
 {
 
 }
