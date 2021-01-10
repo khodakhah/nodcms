@@ -84,7 +84,7 @@ class Autoload extends AutoloadConfig
      *
      * @return array
      */
-    private static function modulesPaths(): array {
+    public static function modulesPaths(): array {
         if(!is_dir(ROOTPATH)) {
             return array();
         }
@@ -103,20 +103,5 @@ class Autoload extends AutoloadConfig
         }
 
         return $paths;
-    }
-
-    /**
-     * Include modules route files
-     *
-     * @param RouteCollection $routes
-     */
-    static function includeModulesRoutes(RouteCollection $routes) {
-        $modules = self::modulesPaths();
-        foreach($modules as $item) {
-            $route_file_path = $item."/Config/Routes.php";
-            if(file_exists($route_file_path)){
-                include_once $route_file_path;
-            }
-        }
     }
 }

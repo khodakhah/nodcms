@@ -53,10 +53,6 @@ $routes->setAutoRoute(true);
 // route since we don't have to scan directories.
 $routes->get('/', 'Dispatcher::index');
 
-// Load the route files of all NodCMS modules.
-// NodCMS modules shall be in route in a directory with the prefix "nodcms-".
-Autoload::includeModulesRoutes($routes);
-
 /**
  * --------------------------------------------------------------------
  * Additional Routing
