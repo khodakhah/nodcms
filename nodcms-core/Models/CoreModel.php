@@ -21,26 +21,38 @@
 
 namespace NodCMS\Core\Models;
 
-class Images_model extends Model
+
+use CodeIgniter\Database\ConnectionInterface;
+use Config\Database;
+
+abstract class CoreModel
 {
-    function init()
+    /**
+     * Database Connection
+     *
+     * @var ConnectionInterface
+     */
+    protected $db;
+
+    /**
+     * The Database connection group that
+     * should be instantiated.
+     *
+     * @var string
+     */
+    protected $DBGroup;
+
+
+    /**
+     * Model constructor.
+     * @param ConnectionInterface|null $db
+     */
+    public function __construct(ConnectionInterface $db = null)
     {
-        $table_name = "images";
-        $primary_key = "image_id";
-        $fields = array(
-            'image_id'=>"int(11) unsigned NOT NULL AUTO_INCREMENT",
-            'name'=>"varchar(255) DEFAULT NULL",
-            'image'=>"varchar(255) DEFAULT NULL",
-            'width'=>"int(11) unsigned NOT NULL DEFAULT '0'",
-            'height'=>"int(11) unsigned NOT NULL DEFAULT '0'",
-            'size'=>"int(11) unsigned NOT NULL DEFAULT '0'",
-            'root'=>"varchar(255) DEFAULT NULL",
-            'folder'=>"varchar(255) DEFAULT NULL",
-            'created_date'=>"int(11) unsigned NOT NULL DEFAULT '0'",
-            'user_id'=>"int(11) unsigned NOT NULL DEFAULT '0'",
-        );
-        $foreign_tables = null;
-        $translation_fields = null;
-        parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
+        if($db != null)
+            $this->db = $db;
+        else
+            $this->db = Database::connect($this->DBGroup);
     }
+
 }

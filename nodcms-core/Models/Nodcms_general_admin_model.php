@@ -21,14 +21,8 @@
 
 namespace NodCMS\Core\Models;
 
-class Nodcms_general_admin_model extends CI_Model
+class Nodcms_general_admin_model extends CoreModel
 {
-    function __construct()
-    {
-        // Call the Model constructor
-        parent::__construct();
-    }
-
     function get_website_info()
     {
         $this->db->select('*');

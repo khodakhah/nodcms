@@ -23,7 +23,7 @@ namespace NodCMS\Core\Models;
 
 class Upload_files_model extends Model
 {
-    function __construct()
+    function init()
     {
         $table_name = "upload_files";
         $primary_key = "file_id";
@@ -51,6 +51,6 @@ class Upload_files_model extends Model
         );
         $foreign_tables = null;
         $translation_fields = null;
-        parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
+        parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
 }

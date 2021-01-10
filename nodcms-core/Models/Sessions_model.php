@@ -23,7 +23,7 @@ namespace NodCMS\Core\Models;
 
 class Sessions_model extends Model
 {
-    function __construct()
+    function init()
     {
         $table_name = "ci_sessions";
         $primary_key = "";
@@ -36,6 +36,6 @@ class Sessions_model extends Model
         $foreign_tables = null;
         $translation_fields = null;
         $this->keys = array('ci_sessions_timestamp'=>array("timestamp"));
-        parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
+        parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
 }

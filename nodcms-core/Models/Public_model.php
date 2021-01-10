@@ -21,9 +21,9 @@
 
 namespace NodCMS\Core\Models;
 
-class Public_model extends CI_Model
+class Public_model extends CoreModel
 {
-    function __construct()
+    function init()
     {
         // Call the Model constructor
     }

@@ -21,9 +21,9 @@
 
 namespace NodCMS\Core\Models;
 
-class Registration_model extends CI_Model
+class Registration_model extends CoreModel
 {
-    function __construct()
+    function init()
     {
         // Call the Model constructor
     }

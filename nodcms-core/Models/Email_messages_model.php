@@ -23,7 +23,7 @@ namespace NodCMS\Core\Models;
 
 class Email_messages_model extends Model
 {
-    function __construct()
+    function init()
     {
         $table_name = "auto_email_messages";
         $primary_key = "msg_id";
@@ -37,6 +37,6 @@ class Email_messages_model extends Model
         );
         $foreign_tables = null;
         $translation_fields = null;
-        parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
+        parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
 }

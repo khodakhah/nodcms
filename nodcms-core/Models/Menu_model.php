@@ -23,7 +23,7 @@ namespace NodCMS\Core\Models;
 
 class Menu_model extends Model
 {
-    function __construct()
+    function init()
     {
         $table_name = "menu";
         $primary_key = "menu_id";
@@ -40,6 +40,6 @@ class Menu_model extends Model
         );
         $foreign_tables = null;
         $translation_fields = null;
-        parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
+        parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
 }

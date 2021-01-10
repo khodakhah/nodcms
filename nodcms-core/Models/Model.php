@@ -21,10 +21,10 @@
 
 namespace NodCMS\Core\Models;
 
+use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Database\Exceptions\DatabaseException;
-use Config\Database;
 
-class Model
+class Model extends CoreModel
 {
     private $table_name;
     private $primary_key;
@@ -36,27 +36,36 @@ class Model
     protected $keys;
     protected $DBGroup;
 
+    public function __construct(ConnectionInterface $db = null)
+    {
+        parent::__construct($db);
+        $this->init();
+    }
+
     /**
-     * @var \CodeIgniter\Database\BaseConnection
+     * The function to setup the model in child classes
      */
-    protected $db;
+    public function init()
+    {
+        // Call setup() method
+    }
 
     /**
      * NodCMS_Model constructor.
+     *
      * @param $table_name
      * @param $primary_key
      * @param $fields
      * @param null $foreign_tables
      * @param null $translation_fields
      */
-    function __construct($table_name, $primary_key, $fields, $foreign_tables = null, $translation_fields = null)
+    function setup($table_name, $primary_key, $fields, $foreign_tables = null, $translation_fields = null)
     {
         $this->table_name = $table_name;
         $this->primary_key = $primary_key;
         $this->fields = $fields;
         $this->foreign_tables = $foreign_tables;
         $this->translation_fields = $translation_fields;
-        $this->db = Database::connect($this->DBGroup);
     }
 
     /**
@@ -64,7 +73,7 @@ class Model
      *
      * @param array $data
      */
-    function add(array $data): int
+    public function add(array $data): int
     {
         foreach($data as $key=>$val){
             if(!key_exists($key, $this->fields))
@@ -668,7 +677,7 @@ class Model
     {
         $sql = "show tables like '{$this->table_name}';";
         $query = $this->db->query($sql);
-        return count($query->result_array()) > 0;
+        return count($query->getResultArray()) > 0;
     }
 
     /**

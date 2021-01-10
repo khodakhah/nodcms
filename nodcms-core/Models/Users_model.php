@@ -23,7 +23,7 @@ namespace NodCMS\Core\Models;
 
 class Users_model extends Model
 {
-    function __construct()
+    function init()
     {
         $table_name = "users";
         $primary_key = "user_id";
@@ -57,7 +57,7 @@ class Users_model extends Model
         );
         $foreign_tables = null;
         $translation_fields = null;
-        parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
+        parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
 
     /**
@@ -77,9 +77,9 @@ class Users_model extends Model
     /**
      * Some filter on create user account
      *
-     * @param $data
+     * @param array $data
      */
-    public function add($data)
+    public function add(array $data): int
     {
         $default_data = array(
             "user_unique_key"=>$this->generateUniqueKey(),

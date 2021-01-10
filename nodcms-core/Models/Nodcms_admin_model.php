@@ -21,13 +21,8 @@
 
 namespace NodCMS\Core\Models;
 
-class Nodcms_admin_model extends CI_Model
+class Nodcms_admin_model extends CoreModel
 {
-    function __construct()
-    {
-        // Call the Model constructor
-    }
-
     /**
      * Update settings storage
      *

@@ -23,7 +23,7 @@ namespace NodCMS\Core\Models;
 
 class Settings_model extends Model
 {
-    function __construct()
+    function init()
     {
         $table_name = "settings";
         $primary_key = "id";
@@ -36,7 +36,7 @@ class Settings_model extends Model
         $foreign_tables = null;
         $translation_fields = null;
         $this->unique_keys = array(array("language_id","field_name"));
-        parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
+        parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
 
     /**

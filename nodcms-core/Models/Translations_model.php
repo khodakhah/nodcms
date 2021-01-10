@@ -23,7 +23,7 @@ namespace NodCMS\Core\Models;
 
 class Translations_model extends Model
 {
-    function __construct()
+    function init()
     {
         $table_name = "translations";
         $primary_key = "translation_id";
@@ -40,7 +40,7 @@ class Translations_model extends Model
         $unique = array(
             'table_id_table_name_field_name_language_id'=>array('table_id','table_name','field_name','language_id'),
         );
-        parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
+        parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
 
     /**

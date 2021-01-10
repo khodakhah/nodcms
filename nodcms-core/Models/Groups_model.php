@@ -23,7 +23,7 @@ namespace NodCMS\Core\Models;
 
 class Groups_model extends Model
 {
-    function __construct()
+    function init()
     {
         $table_name = "groups";
         $primary_key = "group_id";
@@ -34,7 +34,7 @@ class Groups_model extends Model
         );
         $foreign_tables = array("gallery_image");
         $translation_fields = null;
-        parent::__construct($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
+        parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
 
     /**
