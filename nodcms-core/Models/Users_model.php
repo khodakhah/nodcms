@@ -102,7 +102,7 @@ class Users_model extends Model
 
         $data['password'] = md5($data['password']);
 
-        parent::add($data);
+        return parent::add($data);
     }
 
     /**

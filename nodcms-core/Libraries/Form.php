@@ -130,7 +130,6 @@ class Form
 
     function staticConfig($style)
     {
-        $this->CI =& get_instance();
         $this->data['inputs'] = "";
         $this->data['action'] = "";
         $this->data['back_url'] = "";
