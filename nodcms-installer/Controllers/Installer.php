@@ -41,12 +41,14 @@
 
 namespace NodCMS\Installer\Controllers;
 
+use CodeIgniter\Database\Database;
 use NodCMS\Core\Controllers\Base;
+use NodCMS\Core\Libraries\Form;
 
 class Installer extends Base
 {
     public $product_name = "NodCMS";
-    public $product_version = "2.0";
+    public $product_version = "3.0";
     private $required_php_version = '7.0.0';
     private $required_extensions = array('mysqli');
     public $php_version_valid;
@@ -54,6 +56,11 @@ class Installer extends Base
     public $back_url;
     public $next_url;
     public $self_url;
+
+    /**
+     * @var \CodeIgniter\Database\BaseConnection
+     */
+    private $db;
 
     public function __construct()
     {
@@ -91,15 +98,15 @@ class Installer extends Base
         $step_key = array_search($this->router->methodName(), $steps);
 
         if($step_key > 0 && $step_key < count($steps)) {
-            $this->back_url = base_url()."installer/".$steps[$step_key-1];
-            $this->self_url = base_url()."installer/".$steps[$step_key];
-            $this->next_url = base_url().(isset($steps[$step_key+1])?"installer/".$steps[$step_key+1]:"login");
+            $this->back_url = base_url("installer/".$steps[$step_key-1]);
+            $this->self_url = base_url("installer/".$steps[$step_key]);
+            $this->next_url = base_url((isset($steps[$step_key+1])?"installer/".$steps[$step_key+1]:"login"));
         }
 
         $this->data['steps'] = array();
         foreach($steps as $key=>$val) {
             if($key<$step_key) {
-                $url = base_url()."installer/".$steps[$key];
+                $url = base_url("installer/".$steps[$key]);
                 $this->data['steps'][] = "<div class='col bg-green-jungle'>" .
                     "<a class='text-center d-block pt-3 pb-3 font-white' href='$url'>".($key+1).". ".strtoupper($val)."</a>" .
                     "</div>";
@@ -152,11 +159,11 @@ class Installer extends Base
                 'type'=>"textarea",
                 'rules'=>"required",
                 'label'=>"End User License Agreement",
-                'default'=> include APPPATH."views/installer/eula.php",
+                'default'=> include ROOTPATH."nodcms-installer/Views/eula.php",
                 'attr'=>array('readonly'=>"readonly", 'rows'=>10),
             ),
         );
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, $this->self_url, 'post', 'ajax');
         $myform->setFormTheme("form_only");
 
@@ -172,9 +179,9 @@ class Installer extends Base
             $this->successMessage(null, $this->next_url);
             return;
         }
-        $this->data['content'] = "<p>Please read the following license agreement before go to the next step.</p>";
-        $this->data['content'] .= $myform->fetch('login-form', array('data-redirect'=>1,));
-        $this->load->view($this->frameTemplate, $this->data);
+        $content = "<p>Please read the following license agreement before go to the next step.</p>";
+        $content .= $myform->fetch('login-form', array('data-redirect'=>1,));
+        echo $this->viewRenderString($content);
     }
 
     /**
@@ -191,31 +198,31 @@ class Installer extends Base
             array(
                 'field'=>"host",
                 'label'=>"Host Name",
-                'rules'=>"required|callback_validHostName",
+                'rules'=>"required|validHostName",
                 'type'=>"text",
                 'default'=>"localhost",
             ),
             array(
                 'field'=>"username",
                 'label'=>"Username",
-                'rules'=>"required|callback_validateUsernameType",
+                'rules'=>"required|validateUsernameType",
                 'type'=>"text",
                 'default'=>"root",
             ),
             array(
                 'field'=>"password",
                 'label'=>"Password",
-                'rules'=>"callback_formRulesPassword",
+                'rules'=>"formRulesPassword",
                 'type'=>"password",
             ),
             array(
                 'field'=>"database",
                 'label'=>"Database name",
-                'rules'=>"required|callback_validDatabaseName",
+                'rules'=>"required|validDatabaseName",
                 'type'=>"text",
             ),
         );
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, $this->self_url, 'post', 'ajax');
         $myform->setFormTheme("form_only");
 
@@ -238,8 +245,7 @@ class Installer extends Base
             return;
         }
         $this->data['the_form'] = $myform->fetch('login-form', array('data-redirect'=>1));
-        $this->data['content'] = $this->load->view($this->mainTemplate."/authorization", $this->data, true);
-        $this->load->view($this->frameTemplate, $this->data);
+        echo $this->viewRender("authorization");
     }
 
     /**
@@ -250,15 +256,27 @@ class Installer extends Base
         if(!$this->hasAccess() || !$this->hasDatabase())
             return;
 
-        $tables = $this->getTables();
+        $coreTables = $this->getTables(get_all_php_files(COREPATH . 'Models'.DIRECTORY_SEPARATOR));
+        $modulesTables = array();
+
+        $modulesDirs = \Config\Autoload::modulesPaths();
+        foreach ($modulesDirs as $dir) {
+            if(!$moduleModels = get_all_php_files($dir . DIRECTORY_SEPARATOR . 'models'.DIRECTORY_SEPARATOR))
+                continue;
+
+            $tables = $this->getTables($moduleModels);
+            if(!empty($tables)) {
+                $modulesTables[basename($dir)] = $tables;
+            }
+        }
 
         $this->data['title'] = "{$this->product_name} Installer";
         $this->data['sub_title'] = "Database installation";
-        $this->data['tables'] = $tables;
+        $this->data['tables'] = array($coreTables, $modulesTables);
 
-        $paths = array_column($tables[0], 'path');
-        if(isset($tables[1]) && !empty($tables[1])) {
-            foreach($tables[1] as $path) {
+        $paths = array_column($coreTables, 'path');
+        if(isset($modulesTables) && !empty($modulesTables)) {
+            foreach($modulesTables as $path) {
                 $paths = array_merge($paths, array_column($path, 'path'));
             }
         }
@@ -275,7 +293,7 @@ class Installer extends Base
             ),
         );
 
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, $this->self_url, 'post', 'ajax');
         $myform->setFormTheme("form_only");
 
@@ -288,11 +306,14 @@ class Installer extends Base
                 return;
             }
 
-            include_once BASEPATH."core/Model.php";
-            include_once APPPATH."core/NodCMS_Model.php";
-            include_once $data['path'];
             $model_name = basename($data['path'],".php");
-            $theModel = new $model_name();
+            if(in_array($model_name, ["Model", "CoreModel"])) {
+                $this->errorMessage("Wrong table name!", $this->self_url);
+                return;
+            }
+
+            $model_name = "\NodCMS\Core\Models\\".$model_name;
+            $theModel = new $model_name($this->db);
 
             if($theModel->tableExists()) {
                 $theModel->dropTable();
@@ -311,8 +332,7 @@ class Installer extends Base
             return;
         }
 
-        $this->data['content'] = $this->load->view($this->mainTemplate."/database", $this->data, true);
-        $this->load->view($this->frameTemplate, $this->data);
+        echo $this->viewRender("database");
     }
 
     /**
@@ -340,19 +360,19 @@ class Installer extends Base
             array(
                 'field'=>"firstname",
                 'label'=>'First Name',
-                'rules'=>"required|callback_formRulesName",
+                'rules'=>"required|formRulesName",
                 'type'=>"text",
             ),
             array(
                 'field'=>"lastname",
                 'label'=>'Last Name',
-                'rules'=>"required|callback_formRulesName",
+                'rules'=>"required|formRulesName",
                 'type'=>"text",
             ),
             array(
                 'field'=>"company",
                 'label'=>'Company Name',
-                'rules'=>"required|callback_formRulesName",
+                'rules'=>"required|formRulesName",
                 'type'=>"text",
             ),
             array(
@@ -364,15 +384,15 @@ class Installer extends Base
             array(
                 'field'=>"password",
                 'label'=>"Password",
-                'rules'=>"required|callback_formRulesPassword",
+                'rules'=>"required|formRulesPassword",
                 'type'=>"password",
             ),
             array(
                 'field'=>"timezone",
                 'label'=>'Timezone',
-                'rules'=>"required|in_list[".join(',', DateTimeZone::listIdentifiers())."]",
+                'rules'=>"required|in_list[".join(',', \DateTimeZone::listIdentifiers())."]",
                 'type'=>"select-array",
-                'options'=>DateTimeZone::listIdentifiers(),
+                'options'=>\DateTimeZone::listIdentifiers(),
                 'class'=>"select2me",
             ),
             array(
@@ -395,7 +415,7 @@ class Installer extends Base
                 'option_value'=>'format',
             ),
         );
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, $this->self_url, 'post', 'ajax');
         $myform->setFormTheme("form_only");
 
@@ -408,18 +428,15 @@ class Installer extends Base
                 return;
             }
 
-            $db = $_SESSION['database_connect'];
-            $dsn = "mysqli://{$db['username']}:{$db['password']}@{$db['host']}/{$db['database']}";
-            $this->load->database($dsn);
-            $this->load->model('Settings_model');
-            $this->load->model('Users_model');
+            $Settings = new \NodCMS\Core\Models\Settings_model($this->db);
+            $Users = new \NodCMS\Core\Models\Users_model($this->db);
 
             $update_data = $data;
             unset($update_data['password']);
             $update_data['sent_email'] = $data['email'];
-            $this->Settings_model->updateSettings($update_data);
+            $Settings->updateSettings($update_data);
 
-            $user = $this->Users_model->getOne(1);
+            $user = $Users->getOne(1);
             if(!is_array($user) || count($user) == 0) {
                 $_data = array(
                     "firstname"=>$data['firstname'],
@@ -431,7 +448,7 @@ class Installer extends Base
                     "active"=>1,
                     "status"=>1
                 );
-                $this->Users_model->add($_data);
+                $Users->add($_data);
             }
             else {
                 $_data = array(
@@ -440,13 +457,12 @@ class Installer extends Base
                     "email"=>$data['email'],
                     "password"=>$data['password'],
                 );
-                $this->Users_model->edit($user['user_id'], $_data);
+                $Users->edit($user['user_id'], $_data);
             }
             $this->successMessage("Settings has been saved successfully.", $this->next_url);
             return;
         }
-        $this->data['content'] = $myform->fetch('',array('data-redirect'=>1));
-        $this->load->view($this->frameTemplate, $this->data);
+        echo $this->viewRenderString($myform->fetch('',array('data-redirect'=>1)));
     }
 
     /**
@@ -457,15 +473,13 @@ class Installer extends Base
         if(!$this->hasAccess() || !$this->hasDatabase())
             return;
 
-        $db = $_SESSION['database_connect'];
-        $dsn = "mysqli://{$db['username']}:{$db['password']}@{$db['host']}/{$db['database']}";
-        $this->load->database($dsn);
-        $this->load->model('Settings_model');
-        $this->load->model('Users_model');
-
         $this->data['sub_title'] = "Complete";
-        $admin_user = $this->Users_model->getOne(1);
-        $prepare_settings = $this->Settings_model->getCount() > 0;
+
+        $Settings = new \NodCMS\Core\Models\Settings_model($this->db);
+        $Users = new \NodCMS\Core\Models\Users_model($this->db);
+
+        $admin_user = $Users->getOne(1);
+        $prepare_settings = $Settings->getCount() > 0;
         $config = array(
             array(
                 'type'=>"h4",
@@ -519,7 +533,7 @@ class Installer extends Base
                 ),
             ));
         }
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, $this->self_url, 'post', 'ajax');
         $myform->setFormTheme("form_only");
 
@@ -554,7 +568,7 @@ class Installer extends Base
                 return;
             }
 
-            $sample_content = file_get_contents(APPPATH."config/database_manual.php");
+            $sample_content = file_get_contents(COREPATH."Config/database_sample.php");
             if(!$sample_content) {
                 $this->errorMessage("Unable to open database_manual.php file.", $this->self_url);
                 return;
@@ -575,29 +589,27 @@ class Installer extends Base
         }
 
         $this->data['the_form'] = $myform->fetch('',array('data-redirect'=>1));
-        $this->data['content'] = $this->load->view($this->mainTemplate."/complete", $this->data, true);
-        $this->load->view($this->frameTemplate, $this->data);
+        echo $this->viewRender("complete");
     }
 
     /**
+     * @param array $models_paths
      * @return array
      */
-    private function getTables()
+    private function getTables(array $models_paths): array
     {
-        $db = $_SESSION['database_connect'];
-        $dsn = "mysqli://{$db['username']}:{$db['password']}@{$db['host']}/{$db['database']}";
-        $this->load->database($dsn);
-
-        include_once BASEPATH."core/Model.php";
-        include_once APPPATH."core/NodCMS_Model.php";
-
-        // Base models
-        $models_paths = get_all_php_files(APPPATH . 'models'.DIRECTORY_SEPARATOR);
         $base_tables = array();
         foreach($models_paths as $model_path) {
-            include_once $model_path;
             $model_name = basename($model_path,".php");
-            $theModel = new $model_name();
+
+            if(in_array($model_name, ["Model", "CoreModel"]))
+                continue;
+
+            $model_name = "\NodCMS\Core\Models\\".$model_name;
+            $theModel = new $model_name($this->db);
+            if(!is_subclass_of($theModel, "\NodCMS\Core\Models\Model"))
+                continue;
+
             if(method_exists($theModel, 'tableName')) {
                 $base_tables[] = array(
                     'path' => $model_path,
@@ -607,37 +619,7 @@ class Installer extends Base
             }
         }
 
-        // Models from "third_party"s
-        $tables = array();
-        $dirs = glob(APPPATH."third_party/*", GLOB_BRACE);
-        foreach ($dirs as $dir) {
-            $models_paths = get_all_php_files($dir . DIRECTORY_SEPARATOR . 'models'.DIRECTORY_SEPARATOR);
-            if(!$models_paths) {
-                continue;
-            }
-
-            foreach($models_paths as $model_path) {
-                include_once $model_path;
-                $model_name = basename($model_path,".php");
-                $theModel = new $model_name();
-                if(!method_exists($theModel, 'tableName')) {
-                    continue;
-                }
-                $base_path = basename($dir);
-                if(!key_exists($base_path, $tables)) {
-                    $tables[$base_path] = array();
-                }
-
-                $tables[$base_path][] = array(
-                    'path' => $model_path,
-                    'table' => $theModel->tableName(),
-                    'exists' => $theModel->tableExists(),
-                );
-            }
-
-        }
-
-        return array($base_tables, $tables);
+        return $base_tables;
     }
 
     /**
@@ -645,7 +627,7 @@ class Installer extends Base
      *
      * @return bool
      */
-    private function hasAccess()
+    private function hasAccess(): bool
     {
         if(!$this->required_extensions || !$this->required_php_version) {
             $this->errorMessage("Required services not found.", $this->back_url);
@@ -660,7 +642,7 @@ class Installer extends Base
      * @param null|array $data
      * @return bool
      */
-    public function hasDatabase($data = null)
+    public function hasDatabase($data = null): bool
     {
         if($data == null) {
             if(!isset($_SESSION['database_connect'])) {
@@ -674,17 +656,38 @@ class Installer extends Base
             return false;
         }
 
-        $mysqli =@ new mysqli($data['host'], $data['username'], $data['password']);
-        if($mysqli->connect_error) {
-            $this->errorMessage("MySQL error: " . mysqli_connect_error(), $this->self_url);
+        $custom = [
+            'DSN'      => '',
+            'hostname' => $data['host'],
+            'username' => $data['username'],
+            'password' => $data['password'],
+            'database' => $data['database'],
+            'DBDriver' => 'MySQLi',
+            'DBPrefix' => '',
+            'pConnect' => false,
+            'DBDebug'  => false,
+            'cacheOn'  => false,
+            'cacheDir' => '',
+            'charset'  => 'utf8',
+            'DBCollat' => 'utf8_general_ci',
+            'swapPre'  => '',
+            'encrypt'  => false,
+            'compress' => false,
+            'strictOn' => false,
+            'failover' => [],
+            'port'     => 3306,
+        ];
+        $db = \Config\Database::connect($custom);
+        try {
+            $db->connID = $db->connect();
+        }
+        catch (\Throwable $e)
+        {
+            $this->errorMessage($e->getMessage(), $this->self_url);
             return false;
         }
-        $mysqli->select_db($data['database']);
 
-        if(!empty($mysqli->error_list)) {
-            $this->errorMessage("MySQL error: " . join(',', array_column($mysqli->error_list, 'error')), $this->self_url);
-            return false;
-        }
+        $this->db = $db;
 
         return true;
     }

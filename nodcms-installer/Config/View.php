@@ -1,6 +1,6 @@
 <?php namespace NodCMS\Installer\Config;
 
-class View extends \NodCMS\Core\Config\View
+class View extends \Config\View
 {
 	/**
          * NodCMS variable!

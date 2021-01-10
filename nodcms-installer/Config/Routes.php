@@ -24,3 +24,4 @@ if(!isset($routes)) throw new \Exception('$routes not defined.');
 $namespace = "\NodCMS\Installer\Controllers\\";
 
 $routes->get('/installer', '\NodCMS\Installer\Controllers\Installer::start');
+$routes->match(['post', 'get'], '/installer/(start|authorization|eula|database|settings|complete)', '\NodCMS\Installer\Controllers\Installer::$1');
