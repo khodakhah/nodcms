@@ -25,7 +25,8 @@ namespace NodCMS\Core\Controllers;
 class Dispatcher extends App
 {
     public function index() {
-        if(file_exists(DB_CONFIG_PATH) && filesize(DB_CONFIG_PATH) > 0) {
+        $db = \Config\Database::connect();
+        if(!empty($db->getDatabase())) {
             // Redirect to the url with the default language prefix
             return redirect($this->defaultLang());
         }
