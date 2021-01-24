@@ -21,8 +21,8 @@
 
 namespace NodCMS\Core\Controllers;
 
-use CodeIgniter\Config\Services;
 use CodeIgniter\Controller;
+use Config\Services;
 use Config\Settings;
 
 abstract class Base extends Controller

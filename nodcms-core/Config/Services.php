@@ -27,4 +27,20 @@ class Services extends CoreServices
 	//
 	//        return new \CodeIgniter\Example();
 	//    }
+
+    /**
+     * ModelMap is a luncher class to
+     *
+     * @param bool $getShared
+     * @return \NodCMS\Core\Models\ModelMap
+     */
+    public static function model(bool $getShared = true): \NodCMS\Core\Models\ModelMap
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('model');
+        }
+
+        return new \NodCMS\Core\Models\ModelMap();
+    }
 }
