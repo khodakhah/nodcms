@@ -284,10 +284,14 @@ abstract class Base extends Controller
      */
     private function viewPrepare()
     {
-        foreach($this->data as $key=>$value) {
+        $data = array_merge([
+            'title' => "",
+            'page' => "",
+        ], $this->data);
+        unset($this->data);
+        foreach($data as $key=>$value) {
             $this->view->setVar($key, $value);
         }
-        unset($this->data);
         $this->view->loadControllerVars($this);
     }
 }
