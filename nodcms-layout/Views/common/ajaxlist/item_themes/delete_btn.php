@@ -1,0 +1,1 @@
+<button type="button" data-reference="#<?php echo $row_id; ?>" data-role="delete" data-url="<?php echo str_replace('$content', $content, $config['url']); ?>" class="btn btn-sm red-soft"><?php echo _l("Delete", $this); ?></button>

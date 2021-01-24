@@ -1,0 +1,1 @@
+<a href="<?php echo str_replace('$content', $content, $config['url']); ?>" class="btn btn-sm blue-soft"><i class="fas fa-edit"></i> <?php echo _l("Edit", $this); ?></a>
