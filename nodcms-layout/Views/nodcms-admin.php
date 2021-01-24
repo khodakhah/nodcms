@@ -26,7 +26,7 @@
     <script src="<?php echo base_url("assets/jquery-3.4.0.min.js"); ?>" type="text/javascript"></script>
 </head>
 <body data-base-url="<?php echo base_url(); ?>">
-<?php $this->load->view($this->mainTemplate."/top-menu"); ?>
+<?php echo $this->render($this->mainTemplate."/top-menu"); ?>
 <!-- END HEADER -->
 <div class="clearfix"></div>
 <!-- BEGIN CONTAINER -->
@@ -40,7 +40,7 @@
                 <li class="sidebar-close">
                     <a class="btn btn-outline-secondary btn-sm margin-10" href="javascript:;"><i class="fas fa-list"></i></a>
                 </li>
-                <?php $this->load->view($this->page_sidebar); ?>
+                <?php echo $this->render($this->page_sidebar); ?>
             </ul>
         </div>
     <?php } ?>
@@ -157,7 +157,7 @@
         <i class="icon-arrow-up"></i>
     </div>
     <div class="page-footer-inner margin-bottom-20 ">
-        <?php $this->load->view("copyright"); ?>
+        <?php echo $this->render("copyright"); ?>
     </div>
 </div>
 <!-- END FOOTER -->
@@ -167,8 +167,8 @@
 <script src="<?php echo base_url("assets/plugins/jquery-ui/jquery-ui.min.js"); ?>" type="text/javascript"></script>
 
 <script src="<?php echo base_url("assets/nodcms/js/common.js"); ?>" type="text/javascript"></script>
-<?php $this->load->view("common/bootstrap-toastr"); ?>
-<?php $this->load->view("common/bootstrap-confirmation"); ?>
+<?php echo $this->render("common/bootstrap-toastr"); ?>
+<?php echo $this->render("common/bootstrap-confirmation"); ?>
 <script>
     $(function(){
         $.setCurrencyFormatSettings({

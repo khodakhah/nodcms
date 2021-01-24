@@ -1,4 +1,4 @@
-<?php $this->load->addJsFile("assets/nodcms/js/ajaxlist"); ?>
+<?php $this->addJsFile("assets/nodcms/js/ajaxlist"); ?>
 <div id="<?php echo $options['listID']; ?>" class="ajaxlist"></div>
 <script>
     $(function () {

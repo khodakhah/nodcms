@@ -23,6 +23,6 @@
         </div>
     </div>
     <div class="margin-top-30 font-grey-mint">
-        <?php $this->load->view("copyright"); ?>
+        <?php echo $this->render("copyright"); ?>
     </div>
 </div>

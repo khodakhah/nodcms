@@ -69,7 +69,7 @@
                 </div>
             </div>
             <div class="col-md-8">
-                <?php $this->render("nodcms-navbar"); ?>
+                <?php echo $this->render("nodcms-navbar"); ?>
             </div>
         </div>
     </div>

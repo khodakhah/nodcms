@@ -39,7 +39,7 @@
 </head>
 <body data-base-url="<?php echo base_url(); ?>" class="page-container-bg-solid page-sidebar-closed-hide-logo <?php echo (count($this->page_sidebar_items)==0 || $this->page_sidebar_closed == true)?' page-full-width page-sidebar-closed':''; ?>">
 
-<?php $this->load->view("nodcms-top-menu"); ?>
+<?php echo $this->render("nodcms-top-menu"); ?>
 <?php echo isset($cart)?$cart:""; ?>
 <!-- END HEADER -->
 <div class="clearfix"></div>
@@ -54,7 +54,7 @@
                 <li class="sidebar-close">
                     <a class="btn btn-outline-secondary btn-sm margin-10" href="javascript:;"><i class="fas fa-list"></i></a>
                 </li>
-                <?php $this->load->view($this->page_sidebar); ?>
+                <?php echo $this->render($this->page_sidebar); ?>
             </ul>
         </div>
     <?php } ?>
@@ -83,7 +83,7 @@
         <i class="icon-arrow-up"></i>
     </div>
     <div class="page-footer-inner text-center margin-bottom-20 ">
-        <?php $this->load->view("copyright"); ?>
+        <?php echo $this->render("copyright"); ?>
     </div>
 </div>
 <!-- END FOOTER -->

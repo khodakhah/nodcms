@@ -23,7 +23,7 @@
             <?php echo $notes; ?>
         </div>
         <form data-submit="<?php echo $form_type; ?>" id="<?php echo $form_id; ?>" action="<?php echo $action; ?>" method="<?php echo $method; ?>" class="<?php echo $class; ?>" <?php foreach ($attr as $key=>$value){ echo $key.' = "'.$value.'" '; } ?>>
-            <?php $this->load->view($form_content_theme); ?>
+            <?php echo $this->render($form_content_theme); ?>
         </form>
     </div>
 </div>

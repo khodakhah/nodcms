@@ -1,4 +1,4 @@
-<?php $this->load->addJsFile("assets/metronic/global/plugins/jquery-ui/jquery-ui.min"); ?>
+<?php $this->addJsFile("assets/metronic/global/plugins/jquery-ui/jquery-ui.min"); ?>
 <div class="portlet">
     <div class="portlet-body">
         <button class="btn default add-to-sortable-<?php echo $field_id; ?>" type="button"><i class="fa fa-plus font-green-jungle"></i> <?php echo _l("Add item", $this); ?></button>
