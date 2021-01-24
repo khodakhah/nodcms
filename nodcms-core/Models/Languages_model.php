@@ -56,4 +56,13 @@ class Languages_model extends Model
             $this->add($item);
         }
     }
+
+    /**
+     * @param string $code
+     * @return array
+     */
+    public function getByCode(string $code): array
+    {
+        return $this->getOne(null, ['code'=>$code]);
+    }
 }
