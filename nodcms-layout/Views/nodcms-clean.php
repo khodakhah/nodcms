@@ -7,7 +7,7 @@
     <meta name="author" content="<?php echo isset($author)?$author:""; ?>">
     <meta name="keyword" content="<?php echo isset($keyword)?$keyword:""; ?>">
     <?php if(isset($settings["fav_icon"]) && $settings["fav_icon"]!=''){ ?>
-    <link rel="shortcut icon" href="<?php echo base_url().$settings["fav_icon"]; ?>">
+    <link rel="shortcut icon" href="<?php echo base_url($settings["fav_icon"]); ?>">
     <?php } ?>
     <title><?php echo $title; ?> <?php echo isset($sub_title)?$sub_title:""; ?></title>
 
@@ -17,23 +17,23 @@
     <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/v4-shims.css">
-    <link href="<?php echo base_url(); ?>assets/metronic/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo base_url("assets/metronic/global/plugins/simple-line-icons/simple-line-icons.min.css"); ?>" rel="stylesheet" type="text/css"/>
 
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/metronic/global/plugins/bootstrap-select/css/bootstrap-select.min.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url("assets/metronic/global/plugins/bootstrap-select/css/bootstrap-select.min.css"); ?>"/>
     <!-- END GLOBAL MANDATORY STYLES -->
     <?php if($this->language["rtl"]!=1){ ?>
-        <link href="<?php echo base_url(); ?>assets/nodcms/bootstrap-4.1.3/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo base_url("assets/nodcms/bootstrap-4.1.3/css/bootstrap.min.css"); ?>" rel="stylesheet" type="text/css"/>
     <!-- END THEME STYLES -->
    <?php }else{ ?>
-        <link href="<?php echo base_url(); ?>assets/nodcms/bootstrap-4.1.3/css/bootstrap-rtl.min.css" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo base_url("assets/nodcms/bootstrap-4.1.3/css/bootstrap-rtl.min.css"); ?>" rel="stylesheet" type="text/css"/>
     <?php } ?>
-    <link href="<?php echo base_url(); ?>assets/metronic/global/css/custom.css" rel="stylesheet" type="text/css"/>
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url()?>assets/metronic/global/plugins/bootstrap-toastr/toastr.min.css"/>
+    <link href="<?php echo base_url("assets/metronic/global/css/custom.css"); ?>" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url("assets/metronic/global/plugins/bootstrap-toastr/toastr.min.css"); ?>"/>
     <!-- BEGIN PAGE LEVEL PLUGIN STYLES -->
-    <link rel="stylesheet" href="<?php echo base_url()?>assets/metronic/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="<?php echo base_url("assets/metronic/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css"); ?>">
     <!-- END PAGE LEVEL PLUGIN STYLES -->
     <?php $this->fetchAllCSS(); ?>
-    <script src="<?php echo base_url(); ?>assets/metronic/global/plugins/jquery.min.js" type="text/javascript"></script>
+    <script src="<?php echo base_url("assets/metronic/global/plugins/jquery.min.js"); ?>" type="text/javascript"></script>
 </head>
 <body data-base-url="<?php echo base_url(); ?>" class="page-container-bg-solid page-sidebar-closed-hide-logo <?php echo (count($this->page_sidebar_items)==0 || $this->page_sidebar_closed == true)?' page-full-width page-sidebar-closed':''; ?>">
 <div class="page-container">
@@ -63,28 +63,28 @@
 <!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/plugins/jquery-migrate.min.js" type="text/javascript"></script>-->
 <!-- IMPORTANT! Load jquery-ui.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
 <!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>-->
-<script src="<?php echo base_url(); ?>assets/popper/popper.min.js" type="text/javascript"></script>
-<script src="<?php echo base_url(); ?>assets/nodcms/bootstrap-4.1.3/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url("assets/popper/popper.min.js"); ?>" type="text/javascript"></script>
+<script src="<?php echo base_url("assets/nodcms/bootstrap-4.1.3/js/bootstrap.min.js"); ?>" type="text/javascript"></script>
 <!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/plugins/bootstrap-confirmation/bootstrap-confirmation.min.js"></script>-->
 <!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>-->
 <!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>-->
-<script src="<?php echo base_url(); ?>assets/metronic/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url("assets/metronic/global/plugins/jquery.blockui.min.js"); ?>" type="text/javascript"></script>
 <!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/plugins/js.cookie.min.js" type="text/javascript"></script>-->
 <!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>-->
-<script src="<?php echo base_url(); ?>assets/metronic/global/plugins/select2/js/select2.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url("assets/metronic/global/plugins/select2/js/select2.min.js"); ?>" type="text/javascript"></script>
 <!-- END CORE PLUGINS -->
-<script src="<?php echo base_url()?>assets/metronic/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+<script src="<?php echo base_url("assets/metronic/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"); ?>"></script>
 <!-- BEGIN PAGE LEVEL SCRIPTS -->
 <!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/global/scripts/app.min.js" type="text/javascript"></script>-->
 <!--<script src="--><?php //echo base_url(); ?><!--assets/metronic/layouts/layout4/scripts/layout.js" type="text/javascript"></script>-->
-<script src="<?php echo base_url(); ?>assets/nodcms/js/common.js" type="text/javascript"></script>
+<script src="<?php echo base_url("assets/nodcms/js/common.js"); ?>" type="text/javascript"></script>
 <!-- END PAGE LEVEL SCRIPTS -->
 
 <!-- END JAVASCRIPTS -->
-<script type="text/javascript" src="<?php echo base_url(); ?>assets/metronic/global/plugins/bootstrap-inputmask.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url("assets/metronic/global/plugins/bootstrap-inputmask.min.js"); ?>"></script>
 <!--script for this page-->
 
-<script src="<?php echo base_url(); ?>assets/metronic/global/plugins/bootstrap-toastr/toastr.min.js"></script>
+<script src="<?php echo base_url("assets/metronic/global/plugins/bootstrap-toastr/toastr.min.js"); ?>"></script>
 <script>
     $(function(){
         toastr.options = {
@@ -112,7 +112,7 @@
         <?php } ?>
     });
 </script>
-<script src="<?php echo base_url(); ?>assets/metronic/global/plugins/bootstrap-confirmation/bootstrap-confirmation.min.js"></script>
+<script src="<?php echo base_url("assets/metronic/global/plugins/bootstrap-confirmation/bootstrap-confirmation.min.js"); ?>"></script>
 <script>
     $(function(){
         $.fn.makeConfirmationBtn = function () {

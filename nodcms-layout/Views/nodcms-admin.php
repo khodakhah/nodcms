@@ -7,7 +7,7 @@
     <meta name="author" content="<?php echo isset($author)?$author:""; ?>">
     <meta name="keyword" content="<?php echo isset($keyword)?$keyword:""; ?>">
     <?php if(isset($settings["fav_icon"]) && $settings["fav_icon"]!=''){ ?>
-    <link rel="shortcut icon" href="<?php echo base_url().$settings["fav_icon"]; ?>">
+    <link rel="shortcut icon" href="<?php echo base_url($settings["fav_icon"]); ?>">
     <?php } ?>
     <title><?php echo $title; ?> <?php echo isset($sub_title)?$sub_title:""; ?></title>
 
@@ -16,14 +16,14 @@
     <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
     <?php if($this->language["rtl"]!=1){ ?>
-        <link href="<?php echo base_url(); ?>assets/nodcms/bootstrap-4.1.3/css/nodcms-admin.min.css" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo base_url("assets/nodcms/bootstrap-4.1.3/css/nodcms-admin.min.css"); ?>" rel="stylesheet" type="text/css"/>
    <?php }else{ ?>
-        <link href="<?php echo base_url(); ?>assets/nodcms/bootstrap-4.1.3/css/nodcms-admin-rtl.min.css" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo base_url("assets/nodcms/bootstrap-4.1.3/css/nodcms-admin-rtl.min.css"); ?>" rel="stylesheet" type="text/css"/>
     <?php } ?>
-    <link href="<?php echo base_url(); ?>assets/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo base_url("assets/plugins/jquery-ui/jquery-ui.min.css"); ?>" rel="stylesheet" type="text/css"/>
     <?php $this->fetchAllCSS(); ?>
 
-    <script src="<?php echo base_url(); ?>assets/jquery-3.4.0.min.js" type="text/javascript"></script>
+    <script src="<?php echo base_url("assets/jquery-3.4.0.min.js"); ?>" type="text/javascript"></script>
 </head>
 <body data-base-url="<?php echo base_url(); ?>">
 <?php $this->load->view($this->mainTemplate."/top-menu"); ?>
@@ -162,11 +162,11 @@
 </div>
 <!-- END FOOTER -->
 
-<script src="<?php echo base_url(); ?>assets/popper/popper.min.js" type="text/javascript"></script>
-<script src="<?php echo base_url(); ?>assets/nodcms/bootstrap-4.1.3/js/bootstrap.min.js" type="text/javascript"></script>
-<script src="<?php echo base_url(); ?>assets/plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url("assets/popper/popper.min.js"); ?>" type="text/javascript"></script>
+<script src="<?php echo base_url("assets/nodcms/bootstrap-4.1.3/js/bootstrap.min.js"); ?>" type="text/javascript"></script>
+<script src="<?php echo base_url("assets/plugins/jquery-ui/jquery-ui.min.js"); ?>" type="text/javascript"></script>
 
-<script src="<?php echo base_url(); ?>assets/nodcms/js/common.js" type="text/javascript"></script>
+<script src="<?php echo base_url("assets/nodcms/js/common.js"); ?>" type="text/javascript"></script>
 <?php $this->load->view("common/bootstrap-toastr"); ?>
 <?php $this->load->view("common/bootstrap-confirmation"); ?>
 <script>

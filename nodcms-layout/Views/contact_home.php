@@ -19,7 +19,7 @@
                     <?php if($this->settings['email']!=""){ ?>
                         <p><i class="fa fa-envelope font-grey-cararra"></i> <?php echo $this->settings['email']; ?></p>
                     <?php } ?>
-                    <a class="btn white btn-outline" href="<?php echo base_url().$this->language['code']."/contact"; ?>"><?php echo _l("Send Message", $this); ?></a>
+                    <a class="btn white btn-outline" href="<?php echo base_url($this->language['code']."/contact"); ?>"><?php echo _l("Send Message", $this); ?></a>
                 </div>
             </div>
         </div>

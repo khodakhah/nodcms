@@ -1,5 +1,5 @@
-<script src="<?php echo base_url(); ?>assets/popper/popper.min.js"></script>
-<script src="<?php echo base_url(); ?>assets/plugins/bootstrap-confirmation/bootstrap-confirmation.min.js"></script>
+<script src="<?php echo base_url("assets/popper/popper.min.js"); ?>"></script>
+<script src="<?php echo base_url("assets/plugins/bootstrap-confirmation/bootstrap-confirmation.min.js"); ?>"></script>
 <script>
     $(function(){
         $.fn.makeConfirmationBtn = function () {

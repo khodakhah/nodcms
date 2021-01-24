@@ -4,14 +4,14 @@
         <?php echo str_replace(array("{company_name}","{terms_and_conditions}"),
             array(
                 $this->settings['company'],
-                '<a href="'.base_url().$this->language['code'].'/terms-and-conditions" target="_blank">'._l("Terms & Conditions", $this).'</a>',
+                '<a href="'.base_url($this->language['code']."/terms-and-conditions").'" target="_blank">'._l("Terms & Conditions", $this).'</a>',
             ),_l("I agree to {company_name} {terms_and_conditions}.", $this)
         ); ?>
         <br><br>
         <?php echo str_replace(array("{company_name}","{privacy_policy}"),
             array(
                 $this->settings['company'],
-                '<a href="'.base_url().$this->language['code'].'/privacy-policy" target="_blank">'._l("Privacy Policy", $this).'</a>',
+                '<a href="'.base_url($this->language['code']."/privacy-policy").'" target="_blank">'._l("Privacy Policy", $this).'</a>',
             ),_l("{company_name} will use your personal data to help us to support any our services you might use. Please have a look at our {privacy_policy} for more information on how we use your data.", $this)
         ); ?>
         <span></span>

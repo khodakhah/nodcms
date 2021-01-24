@@ -21,7 +21,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
                         <i class="icon-home"></i>
-                        <a  href="<?php echo base_url().$this->language['code']; ?>"><?php echo _l('Home', $this); ?></a>
+                        <a  href="<?php echo base_url($this->language['code']); ?>"><?php echo _l('Home', $this); ?></a>
                     </li>
                     <?php foreach($breadcrumb as $item){ ?>
                         <li class="breadcrumb-item">

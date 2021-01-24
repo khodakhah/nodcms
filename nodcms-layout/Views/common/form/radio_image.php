@@ -6,7 +6,7 @@
                 <span></span>
                 <span class="check"></span>
                 <span class="box"></span>
-                <img src="<?php echo base_url().$item[$option_image]; ?>" alt="<?php echo $item[$option_name]; ?>" title="<?php echo $item[$option_name]; ?>">
+                <img src="<?php echo base_url($item[$option_image]); ?>" alt="<?php echo $item[$option_name]; ?>" title="<?php echo $item[$option_name]; ?>">
             </label>
         </div>
     <?php } ?>
