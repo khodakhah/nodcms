@@ -61,7 +61,7 @@ abstract class Base extends Controller
     /**
      * @var \NodCMS\Core\View\View
      */
-    public $view;
+    protected $view;
 
     /**
      * @var \CodeIgniter\Session\Session
@@ -73,14 +73,25 @@ abstract class Base extends Controller
      */
     public $request;
 
+    /**
+     * @var \Config\Settings
+     */
+    protected $config;
+
+    /**
+     * @var \NodCMS\Core\Models\ModelMap
+     */
+    protected $model;
+
     public function __construct()
     {
-        $config = new Settings();
-        $this->settings = $config->settings_default;
+        $this->config = new Settings();
+        $this->settings = $this->config->settings_default;
         $this->router = \Config\Services::router();
         $this->view = new \NodCMS\Core\View\View();
         $this->request = Services::request();
         $this->session = Services::session();
+        $this->model = Services::model();
         helper("NodCMS\Core\core");
     }
 
