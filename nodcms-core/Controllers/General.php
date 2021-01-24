@@ -31,7 +31,6 @@ class General extends Frontend
     /**
      * Homepage
      *
-     * @param $lang
      */
     public function index()
     {
@@ -90,16 +89,16 @@ class General extends Frontend
         }
 
         // Contact page
-//        $data = $this->curlWebPage(base_url()."$lang/contact-home");
+//        $data = $this->curlWebPage(base_url("$lang/contact-home"));
 //        if(!preg_match("/\<title\>[\s]?Error 404[\s]?\<\/title>/",$data))
 //            $index_content .= $data;
 
         $this->display_page_title = $this->settings['home_page_title_box'];
         if(!empty($this->settings['index_logo'])) {
-            $this->data['title_logo'] = base_url().$this->settings['index_logo'];
+            $this->data['title_logo'] = base_url($this->settings['index_logo']);
         }
         if(isset($this->settings['home_page_title_bg']) && !empty($this->settings['home_page_title_bg'])) {
-            $this->data['title_bg'] = base_url().$this->settings['home_page_title_bg'];
+            $this->data['title_bg'] = base_url($this->settings['home_page_title_bg']);
         }
         $this->data['title_bg_blur'] = $this->settings['home_page_title_bg_blur'];
         $this->data['title'] = $this->settings['company'];
@@ -240,13 +239,12 @@ class General extends Frontend
         }
         header('Content-Type: '.$row['file_type']);
         header('Content-Length: ' . filesize($file));
-        echo file_get_contents(base_url().$row['file_path']);
+        echo file_get_contents(base_url($row['file_path']));
     }
 
     /**
      * Change the account details
      *
-     * @param $lang
      */
     function accountSetting()
     {
@@ -320,7 +318,7 @@ class General extends Frontend
             ),
         );
         $myform = new Form();
-        $myform->config($config, base_url()."$lang/account-setting/", 'post', 'ajax');
+        $myform->config($config, base_url("$lang/account-setting/"), 'post', 'ajax');
         // * Submit form
         if($myform->ispost()){
             if($this->userdata['group_id']==100){
@@ -346,7 +344,7 @@ class General extends Frontend
             if($post_data['password']!='') $data['password'] = md5($post_data['password']);
             $this->load->model("Nodcms_admin_model");
             if (!$this->Nodcms_admin_model->userManipulate($data,$this->session->userdata['user_id'])){
-                $this->systemError("There was a problem to update the user data.", base_url()."$lang/account-setting");
+                $this->systemError("There was a problem to update the user data.", base_url("$lang/account-setting"));
                 return;
             }
             $row = $this->Nodcms_admin_model->getUserDetail($this->session->userdata['user_id']);
@@ -356,7 +354,7 @@ class General extends Frontend
             $this->session->set_userdata('username', $row['username']);
             $this->session->set_userdata('email', $row['email']);
 
-            $this->systemSuccess("Your profile has been updated successfully.", base_url()."$lang/account-setting");
+            $this->systemSuccess("Your profile has been updated successfully.", base_url("$lang/account-setting"));
             return;
         }
         // * Upload an avatar
@@ -371,7 +369,6 @@ class General extends Frontend
     /**
      * Upload and remove the user avatar
      *
-     * @param $lang
      */
     function accountAvatarChange()
     {
@@ -380,7 +377,7 @@ class General extends Frontend
             return;
         }
         if($this->userdata['group_id']==100){
-            $this->systemError("As demo account you aren't able to change any thing.", base_url().$lang."/account-setting");
+            $this->systemError("As demo account you aren't able to change any thing.", base_url($lang."/account-setting"));
             return;
         }
         $this->load->model("Nodcms_admin_model");
@@ -398,7 +395,7 @@ class General extends Frontend
             $config['upload_path'] = $dir;
             $this->load->library('upload', $config);
             if(! $this->upload->do_upload("file")){
-                $this->systemError($this->upload->display_errors('<p>', '</p>'), base_url()."$lang/account-setting");
+                $this->systemError($this->upload->display_errors('<p>', '</p>'), base_url("$lang/account-setting"));
                 return;
             }
 
@@ -409,7 +406,7 @@ class General extends Frontend
             $this->Nodcms_admin_model->userManipulate($setData, $this->userdata['user_id']);
             if(isset($this->userdata["avatar"])&&$this->userdata["avatar"]!=null&&$this->userdata["avatar"]!=""&&file_exists(SELF_PATH.$this->userdata["avatar"]))
                 unlink($dir."/".$this->userdata["avatar"]);
-            $this->systemSuccess("Your avatar has updated successfully.", base_url()."$lang/account-setting");
+            $this->systemSuccess("Your avatar has updated successfully.", base_url("$lang/account-setting"));
         }
         else{
             $setData = array(
@@ -418,7 +415,7 @@ class General extends Frontend
             $this->Nodcms_admin_model->userManipulate($setData, $this->userdata['user_id']);
             if(isset($this->userdata["avatar"])&&$this->userdata["avatar"]!=null&&$this->userdata["avatar"]!=""&&file_exists(SELF_PATH.$this->userdata["avatar"]))
                 unlink(SELF_PATH.$this->userdata["avatar"]);
-            $this->systemSuccess("Your avatar has removed successfully.!", base_url()."$lang/account-setting");
+            $this->systemSuccess("Your avatar has removed successfully.!", base_url("$lang/account-setting"));
         }
     }
 
@@ -428,7 +425,6 @@ class General extends Frontend
      *      * Terms & Conditions (Route: /[LanguagePrefix]/terms-and-conditions)
      *      * Privacy Policy (Route: /[LanguagePrefix]/privacy-policy)
      *
-     * @param $lang
      * @param $page_name
      */
     function staticSettingsPages($page_name)
@@ -452,14 +448,13 @@ class General extends Frontend
     /**
      * Contact form page and google map
      *
-     * @param $lang
      * @param $home
      */
     function contact($home = null)
     {
 
         if($this->settings['contact_form']==1){
-            $self_url = base_url()."$lang/contact";
+            $self_url = base_url("$lang/contact");
             $config = array(
                 array(
                     'field'=>"email",
