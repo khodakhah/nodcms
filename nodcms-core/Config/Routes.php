@@ -53,6 +53,47 @@ $routes->setAutoRoute(true);
 // route since we don't have to scan directories.
 $routes->get('/', 'Dispatcher::index');
 
+// Admin URLs
+$routes->get('admin', "General_admin::dashboard");
+$routes->get('admin/(.+)', "General_admin::$1");
+$routes->get('admin-provider', "Providers_admin::index");
+$routes->get('admin-provider/(.+)', "Providers_admin::$1");
+
+$routes->get('get-new-captcha', "General::resetCaptcha");
+
+$routes->get('user/dashboard', "General_members::dashboard");
+$routes->get('user/account', "General_members::account");
+$routes->match(['post', 'get'],'user/account/personal-info', "General_members::accountPersonalInfo");
+$routes->match(['post', 'get'],'user/account/change-password', "General_members::accountChangePassword");
+$routes->match(['post', 'get'],'user/account/remove-avatar', "General_members::accountRemoveAvatar");
+$routes->match(['post', 'get'],'user/account/remove-avatar-confirmed', "General_members::accountRemoveAvatar/1");
+
+$routes->match(['post', 'get'],'user/account-avatar-change', "General_members::accountAvatarChange");
+$routes->match(['post', 'get'],'user/account-avatar-upload', "General_members::accountAvatarUpload");
+//$routes->get('user-([A-Za-z\_]+)/dashboard', '$1/dashboard');
+//General URLs
+$routes->get('(file|image)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::$1/$2/$3');
+$routes->get('noimage-([0-9]+)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::noimage/$1/$2/$3');
+$routes->get('noimage-([0-9]+)-([0-9]+)', 'General::noimage/$1/$2');
+$routes->match(['post', 'get'],'remove-my-file/([0-9]+)-([A-Za-z0-9\_]+)', 'General::removeMyFile/$1/$2');
+// General Pages
+$routes->get('{locale}', 'General::index');
+$routes->get('{locale}/([A-Za-z\_]+)-index', '$1::index');
+$routes->match(['post', 'get'],'{locale}/contact', 'General::contact');
+$routes->get('{locale}/contact-home', 'General::contact/home');
+$routes->get('{locale}/(terms-and-conditions|privacy-policy)', "General::staticSettingsPages/$1");
+// Registration
+$routes->match(['post', 'get'],'admin-sign', "Registration::login");
+$routes->get('account-locked', "Registration::accountLocked");
+$routes->get('{locale}/account-locked', "Registration::accountLocked");
+$routes->get('logout', "Registration::logout");
+$routes->get('{locale}/logout', "Registration::logout");
+$routes->match(['post', 'get'],'{locale}/user-registration', "Registration::userRegistration");
+$routes->match(['post', 'get'],'{locale}/return-password', "Registration::returnPassword");
+$routes->get('{locale}/user-registration/message', "Registration::userRegistrationMessage");
+$routes->match(['post', 'get'],'{locale}/user-registration/active/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', "Registration::activeAccount/$1/$2/");
+$routes->match(['post', 'get'],'{locale}/set-new-password/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', "Registration::setNewPassword/$1/$2/");
+
 /**
  * --------------------------------------------------------------------
  * Additional Routing
