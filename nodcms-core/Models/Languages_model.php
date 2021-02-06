@@ -45,24 +45,46 @@ class Languages_model extends Model
     }
 
     /**
-     * Insert first data
+     * @return array
      */
-    function defaultData()
+    public function getDefaultRecord(): array
     {
-        $data = array(
-            array('language_id'=>1, 'language_name'=>'english', 'language_title'=>'English', 'code'=>'en', 'public'=>1, 'rtl'=>0, 'sort_order'=>1, 'created_date'=>time(), 'default'=>1, 'image'=>'upload_file/lang/en.png'),
-        );
+        return array('language_id'=>1, 'language_name'=>'english', 'language_title'=>'English', 'code'=>'en', 'public'=>1, 'rtl'=>0, 'sort_order'=>1, 'created_date'=>time(), 'default'=>1, 'image'=>'upload_file/lang/en.png');
+    }
+
+    /**
+     * Insert default data by install
+     */
+    public function defaultData()
+    {
+        $data = [self::getDefaultRecord()];
         foreach($data as $item) {
             $this->add($item);
         }
     }
 
     /**
+     * Returns a recorde by language code(Locale)
+     *
      * @param string $code
+     * @return array|null
+     */
+    public function getByCode(string $code): ?array
+    {
+        $result = $this->getOne(null, ['code'=>$code]);
+        if(empty($result)) {
+            $result = $this->getOne(null);
+        }
+        return $result;
+    }
+
+    /**
+     * Returns all language that already has been in backend activated
+     *
      * @return array
      */
-    public function getByCode(string $code): array
+    public function getAllActives(): array
     {
-        return $this->getOne(null, ['code'=>$code]);
+        return $this->getAll(['public'=>1]);
     }
 }

@@ -51,7 +51,6 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-$routes->get('/', 'Dispatcher::index');
 
 // Admin URLs
 $routes->get('admin', "General_admin::dashboard");
@@ -76,23 +75,25 @@ $routes->get('(file|image)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::$1/$2/$3');
 $routes->get('noimage-([0-9]+)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::noimage/$1/$2/$3');
 $routes->get('noimage-([0-9]+)-([0-9]+)', 'General::noimage/$1/$2');
 $routes->match(['post', 'get'],'remove-my-file/([0-9]+)-([A-Za-z0-9\_]+)', 'General::removeMyFile/$1/$2');
-// General Pages
-$routes->get('{locale}', 'General::index');
-$routes->get('{locale}/([A-Za-z\_]+)-index', '$1::index');
-$routes->match(['post', 'get'],'{locale}/contact', 'General::contact');
-$routes->get('{locale}/contact-home', 'General::contact/home');
-$routes->get('{locale}/(terms-and-conditions|privacy-policy)', "General::staticSettingsPages/$1");
+
 // Registration
-$routes->match(['post', 'get'],'admin-sign', "Registration::login");
+$routes->match(['post', 'get'],'(admin-sign|login)', "Registration::login");
 $routes->get('account-locked', "Registration::accountLocked");
-$routes->get('{locale}/account-locked', "Registration::accountLocked");
+$routes->get('{locale}/account-locked', "Registration::accountLocked", ['filter'=>"urlLocale"]);
 $routes->get('logout', "Registration::logout");
-$routes->get('{locale}/logout', "Registration::logout");
-$routes->match(['post', 'get'],'{locale}/user-registration', "Registration::userRegistration");
-$routes->match(['post', 'get'],'{locale}/return-password', "Registration::returnPassword");
-$routes->get('{locale}/user-registration/message', "Registration::userRegistrationMessage");
-$routes->match(['post', 'get'],'{locale}/user-registration/active/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', "Registration::activeAccount/$1/$2/");
-$routes->match(['post', 'get'],'{locale}/set-new-password/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', "Registration::setNewPassword/$1/$2/");
+$routes->get('{locale}/logout', "Registration::logout", ['filter'=>"urlLocale"]);
+$routes->match(['post', 'get'],'{locale}/user-registration', "Registration::userRegistration", ['filter'=>"urlLocale"]);
+$routes->match(['post', 'get'],'{locale}/return-password', "Registration::returnPassword", ['filter'=>"urlLocale"]);
+$routes->get('{locale}/user-registration/message', "Registration::userRegistrationMessage", ['filter'=>"urlLocale"]);
+$routes->match(['post', 'get'],'{locale}/user-registration/active/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', "Registration::activeAccount/$1/$2/", ['filter'=>"urlLocale"]);
+$routes->match(['post', 'get'],'{locale}/set-new-password/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', "Registration::setNewPassword/$1/$2/", ['filter'=>"urlLocale"]);
+
+// General Pages
+$routes->get('{locale}', 'General::index', ['filter'=>"urlLocale"]);
+$routes->get('{locale}/([A-Za-z\_]+)-index', '$1::index', ['filter'=>"urlLocale"]);
+$routes->match(['post', 'get'],'{locale}/contact', 'General::contact', ['filter'=>"urlLocale"]);
+$routes->get('{locale}/contact-home', 'General::contact/home', ['filter'=>"urlLocale"]);
+$routes->get('{locale}/(terms-and-conditions|privacy-policy)', "General::staticSettingsPages/$1", ['filter'=>"urlLocale"]);
 
 /**
  * --------------------------------------------------------------------

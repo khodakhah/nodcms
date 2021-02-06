@@ -27,6 +27,10 @@ abstract class Frontend extends App
     {
         parent::__construct();
 
+        // Set loaded language
+        $this->language = \Config\Services::language()->get();
+
+        // Sidebar view file
         $this->page_sidebar = "frontend_sidebar";
         $this->view->config->frameFile = $this->config->frontend_template_frame;
 
@@ -34,6 +38,7 @@ abstract class Frontend extends App
             $this->frameTemplate = $this->mainTemplate;
 
         $this->data['lang_url'] = base_url().uri_string();
+
         if($this->session->has("user_id")) {
             $userModel = new \NodCMS\Core\Models\Users_model();
             $this->userdata = $userModel->getOne($this->session->get("user_id"));
@@ -52,51 +57,41 @@ abstract class Frontend extends App
             $this->userdata = NULL;
     }
 
-    // Set system language from URL
-    function preset($lang)
+    /**
+     * Set the top and bottom menus
+     */
+    private function setMenus()
     {
-        $languageModel = new \NodCMS\Core\Models\Languages_model();
-        // Set system language from URL language code (Language prefix)
-        $language = $languageModel->getByCode($lang);
-        if($language!=0){
-            $_SESSION["language"] = $language;
-            $this->language = $language;
-            $this->data["lang"] = $lang;
-        }else{
-            $this->setLanguagePrefix();
+        $all_menus = array('top_menu', 'footer_menu');
+        foreach($all_menus as $menu_type){
+            $data_menu = array();
+            $menu = $this->model->menu()->getMenu($menu_type, 0);
+            foreach($menu as $item){
+                $menu_item = array(
+                    'name' =>$item['title_caption'],
+                    'title' =>$item['title_caption'],
+                    'icon' =>$item['menu_icon'],
+                    'url' =>substr($item['menu_url'],0,4)=="http"?$item['menu_url']:base_url().$this->language['code']."/".$item['menu_url'],
+                );
+                $sub_menu = $this->model->menu()->getMenu("top_menu", $item['menu_id']);
+
+                if(count($sub_menu)!=0){
+                    $sub_menu_data = array();
+                    foreach ($sub_menu as $sub_item){
+                        $sub_menu_item = array(
+                            'name' =>$sub_item['title_caption'],
+                            'title' =>$sub_item['title_caption'],
+                            'icon' =>$sub_item['menu_icon'],
+                            'url' =>substr($sub_item['menu_url'],0,4)=="http"?$sub_item['menu_url']:base_url().$this->language['code']."/".$sub_item['menu_url'],
+                        );
+                        array_push($sub_menu_data, $sub_menu_item);
+                    }
+                    $menu_item['sub_menu'] = $sub_menu_data;
+                }
+
+                array_push($data_menu, $menu_item);
+            }
+            $this->data[$menu_type] = $data_menu;
         }
-
-        // Make nodcms lang file for version 3.6
-        $my_lang_file = APPPATH.'language/'.$language['language_name'].'/nodcms_lang.php';
-        if(!file_exists($my_lang_file)){
-            resetLanguageTempFile();
-        }
-        $this->lang->load("nodcms", $language["language_name"]);
-
-        $_SERVER['DOCUMENT_ROOT'] = dirname(dirname(dirname(__FILE__)));
-
-        $this->settings = array_merge($this->settings, $this->Public_model->getSettings($this->language['language_id']));
-
-        $this->data['settings'] =  $this->settings;
-        $_SESSION['settings'] = $this->settings;
-
-        // Set Languages menu
-        $this->data['languages'] = $this->Nodcms_general_model->get_languages();
-        foreach ($this->data['languages'] as &$value) {
-            $url_array = explode("/",$this->data["lang_url"]);
-            $url_array[array_search($lang,$url_array)]=$value["code"];
-            $value["lang_url"] = implode("/",$url_array);
-        }
-        // Set header and footer menus
-        $this->setMenus();
-
-//        if($this->frameTemplate == "mt-layout4"){
-//            if(!isset($this->settings['forms_theme']) || $this->settings['forms_theme'] != "form-clean"){
-//                $this->page_sidebar_closed = false;
-//                $this->addToSidebar($this->data["top_menu"]);
-//            }
-//        }
-        // Run hooks classes
-        $this->packageHooks("preset", $lang);
     }
 }

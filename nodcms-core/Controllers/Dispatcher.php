@@ -24,12 +24,16 @@ namespace NodCMS\Core\Controllers;
 
 class Dispatcher extends App
 {
-    public function index() {
+    public function index(): \CodeIgniter\HTTP\RedirectResponse
+    {
         $db = \Config\Database::connect();
         if(!empty($db->getDatabase())) {
-            // Redirect to the url with the default language prefix
-            return redirect($this->defaultLang());
+            // Redirect to the url with an unknown language prefix.
+            // It will be redirected to the default language.
+            return redirect()->to('xx');
         }
+
+        // Redirect to the install wizard page.
         return redirect("installer");
     }
 }

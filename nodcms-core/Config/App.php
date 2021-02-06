@@ -76,7 +76,7 @@ class App extends BaseConfig
 	| If false, no automatic detection will be performed.
 	|
 	*/
-	public $negotiateLocale = false;
+	public $negotiateLocale = true;
 
 	/*
 	|--------------------------------------------------------------------------

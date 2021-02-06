@@ -46,7 +46,8 @@ class Settings_model extends Model
      * @param int $language_id
      * @return bool
      */
-    function updateSettings($data = NULL, $language_id = 0){
+    public function updateSettings($data = NULL, $language_id = 0): bool
+    {
         if($data != NULL && is_array($data) && count($data)!=0)
             foreach($data as $name=>$value){
                 $sql = 'INSERT INTO settings'.
@@ -58,5 +59,22 @@ class Settings_model extends Model
                 $this->db->query($sql, array($name, $language_id, $value, $value));
             }
         return true;
+    }
+
+    /**
+     * Return settings as an array with key and values
+     *
+     * @param int $language_id
+     * @return array
+     */
+    public function getSettings(int $language_id=0): array
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*');
+        $builder->from('settings');
+        $builder->where('language_id', $language_id);
+        $query = $builder->get();
+        $result = $query->getResultArray();
+        return array_combine(array_column($result, 'field_name'), array_column($result, 'field_value'));
     }
 }

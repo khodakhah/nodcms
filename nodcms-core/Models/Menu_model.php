@@ -21,6 +21,8 @@
 
 namespace NodCMS\Core\Models;
 
+use CodeIgniter\Database\MySQLi\Builder;
+
 class Menu_model extends Model
 {
     function init()
@@ -41,5 +43,28 @@ class Menu_model extends Model
         $foreign_tables = null;
         $translation_fields = null;
         parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
+    }
+
+    /**
+     * @param string $key
+     * @param int|null $parent
+     * @return array
+     */
+    public function getMenu(string $key, int $parent=null): array
+    {
+        $language_id = \Config\Services::language()->get()['language_id'];
+        $builder = $this->getBuilder();
+        $builder->select('*');
+        $builder->from('menu');
+        $builder->join('titles',"titles.relation_id = menu_id");
+        $builder->where('titles.data_type',"menu");
+        $builder->where('titles.language_id', $language_id);
+        $builder->where('public',1);
+        $builder->where('menu_key', $key);
+        if($parent!==null)
+            $builder->where('sub_menu',$parent);
+        $builder->orderBy('menu_order', "ASC");
+        $query = $builder->get();
+        return $query->getResultArray();
     }
 }

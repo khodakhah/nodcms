@@ -29,6 +29,25 @@ class Services extends CoreServices
 	//    }
 
     /**
+     * @param bool $getShared
+     * @return \NodCMS\Core\Libraries\Language
+     */
+    public static function language(string $locale = null, bool $getShared = true)
+    {
+
+        if ($getShared)
+        {
+            return static::getSharedInstance('language', $locale)
+                ->setLocale($locale);
+        }
+
+        $locale = ! empty($locale) ? $locale : static::request()
+            ->getLocale();
+
+        return new \NodCMS\Core\Libraries\Language($locale);
+    }
+
+    /**
      * ModelMap is a luncher class to
      *
      * @param bool $getShared
