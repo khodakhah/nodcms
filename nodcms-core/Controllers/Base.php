@@ -117,21 +117,24 @@ abstract class Base extends Controller
     /*
      * This method useful for return successful messages
      */
-    protected function successMessage($message, $redirect = "" , $add_on_data = null, $translate = false)
+    protected function successMessage(string $message=null, string $redirect = "" , $add_on_data = null, $translate = false)
     {
         if($this->request->isAJAX()){
             $data = array(
                 "status"=>"success",
                 "url"=>$redirect,
-                "msg"=> $message
             );
+            if($message!=null)
+                $data['msg'] = $message;
+
             if($add_on_data!=null)
                 $data["data"] = $add_on_data;
             echo  json_encode($data);
             exit;
         }else{
-            $this->session->setFlashdata('success', $message);
-            redirect($redirect);
+            if($message!=null)
+                $this->session->setFlashdata('success', $message);
+            return redirect()->to($redirect);
         }
     }
 

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * NodCMS
  *
  * Copyright (c) 2015-2020.
@@ -19,39 +19,17 @@
  *
  */
 
-namespace NodCMS\Core\Controllers;
+if(!isset($routes)) throw new \Exception('$routes not defined.');
 
+$namespace = "\NodCMS\Users\Controllers\\";
 
-abstract class App extends Base
-{
-    // !Important: undefined $lang keys put in this array to add to language files
-    public $langArray = array();
-    // Class type: backend or frontend
-    public $controllerType;
-    // Admin sidebar menus
-    public $admin_panel_items = array();
-
-    public $captcha_session_name = 'nodcms_captcha';
-    // Keep the form data for form helpers
-    public $html_form_data = array('form_group'=>"inline_form_group", 'label_col'=>"col-md-2", 'input_col'=>"col-md-10");
-
-    // Controller type
-    public $controller_type;
-
-    // Settings default values
-    public $settings_default;
-
-    /**
-     * @var \NodCMS\Core\Core\Modules
-     */
-    protected $modules;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->modules = new \NodCMS\Core\Core\Modules($this);
-
-        define('USER_UNDEFINED_AVATAR',base_url().'upload_file/images/user.png');
-        define('ADMIN_URL',base_url("admin"));
-    }
-}
+$routes->match(['post', 'get'],'{locale}/(admin-sign|login)', "{$namespace}Users::login", ['filter'=>"urlLocale"]);
+$routes->get('account-locked', "{$namespace}Users::accountLocked");
+$routes->get('{locale}/account-locked', "{$namespace}Users::accountLocked", ['filter'=>"urlLocale"]);
+$routes->get('logout', "{$namespace}Users::logout");
+$routes->get('{locale}/logout', "{$namespace}Users::logout", ['filter'=>"urlLocale"]);
+$routes->match(['post', 'get'],'{locale}/user-registration', "{$namespace}Users::userRegistration", ['filter'=>"urlLocale"]);
+$routes->match(['post', 'get'],'{locale}/return-password', "{$namespace}Users::returnPassword", ['filter'=>"urlLocale"]);
+$routes->get('{locale}/user-registration/message', "{$namespace}Users::userRegistrationMessage", ['filter'=>"urlLocale"]);
+$routes->match(['post', 'get'],'{locale}/user-registration/active/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', "{$namespace}Users::activeAccount/$1/$2/", ['filter'=>"urlLocale"]);
+$routes->match(['post', 'get'],'{locale}/set-new-password/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', "{$namespace}Users::setNewPassword/$1/$2/", ['filter'=>"urlLocale"]);
