@@ -110,9 +110,9 @@ class Form
     private $custom_file = "";
     private $is_custom = false;
 
-    function __construct(&$CI)
+    function __construct($CI)
     {
-        $this->CI =& $CI;
+        $this->CI = $CI;
         $this->upload_cookie_name = md5($this->upload_cookie_name);
     }
 
@@ -302,7 +302,7 @@ class Form
                         "url"=>$this->data['back_url'],
                         "error"=> $validation->getErrors(),
                     );
-                    echo  json_encode($data);
+                    echo json_encode($data);
                 }else{
                     $this->CI->session->set_flashdata('static_error', $validation->listErrors());
                     redirect($this->data['back_url']);

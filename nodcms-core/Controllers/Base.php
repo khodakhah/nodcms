@@ -24,6 +24,7 @@ namespace NodCMS\Core\Controllers;
 use CodeIgniter\Controller;
 use Config\Services;
 use Config\Settings;
+use NodCMS\Core\View\View;
 
 abstract class Base extends Controller
 {
@@ -61,7 +62,7 @@ abstract class Base extends Controller
     /**
      * @var \NodCMS\Core\View\View
      */
-    protected $view;
+    public $view;
 
     /**
      * @var \CodeIgniter\Session\Session
@@ -88,7 +89,7 @@ abstract class Base extends Controller
         $this->config = new Settings();
         $this->settings = $this->config->settings_default;
         $this->router = \Config\Services::router();
-        $this->view = new \NodCMS\Core\View\View();
+        $this->view = new View();
         $this->request = Services::request();
         $this->session = Services::session();
         $this->model = Services::model();
@@ -106,11 +107,10 @@ abstract class Base extends Controller
                 "url"=>$redirect,
                 "error"=> $error
             );
-            echo  json_encode($data);
-            exit;
+            return json_encode($data);
         }else{
             $this->session->setFlashdata('error', $error);
-            redirect($redirect);
+            return redirect()->to($redirect);
         }
     }
 
@@ -129,8 +129,8 @@ abstract class Base extends Controller
 
             if($add_on_data!=null)
                 $data["data"] = $add_on_data;
-            echo  json_encode($data);
-            exit;
+
+            return json_encode($data);
         }else{
             if($message!=null)
                 $this->session->setFlashdata('success', $message);
@@ -243,6 +243,8 @@ abstract class Base extends Controller
     }
 
     /**
+     * Render view with whole page structure
+     *
      * @param string $view_file
      * @param bool|null $saveData
      * @return string
@@ -255,7 +257,7 @@ abstract class Base extends Controller
     }
 
     /**
-     * Render view with an string content
+     * Render whole page structure with an string content
      *
      * @param string $string
      * @param bool|null $saveData
@@ -269,6 +271,8 @@ abstract class Base extends Controller
     }
 
     /**
+     *
+     *
      * @param string $view_file
      * @param array $data
      * @param string|null $view_path

@@ -25,6 +25,7 @@ use Config\Autoload;
 use Config\Modules;
 use Config\Services;
 use NodCMS\Core\View\View;
+use NodCMS\Core\Libraries;
 
 class General extends Frontend
 {
@@ -125,24 +126,24 @@ class General extends Frontend
         $query = $this->db->get();
         $row = $query->row_array();
         if(count($row)==0){
-            $this->systemError("The file couldn't find.", base_url());
+            $this->errorMessage("The file couldn't find.", base_url());
             return;
         }
         $file = $row['file_path'];
         if(preg_match('/^[ftp|http|https]\:\/\/(.*\.[\a])$/',$row['file_path'])!=1) {
             $file = SELF_PATH . $file;
         }
-        $myForm = new Form();
+        $myForm = new Libraries\Form($this);
         $unique_cookie = $myForm->getFileUniqueCookie();
         if($row['unique_cookie']!=$unique_cookie){
-            $this->systemError("You don't have access to remove this file.", base_url());
+            $this->errorMessage("You don't have access to remove this file.", base_url());
             return;
         }
         if (file_exists($file)) {
             unlink($file);
         }
         $this->db->delete("upload_files" ,array('file_id'=>$id));
-        $this->systemSuccess("The file has been removed successfully.", base_url());
+        $this->successMessage("The file has been removed successfully.", base_url());
     }
 
     /**
@@ -150,37 +151,26 @@ class General extends Frontend
      *
      * @param $id
      * @param $key
+     * @throws \Exception
      */
-    function file($id, $key)
+    public function file($id, $key)
     {
         $conditions = array(
             'file_id'=>$id,
             'file_key'=>$key,
         );
-        $this->db->select("*")->from("upload_files")->where($conditions);
-        $query = $this->db->get();
-        $row = $query->row_array();
-        if(count($row)==0){
-            show_error("The file couldn't find.");
-            return;
+        $row = $this->model->uploadFiles()->getOne(null, $conditions);
+        if(empty($row)){
+            return $this->viewRenderString("The file couldn't find.");
         }
         $file = $row['file_path'];
         if(preg_match('/^[ftp|http|https]\:\/\/(.*\.[\a])$/',$row['file_path'])!=1) {
-            $file = SELF_PATH . $file;
+            $file = ROOTPATH . $file;
             if (!file_exists($file)) {
-                show_error("The file doesn't exists.");
-                return;
+                throw new \Exception("The file doesn't exists.");
             }
         }
-        header('Content-Description: File Transfer');
-        header('Content-Type: '.$row['file_type']);
-        header('Content-Disposition: attachment; filename="'.$row['name'].'"');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        header('Content-Length: ' . filesize($file));
-        flush(); // Flush system output buffer
-        readfile($file);
+        return $this->response->download($file)->setFileName($row['name'])->setContentType($row['file_type']);
     }
 
     /**
@@ -190,7 +180,7 @@ class General extends Frontend
      * @param $height
      * @param string $text
      */
-    function noimage($width, $height, $text = "No Image")
+    public function noimage($width, $height, $text = "No Image")
     {
         $font_size = 20;
         header("Content-Type: image/png");
@@ -222,10 +212,8 @@ class General extends Frontend
             'file_id'=>$id,
             'file_key'=>$key,
         );
-        $this->db->select("*")->from("upload_files")->where($conditions);
-        $query = $this->db->get();
-        $row = $query->row_array();
-        if(count($row)==0){
+        $row = $this->model->uploadFiles()->getOne(null, $conditions);
+        if(empty($row)){
             $this->noimage(400,400,"The file couldn't find");
             return;
         }
@@ -240,183 +228,6 @@ class General extends Frontend
         header('Content-Type: '.$row['file_type']);
         header('Content-Length: ' . filesize($file));
         echo file_get_contents(base_url($row['file_path']));
-    }
-
-    /**
-     * Change the account details
-     *
-     */
-    function accountSetting()
-    {
-        if($this->userdata==null){
-            $this->error404();
-            return;
-        }
-        $languages = $this->model->languages()->getAll();
-        $config = array(
-            array(
-                'field'=>"username",
-                'label'=>_l('Username',$this),
-                'rules'=>"required|callback_isUnique[users,username,user_id,".$this->userdata['user_id']."]",
-//                'type'=>"text",
-//                'default'=>$this->userdata['username'],
-                'type'=>"static",
-                'value'=>$this->userdata['username'],
-            ),
-            array(
-                'field'=>"email",
-                'label'=>_l('Email Address',$this),
-                'rules'=>"required|valid_email|callback_isUnique[users,email,user_id,".$this->userdata['user_id']."]",
-//                'type'=>"text",
-//                'default'=>$this->userdata['email'],
-                'type'=>"static",
-                'value'=>$this->userdata['email'],
-            ),
-            array(
-                'field'=>"firstname",
-                'label'=>_l('First Name',$this),
-                'rules'=>"required|callback_formRulesName",
-                'type'=>"text",
-                'default'=>$this->userdata['firstname'],
-            ),
-            array(
-                'field'=>"lastname",
-                'label'=>_l('Last Name',$this),
-                'rules'=>"required|callback_formRulesName",
-                'type'=>"text",
-                'default'=>$this->userdata['lastname'],
-            ),
-            array(
-                'field'=>"mobile",
-                'label'=>_l('Mobile',$this),
-                'rules'=>"callback_validPhone",
-                'type'=>"text",
-                'default'=>$this->userdata['mobile'],
-            ),
-            array(
-                'field'=>"website",
-                'label'=>_l('Website',$this),
-                'rules'=>"xss_clean|valid_url",
-                'type'=>"url",
-                'default'=>$this->userdata['website'],
-            ),
-            array(
-                'field'=>"password",
-                'label'=>_l('Password',$this),
-                'rules'=>"callback_formRulesPassword",
-                'type'=>"password",
-            ),
-            array(
-                'field'=>"language_id",
-                'label'=>_l('Language',$this),
-                'rules'=>"required|in_list[".join(',',array_column($languages,"language_id"))."]",
-                'type'=>"select",
-                'options'=>$languages,
-                'option_name'=>"language_title",
-                'option_value'=>"language_id",
-                'default'=>$this->userdata['language_id'],
-            ),
-        );
-        $myform = new Form();
-        $myform->config($config, base_url("$lang/account-setting/"), 'post', 'ajax');
-        // * Submit form
-        if($myform->ispost()){
-            if($this->userdata['group_id']==100){
-                $this->systemError("As demo account you aren't able to change any thing.", base_url());
-                return;
-            }
-            $post_data = $myform->getPost();
-            // Stop Page
-            if(!is_array($post_data) || count($post_data)==0 || $post_data == null){
-                return;
-            }
-
-            $data = array(
-                'firstname'=>$post_data['firstname'],
-                'lastname'=>$post_data['lastname'],
-                'fullname'=>$post_data['firstname'].' '.$post_data['lastname'],
-//                'username'=>$post_data['username'],
-//                'email'=>$post_data['email'],
-                'website'=>$post_data['website'],
-                'mobile'=>$post_data['mobile'],
-                'language_id'=>$post_data['language_id']
-            );
-            if($post_data['password']!='') $data['password'] = md5($post_data['password']);
-            $this->load->model("Nodcms_admin_model");
-            if (!$this->Nodcms_admin_model->userManipulate($data,$this->session->userdata['user_id'])){
-                $this->systemError("There was a problem to update the user data.", base_url("$lang/account-setting"));
-                return;
-            }
-            $row = $this->Nodcms_admin_model->getUserDetail($this->session->userdata['user_id']);
-            $this->session->set_userdata('firstname', $row['firstname']);
-            $this->session->set_userdata('lastname', $row['lastname']);
-            $this->session->set_userdata('fullname', $row['fullname']);
-            $this->session->set_userdata('username', $row['username']);
-            $this->session->set_userdata('email', $row['email']);
-
-            $this->systemSuccess("Your profile has been updated successfully.", base_url("$lang/account-setting"));
-            return;
-        }
-        // * Upload an avatar
-        $this->data['data'] = $this->userdata;
-        $this->data['submit_form'] = $myform->fetch();
-        $this->data['content']=$this->load->view('membership/account_setting',$this->data,true);
-        $this->data['title'] = _l("Account setting",$this);
-        $this->data['page'] = "account";
-        $this->load->view($this->frameTemplate,$this->data);
-    }
-
-    /**
-     * Upload and remove the user avatar
-     *
-     */
-    function accountAvatarChange()
-    {
-        if($this->userdata==null){
-            $this->showError();
-            return;
-        }
-        if($this->userdata['group_id']==100){
-            $this->systemError("As demo account you aren't able to change any thing.", base_url($lang."/account-setting"));
-            return;
-        }
-        $this->load->model("Nodcms_admin_model");
-        if(is_uploaded_file($_FILES["file"]["tmp_name"])){
-            $uri = "upload_file/users";
-            $dir = SELF_PATH.$uri;
-            if( ! file_exists($dir))
-                mkdir($dir);
-            $uri .= "/user-".$this->userdata["user_id"];
-            $dir .= "/user-".$this->userdata["user_id"];
-            if( ! file_exists($dir))
-                mkdir($dir);
-            $config['allowed_types'] = 'gif|jpg|png';
-            $config['encrypt_name'] = true;
-            $config['upload_path'] = $dir;
-            $this->load->library('upload', $config);
-            if(! $this->upload->do_upload("file")){
-                $this->systemError($this->upload->display_errors('<p>', '</p>'), base_url("$lang/account-setting"));
-                return;
-            }
-
-            $file = $this->upload->data();
-            $setData = array(
-                "avatar"=>$uri."/".$file['file_name'],
-            );
-            $this->Nodcms_admin_model->userManipulate($setData, $this->userdata['user_id']);
-            if(isset($this->userdata["avatar"])&&$this->userdata["avatar"]!=null&&$this->userdata["avatar"]!=""&&file_exists(SELF_PATH.$this->userdata["avatar"]))
-                unlink($dir."/".$this->userdata["avatar"]);
-            $this->systemSuccess("Your avatar has updated successfully.", base_url("$lang/account-setting"));
-        }
-        else{
-            $setData = array(
-                "avatar"=>"",
-            );
-            $this->Nodcms_admin_model->userManipulate($setData, $this->userdata['user_id']);
-            if(isset($this->userdata["avatar"])&&$this->userdata["avatar"]!=null&&$this->userdata["avatar"]!=""&&file_exists(SELF_PATH.$this->userdata["avatar"]))
-                unlink(SELF_PATH.$this->userdata["avatar"]);
-            $this->systemSuccess("Your avatar has removed successfully.!", base_url("$lang/account-setting"));
-        }
     }
 
     /**
@@ -450,11 +261,10 @@ class General extends Frontend
      *
      * @param $home
      */
-    function contact($home = null)
+    public function contact($home = null)
     {
-
         if($this->settings['contact_form']==1){
-            $self_url = base_url("$lang/contact");
+            $self_url = base_url("{$this->lang}/contact");
             $config = array(
                 array(
                     'field'=>"email",
@@ -491,7 +301,7 @@ class General extends Frontend
                 $config[1]['class'] = "bold";
                 $config[1]['value'] = $this->userdata['fullname'];
             }
-            $myForm = new Form();
+            $myForm = new Libraries\Form($this);
             $myForm->config($config, $self_url, 'post', 'ajax');
             if($myForm->ispost()){
                 $data = $myForm->getPost();
@@ -510,14 +320,14 @@ class General extends Frontend
                 // Send Notification Emial
                 send_notification_email("contact_form", $this->settings['email'], $data, $this->language['language_id'],$data['email']);
 
-                $this->systemSuccess("The message has been successfully sent.", $self_url);
+                $this->successMessage("The message has been successfully sent.", $self_url);
                 return;
             }
             $myForm->setFormTheme('form_only');
             $myForm->setStyle('bootstrap-vertical');
 
             $form_attr = array('data-reset'=>1,'data-message'=>1);
-            if($this->input->is_ajax_request()){
+            if($this->request->isAJAX()){
                 echo $myForm->fetch('',$form_attr, false);
                 return;
             }
@@ -526,7 +336,7 @@ class General extends Frontend
 
         $this->data['title'] = _l("Contact us", $this);
         if($home!=null){
-            echo $this->load->view($this->mainTemplate."/contact_home",$this->data, true);
+            echo $this->viewCommon("contact_home", $this->data);
             return;
         }
 

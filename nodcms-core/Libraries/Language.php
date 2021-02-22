@@ -53,11 +53,6 @@ class Language extends CI_Language
      */
     private $DBlanguage;
 
-//    public function __construct()
-//    {
-//        parent::__construct("");
-//    }
-
     /**
      * Set the row of current loaded language from database.
      *

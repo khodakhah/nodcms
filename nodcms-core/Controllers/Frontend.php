@@ -23,12 +23,15 @@ namespace NodCMS\Core\Controllers;
 
 abstract class Frontend extends App
 {
+    public $lang;
+
     public function __construct()
     {
         parent::__construct();
 
         // Set loaded language
         $this->language = \Config\Services::language()->get();
+        $this->lang = $this->language['code'];
 
         // Sidebar view file
         $this->page_sidebar = "frontend_sidebar";
@@ -53,8 +56,11 @@ abstract class Frontend extends App
                 $this->userdata = NULL;
             }
         }
-        else
+        else {
             $this->userdata = NULL;
+        }
+
+//        $this->setMenus();
     }
 
     /**

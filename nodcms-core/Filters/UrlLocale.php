@@ -40,7 +40,6 @@ class UrlLocale implements \CodeIgniter\Filters\FilterInterface
     public function before(RequestInterface $request, $arguments = null)
     {
         $localePrefix = $request->uri->getSegment(1);
-        $locale = $request->getLocale();
         $languageModel = \Config\Services::model()::languages();
 
         // No prefix has been set
@@ -57,7 +56,7 @@ class UrlLocale implements \CodeIgniter\Filters\FilterInterface
         }
 
         if(empty($language)){
-            throw new \Exception("Language \"{$locale}\" not found in database.");
+            throw new \Exception("Language \"{$localePrefix}\" not found in database.");
         }
 
         if($language['code'] != $localePrefix) {

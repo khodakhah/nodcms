@@ -71,22 +71,10 @@ $routes->match(['post', 'get'],'user/account-avatar-change', "General_members::a
 $routes->match(['post', 'get'],'user/account-avatar-upload', "General_members::accountAvatarUpload");
 //$routes->get('user-([A-Za-z\_]+)/dashboard', '$1/dashboard');
 //General URLs
-$routes->get('(file|image)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::$1/$2/$3');
-$routes->get('noimage-([0-9]+)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::noimage/$1/$2/$3');
-$routes->get('noimage-([0-9]+)-([0-9]+)', 'General::noimage/$1/$2');
+$routes->get('{locale}/(file|image)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::$1/$2/$3', ['filter'=>"urlLocale"]);
+$routes->get('{locale}/noimage-([0-9]+)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::noimage/$1/$2/$3', ['filter'=>"urlLocale"]);
+$routes->get('{locale}/noimage-([0-9]+)-([0-9]+)', 'General::noimage/$1/$2', ['filter'=>"urlLocale"]);
 $routes->match(['post', 'get'],'remove-my-file/([0-9]+)-([A-Za-z0-9\_]+)', 'General::removeMyFile/$1/$2');
-
-// Registration
-$routes->match(['post', 'get'],'(admin-sign|login)', "Registration::login");
-$routes->get('account-locked', "Registration::accountLocked");
-$routes->get('{locale}/account-locked', "Registration::accountLocked", ['filter'=>"urlLocale"]);
-$routes->get('logout', "Registration::logout");
-$routes->get('{locale}/logout', "Registration::logout", ['filter'=>"urlLocale"]);
-$routes->match(['post', 'get'],'{locale}/user-registration', "Registration::userRegistration", ['filter'=>"urlLocale"]);
-$routes->match(['post', 'get'],'{locale}/return-password', "Registration::returnPassword", ['filter'=>"urlLocale"]);
-$routes->get('{locale}/user-registration/message', "Registration::userRegistrationMessage", ['filter'=>"urlLocale"]);
-$routes->match(['post', 'get'],'{locale}/user-registration/active/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', "Registration::activeAccount/$1/$2/", ['filter'=>"urlLocale"]);
-$routes->match(['post', 'get'],'{locale}/set-new-password/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', "Registration::setNewPassword/$1/$2/", ['filter'=>"urlLocale"]);
 
 // General Pages
 $routes->get('{locale}', 'General::index', ['filter'=>"urlLocale"]);

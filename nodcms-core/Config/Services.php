@@ -47,7 +47,40 @@ class Services extends CoreServices
         $locale = ! empty($locale) ? $locale : static::request()
             ->getLocale();
 
-        return new \NodCMS\Core\Libraries\Language($locale);
+        return new Language($locale);
+    }
+
+    /**
+     * Signed user identity
+     *
+     * @param $controller
+     * @param bool $getShared
+     * @return \NodCMS\Core\Libraries\Identity
+     */
+    public static function identity(bool $getShared = true): \NodCMS\Core\Libraries\Identity
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('identity');
+        }
+
+        return new \NodCMS\Core\Libraries\Identity();
+    }
+
+    /**
+     * Email notification handle
+     *
+     * @param bool $getShared
+     * @return EmailNotification
+     */
+    public static function emailNotification(bool $getShared = true): \NodCMS\Core\Notification\EmailNotification
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('emailNotification');
+        }
+
+        return new \NodCMS\Core\Notification\EmailNotification();
     }
 
     /**

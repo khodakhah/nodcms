@@ -132,4 +132,9 @@ class Users_model extends Model
 
         parent::edit($id, $data);
     }
+
+    public function loginMatch($username, $password) : ?array
+    {
+        return $this->getOne(null, ['username'=>$username, 'password'=>md5($password)]);
+    }
 }
