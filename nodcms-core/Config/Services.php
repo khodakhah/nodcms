@@ -1,6 +1,9 @@
 <?php namespace Config;
 
 use CodeIgniter\Config\Services as CoreServices;
+use NodCMS\Core\Hooks\Hooks;
+use NodCMS\Core\Libraries\Language;
+use NodCMS\Core\Notification\EmailNotification;
 
 /**
  * Services Configuration file.
@@ -61,5 +64,20 @@ class Services extends CoreServices
         }
 
         return new \NodCMS\Core\Models\ModelMap();
+    }
+
+    /**
+     * @param $controller
+     * @param bool $getShared
+     * @return \NodCMS\Core\Core\Modules
+     */
+    public static function modules(bool $getShared = true): \NodCMS\Core\Core\Modules
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('modules');
+        }
+
+        return new \NodCMS\Core\Core\Modules();
     }
 }
