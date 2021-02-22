@@ -32,12 +32,12 @@ class Services extends CoreServices
 	//    }
 
     /**
+     * @param string $locale
      * @param bool $getShared
      * @return \NodCMS\Core\Libraries\Language
      */
     public static function language(string $locale = null, bool $getShared = true)
     {
-
         if ($getShared)
         {
             return static::getSharedInstance('language', $locale)

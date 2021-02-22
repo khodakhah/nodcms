@@ -147,7 +147,7 @@ class View extends \CodeIgniter\View\View
      * @param string $path
      * @param string|null $ltr_path
      */
-    function addCssFile(string $path, string $ltr_path = null)
+    public function addCssFile(string $path, string $ltr_path = null)
     {
         $this->addAsset($this->css_files, ".css", $path, $ltr_path);
     }
@@ -158,7 +158,7 @@ class View extends \CodeIgniter\View\View
      * @param string $path
      * @param string|null $ltr_path
      */
-    function addJsFile(string $path, string $ltr_path = null)
+    public function addJsFile(string $path, string $ltr_path = null)
     {
         $this->addAsset($this->footer_js_files, ".js", $path, $ltr_path);
     }
@@ -169,7 +169,7 @@ class View extends \CodeIgniter\View\View
      * @param string $path
      * @param string|null $ltr_path
      */
-    function addHeaderJsFile(string $path, string $ltr_path = null)
+    public function addHeaderJsFile(string $path, string $ltr_path = null)
     {
         $this->addAsset($this->header_js_files, ".js", $path, $ltr_path);
     }
@@ -178,7 +178,7 @@ class View extends \CodeIgniter\View\View
      * Add all css files to your view files.
      * It will use on your main template frame file.
      */
-    function fetchAllCSS()
+    public function fetchAllCSS()
     {
         foreach ($this->css_files as $item){
             $file = ROOTPATH . "public/" . $item;
@@ -191,7 +191,7 @@ class View extends \CodeIgniter\View\View
      * Add all js files to your view files at the end of body tag.
      * It will use on your main template frame file.
      */
-    function fetchAllJS()
+    public function fetchAllJS()
     {
         foreach ($this->footer_js_files as $item){
             $file = ROOTPATH . "public/" . $item;
@@ -204,7 +204,7 @@ class View extends \CodeIgniter\View\View
      * Add all js files to your view files at the end of head tag.
      * It will use on your main template frame file.
      */
-    function fetchAllHeaderJS()
+    public function fetchAllHeaderJS()
     {
         foreach ($this->header_js_files as $item){
             $file = ROOTPATH . "public/" . $item;

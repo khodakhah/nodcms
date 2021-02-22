@@ -51,7 +51,7 @@ class Settings extends \CodeIgniter\Config\BaseConfig
     /**
      * Backend pages frame template name
      */
-    public $backend_template_frame =  'nodcms-admin';
+    public $backend_template_frame =  'layout';
 
     /**
      * Membership/Users pages template folder name

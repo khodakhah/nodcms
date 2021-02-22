@@ -22,7 +22,20 @@
 namespace NodCMS\Core\Controllers;
 
 
+use Config\Services;
+
 abstract class Backend extends App
 {
+    /**
+     * @var \NodCMS\Core\Libraries\Identity
+     */
+    protected $identity;
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->identity = Services::identity();
+        $this->view->config->frameFile = $this->config->backend_template_frame;
+        $this->view->config->viewPath .= "/{$this->config->backend_template}";
+    }
 }

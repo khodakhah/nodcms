@@ -135,11 +135,11 @@
                 <br>
             <?php } ?>
 
-            <?php if($this->session->flashdata('static_error')){ ?>
+            <?php if($this->flashdata('static_error')){ ?>
                 <div class="alert alert-block alert-danger fade in">
                     <button data-dismiss="alert" class="close" type="button"></button>
                     <h4 class="alert-heading"><?php echo _l('Error',$this); ?>!</h4>
-                    <?php echo $this->session->flashdata('static_error'); ?>
+                    <?php echo $this->flashdata('static_error'); ?>
                 </div>
             <?php } ?>
             <div class="page-content">
@@ -157,7 +157,7 @@
         <i class="icon-arrow-up"></i>
     </div>
     <div class="page-footer-inner margin-bottom-20 ">
-        <?php echo $this->render("copyright"); ?>
+        <?php echo $this->common()->render("copyright"); ?>
     </div>
 </div>
 <!-- END FOOTER -->
@@ -167,8 +167,8 @@
 <script src="<?php echo base_url("assets/plugins/jquery-ui/jquery-ui.min.js"); ?>" type="text/javascript"></script>
 
 <script src="<?php echo base_url("assets/nodcms/js/common.js"); ?>" type="text/javascript"></script>
-<?php echo $this->render("common/bootstrap-toastr"); ?>
-<?php echo $this->render("common/bootstrap-confirmation"); ?>
+<?php echo $this->common()->render("common/bootstrap-toastr"); ?>
+<?php echo $this->common()->render("common/bootstrap-confirmation"); ?>
 <script>
     $(function(){
         $.setCurrencyFormatSettings({
