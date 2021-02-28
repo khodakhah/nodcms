@@ -24,7 +24,7 @@ namespace NodCMS\Core\Controllers;
 use CodeIgniter\Controller;
 use Config\Services;
 use Config\Settings;
-use NodCMS\Core\View\View;
+use NodCMS\Core\View\Layout;
 
 abstract class Base extends Controller
 {
@@ -42,8 +42,6 @@ abstract class Base extends Controller
     public $cleanFrame;
     // Outputs data (The parameters will use in view files)
     public $data;
-    // User data from DB
-    public $userdata;
     // Static sidebar close status
     public $page_sidebar = "frontend_sidebar";
     public $page_sidebar_closed = false;
@@ -60,7 +58,7 @@ abstract class Base extends Controller
     protected $router;
 
     /**
-     * @var \NodCMS\Core\View\View
+     * @var \NodCMS\Core\View\Layout
      */
     public $view;
 
@@ -89,7 +87,7 @@ abstract class Base extends Controller
         $this->config = new Settings();
         $this->settings = $this->config->settings_default;
         $this->router = \Config\Services::router();
-        $this->view = new View();
+        $this->view = new Layout();
         $this->request = Services::request();
         $this->session = Services::session();
         $this->model = Services::model();

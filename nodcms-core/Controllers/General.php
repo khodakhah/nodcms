@@ -22,9 +22,6 @@
 namespace NodCMS\Core\Controllers;
 
 use Config\Autoload;
-use Config\Modules;
-use Config\Services;
-use NodCMS\Core\View\View;
 use NodCMS\Core\Libraries;
 
 class General extends Frontend

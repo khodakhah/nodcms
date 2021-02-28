@@ -162,7 +162,7 @@
 </div>
 <!-- END FOOTER -->
 
-<script src="<?php echo base_url("assets/popper/popper.min.js"); ?>" type="text/javascript"></script>
+<script src="<?php echo base_url("assets/plugins/popper/popper.min.js"); ?>" type="text/javascript"></script>
 <script src="<?php echo base_url("assets/nodcms/bootstrap-4.1.3/js/bootstrap.min.js"); ?>" type="text/javascript"></script>
 <script src="<?php echo base_url("assets/plugins/jquery-ui/jquery-ui.min.js"); ?>" type="text/javascript"></script>
 

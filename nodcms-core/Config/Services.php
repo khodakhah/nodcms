@@ -1,9 +1,13 @@
 <?php namespace Config;
 
 use CodeIgniter\Config\Services as CoreServices;
-use NodCMS\Core\Hooks\Hooks;
+use NodCMS\Core\Libraries\Identity;
 use NodCMS\Core\Libraries\Language;
+use NodCMS\Core\Models\ModelMap;
 use NodCMS\Core\Notification\EmailNotification;
+use NodCMS\Core\Response\QuickResponse;
+use NodCMS\Core\View\LinkList;
+use NodCMS\Core\Modules\Modules;
 
 /**
  * Services Configuration file.
@@ -34,9 +38,9 @@ class Services extends CoreServices
     /**
      * @param string $locale
      * @param bool $getShared
-     * @return \NodCMS\Core\Libraries\Language
+     * @return Language
      */
-    public static function language(string $locale = null, bool $getShared = true)
+    public static function language(string $locale = null, bool $getShared = true): Language
     {
         if ($getShared)
         {
@@ -55,16 +59,16 @@ class Services extends CoreServices
      *
      * @param $controller
      * @param bool $getShared
-     * @return \NodCMS\Core\Libraries\Identity
+     * @return Identity
      */
-    public static function identity(bool $getShared = true): \NodCMS\Core\Libraries\Identity
+    public static function identity(bool $getShared = true): Identity
     {
         if ($getShared)
         {
             return static::getSharedInstance('identity');
         }
 
-        return new \NodCMS\Core\Libraries\Identity();
+        return new Identity();
     }
 
     /**
@@ -73,44 +77,86 @@ class Services extends CoreServices
      * @param bool $getShared
      * @return EmailNotification
      */
-    public static function emailNotification(bool $getShared = true): \NodCMS\Core\Notification\EmailNotification
+    public static function emailNotification(bool $getShared = true): EmailNotification
     {
         if ($getShared)
         {
             return static::getSharedInstance('emailNotification');
         }
 
-        return new \NodCMS\Core\Notification\EmailNotification();
+        return new EmailNotification();
     }
 
     /**
      * ModelMap is a luncher class to
      *
      * @param bool $getShared
-     * @return \NodCMS\Core\Models\ModelMap
+     * @return ModelMap
      */
-    public static function model(bool $getShared = true): \NodCMS\Core\Models\ModelMap
+    public static function model(bool $getShared = true): ModelMap
     {
         if ($getShared)
         {
             return static::getSharedInstance('model');
         }
 
-        return new \NodCMS\Core\Models\ModelMap();
+        return new ModelMap();
     }
 
     /**
      * @param $controller
      * @param bool $getShared
-     * @return \NodCMS\Core\Core\Modules
+     * @return Modules
      */
-    public static function modules(bool $getShared = true): \NodCMS\Core\Core\Modules
+    public static function modules(bool $getShared = true): Modules
     {
         if ($getShared)
         {
             return static::getSharedInstance('modules');
         }
 
-        return new \NodCMS\Core\Core\Modules();
+        return new Modules();
+    }
+
+    /**
+     * NodCMS responses
+     *
+     * @return QuickResponse
+     */
+    public static function quickResponse(): QuickResponse
+    {
+        return new QuickResponse();
+    }
+
+    /**
+     * A link list for sidebar
+     *
+     * @param bool $getShared
+     * @return LinkList
+     */
+    public static function sidebar(bool $getShared = true): LinkList
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance("sidebar");
+        }
+
+        return new LinkList();
+    }
+
+    /**
+     * A link list for top menu
+     *
+     * @param bool $getShared
+     * @return LinkList
+     */
+    public static function topMenu(bool $getShared = true): LinkList
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance("topMenu");
+        }
+
+        return new LinkList();
     }
 }

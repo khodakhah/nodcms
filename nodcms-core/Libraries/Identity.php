@@ -43,8 +43,7 @@ namespace NodCMS\Core\Libraries;
 
 
 use CodeIgniter\Config\Services;
-use NodCMS\Core\Response\Response;
-use NodCMS\Core\Response\ResponseType;
+use NodCMS\Core\Response\QuickResponse;
 
 class Identity
 {
@@ -56,20 +55,19 @@ class Identity
     public function __constructor($controller)
     {
         $this->controller = $controller;
-        $this->session = Services::session();
     }
 
     public function getUserData()
     {
-        if($this->session->has("user_id")) {
+        if(Services::session()->has("user_id")) {
             $userModel = new \NodCMS\Core\Models\Users_model();
-            $user = $userModel->getOne($this->session->get("user_id"));
+            $user = $userModel->getOne(Services::session()->get("user_id"));
 //            if($user["active"]!=1 && $this->router->methodName() != "logout"){
 //                $this->accountLock();
 //                return;
 //            }
             if(!empty($user)) {
-                $user['has_dashboard'] = $this->session->has("has_dashboard") ? $this->session->get("has_dashboard") : false;
+                $user['has_dashboard'] = Services::session()->has("has_dashboard") ? Services::session()->get("has_dashboard") : false;
                 return $user;
             }
         }
@@ -79,14 +77,14 @@ class Identity
 
     public function hasSession(): bool
     {
-        return $this->session->has("user_id");
+        return Services::session()->has("user_id");
     }
 
     public function isValid(): bool
     {
-        if($this->session->has("user_id")) {
+        if(Services::session()->has("user_id")) {
             $userModel = new \NodCMS\Core\Models\Users_model();
-            $user = $userModel->getOne($this->session->get("user_id"));
+            $user = $userModel->getOne(Services::session()->get("user_id"));
             return !empty($user);
         }
 
@@ -94,15 +92,20 @@ class Identity
     }
 
     public function isAdmin(bool $isDemoAdmin = false): bool{
-        if($this->session->get('group') !== 1) {
-            $reponse = new Response(new ResponseType(ResponseType::TYPES_ERROR_MESSAGE));
+        if(Services::session()->get('group') !== 1) {
+            $reponse = new QuickResponse();
             $reponse->setMessage(_l("Unfortunately you do not have permission to this part of system.", $this));
-            $reponse->setUrl("/");
-            $this->response = $reponse->get();
+            $reponse->setUrl( "/");
+            $this->response = $reponse->getError();
             return false;
         }
 
         return true;
+    }
+
+    public function isActive(): bool
+    {
+        return boolval(Services::session()->get('active'));
     }
 
     public function getResponse()

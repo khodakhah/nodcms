@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-2 col-sm-6">
                 <a href="<?php echo base_url(); ?>">
-                    <img class="img-fluid site-logo" src="<?php echo base_url().$this->settings["logo_light"]; ?>" alt="<?php echo $this->settings["company"]; ?>" title="<?php echo $this->settings["company"]; ?>">
+                    <img class="img-fluid site-logo" src="<?php echo base_url($this->settings["logo_light"]); ?>" alt="<?php echo $this->settings["company"]; ?>" title="<?php echo $this->settings["company"]; ?>">
                 </a>
             </div>
             <div class="col-md-2 col-sm-6 order-md-12">
@@ -12,7 +12,7 @@
                         <?php if(isset($languages) && count($languages)>1){ ?>
                             <li class="nav-item dropdown dropdown-language">
                                 <a href="javascript:;" class="nav-link" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-                                    <img alt="" src="<?php echo base_url()."/upload_file/images/translate.png"; ?>"/>
+                                    <img alt="" src="<?php echo base_url("upload_file/images/translate.png"); ?>"/>
                                     <?php echo $this->language['language_title']; ?>
                                 </a>
                                 <div class="dropdown-menu">
@@ -34,14 +34,14 @@
                                 </a>
                                 <div class="dropdown-menu">
                                     <?php if($this->userdata['has_dashboard']){ ?>
-                                        <a class="dropdown-item" href="<?php echo base_url(); ?>user/dashboard"><i class="icon-speedometer"></i><?php echo _l('Dashboard',$this);?></a>
+                                        <a class="dropdown-item" href="<?php echo base_url("user/dashboard"); ?>"><i class="icon-speedometer"></i><?php echo _l('Dashboard',$this);?></a>
                                     <?php } ?>
                                     <?php if(in_array($this->userdata['group_id'],array(1,100))){ ?>
-                                        <a class="dropdown-item" href="<?php echo base_url(); ?>admin"><i class="icon-grid"></i><?php echo _l('Control Panel',$this);?></a>
-                                        <a class="dropdown-item" href="<?php echo base_url(); ?>admin/settings"><i class="icon-settings"></i><?=_l('Settings',$this);?></a>
+                                        <a class="dropdown-item" href="<?php echo base_url("admin"); ?>"><i class="icon-grid"></i><?php echo _l('Control Panel',$this);?></a>
+                                        <a class="dropdown-item" href="<?php echo base_url("admin/settings"); ?>"><i class="icon-settings"></i><?=_l('Settings',$this);?></a>
                                     <?php } ?>
-                                    <a class="dropdown-item" href="<?php echo base_url()."user/account"; ?>"><i class="icon-user"></i><?=_l('Account Setting',$this);?></a>
-                                    <a class="dropdown-item" href="<?php echo base_url()."logout/".$this->language['code']; ?>"><i class="icon-power"></i><?=_l('Log Out',$this);?></a>
+                                    <a class="dropdown-item" href="<?php echo base_url("user/account"); ?>"><i class="icon-user"></i><?=_l('Account Setting',$this);?></a>
+                                    <a class="dropdown-item" href="<?php echo base_url("logout/".$this->language['code']); ?>"><i class="icon-power"></i><?=_l('Log Out',$this);?></a>
                                 </div>
                             </li>
                         <?php }else{ ?>
@@ -51,12 +51,12 @@
                                     <i class="fa fa-angle-down"></i>
                                 </a>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="<?php echo base_url().$this->language['code']; ?>/login">
+                                    <a class="dropdown-item" href="<?php echo base_url("{$this->language['code']}/login"); ?>">
                                         <i class="icon-lock-open"></i>
                                         <?php echo _l("Login",$this); ?>
                                     </a>
                                     <?php if($this->settings['registration']==1){ ?>
-                                        <a class="dropdown-item" href="<?php echo base_url().$this->language['code']; ?>/user-registration">
+                                        <a class="dropdown-item" href="<?php echo base_url("{$this->language['code']}/user-registration"); ?>">
                                             <i class="icon-user-follow"></i>
                                             <?php echo _l("Register",$this); ?>
                                         </a>

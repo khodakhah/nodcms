@@ -19,29 +19,34 @@
  *
  */
 
-namespace NodCMS\Core\Response;
+namespace NodCMS\Core\Types;
 
-
-class ResponseType
+class Link
 {
-    public $messageVar;
-    public $status;
+    public $title;
 
-    private $_types = [
-        0 => ['status' => "error", 'messageVar'=> "error"],
-        1 => ['status' => "success", 'messageVar'=> "msg"],
-    ];
+    public $icon;
 
-    public const TYPES_ERROR_MESSAGE = 0;
-    public const TYPES_SUCCESS_MESSAGE = 1;
+    public $color;
 
-    public function __construct($type)
+    public $order;
+
+    public $uri;
+
+    /**
+     * Link constructor.
+     * Fill variable from an array
+     *
+     * @param array|null $value
+     */
+    public function __construct(array $value = null)
     {
-        if(!in_array($type, $this->_types)) {
-            throw new \Exception("Response type \"{$type}\" is undefined.");
+        if($value != null) {
+            foreach($this as $key=>$item) {
+                if(key_exists($key, $value)) {
+                    $this->$key = $value;
+                }
+            }
         }
-
-        $this->status = $this->_types[$type]['status'];
-        $this->messageVar = $this->_types[$type]['messageVar'];
     }
 }

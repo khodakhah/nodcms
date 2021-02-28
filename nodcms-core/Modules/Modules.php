@@ -19,11 +19,12 @@
  *
  */
 
-namespace NodCMS\Core\Core;
+namespace NodCMS\Core\Modules;
 
 use Config\Autoload;
 use Config\Services;
 use NodCMS\Core\Models\ModelMap;
+use NodCMS\Core\Startup;
 
 class Modules
 {
@@ -31,7 +32,7 @@ class Modules
     private $dbModules;
 
     /**
-     * @var Hooks[]
+     * @var I_Startup[]
      */
     private $activeModules;
 
@@ -39,19 +40,12 @@ class Modules
     {
         $this->modulesDirs = Autoload::modulesPaths();
         $this->dbModules = ModelMap::packages()->getAll();
-        $this->activeModules = array();
+        $this->activeModules = [];
 
         $modules = ModelMap::packages()->getAll(['active'=>1]);
         foreach($modules as $item) {
             $class = "NodCMS\\".ucfirst($item['package_name'])."\Startup";
             $this->activeModules[ucfirst($item['package_name'])] = new $class();
-        }
-    }
-
-    public function preset()
-    {
-        foreach($this->activeModules as $module) {
-            $module->preset();
         }
     }
 
@@ -92,6 +86,17 @@ class Modules
                 $model->packagesDashboard()->add(array('package_name'=>$item, 'package_sort'=>$max));
                 $max++;
             }
+        }
+    }
+
+    /**
+     * Execute backend startup for all modules
+     */
+    public function backend()
+    {
+        foreach($this->activeModules as $module) {
+            if(method_exists($module, 'backend'))
+                $module->backend();
         }
     }
 }

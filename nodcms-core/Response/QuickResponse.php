@@ -23,12 +23,17 @@ namespace NodCMS\Core\Response;
 
 use Config\Services;
 
-class Response
+class QuickResponse
 {
     /**
-     * @var ResponseType
+     * @var QuickResponseType
      */
     protected $type;
+
+    /**
+     * @var bool
+     */
+    protected $ajax;
 
     protected $message;
 
@@ -37,14 +42,24 @@ class Response
     protected $data;
 
     /**
-     * Response constructor.
-     *
-     * @param ResponseType $type
+     * NodCMS Response type error
      */
-    public function __construct(ResponseType $type)
-    {
-        $this->type = $type;
-    }
+    public const RESPONSE_TYPE_ERROR = 'error';
+
+    /**
+     * NodCMS Response type success
+     */
+    public const RESPONSE_TYPE_SUCCESS = 'success';
+
+    /**
+     * NodCMS response types
+     *
+     * @var string[][]
+     */
+    private $_types = [
+        self::RESPONSE_TYPE_ERROR => ['status' => "error", 'messageVar'=> "error"],
+        self::RESPONSE_TYPE_SUCCESS => ['status' => "success", 'messageVar'=> "msg"],
+    ];
 
     /**
      * Set the error message.
@@ -77,21 +92,51 @@ class Response
     }
 
     /**
+     * Set the ajax response flag
+     *
+     * @param bool $value
+     */
+    public function setAjax(bool $value)
+    {
+        $this->ajax = $value;
+    }
+
+    /**
      * Returns response result
      *
+     * @param $type
+     * @param string|null $message
+     * @param string|null $uri
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
-    public function get()
+    private function get($type, string $message = null, string $uri = null)
     {
-        $request = Services::request();
-        if($request->isAJAX()){
+        if(!in_array($type, $this->_types)) {
+            throw new \Exception("Response type \"{$type}\" is undefined.");
+        }
+
+        $_type = $this->_types[$type];
+
+        if($message != null)
+            $this->setMessage($message);
+
+        if($uri != null)
+            $this->setUrl($uri);
+
+        if($this->ajax === null) {
+            $request = Services::request();
+            $this->ajax = $request->isAJAX();
+        }
+
+        if($this->ajax){
             $data = array(
-                "status"=>$this->type->status,
                 "url"=>$this->url,
+                "status"=>$_type['status'],
             );
             if($this->message!=null)
-                $data[$this->type->messageVar] = $this->message;
 
+                $data[$_type['messageVar']] = $this->message;
             if(!empty($this->data))
                 $data["data"] = $this->data;
 
@@ -100,8 +145,34 @@ class Response
 
         if($this->message!=null) {
             $session = Services::session();
-            $session->setFlashdata($this->type->status, $this->message);
+            $session->setFlashdata($_type['status'], $this->message);
         }
         return redirect()->to($this->url);
+    }
+
+    /**
+     * Returns an error response
+     *
+     * @param string|null $message
+     * @param string|null $uri
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
+     */
+    public function getError(string $message = null, string $uri = null)
+    {
+        return $this->get(self::RESPONSE_TYPE_ERROR, $message, $uri);
+    }
+
+    /**
+     * Returns a success response
+     *
+     * @param string|null $message
+     * @param string|null $uri
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
+     */
+    public function getSuccess(string $message = null, string $uri = null)
+    {
+        return $this->get(self::RESPONSE_TYPE_SUCCESS, $message, $uri);
     }
 }

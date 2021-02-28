@@ -21,6 +21,8 @@
 
 namespace NodCMS\Core\Controllers;
 
+use Config\Services;
+
 abstract class Frontend extends App
 {
     public $lang;
@@ -42,22 +44,11 @@ abstract class Frontend extends App
 
         $this->data['lang_url'] = base_url().uri_string();
 
-        if($this->session->has("user_id")) {
-            $userModel = new \NodCMS\Core\Models\Users_model();
-            $this->userdata = $userModel->getOne($this->session->get("user_id"));
-//            if($this->userdata["active"]!=1 && $this->router->methodName() != "logout"){
-//                $this->accountLock();
-//                return;
-//            }
-            if(empty($this->userdata)) {
-                $this->userdata['has_dashboard'] = $this->session->has("has_dashboard") ? $this->session->get("has_dashboard") : false;
-            }
-            else{
-                $this->userdata = NULL;
-            }
+        if(Services::identity()->hasSession()) {
+            $this->userdata = Services::identity()->getUserData();
         }
         else {
-            $this->userdata = NULL;
+            $this->userdata = null;
         }
 
 //        $this->setMenus();
