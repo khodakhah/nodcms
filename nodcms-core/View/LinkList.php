@@ -24,13 +24,11 @@ namespace NodCMS\Core\View;
 
 use NodCMS\Core\Types\Link;
 
-class LinkList extends View
+abstract class LinkList extends View
 {
-    /**
-     * @var Link[]
-     */
-    private $links = [];
-    private $subLinks = [];
+    protected $links = [];
+
+    abstract protected function newLink();
 
     /**
      * Add a Link to the link list
@@ -60,54 +58,20 @@ class LinkList extends View
     }
 
     /**
-     * Add a link to the link list
-     *
-     * @param string $key
-     * @param string $title
-     * @param string|null $url
-     * @param string|null $icon
-     */
-    public function addLink(string $key, string $title, string $url = null, string $icon = null)
-    {
-        $link = new Link();
-        $link->title = $title;
-        $link->uri = $url;
-        $link->icon = $icon;
-        $this->add($key, $link);
-    }
-
-    /**
-     * Add a sub link to the link list
-     *
-     * @param string $key
-     * @param string $sub_key
-     * @param string $title
-     * @param string|null $url
-     * @param string|null $icon
-     */
-    public function addSubLink(string $key, string $sub_key, string $title, string $url = null, string $icon = null)
-    {
-        $link = new Link();
-        $link->title = $title;
-        $link->uri = $url;
-        $link->icon = $icon;
-
-        if(!isset($this->links[$key]))
-            return;
-
-        if(!isset($this->subLinks[$key][$sub_key]))
-            $this->subLinks[$key]['sub_menu'] = array();
-
-        $this->subLinks[$key][$sub_key] = $link;
-    }
-
-    /**
      * Return link list as array
      *
-     * @return Link[]
+     * @return array
      */
     public function getLinks(): array
     {
         return $this->links;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasLinks(): bool
+    {
+        return !empty($this->links);
     }
 }

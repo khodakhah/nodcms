@@ -8,6 +8,8 @@ use NodCMS\Core\Notification\EmailNotification;
 use NodCMS\Core\Response\QuickResponse;
 use NodCMS\Core\View\LinkList;
 use NodCMS\Core\Modules\Modules;
+use NodCMS\Core\View\Sidebar;
+use NodCMS\Core\View\TopMenu;
 
 /**
  * Services Configuration file.
@@ -132,16 +134,16 @@ class Services extends CoreServices
      * A link list for sidebar
      *
      * @param bool $getShared
-     * @return LinkList
+     * @return Sidebar
      */
-    public static function sidebar(bool $getShared = true): LinkList
+    public static function sidebar(bool $getShared = true): Sidebar
     {
         if ($getShared)
         {
             return static::getSharedInstance("sidebar");
         }
 
-        return new LinkList();
+        return new Sidebar();
     }
 
     /**
@@ -157,6 +159,6 @@ class Services extends CoreServices
             return static::getSharedInstance("topMenu");
         }
 
-        return new LinkList();
+        return new TopMenu();
     }
 }

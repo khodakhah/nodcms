@@ -19,34 +19,35 @@
  *
  */
 
-namespace NodCMS\Core\Types;
+namespace NodCMS\Core\View;
 
-class Link
+
+use NodCMS\Core\Types\Link;
+
+class TopMenu extends LinkList
 {
     /**
-     * @var string
+     * @return Link
      */
-    public $title;
-
-    /**
-     * @var string
-     */
-    public $uri = "javascript:;";
-
-    /**
-     * Link constructor.
-     * Fill variable from an array
-     *
-     * @param array|null $value
-     */
-    public function __construct(array $value = null)
+    protected function newLink(): Link
     {
-        if($value != null) {
-            foreach($this as $key=>$item) {
-                if(key_exists($key, $value)) {
-                    $this->$key = $value;
-                }
-            }
-        }
+        return new Link();
+    }
+
+    /**
+     * Add a link to the link list
+     *
+     * @param string $key
+     * @param string $title
+     * @param string|null $url
+     * @param string|null $icon
+     */
+    public function addLink(string $key, string $title, string $url = null)
+    {
+        $link = $this->newLink();
+        $link->title = $title;
+        if($url !== null)
+            $link->uri = $url;
+        $this->add($key, $link);
     }
 }

@@ -31,7 +31,7 @@
 <div class="clearfix"></div>
 <!-- BEGIN CONTAINER -->
 <div class="row no-gutters">
-    <?php if(count($this->admin_panel_items)!=0){ ?>
+    <?php if($this->hasSidebar()){ ?>
         <div class="sidebar-col d-print-none">
             <ul class="nav flex-column nodcms-sidebar">
                 <li class="nav-item sidebar-minimizer">
@@ -40,7 +40,7 @@
                 <li class="sidebar-close">
                     <a class="btn btn-outline-secondary btn-sm margin-10" href="javascript:;"><i class="fas fa-list"></i></a>
                 </li>
-                <?php echo $this->render($this->page_sidebar); ?>
+                <?php echo $this->sidebar(); ?>
             </ul>
         </div>
     <?php } ?>

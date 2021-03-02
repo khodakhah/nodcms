@@ -21,32 +21,17 @@
 
 namespace NodCMS\Core\Types;
 
-class Link
+
+class SidebarLink extends Link
 {
     /**
      * @var string
      */
-    public $title;
+    public $icon = "";
 
     /**
-     * @var string
+     * @var SidebarLink[]
      */
-    public $uri = "javascript:;";
+    public $subLinks = [];
 
-    /**
-     * Link constructor.
-     * Fill variable from an array
-     *
-     * @param array|null $value
-     */
-    public function __construct(array $value = null)
-    {
-        if($value != null) {
-            foreach($this as $key=>$item) {
-                if(key_exists($key, $value)) {
-                    $this->$key = $value;
-                }
-            }
-        }
-    }
 }

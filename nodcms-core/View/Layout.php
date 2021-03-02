@@ -22,6 +22,8 @@
 namespace NodCMS\Core\View;
 
 
+use Config\Services;
+
 class Layout extends View
 {
     // All add-ons css files in header tag
@@ -32,7 +34,6 @@ class Layout extends View
 
     // All add-ons js files in footer content (append to body tag)
     public $footer_js_files = array();
-
 
     /**
      * Define controller public variables as view variables to use in the view files.
@@ -141,5 +142,33 @@ class Layout extends View
 
         if(!in_array($path . $file_type, $variable))
             array_push($variable, $path . $file_type);
+    }
+
+    /**
+     * Render the frame
+     *
+     * @param array|null $options
+     * @param bool|null $saveData
+     * @return string
+     */
+    public function renderFrame(array $options = null, bool $saveData = null): string
+    {
+        return $this->render($this->config->frameFile, $options, $saveData);
+    }
+
+    /**
+     * Render sidebar
+     *
+     * @param string $view_file
+     * @return string
+     */
+    public function sidebar(string $view_file = "sidebar"): string
+    {
+        return Services::sidebar()->render($view_file);
+    }
+
+    public function hasSidebar(): bool
+    {
+        return Services::sidebar()->hasLinks();
     }
 }

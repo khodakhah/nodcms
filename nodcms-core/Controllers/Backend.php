@@ -36,6 +36,7 @@ abstract class Backend extends App
         parent::__construct();
         $this->view->config->frameFile = $this->config->backend_template_frame;
         $this->view->config->viewPath .= "/{$this->config->backend_template}";
+        Services::sidebar()->config->viewPath .= "/{$this->config->backend_template}";
 
         $this->data['base_url'] = base_url()."admin/";
 

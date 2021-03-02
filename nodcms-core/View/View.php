@@ -104,18 +104,6 @@ class View extends \CodeIgniter\View\View
     }
 
     /**
-     * Render the frame
-     *
-     * @param array|null $options
-     * @param bool|null $saveData
-     * @return string
-     */
-    public function renderFrame(array $options = null, bool $saveData = null): string
-    {
-        return parent::render($this->config->viewPath . "/" . $this->config->frameFile, $options, $saveData);
-    }
-
-    /**
      * Keep the old flashdata() usage in view files
      *
      * @param string $key
