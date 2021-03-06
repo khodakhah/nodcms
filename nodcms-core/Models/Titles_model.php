@@ -21,6 +21,8 @@
 
 namespace NodCMS\Core\Models;
 
+use Config\Services;
+
 class Titles_model extends Model
 {
     function init()
@@ -37,5 +39,28 @@ class Titles_model extends Model
         $foreign_tables = null;
         $translation_fields = null;
         parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
+    }
+
+    /**
+     * Get a row on specific conditions
+     *
+     * @param string $table
+     * @param int $id
+     * @param int|null $language_id
+     * @return array|null
+     */
+    public function getTitle(string $table, int $id, int $language_id = null) : ?array
+    {
+        if($language_id==null)
+            $language_id = Services::language()->get()['language_id'];
+
+        $builder = $this->getBuilder();
+
+        $builder->select("*");
+        $builder->where("relation_id", $id);
+        $builder->where("data_type", $table);
+        $builder->where("language_id", $language_id);
+        $query = $builder->get();
+        return $query->getRowArray();
     }
 }

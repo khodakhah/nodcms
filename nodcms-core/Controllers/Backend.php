@@ -48,7 +48,7 @@ abstract class Backend extends App
         Services::language()->set($this->language);
 
         // Load settings from DB
-//        $this->settings = Services::model()->settings()->getSettings($this->language['language_id']);
+        $this->settings = array_merge($this->settings, $this->model->settings()->getSettings($this->language['language_id']));
 
         Services::sidebar()->addLink(
             'dashboard',

@@ -22,6 +22,7 @@
 namespace NodCMS\Core\Controllers;
 
 use Config\Services;
+use NodCMS\Core\Libraries\Form;
 
 class GeneralAdmin extends Backend
 {
@@ -62,7 +63,7 @@ class GeneralAdmin extends Backend
             if($this->model->packages()->getCount(array('package_name'=>$item['package_name'])) == 0)
                 continue;
             $name = strtolower($item['package_name']);
-            $curl =  $this->curlJSON(base_url()."admin-$name/dashboard", null, 0, SSL_PROTOCOL, true);
+            $curl =  $this->curlJSON(base_url("admin-$name/dashboard"), null, 0, SSL_PROTOCOL, true);
             if($curl['status']!="success" || $curl['content'] == ""){
                 continue;
             }
@@ -193,7 +194,7 @@ class GeneralAdmin extends Backend
                         'rules'=>"",
                         'type'=>"select-array",
                         'default'=>$this->settings['timezone'],
-                        'options'=>DateTimeZone::listIdentifiers(),
+                        'options'=>\DateTimeZone::listIdentifiers(),
                         'class'=>"select2me",
                     ),
                     array(
@@ -373,8 +374,8 @@ class GeneralAdmin extends Backend
                         'title'=>"<a target='_blank' href='https://gdpr-info.eu/'>GDPR</a> Compliant",
                         'content'=>"To make your website <a target='_blank' href='https://gdpr-info.eu/'><strong>General Data Protection Regulation(GDPR)</strong></a> Compliant " .
                             "you shall to active the bellow feature: <strong>" .
-                            "<a target='_blank' href='".base_url().$this->language['code']."/terms-and-conditions'>Accept T&C</a> and " .
-                            "<a target='_blank' href='".base_url().$this->language['code']."/privacy-policy'>Privacy Policy</a> required</strong> " .
+                            "<a target='_blank' href='".base_url($this->language['code']."/terms-and-conditions")."'>Accept T&C</a> and " .
+                            "<a target='_blank' href='".base_url($this->language['code']."/privacy-policy")."'>Privacy Policy</a> required</strong> " .
                             "and enter your business Terms & Conditions and Privacy Policy into the defined fields." .
                             "<br>The Terms & Conditions of and  Privacy Policy's contents will display on your website as separate pages. <br>" .
                             "<br><strong>NOTE:</strong><br>" .
@@ -407,7 +408,7 @@ class GeneralAdmin extends Backend
 
         $languages = $this->model->languages()->getAll();
         foreach($languages as $language){
-            $setting = $this->Public_model->getSettings($language['language_id']);
+            $setting = $this->model->settings()->getSettings($language['language_id']);
             $language_head = array(
                 'label'=>$language['language_title'],
                 'type'=>"h4",
@@ -471,7 +472,7 @@ class GeneralAdmin extends Backend
             return $this->errorMessage("Page not found.", ADMIN_URL.'settings');
         }
 
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($forms[$sub_page]['config'], ADMIN_URL."settings/$sub_page", 'post', 'ajax', $forms[$sub_page]['notes']);
         // * Submit form
         if($myform->ispost()){
@@ -480,8 +481,8 @@ class GeneralAdmin extends Backend
 
             $data = $myform->getPost();
             // Stop Page
-            if(!is_array($data) || count($data)==0 || $data == null){
-                return;
+            if($data === false){
+                return $myform->getResponse();
             }
             // Email templates and messages save
             if(isset($data["auto_messages"])){
@@ -496,15 +497,15 @@ class GeneralAdmin extends Backend
                 foreach($data["auto_messages"] as $language_id=>$value){
                     foreach($auto_emails as $code_key=>$msg_val){
                         $item = $value[$code_key];
-                        $message = $this->Email_messages_model->getOne(null, array('code_key'=>$code_key, 'language_id'=>$language_id));
+                        $message = $this->model->emailMessages()->getOne(null, array('code_key'=>$code_key, 'language_id'=>$language_id));
                         if($message!=null){
-                            $this->Email_messages_model->edit($message['msg_id'], $item);
+                            $this->model->emailMessages()->edit($message['msg_id'], $item);
                         }
                         // Add new message
                         else{
                             $item['language_id'] = $language_id;
                             $item['code_key'] = $code_key;
-                            $this->Email_messages_model->add($item);
+                            $this->model->emailMessages()->add($item);
                         }
                     }
                 }
@@ -513,7 +514,7 @@ class GeneralAdmin extends Backend
             // Options in all languages save
             if(isset($data["options"])){
                 foreach($data["options"] as $language_id=>$item){
-                    if(!$this->Nodcms_admin_model->updateSettings($item, $language_id)){
+                    if(!$this->model->settings()->updateSettings($item, $language_id)){
                         return $this->errorMessage("A settings options could not be saved.", $this);
                     }
                 }
@@ -542,7 +543,7 @@ class GeneralAdmin extends Backend
             }
 
             // The settings without language_id
-            $this->Nodcms_admin_model->updateSettings($data);
+            $this->model->settings()->updateSettings($data);
             return $this->successMessage("Your Setting has been updated successfully!", ADMIN_URL."settings/$sub_page");
         }
 
@@ -562,7 +563,7 @@ class GeneralAdmin extends Backend
 
             $auto_messages_data = array();
             foreach($this->data['auto_emails'] as $language_id=>$val){
-                $autoMsgData = $this->Email_messages_model->getAll(array('language_id'=>$language_id));
+                $autoMsgData = $this->model->emailMessages()->getAll(array('language_id'=>$language_id));
                 foreach($autoMsgData as $value){
                     $auto_messages_data[$value["language_id"]][$language_id] = $value;
                 }
@@ -573,8 +574,7 @@ class GeneralAdmin extends Backend
         $this->data['title'] = _l('Settings',$this);
         $this->data['breadcrumb'] = array(array('title'=>$this->data['title']),
             array('title'=>$this->data['sub_title']));
-        $this->data['content'] = $myform->fetch();
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRenderString($myform->fetch());
     }
 
     /**
@@ -594,7 +594,7 @@ class GeneralAdmin extends Backend
         $keys = array_keys($auto_emails);
         $languages = $this->model->languages()->getCount();
         foreach ($auto_emails as $key=>&$item){
-            $_missed = $this->Email_messages_model->getCount(array('code_key'=>$key));
+            $_missed = $this->model->emailMessages()->getCount(array('code_key'=>$key));
             $item['form_url'] = ADMIN_URL."automaticEmailTextForm/$key";
             if($_missed<$languages){
                 $item['form_badge'] = str_replace("{data}", $languages-$_missed, _l("{data} Empty", $this));
@@ -608,8 +608,7 @@ class GeneralAdmin extends Backend
             array('title'=>$this->data['title']),
             array('title'=>$this->data['sub_title'])
         );
-        $this->data['content'] = $this->load->view($this->mainTemplate.'/auto_emails',$this->data,true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("auto_emails");
     }
 
     /**
@@ -643,7 +642,7 @@ class GeneralAdmin extends Backend
         );
         foreach ($languages as $item){
             // Get contents from database
-            $autoMsgData = $this->Email_messages_model->getOne(null, array('code_key'=>$email_key, 'language_id'=>$item['language_id']));
+            $autoMsgData = $this->model->emailMessages()->getOne(null, array('code_key'=>$email_key, 'language_id'=>$item['language_id']));
             $config = array_merge($config, array(
                 array(
                     'field'=>$email_key."[$item[language_id]][subject]",
@@ -664,7 +663,7 @@ class GeneralAdmin extends Backend
                 ),
             ));
         }
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()) {
             if(!$this->identity->isAdmin())
@@ -673,22 +672,22 @@ class GeneralAdmin extends Backend
             $data = $myform->getPost();
             // Stop Page
             if ($data === false) {
-                return;
+                return $myform->getResponse();
             }
             $language_ids = array_column($languages, 'language_id');
             foreach($data[$email_key] as $key=>$item){
                 if(!in_array($key, $language_ids))
                     continue;
                 // Edit message
-                $message = $this->Email_messages_model->getOne(null, array('code_key'=>$email_key, 'language_id'=>$key));
+                $message = $this->model->emailMessages()->getOne(null, array('code_key'=>$email_key, 'language_id'=>$key));
                 if($message!=null){
-                    $this->Email_messages_model->edit($message['msg_id'], $item);
+                    $this->model->emailMessages()->edit($message['msg_id'], $item);
                 }
                 // Add new message
                 else{
                     $item['language_id'] = $key;
                     $item['code_key'] = $email_key;
-                    $this->Email_messages_model->add($item);
+                    $this->model->emailMessages()->add($item);
                 }
             }
             // Options in all languages save
@@ -710,17 +709,16 @@ class GeneralAdmin extends Backend
             array('title'=>_l('Footer menu',$this), 'description'=>_l("This menu will display in the pre footer.", $this), 'key'=>"footer_menu"),
         );
         foreach($this->data['menu_types'] as &$val){
-            $val['data_list'] = $this->Nodcms_admin_model->get_all_menu(array('menu_key'=>$val['key'], 'sub_menu'=>0));
+            $val['data_list'] = $this->model->menu()->getAll(array('menu_key'=>$val['key'], 'sub_menu'=>0));
             foreach($val['data_list'] as &$item){
-                $item['sub_menu_data'] = $this->Nodcms_admin_model->get_all_menu(array('menu_key'=>$val['key'], 'sub_menu'=>$item['menu_id']));
+                $item['sub_menu_data'] = $this->model->menu()->getAll(array('menu_key'=>$val['key'], 'sub_menu'=>$item['menu_id']));
             }
         }
         $this->data['breadcrumb']=array(
             array('title'=>_l('Menu',$this)),
         );
         $this->data['page'] = "menu";
-        $this->data['content']=$this->load->view($this->mainTemplate.'/menu_manager',$this->data,true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("menu_manager");
     }
 
     /**
@@ -732,7 +730,7 @@ class GeneralAdmin extends Backend
     {
         if($id!=0)
         {
-            $current_data = $this->Nodcms_admin_model->getMenuDetail($id);
+            $current_data = $this->model->menu()->getOne($id);
             if(count($current_data)==0)
                 $this->showError("The menu couldn't find.",ADMIN_URL."menuForm");
             $this->data["form_title"] = _l("Edit", $this);
@@ -740,7 +738,7 @@ class GeneralAdmin extends Backend
             $this->data["form_title"] = _l("Add", $this);
         }
 
-        $languages = $this->Public_model->getAllLanguages();
+        $languages = $this->model->languages()->getAll();
         $config = array(
             array(
                 'field'=>"menu_name",
@@ -752,7 +750,7 @@ class GeneralAdmin extends Backend
         );
         foreach($languages as $item){
             if(isset($current_data))
-                $title = $this->Public_model->getTitle("menu",$current_data['menu_id'], $item['language_id']);
+                $title = $this->model->titles()->getTitle("menu",$current_data['menu_id'], $item['language_id']);
             $config[] = array(
                 'field'=>"titles[$item[language_id]]",
                 'label'=>_l("Title", $this),
@@ -780,23 +778,22 @@ class GeneralAdmin extends Backend
             'type'=>"hidden",
             'default'=>$menu_type,
         );
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, ADMIN_URL."menuForm/$id/$menu_type", 'post', 'ajax');
         if($myform->ispost()){
             $data = $myform->getPost();
             // Stop Page
             if($data === false){
-                return;
+                return $myform->getResponse();
             }
             if(!$this->identity->isAdmin())
                 return $this->identity->getResponse();
-            $this->Nodcms_admin_model->menu_manipulate($data,$id);
+            $this->model->menu()->edit($id, $data);
             return $this->successMessage("Menu has been successfully updated.", ADMIN_URL."menu");
         }
 
         if($this->input->is_ajax_request()){
             echo $myform->fetch('',array('data-redirect'=>1));
-            return;
         }
 
         $this->data['title'] = _l("Menu Manager", $this);
@@ -805,13 +802,12 @@ class GeneralAdmin extends Backend
             array('title'=>$this->data['sub_title'])
         );
         $this->data['page'] = "menu_edit";
-        $this->data['content'] = $myform->fetch('',array('data-redirect'=>1));;
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender($myform->fetch('',array('data-redirect'=>1)));
     }
 
     function menuVisibility($id)
     {
-        $data = $this->Nodcms_admin_model->getMenuDetail($id);
+        $data = $this->model->menu()->getOne($id);
         if(count($data)==0){
             return $this->errorMessage("Couldn't find the menu item.", ADMIN_URL."menu");
         }
@@ -826,7 +822,7 @@ class GeneralAdmin extends Backend
         $update_data = array(
             'public'=>$public
         );
-        $this->Nodcms_admin_model->menu_manipulate($update_data, $id);
+        $this->model->menu()->edit($id, $update_data);
         $this->successMessage("Success", ADMIN_URL."menu");
     }
 
@@ -849,7 +845,7 @@ class GeneralAdmin extends Backend
                     'sub_menu'=>$sub_menu[$index],
                     'menu_key'=>$menu_key,
                 );
-                $this->Nodcms_admin_model->menu_manipulate($update_data, $item->id);
+                $this->model->menu()->edit($item->id, $update_data);
                 if(isset($item->children)){
                     $sub_menu[$index+1] = $item->id;
                     $children[$index+1] = $item->children;
@@ -870,15 +866,8 @@ class GeneralAdmin extends Backend
         if(!$this->identity->isAdmin())
             return $this->identity->getResponse();
 
-        if ($this->Nodcms_admin_model->menu_manipulate($this->input->post('data',TRUE),$id))
-        {
-            $this->session->set_flashdata('success', _l('Updated menu',$this));
-        }
-        else
-        {
-            $this->session->set_flashdata('error', _l('Updated menu error. Please try later',$this));
-        }
-        redirect(ADMIN_URL."menu");
+        $this->model->menu()->edit($id, $this->input->post('data',TRUE));
+        return Services::quickResponse()->getSuccess(_l('Updated menu',$this), ADMIN_URL."menu");
     }
 
     /**
@@ -909,8 +898,7 @@ class GeneralAdmin extends Backend
         $this->data['data_list']=$this->model->languages()->getAll(null,null,1,array('sort_order','asc'));
         $this->data['key_changes'] = findNewLangKeys($this);
         $this->data['page'] = "language";
-        $this->data['content'] = $this->load->view($this->mainTemplate.'/language_sort',$this->data,true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("language_sort");
     }
 
     /**
@@ -1137,13 +1125,13 @@ class GeneralAdmin extends Backend
             ),
         );
 
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, ADMIN_URL."languageSubmit/$id", 'post', 'ajax');
         if($myform->ispost()){
             $data = $myform->getPost();
             // Stop Page
-            if($data === false || !is_array($data) || count($data)==0 || $data == null){
-                return;
+            if($data === false){
+                return $myform->getResponse();
             }
             if(!$this->identity->isAdmin())
                 return $this->identity->getResponse();
@@ -1187,8 +1175,7 @@ class GeneralAdmin extends Backend
             array('title'=>$this->data['sub_title'])
         );
         $this->data['page'] = "language";
-        $this->data['content'] = $this->load->view($this->mainTemplate."/language_submit", $this->data, true);
-        $this->load->view($this->frameTemplate, $this->data);
+        return $this->viewRender("language_submit");
     }
 
     /**
@@ -1232,7 +1219,7 @@ class GeneralAdmin extends Backend
         $self_url = ADMIN_URL."languageDelete/$id";
 
         if($confirm!=1){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">' .
                     str_replace("{data}", "<strong>$current_data[language_title]</strong>",_l("This action will delete the language '{data}' from database.", $this)) .' '.
@@ -1247,7 +1234,6 @@ class GeneralAdmin extends Backend
                 'confirmUrl'=>$self_url."/1",
                 'redirect'=>1,
             ));
-            return;
         }
 
         $this->model->languages()->remove($id);
@@ -1262,10 +1248,10 @@ class GeneralAdmin extends Backend
      */
     function languageEditFile($id,$file_name)
     {
-        $this->data['data']=$this->Nodcms_admin_model->get_language_detail($id);
+        $this->data['data']=$this->model->languages()->getOne($id);
         if($this->data['data']==null || !file_exists( SELF_PATH.'nodcms/language/'.$this->data['data']['language_name'].'/'.$file_name.'_lang.php')){
             $this->session->set_flashdata('error', _l('URL-Request was not exists!',$this));
-            redirect(base_url()."admin/language");
+            return redirect(ADMIN_URL."language");
         }
         $this->load->library('Get_lang_in_array');
         $CI = new Get_lang_in_array();
@@ -1290,18 +1276,17 @@ class GeneralAdmin extends Backend
                     file_put_contents($file, $fileContent);
                 }
                 $this->session->set_flashdata('success', _l('Edit language file successfully!',$this));
-                redirect(base_url()."admin/edit_lang_file/".$id.'/'.$file_name);
+                return redirect(ADMIN_URL."edit_lang_file/".$id.'/'.$file_name);
             }else{
                 $this->session->set_flashdata('error', _l('This request is just fore real admin.',$this));
-                redirect(ADMIN_URL."language");
+                return redirect(ADMIN_URL."language");
             }
         }
         $this->data['file_name'] = $file_name;
-        $this->data['languages']=$this->Nodcms_admin_model->get_all_language();
+        $this->data['languages']=$this->model->languages()->getAll();
         $this->data['title'] = _l("Edit language file",$this);
         $this->data['page'] = "edit lang file";
-        $this->data['content']=$this->load->view($this->mainTemplate.'/language_edit_file',$this->data,true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("language_edit_file");
     }
 
     /**
@@ -1315,7 +1300,7 @@ class GeneralAdmin extends Backend
         if(!isset($lang_temp)){
             return $this->errorMessage("lang_temp.php file not found.", ADMIN_URL."language");
         }
-        $this->data['data'] = $this->Nodcms_admin_model->get_language_detail($id);
+        $this->data['data'] = $this->model->languages()->getOne($id);
         if($this->data['data']==null){
             return $this->errorMessage("The language was not found.", ADMIN_URL."language");
         }
@@ -1392,12 +1377,11 @@ class GeneralAdmin extends Backend
             file_put_contents($file, $fileContent);
             return $this->successMessage("Edit language file successfully!", ADMIN_URL."languageTranslation/$id");
         }
-        $this->data['languages'] = $this->Nodcms_admin_model->get_all_language();
+        $this->data['languages'] = $this->model->languages()->getAll();
         $this->data['title'] = _l("Edit Translation File",$this);
         $this->data['sub_title'] = $this->data['data']['language_name'];
         $this->data['page'] = "language_translation";
-        $this->data['content']=$this->load->view($this->mainTemplate.'/language_edit_file',$this->data,true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("language_edit_file");
     }
 
     function languageUpdateTranslation()
@@ -1415,7 +1399,6 @@ class GeneralAdmin extends Backend
      */
     function socialLinks($page = 1)
     {
-        $this->load->library("Ajaxlist");
         $theList = new Ajaxlist();
         $config = array(
             'total_rows'=>0,
@@ -1455,16 +1438,16 @@ class GeneralAdmin extends Backend
             'page'=>$page,
         );
         $conditions = null;
-        $config['total_rows'] = $this->Social_links_model->getCount($conditions);
+        $config['total_rows'] = $this->model->Social_links()->getCount($conditions);
         $theList->setOptions($config);
         if($this->input->is_ajax_request()){
-            $data = $this->Social_links_model->getAll($conditions, $config['per_page'], $config['page']);
+            $data = $this->model->Social_links()->getAll($conditions, $config['per_page'], $config['page']);
             echo $theList->ajaxData($data);
             return;
         }
         $this->data['title'] = _l("Social Links", $this);
         $this->data['sub_title'] = _l("List", $this);
-        $this->data['data_list'] = $this->Nodcms_admin_model->getSocialLinks();
+        $this->data['data_list'] = $this->model->socialLinks()->getAll();
         $this->data['breadcrumb']=array(
             array('title'=>$this->data['title']),
         );
@@ -1473,8 +1456,7 @@ class GeneralAdmin extends Backend
         );
         $this->data['page'] = "social_links";
         $this->data['the_list'] = $theList->getPage();
-        $this->data['content'] = $this->load->view($this->mainTemplate."/data_list",$this->data, true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("data_list");
     }
 
     /**
@@ -1487,7 +1469,7 @@ class GeneralAdmin extends Backend
         $back_url = ADMIN_URL."socialLinks";
         $self_url = ADMIN_URL."socialLinksForm";
         if($id > 0){
-            $current_data = $this->Social_links_model->getOne($id);
+            $current_data = $this->model->Social_links()->getOne($id);
             if(!is_array($current_data) || count($current_data) == 0){
                 return $this->errorMessage("Social link not found.", $back_url);
             }
@@ -1557,7 +1539,7 @@ class GeneralAdmin extends Backend
             ),
         );
 
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()){
             if(!$this->identity->isAdmin())
@@ -1565,16 +1547,16 @@ class GeneralAdmin extends Backend
             $data = $myform->getPost();
             // Stop Page
             if($data === false){
-                return;
+                return $myform->getResponse();
             }
 
             $titles = array_combine(array_column($social_types, 'class'), array_column($social_types, 'title'));
             $data['title'] = $titles[$data['class']];
             if ($id > 0) {
-                $this->Social_links_model->edit($id, $data);
+                $this->model->Social_links()->edit($id, $data);
                 return $this->successMessage("Social link has been updated.", $back_url);
             }
-            $this->Social_links_model->add($data);
+            $this->model->Social_links()->add($data);
             return $this->successMessage("Social link has been inserted.", $back_url);
         }
 
@@ -1585,8 +1567,7 @@ class GeneralAdmin extends Backend
         );
         $this->data['page'] = "social_links_edit";
 
-        $this->data['content'] = $myform->fetch('', array('data-redirect'=>1));
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender($myform->fetch('', array('data-redirect'=>1)));
     }
 
     /**
@@ -1599,7 +1580,7 @@ class GeneralAdmin extends Backend
     {if(!$this->identity->isAdmin())
         return $this->identity->getResponse();
 
-        $current_data = $this->Social_links_model->getOne($id);
+        $current_data = $this->model->Social_links()->getOne($id);
         if(count($current_data)==0){
             return $this->errorMessage("Link not found!", ADMIN_URL."user");
         }
@@ -1608,7 +1589,7 @@ class GeneralAdmin extends Backend
         $self_url = ADMIN_URL."socialLinksDelete/$id";
 
         if($confirm!=1){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">' .
                     str_replace("{data}", "<strong>$current_data[url]</strong>",_l("This action will delete the social link '{data}' from database.", $this)) .' '.
@@ -1623,10 +1604,9 @@ class GeneralAdmin extends Backend
                 'confirmUrl'=>$self_url."/1",
                 'redirect'=>1,
             ));
-            return;
         }
 
-        $this->Social_links_model->remove($id);
+        $this->model->Social_links()->remove($id);
         $this->successMessage("The social link has been deleted successfully.", $back_url);
     }
 
@@ -1648,15 +1628,13 @@ class GeneralAdmin extends Backend
         $config['base_url'] = ADMIN_URL.'user';
         $config['query_string_segment'] = '';
         $config['reuse_query_string'] = TRUE;
-        $config['total_rows'] = $this->Nodcms_admin_model->countAllUser();
+        $config['total_rows'] = $this->model->users()->getCount();
         $config['uri_segment'] = 3;
         $config['per_page'] = 10;
         $this->mkPagination($config);
-        $page--;
 
-        $this->data['data_list'] = $this->Nodcms_admin_model->getAllUser($page, $config['per_page']);
-        $this->data['content']=$this->load->view($this->mainTemplate.'/user',$this->data,true);
-        $this->load->view($this->frameTemplate,$this->data);
+        $this->data['data_list'] = $this->model->users()->getAll(null, $config['per_page'], $page);
+        return $this->viewRender("user");
     }
 
     /**
@@ -1669,11 +1647,11 @@ class GeneralAdmin extends Backend
         if(!$this->identity->isAdmin())
             return $this->identity->getResponse();
 
-        $user = $this->Users_model->getOne($id);
+        $user = $this->model->Users()->getOne($id);
         if(!is_array($user) || count($user)==0){
             return $this->errorMessage("The user is not exists.", ADMIN_URL."user");
         }
-        $user_group = $this->Groups_model->getOne($user['group_id']);
+        $user_group = $this->model->Groups()->getOne($user['group_id']);
         if(!is_array($user) || count($user)==0){
             $user['group_name'] = "undefined";
         }else{
@@ -1684,7 +1662,7 @@ class GeneralAdmin extends Backend
             $user['avatar'] = 'upload_file/images/user.png';
 
         if($user['language_id']!=-0){
-            $user_language = $this->Public_model->getLanguage($user['language_id']);
+            $user_language = $this->model->languages()->getOne($user['language_id']);
             if(count($user_language)!=0){
                 $user['language'] = $user_language;
             }
@@ -1692,15 +1670,15 @@ class GeneralAdmin extends Backend
 
         $this->data['data'] = $user;
 
-        $this->data['uploaded_files_size'] = human_file_size($this->Nodcms_admin_model->getUploadedSize(array('user_id'=>$user['user_id'])));
+        $this->data['uploaded_files_size'] = human_file_size($this->model->uploadFiles()->getSum("size", array('user_id'=>$user['user_id'])));
 
         $this->data['title'] = _l("Members",$this);
         $this->data['sub_title'] = _l("Profile",$this);
         $this->data['page'] = "user_profile";
         if($this->input->is_ajax_request()){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>'success',
-                'content'=>$this->load->view($this->mainTemplate.'/user_profile_ajax',$this->data, true),
+                'content'=>$this->view->setData($this->data)->render("user_profile_ajax"),
                 'title'=>$user['username'],
                 'closeBtnLable'=>_l("Close", $this),
                 'footerLinks'=>array(
@@ -1708,7 +1686,6 @@ class GeneralAdmin extends Backend
                     array('color'=>"blue", 'url'=>ADMIN_URL."userEdit/$id", 'caption'=>_l("Edit", $this)),
                 ),
             ));
-            return;
         }
 
         // Data from add-ons
@@ -1722,8 +1699,7 @@ class GeneralAdmin extends Backend
             array('title'=>_l("Profile", $this),'url'=>ADMIN_URL."userProfile/$id",'active'=>1),
             array('title'=>_l("Edit", $this),'url'=>ADMIN_URL."userEdit/$id"),
         );
-        $this->data['content'] = $this->load->view($this->mainTemplate.'/user_profile',$this->data, true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("user_profile");
     }
 
     /**
@@ -1737,12 +1713,11 @@ class GeneralAdmin extends Backend
         if(!$this->identity->isAdmin())
             return $this->identity->getResponse();
 
-        $user = $this->Nodcms_admin_model->getUserDetail($id);
+        $user = $this->model->users()->getOne($id);
         if(count($user)==0){
             return $this->errorMessage("User not found!", ADMIN_URL."user");
         }
 
-        $this->load->library("Ajaxlist");
         $theList = new Ajaxlist();
         $config = array(
             'total_rows'=>0,
@@ -1787,21 +1762,20 @@ class GeneralAdmin extends Backend
             'page'=>$page,
         );
         $conditions = null;
-        $config['total_rows'] = $this->Nodcms_admin_model->getFilesCount($conditions);
+        $config['total_rows'] = $this->model->uploadFiles()->getCount($conditions);
         $theList->setOptions($config);
         if($this->input->post('record_result')==1){
-            $data = $this->Nodcms_admin_model->getFiles($conditions, $config['per_page'], $config['page']);
+            $data = $this->model->uploadFiles()->getAll($conditions, $config['per_page'], $config['page']);
             echo $theList->ajaxData($data);
             return;
         }
 
         if($this->input->is_ajax_request()){
             $this->data['the_list'] = $theList->getPage();
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>"success",
-                'content'=> $this->load->view($this->mainTemplate."/data_list",$this->data, true),
+                'content'=> $this->view->setData($this->data)->render("data_list"),
             ));
-            return;
         }
 
         $this->data['title'] = _l('Members',$this);
@@ -1811,9 +1785,8 @@ class GeneralAdmin extends Backend
             array('title'=>$user['username'], 'url'=>ADMIN_URL."userProfile/$user[user_id]"),
             array('title'=>$this->data['sub_title']));
         $this->data['the_list'] = $theList->getPage();
-        $this->data['content'] = $this->load->view($this->mainTemplate."/data_list",$this->data, true);
         $this->data['page'] = "user_uploaded_files";
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("data_list");
     }
 
     /**
@@ -1826,27 +1799,25 @@ class GeneralAdmin extends Backend
         if(!$this->identity->isAdmin())
             return $this->identity->getResponse();
 
-        $current_data = $this->Public_model->getFile($id);
+        $current_data = $this->model->uploadFiles()->getOne($id);
         if(count($current_data)==0){
             return $this->errorMessage("File not found!", ADMIN_URL."user");
         }
         $this->data['title'] = _l('An Uploaded file details ',$this);
         $this->data['data'] = $current_data;
         if($current_data['user_id']!=0){
-            $this->data['user'] = $this->Public_model->getUserDetails($current_data['user_id']);
+            $this->data['user'] = $this->model->users()->getOne($current_data['user_id']);
         }
         if($this->input->is_ajax_request()){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>"success",
                 'title'=>$this->data['title'],
-                'content'=> $this->load->view($this->mainTemplate."/uploaded_file",$this->data, true),
+                'content'=> $this->view->setData($this->data)->render("uploaded_file"),
             ));
-            return;
         }
 
-        $this->data['content'] = $this->load->view($this->mainTemplate."/uploaded_file",$this->data, true);
         $this->data['page'] = "uploaded_file";
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("uploaded_file");
     }
 
     /**
@@ -1860,7 +1831,7 @@ class GeneralAdmin extends Backend
         if(!$this->identity->isAdmin())
             return $this->identity->getResponse();
 
-        $current_data = $this->Public_model->getFile($id);
+        $current_data = $this->model->uploadFiles()->getOne($id);
         if(count($current_data)==0){
             return $this->errorMessage("File not found!", ADMIN_URL."user");
         }
@@ -1869,7 +1840,7 @@ class GeneralAdmin extends Backend
         $self_url = ADMIN_URL."uploadedFileDelete/$id";
 
         if($confirm!=1){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">' .
                     str_replace("{data}", "<strong>$current_data[name]</strong>",_l("This action will delete the file '{data}' from your host.", $this)) .' '.
@@ -1884,10 +1855,9 @@ class GeneralAdmin extends Backend
                 'confirmUrl'=>$self_url."/1",
                 'redirect'=>1,
             ));
-            return;
         }
 
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->removeFiles($id);
         $this->successMessage("The file has been deleted successfully.", $back_url);
     }
@@ -1903,7 +1873,7 @@ class GeneralAdmin extends Backend
         if(!$this->identity->isAdmin())
             return $this->identity->getResponse();
 
-        $user = $this->Nodcms_admin_model->getUserDetail($id);
+        $user = $this->model->users()->getOne($id);
         if(count($user)==0){
             return $this->errorMessage("User not found!", ADMIN_URL."user");
         }
@@ -1919,21 +1889,20 @@ class GeneralAdmin extends Backend
         $self_url = ADMIN_URL."userDelete/$id";
 
         if($confirm!=1){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>'success',
-                'content'=>$this->load->view($this->mainTemplate.'/user_delete_confirm',$user, true),
+                'content'=>$this->view->setData($user)->render("user_delete_confirm"),
                 'title'=>_l("Delete confirmation", $this),
                 'noBtnLabel'=>_l("Cancel", $this),
                 'yesBtnLabel'=>str_replace("{data}", $user['username'], _l("Yes, delete {data}'s account.", $this)),
                 'confirmUrl'=>$self_url."/1",
                 'redirect'=>1,
             ));
-            return;
         }
 
-        $this->Nodcms_admin_model->userDelete($id);
+        $this->model->users()->remove($id);
 
-        $this->successMessage("The user account has been deleted successfully.", $back_url);
+        return $this->successMessage("The user account has been deleted successfully.", $back_url);
     }
 
     /**
@@ -1946,7 +1915,7 @@ class GeneralAdmin extends Backend
         if(!$this->identity->isAdmin())
             return $this->identity->getResponse();
         if($id!=''){
-            $data = $this->Nodcms_admin_model->getUserDetail($id);
+            $data = $this->model->users()->getOne($id);
             if($data==null)
                 $this->errorMessage("The user couldn't find.", ADMIN_URL."user");
             $this->data['sub_title'] = _l("Edit a user",$this);
@@ -1965,7 +1934,7 @@ class GeneralAdmin extends Backend
                 'label' => _l("Language", $this),
                 'rules' => 'required',
                 'type' => "select",
-                'options' => $this->Nodcms_admin_model->get_all_language(),
+                'options' => $this->model->languages()->getAll(),
                 'option_value'=>"language_id",
                 'option_name'=>"language_name",
                 'default'=>isset($data)?$data["language_id"]:''
@@ -1975,7 +1944,7 @@ class GeneralAdmin extends Backend
                 'label' => _l("Group", $this),
                 'rules' => 'required',
                 'type' => "select",
-                'options' => $this->Nodcms_admin_model->get_all_groups(),
+                'options' => $this->model->groups()->getAll(),
                 'option_value'=>"group_id",
                 'option_name'=>"group_name",
                 'default'=>isset($data)?$data["group_id"]:''
@@ -2040,21 +2009,17 @@ class GeneralAdmin extends Backend
             ),
         );
 
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, ADMIN_URL."userEdit/$id", 'post', 'ajax');
         if($myform->ispost()){
             $data = $myform->getPost();
             // Stop Page
-            if($data === false || !is_array($data) || count($data)==0 || $data == null){
-                return;
+            if($data === false){
+                return $myform->getResponse();
             }
             $data["fullname"] = $data["firstname"]." ".$data["lastname"];
-            if ($this->Nodcms_admin_model->userManipulate($data, $id)) {
-                $this->successMessage("The users has successfully updated", ADMIN_URL."userEdit/$id");
-            }else{
-                $this->errorMessage("The user couldn't successfully saved.", ADMIN_URL."userEdit/$id");
-            }
-            return;
+            $this->model->users()->edit($id, $data);
+            return $this->successMessage("The users has successfully updated", ADMIN_URL."userEdit/$id");
         }
 
         $this->data['breadcrumb']=array(
@@ -2063,8 +2028,7 @@ class GeneralAdmin extends Backend
         );
         $this->data['title'] = _l("Members",$this);
         $this->data['page'] = "user";
-        $this->data['content'] = $myform->fetch('',$form_attr);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender($myform->fetch('',$form_attr));
     }
 
     /**
@@ -2077,7 +2041,7 @@ class GeneralAdmin extends Backend
         if(!$this->identity->isAdmin())
             return $this->identity->getResponse();
 
-        $user = $this->Public_model->getUserDetails($id);
+        $user = $this->model->users()->getOne($id);
         if(count($user)==0){
             return $this->errorMessage("User not found!", ADMIN_URL."user");
         }
@@ -2088,14 +2052,12 @@ class GeneralAdmin extends Backend
 
         // * Deactive the user
         if($user["active"]==1){
-            $this->Nodcms_admin_model->userManipulate(array('active'=>0), $user["user_id"]);
-            $this->successMessage("The user has been successfully banned!", ADMIN_URL."user");
+            $this->model->users()->edit($user["user_id"], array('active'=>0));
+            return $this->successMessage("The user has been successfully banned!", ADMIN_URL."user");
         }
         // * Active the user
-        else{
-            $this->Nodcms_admin_model->userManipulate(array('active'=>1), $user["user_id"]);
-            $this->successMessage("The user has been successfully activated!", ADMIN_URL."user");
-        }
+        $this->model->users()->edit($user["user_id"], array('active'=>1));
+        return $this->successMessage("The user has been successfully activated!", ADMIN_URL."user");
     }
 
     /**
@@ -2109,37 +2071,35 @@ class GeneralAdmin extends Backend
         if($type==null)
             $type = "images-library";
         if(!key_exists($type, $this->image_library_types)){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>"error",
                 'error'=>_l("Library type is undefined.", $this)
             ));
-            return;
         }
         $this->data["upload_url"] = ADMIN_URL."uploadImage/$type";
         $this->data['input_id'] = $input_id;
-        $this->data['images'] = $this->Images_model->getAll(array('folder'=>$this->image_library_types[$type]['dir']), null, 1, array('image_id','DESC'));
+        $this->data['images'] = $this->model->Images()->getAll(array('folder'=>$this->image_library_types[$type]['dir']), null, 1, array('image_id','DESC'));
         $data = array(
             'status'=>"success",
-            'content'=>$this->load->view($this->mainTemplate.'/images_library',$this->data, true),
+            'content'=>$this->view->setData($this->data)->render("images_library"),
             'title'=>_l("Image Library", $this),
             'closeBtnLable'=>_l("Close", $this),
         );
-        echo json_encode($data);
+        return json_encode($data);
     }
 
     function uploaded_images()
     {
-        $this->data["data_list"] = $this->Nodcms_admin_model->get_all_images();
-        echo $this->load->view($this->mainTemplate.'/uploaded_images',$this->data, true);
+        $this->data["data_list"] = $this->model->images()->getAll();
+        return $this->view->setData($this->data)->render("uploaded_images");
     }
     function imagesLibrary()
     {
-        $this->data["data_list"] = $this->Images_model->getAll(null, null, 1, array('image_id','DESC'));
+        $this->data["data_list"] = $this->model->Images()->getAll(null, null, 1, array('image_id','DESC'));
         $this->data['upload_url'] = ADMIN_URL."uploadImage/images-library";
         $this->data['page'] = "uploaded_images";
         $this->data['title'] = _l("Images Library",$this);
-        $this->data['content']= $this->load->view($this->mainTemplate.'/uploaded_images_manager',$this->data,true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("uploaded_images_manager");
     }
 
     function imageDelete($id=0, $confirm = 0)
@@ -2147,7 +2107,7 @@ class GeneralAdmin extends Backend
         if(!$this->identity->isAdmin())
             return $this->identity->getResponse();
 
-        $current_data = $this->Images_model->getOne($id);
+        $current_data = $this->model->Images()->getOne($id);
         if(!is_array($current_data) || count($current_data)==0){
             return $this->errorMessage("Image not found.", ADMIN_URL."imagesLibrary");
         }
@@ -2156,7 +2116,7 @@ class GeneralAdmin extends Backend
         $self_url = ADMIN_URL."imageDelete/$id";
 
         if($confirm!=1){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">' .
                     str_replace("{data}", "<strong>$current_data[name]</strong>",_l("This action will delete the image file '{data}' and record from database.", $this)) .' '.
@@ -2171,13 +2131,12 @@ class GeneralAdmin extends Backend
                 'confirmUrl'=>$self_url."/1",
                 'redirect'=>1,
             ));
-            return;
         }
 
         if(file_exists(SELF_PATH.$current_data["image"])){
             unlink(SELF_PATH.$current_data["image"]);
         }
-        $this->Images_model->remove($id);
+        $this->model->Images()->remove($id);
         $this->successMessage("Language has been deleted successfully.", $back_url, array('removed'=>$id));
     }
 
@@ -2192,8 +2151,7 @@ class GeneralAdmin extends Backend
             return $this->identity->getResponse();
         $types = $this->image_library_types;
         if(!key_exists($type, $types)){
-            echo json_encode(array("status"=>"error","errors"=>str_replace("{data}", "'<strong>$type</strong>'",  _l("The {data} upload type is undefined.", $this))));
-            return;
+            return json_encode(array("status"=>"error","errors"=>str_replace("{data}", "'<strong>$type</strong>'",  _l("The {data} upload type is undefined.", $this))));
         }
 
         $type_dir = $types[$type]['dir'];
@@ -2221,8 +2179,7 @@ class GeneralAdmin extends Backend
         $this->load->library('upload', $config);
         if ( ! $this->upload->do_upload("file"))
         {
-            echo json_encode(array("status"=>"error","errors"=>$this->upload->display_errors('<p>', '</p>')));
-            return;
+            return json_encode(array("status"=>"error","errors"=>$this->upload->display_errors('<p>', '</p>')));
         }
 
         $data = $this->upload->data();
@@ -2236,9 +2193,9 @@ class GeneralAdmin extends Backend
             "size"=>$data["file_size"],
             'user_id'=>$this->userdata['user_id']
         );
-        $image_id = $this->Images_model->add($data_image);
+        $image_id = $this->model->Images()->add($data_image);
         if($image_id!=0) {
-            echo json_encode(array(
+            return json_encode(array(
                 "status" => "success",
                 "file_patch" => $uri . $data["file_name"],
                 "file_url" => base_url() . $uri . $data["file_name"],
@@ -2247,10 +2204,9 @@ class GeneralAdmin extends Backend
                 "image_id" => $image_id,
                 "image_name" => $current_file_name,
                 "size" => $data["file_size"]));
-            return;
         }
         unlink(SELF_PATH.$data_image["image"]);
-        echo json_encode(array("status"=>"error","errors"=>_l("Could not save images data in database.",$this)));
+        return json_encode(array("status"=>"error","errors"=>_l("Could not save images data in database.",$this)));
     }
 
     /**
@@ -2303,8 +2259,8 @@ class GeneralAdmin extends Backend
         $unable_urls = array(base_url(),substr(base_url(),0,-1));
         $languages = $this->model->languages()->getAll();
         foreach($languages as $language){
-            $unable_urls[] = base_url().$language['code'];
-            $unable_urls[] = base_url().$language['code']."/";
+            $unable_urls[] = base_url($language['code']);
+            $unable_urls[] = base_url($language['code'])."/";
         }
 
         $title_box_classes = "inputs_default_title_box inputs_default inputs_custom_view";
@@ -2396,7 +2352,7 @@ class GeneralAdmin extends Backend
             ),
         );
 
-        if(count($this->homepageSortedPackages()) > 0){
+        if(count($this->homepageSortedPackages()) > 0) {
             $config[] = array(
                 'field'=>"homepage_sort",
                 'label'=>_l('Home preview sort',$this),
@@ -2415,7 +2371,7 @@ class GeneralAdmin extends Backend
 
         $seo_group_class = "inputs_default inputs_custom_view ".(in_array($this->settings['homepage_type'], array("default", "custom_view"))?"":"hidden");
         foreach($languages as $language){
-            $setting = $this->Public_model->getSettings($language['language_id']);
+            $setting = $this->model->settings()->getSettings($language['language_id']);
             $language_head = array(
                 'label'=>$language['language_title'],
                 'type'=>"h4",
@@ -2458,7 +2414,7 @@ class GeneralAdmin extends Backend
             ));
         }
 
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, ADMIN_URL."settingsHomepage", 'post', 'ajax');
         // * Submit form
         if($myform->ispost()){
@@ -2466,20 +2422,18 @@ class GeneralAdmin extends Backend
                 return $this->identity->getResponse();
             $data = $myform->getPost();
             // Stop Page
-            if(!is_array($data) || count($data)==0 || $data == null){
-                return;
+            if($data === false){
+                return $myform->getResponse();
             }
             // Options in all languages save
             if(isset($data["options"])){
                 foreach($data["options"] as $language_id=>$item){
-                    if(!$this->Nodcms_admin_model->updateSettings($item, $language_id)){
-                        return $this->errorMessage("A settings options could not be saved.", $this);
-                    }
+                    $this->model->settings()->updateSettings($item, $language_id);
                 }
                 unset($data["options"]);
             }
             // The settings without language_id
-            $this->Nodcms_admin_model->updateSettings($data);
+            $this->model->settings()->updateSettings($data);
             return $this->successMessage("Your Setting has been updated successfully!", ADMIN_URL."settingsHomepage");
         }
 
@@ -2489,9 +2443,7 @@ class GeneralAdmin extends Backend
         $this->data['title'] = _l('Settings',$this);
         $this->data['breadcrumb'] = array(array('title'=>$this->data['title']),
             array('title'=>$this->data['sub_title']));
-        $this->data['content'] = $this->load->view($this->mainTemplate."/homepage_sort_includes", $this->data, true).
-            $myform->fetch();
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRenderString($this->view->setData($this->data)->render('homepage_sort_includes').$myform->fetch());
     }
 
     /**
@@ -2509,7 +2461,7 @@ class GeneralAdmin extends Backend
                 $update_data = array(
                     'package_sort'=>$i,
                 );
-                $this->Packages_model->edit($item->id, $update_data);
+                $this->model->packages()->edit($item->id, $update_data);
             }
             return $this->successMessage("The packages has been successfully sorted.", ADMIN_URL."settingsHomepageSort");
         }
@@ -2521,20 +2473,18 @@ class GeneralAdmin extends Backend
         $this->data['title'] = _l('Settings',$this);
 
         if($this->input->is_ajax_request()){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>"success",
-                'content'=>$this->load->view($this->mainTemplate."/homepage_sort", $this->data, true),
+                'content'=>$this->view->setData($this->data)->render("homepage_sort"),
                 'title'=>$this->data['sub_title'],
             ));
-            return;
         }
 
         $this->data['breadcrumb'] = array(
             array('title'=>$this->data['title']),
             array('title'=>_l("Homepage", $this), 'url'=>ADMIN_URL."settingsHomepage"),
             array('title'=>$this->data['sub_title']));
-        $this->data['content'] = $this->load->view($this->mainTemplate."/homepage_sort", $this->data, true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("homepage_sort");
     }
 
     /**
@@ -2546,16 +2496,16 @@ class GeneralAdmin extends Backend
     {
         if(!$this->identity->isAdmin())
             return $this->identity->getResponse();
-        $current_data = $this->Packages_dashboard_model->getOne($id);
+        $current_data = $this->model->Packages_dashboard()->getOne($id);
         if($current_data==null || count($current_data)==0){
             return $this->errorMessage("The package not found.", ADMIN_URL);
         }
 
         if($current_data['active']==1){
-            $this->Packages_dashboard_model->edit($id, array('active'=>0));
+            $this->model->Packages_dashboard()->edit($id, array('active'=>0));
             return $this->successMessage("The package has been successfully deactivated.", ADMIN_URL);
         }
-        $this->Packages_dashboard_model->edit($id, array('active'=>1));
+        $this->model->Packages_dashboard()->edit($id, array('active'=>1));
         $this->successMessage("The package has been successfully activated.", ADMIN_URL);
     }
 
@@ -2568,16 +2518,16 @@ class GeneralAdmin extends Backend
     {
         if(!$this->identity->isAdmin())
             return $this->identity->getResponse();
-        $current_data = $this->Packages_model->getOne($id);
+        $current_data = $this->model->packages()->getOne($id);
         if($current_data==null || count($current_data)==0){
             return $this->errorMessage("The package not found.", ADMIN_URL);
         }
 
         if($current_data['active']==1){
-            $this->Packages_model->edit($id, array('active'=>0));
+            $this->model->packages()->edit($id, array('active'=>0));
             return $this->successMessage("The package has been successfully deactivated.", ADMIN_URL);
         }
-        $this->Packages_model->edit($id, array('active'=>1));
+        $this->model->packages()->edit($id, array('active'=>1));
         $this->successMessage("The package has been successfully activated.", ADMIN_URL);
     }
 
@@ -2589,7 +2539,7 @@ class GeneralAdmin extends Backend
     private function homepageSortedPackages()
     {
         // Get packages from DB
-        $packages = $this->Packages_model->getAll(null, null, 1, array('package_sort', 'ASC'));
+        $packages = $this->model->packages()->getAll(null, null, 1, array('package_sort', 'ASC'));
         // Check packages home method exists.
         foreach ($packages as $key=>$item){
             if(file_exists(APPPATH."controllers/{$item['package_name']}.php")){
@@ -2620,7 +2570,7 @@ class GeneralAdmin extends Backend
         $_packages = $this->load->packageList();
         $packages = array();
         foreach($_packages as $item) {
-            $package = $this->Packages_model->getOne(null, array('package_name'=>$item));
+            $package = $this->model->packages()->getOne(null, array('package_name'=>$item));
             $module = $this->load->packageReturn($item, "description");
             $packages[] = array(
                 'name'=>$item,
@@ -2630,7 +2580,6 @@ class GeneralAdmin extends Backend
             );
         }
 
-        $this->load->library("Ajaxlist");
         $theList = new Ajaxlist();
         $config = array(
             'listID'=>"my-data-list",
@@ -2670,14 +2619,13 @@ class GeneralAdmin extends Backend
         $theList->setOptions($config);
         $this->data['title'] = _l("Social Links", $this);
         $this->data['sub_title'] = _l("List", $this);
-        $this->data['data_list'] = $this->Nodcms_admin_model->getSocialLinks();
+        $this->data['data_list'] = $this->model->socialLinks()->getAll();
         $this->data['breadcrumb']=array(
             array('title'=>$this->data['title']),
         );
         $this->data['page'] = "modules";
         $this->data['the_list'] = $theList->getPage();
-        $this->data['content'] = $this->load->view($this->mainTemplate."/data_list",$this->data, true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("data_list");
     }
 
     public function module($package)
@@ -2686,7 +2634,7 @@ class GeneralAdmin extends Backend
         if(!$this->load->packageExists($package)){
             return $this->errorMessage("Module not found.", $back_url);
         }
-        $current_data = $this->Packages_model->getOne(null, array('package_name'=>$package));
+        $current_data = $this->model->packages()->getOne(null, array('package_name'=>$package));
         if(is_array($current_data) && count($current_data) > 0){
             $this->data['data'] = $current_data;
         }
@@ -2699,22 +2647,8 @@ class GeneralAdmin extends Backend
         $this->data['breadcrumb'] = array(
             array('title'=>_l("Modules", $this))
         );
-        if($this->input->is_ajax_request()){
-            echo json_encode(array(
-                'status'=>'success',
-                'content'=>$this->load->view($this->mainTemplate.'/module',$this->data, true),
-                'title'=>$package,
-                'closeBtnLable'=>_l("Close", $this),
-                'footerLinks'=>array(
-                    array('color'=>"blue", 'url'=>ADMIN_URL."userProfile/$name", 'caption'=>_l("More info", $this)),
-                    array('color'=>"blue", 'url'=>ADMIN_URL."userEdit/$name", 'caption'=>_l("Edit", $this)),
-                ),
-            ));
-            return;
-        }
         $this->data['page'] = "module";
-        $this->data['content'] = $this->load->view($this->mainTemplate."/module",$this->data, true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("module");
     }
 
     /**
@@ -2733,7 +2667,7 @@ class GeneralAdmin extends Backend
         if(!key_exists($name, $this->load->packages)){
             return $this->errorMessage("Module not found.", $back_url);
         }
-        $current_data = $this->Packages_model->getOne(null, array('package_name'=>$name));
+        $current_data = $this->model->packages()->getOne(null, array('package_name'=>$name));
         if(is_array($current_data) && count($current_data)==0){
             return $this->errorMessage("Module has been installed before.", $back_url);
         }
@@ -2742,7 +2676,7 @@ class GeneralAdmin extends Backend
 
         $tables = $this->getModuleTables($name);
         if($confirm!=1){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-left">' .
                     str_replace("{data}", "<strong>$name</strong>",_l("This action will create or repair bellow database tables that required to run module {data}.", $this)) .
@@ -2759,7 +2693,6 @@ class GeneralAdmin extends Backend
                 'confirmUrl'=>$self_url."/1",
                 'redirect'=>1,
             ));
-            return;
         }
 
         foreach($tables as $item) {
@@ -2774,10 +2707,10 @@ class GeneralAdmin extends Backend
             }
         }
 
-        $max = $this->Packages_model->getMax('package_sort');
-        $this->Packages_model->add(array('package_name'=>$name, 'package_sort'=>$max+1, 'active'=>1));
+        $max = $this->model->packages()->getMax('package_sort');
+        $this->model->packages()->add(array('package_name'=>$name, 'package_sort'=>$max+1, 'active'=>1));
 
-        $this->successMessage("The module has been successfully installed.", $back_url);
+        return $this->successMessage("The module has been successfully installed.", $back_url);
     }
 
     /**
@@ -2793,7 +2726,7 @@ class GeneralAdmin extends Backend
 
         $back_url = ADMIN_URL."modules";
 
-        $current_data = $this->Packages_model->getOne(null, array('package_name'=>$name));
+        $current_data = $this->model->packages()->getOne(null, array('package_name'=>$name));
         if(!is_array($current_data) || count($current_data)==0){
             return $this->errorMessage("Module not found.", $back_url);
         }
@@ -2802,7 +2735,7 @@ class GeneralAdmin extends Backend
 
         $tables = $this->getModuleTables($name);
         if($confirm!=1){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-left">' .
                     str_replace("{data}", "<strong>$name</strong>",_l("This action only make the module {data} de-active.", $this)) .
@@ -2821,12 +2754,11 @@ class GeneralAdmin extends Backend
                 'confirmUrl'=>$self_url."/1",
                 'redirect'=>1,
             ));
-            return;
         }
 
-        $this->Packages_model->remove($current_data['package_id']);
+        $this->model->packages()->remove($current_data['package_id']);
 
-        $this->successMessage("The module has been successfully uninstalled.", $back_url);
+        return $this->successMessage("The module has been successfully uninstalled.", $back_url);
     }
 
     /**

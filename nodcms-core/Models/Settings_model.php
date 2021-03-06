@@ -71,7 +71,6 @@ class Settings_model extends Model
     {
         $builder = $this->getBuilder();
         $builder->select('*');
-        $builder->from('settings');
         $builder->where('language_id', $language_id);
         $query = $builder->get();
         $result = $query->getResultArray();

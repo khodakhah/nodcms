@@ -29,6 +29,11 @@ use CodeIgniter\Config\Services;
  */
 class Form
 {
+    /**
+     * @var \CodeIgniter\HTTP\RedirectResponse|string
+     */
+    private $errorResponse;
+
     public $CI;
     public $template_form = '';
     public $template_inputs = '';
@@ -275,16 +280,17 @@ class Form
     }
 
     /**
-     *
+     * Return an array of inputs
      *
      * @param null $url
-     * @return bool
+     * @return array|false
+     * @throws \Exception
      */
-    function getPost($url = null)
+    function getPost($url = null) : array
     {
         $validation = Services::validation();
         $method = strtolower($this->data['method']);
-        $input_data = $method == 'get' ? $this->CI->request->getGet() : $this->CI->request->getPost();
+        $input_data = $method == 'get' ? \Config\Services::request()->getGet() : \Config\Services::request()->getPost();
         $config = $this->getRules();
         // Check rules empty
         if($config != null){
@@ -296,17 +302,8 @@ class Form
 
             // Form Error
             if ($validation->run($input_data) != TRUE) {
-                if($this->CI->request->isAjax()){
-                    $data = array(
-                        "status"=>"form-error",
-                        "url"=>$this->data['back_url'],
-                        "error"=> $validation->getErrors(),
-                    );
-                    echo json_encode($data);
-                }else{
-                    $this->CI->session->set_flashdata('static_error', $validation->listErrors());
-                    redirect($this->data['back_url']);
-                }
+                $response = \Config\Services::quickResponse();
+                $this->errorResponse = $response->getFormError($validation->getErrors(), $validation->listErrors(), $this->data['back_url']);
                 return false;
             }
         }
@@ -1010,12 +1007,12 @@ class Form
             'type'=>"",
             'default'=>"",
             'remove_url'=>"",
-            'not_set_preview'=>base_url()."noimage-200-50-Not_Set",
+            'not_set_preview'=>base_url("noimage-200-50-Not_Set"),
             'library_type'=>"images-library",
         );
         $data = array_merge($data_default, $data);
         $data['image_library_url'] = ADMIN_URL."getImagesLibrary/$data[name]/$data[library_type]";
-        $data['img_src'] = base_url().($data['default']!=""?$data['default']:"noimage-200-50-Not_Set");
+        $data['img_src'] = base_url($data['default']!=""?$data['default']:"noimage-200-50-Not_Set");
         $input = $this->CI->viewCommon($this->theme_patch.$data['type'], $data);
         return $this->addInput($data, $input);
     }
@@ -1307,7 +1304,7 @@ class Form
             return json_encode(array("status"=>"error","errors"=>_l("Unfortunately, the file could not be successfully saved.",$this->CI)));
         }
         $file_path = "file-$inserted_id-$data_insert[file_key]-$data_insert[name]";
-//        $file_url = base_url().$file_path;
+//        $file_url = base_url($file_path);
         return json_encode(array("status"=>"success",
             "file_id"=>$inserted_id,
             "file_key"=>$data_insert['file_key'],
@@ -1335,7 +1332,7 @@ class Form
         $result = $query->result_array();
         foreach($result as &$item){
             $url_prefix = substr($item['file_type'],0,5)=="image"?"image":"file";
-            $item['file_url'] = base_url()."$url_prefix-$item[file_id]-$item[file_key]";
+            $item['file_url'] = base_url("$url_prefix-$item[file_id]-$item[file_key]");
             $item['name'] = $upload_key." - $item[name]";
         }
         return $result;
@@ -1360,7 +1357,7 @@ class Form
         $result = $query->result_array();
         foreach($result as &$item){
             $url_prefix = substr($item['file_type'],0,5)=="image"?"image":"file";
-            $item['file_url'] = base_url()."$url_prefix-$item[file_id]-$item[file_key]";
+            $item['file_url'] = base_url("$url_prefix-$item[file_id]-$item[file_key]");
             $item['name'] = "$item[name]";
         }
         return $result;
@@ -1415,4 +1412,14 @@ class Form
         return get_cookie($this->upload_cookie_name);
     }
 
+    /**
+     * @return \CodeIgniter\HTTP\RedirectResponse|string
+     */
+    public function getResponse()
+    {
+        if(!empty($this->errorResponse))
+            return $this->errorResponse;
+
+        return "";
+    }
 }
