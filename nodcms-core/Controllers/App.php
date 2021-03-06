@@ -61,6 +61,6 @@ abstract class App extends Base
         $this->modules = Services::modules();
 
         define('USER_UNDEFINED_AVATAR',base_url().'upload_file/images/user.png');
-        define('ADMIN_URL',base_url("admin"));
+        define('ADMIN_URL',base_url("admin")."/");
     }
 }

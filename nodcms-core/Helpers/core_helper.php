@@ -579,7 +579,7 @@ if( ! function_exists('print_captcha')){
         $vals = array(
             'word'=>$random_word,
             'img_path'=> FCPATH.'upload_file/captcha/',
-            'img_url'=> base_url().'upload_file/captcha/',
+            'img_url'=> base_url('upload_file/captcha/'),
             'img_width'     => 100,
             'img_height'    => 40,
             'word_length'     => 6,
@@ -661,9 +661,9 @@ if(!function_exists('get_user_avatar_url')){
      */
     function get_user_avatar_url($user){
         if($user['avatar']=="" || !file_exists(FCPATH.$user['avatar'])){
-            return base_url()."upload_file/images/user.png";
+            return base_url("upload_file/images/user.png");
         }
-        return base_url().$user['avatar'];
+        return base_url($user['avatar']);
     }
 }
 
