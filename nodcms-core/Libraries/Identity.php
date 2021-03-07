@@ -91,8 +91,13 @@ class Identity
         return false;
     }
 
+    /**
+     * @param bool $isDemoAdmin
+     * @return bool
+     * @throws \Exception
+     */
     public function isAdmin(bool $isDemoAdmin = false): bool{
-        if(Services::session()->get('group') !== 1) {
+        if((int) Services::session()->get('group') !== 1) {
             $reponse = new QuickResponse();
             $reponse->setMessage(_l("Unfortunately you do not have permission to this part of system.", $this));
             $reponse->setUrl( "/");
