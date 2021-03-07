@@ -63,4 +63,17 @@ abstract class App extends Base
         define('USER_UNDEFINED_AVATAR',base_url().'upload_file/images/user.png');
         define('ADMIN_URL',base_url("admin")."/");
     }
+
+    /**
+     * Create a pagination
+     *
+     * @param array $config
+     */
+    public function mkPagination(array $config)
+    {
+        $pagination = Services::pager();
+        $pagination->setSegment($config['uri_segment']);
+        if($pagination->getPageCount() > 1)
+            $this->data['pagination'] = $pagination->makeLinks($pagination->getCurrentPage(), $config['per_page'], $config['total_rows']);
+    }
 }
