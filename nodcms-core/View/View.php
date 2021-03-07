@@ -63,7 +63,7 @@ class View extends \CodeIgniter\View\View
      *
      * @return self
      */
-    public function common(): self
+    public function common()
     {
         if(empty($this->_common_view))
             $this->_common_view = new self();

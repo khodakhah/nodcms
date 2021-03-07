@@ -22,6 +22,7 @@
 namespace NodCMS\Core\Controllers;
 
 use Config\Services;
+use NodCMS\Core\Libraries\Ajaxlist;
 use NodCMS\Core\Libraries\Form;
 
 class GeneralAdmin extends Backend
@@ -46,8 +47,8 @@ class GeneralAdmin extends Backend
         // * Update Sort
         $post_data = $this->request->getPost('data');
         if($post_data != null){
-            if(!$this->identity->isAdmin())
-                return $this->identity->getResponse();
+            if(!Services::identity()->isAdmin())
+                return Services::identity()->getResponse();
             foreach($post_data as $i=>$item){
                 $update_data = array(
                     'package_sort'=>$i,
@@ -476,8 +477,8 @@ class GeneralAdmin extends Backend
         $myform->config($forms[$sub_page]['config'], ADMIN_URL."settings/$sub_page", 'post', 'ajax', $forms[$sub_page]['notes']);
         // * Submit form
         if($myform->ispost()){
-            if(!$this->identity->isAdmin())
-                return $this->identity->getResponse();
+            if(!Services::identity()->isAdmin())
+                return Services::identity()->getResponse();
 
             $data = $myform->getPost();
             // Stop Page
@@ -488,7 +489,7 @@ class GeneralAdmin extends Backend
             if(isset($data["auto_messages"])){
                 $auto_emails = $this->config->item('autoEmailMessages');
                 // Load auto messages from packages directories
-                $packages = $this->load->packageList();
+                $packages = Services::modules()->getNames();
                 foreach ($packages as $item){
                     $package_auto_emails = $this->config->item($item.'_autoEmailMessages');
                     if(is_array($package_auto_emails))
@@ -554,7 +555,7 @@ class GeneralAdmin extends Backend
         if($sub_page=='mail'){
             $this->data['auto_emails'] = $this->config->item('autoEmailMessages');
             // Load auto messages from packages directories
-            $packages = $this->load->packageList();
+            $packages = Services::modules()->getNames();
             foreach ($packages as $item){
                 $package_auto_emails = $this->config->item($item.'_autoEmailMessages');
                 if(is_array($package_auto_emails))
@@ -585,7 +586,7 @@ class GeneralAdmin extends Backend
         $this->data['page'] = "emails_texts";
         $auto_emails = $this->config->item('autoEmailMessages');
         // Load auto messages from packages directories
-        $packages = $this->load->packageList();
+        $packages = Services::modules()->getNames();
         foreach ($packages as $item){
             $package_auto_emails = $this->config->item($item.'_autoEmailMessages');
             if(is_array($package_auto_emails))
@@ -623,7 +624,7 @@ class GeneralAdmin extends Backend
         // Get auto messages keys from config
         $auto_emails = $this->config->item('autoEmailMessages');
         // Load auto messages from packages directories
-        $packages = $this->load->packageList();
+        $packages = Services::modules()->getNames();
         foreach ($packages as $item){
             $package_auto_emails = $this->config->item($item.'_autoEmailMessages');
             if(is_array($package_auto_emails))
@@ -666,8 +667,8 @@ class GeneralAdmin extends Backend
         $myform = new Form($this);
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()) {
-            if(!$this->identity->isAdmin())
-                return $this->identity->getResponse();
+            if(!Services::identity()->isAdmin())
+                return Services::identity()->getResponse();
 
             $data = $myform->getPost();
             // Stop Page
@@ -786,13 +787,13 @@ class GeneralAdmin extends Backend
             if($data === false){
                 return $myform->getResponse();
             }
-            if(!$this->identity->isAdmin())
-                return $this->identity->getResponse();
+            if(!Services::identity()->isAdmin())
+                return Services::identity()->getResponse();
             $this->model->menu()->edit($id, $data);
             return $this->successMessage("Menu has been successfully updated.", ADMIN_URL."menu");
         }
 
-        if($this->input->is_ajax_request()){
+        if(Services::request()->isAJAX()){
             echo $myform->fetch('',array('data-redirect'=>1));
         }
 
@@ -802,7 +803,7 @@ class GeneralAdmin extends Backend
             array('title'=>$this->data['sub_title'])
         );
         $this->data['page'] = "menu_edit";
-        return $this->viewRender($myform->fetch('',array('data-redirect'=>1)));
+        return $this->viewRenderString($myform->fetch('',array('data-redirect'=>1)));
     }
 
     function menuVisibility($id)
@@ -828,8 +829,8 @@ class GeneralAdmin extends Backend
 
     function menuSort($menu_key='')
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $i = 0;
         $index = 0;
@@ -863,8 +864,8 @@ class GeneralAdmin extends Backend
      */
     function menu_manipulate($id=null)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $this->model->menu()->edit($id, $this->input->post('data',TRUE));
         return Services::quickResponse()->getSuccess(_l('Updated menu',$this), ADMIN_URL."menu");
@@ -877,8 +878,8 @@ class GeneralAdmin extends Backend
      */
     function menuDelete($id=0)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $this->db->trans_start();
         $this->db->delete('menu', array('menu_id' => $id));
@@ -1133,8 +1134,8 @@ class GeneralAdmin extends Backend
             if($data === false){
                 return $myform->getResponse();
             }
-            if(!$this->identity->isAdmin())
-                return $this->identity->getResponse();
+            if(!Services::identity()->isAdmin())
+                return Services::identity()->getResponse();
 
             unset($data['languages']);
             if($id != null){
@@ -1183,8 +1184,8 @@ class GeneralAdmin extends Backend
      */
     function languageSortSubmit()
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
         $post_data = $this->input->post("data");
         if($post_data == null) {
             return $this->errorMessage("Sort data shouldn't be empty.", ADMIN_URL."language");
@@ -1207,8 +1208,8 @@ class GeneralAdmin extends Backend
      */
     function languageDelete($id, $confirm = 0)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $current_data = $this->model->languages()->getOne($id);
         if(count($current_data)==0){
@@ -1316,8 +1317,8 @@ class GeneralAdmin extends Backend
         $CI = new Get_lang_in_array();
         $this->data['lang_list'] = $CI->load("nodcms", $this->data['data']['language_name']);
         if($this->input->input_stream('key')){
-            if(!$this->identity->isAdmin())
-                return $this->identity->getResponse();
+            if(!Services::identity()->isAdmin())
+                return Services::identity()->getResponse();
             $key = $this->input->post('key');
             $value = $this->input->post('value');
 
@@ -1386,8 +1387,8 @@ class GeneralAdmin extends Backend
 
     function languageUpdateTranslation()
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
         findNewLangKeys($this, 1, 1);
         $this->successMessage("The translation file successfully updated.", ADMIN_URL."language");
     }
@@ -1438,10 +1439,10 @@ class GeneralAdmin extends Backend
             'page'=>$page,
         );
         $conditions = null;
-        $config['total_rows'] = $this->model->Social_links()->getCount($conditions);
+        $config['total_rows'] = $this->model->socialLinks()->getCount($conditions);
         $theList->setOptions($config);
-        if($this->input->is_ajax_request()){
-            $data = $this->model->Social_links()->getAll($conditions, $config['per_page'], $config['page']);
+        if(Services::request()->isAJAX()){
+            $data = $this->model->socialLinks()->getAll($conditions, $config['per_page'], $config['page']);
             echo $theList->ajaxData($data);
             return;
         }
@@ -1469,7 +1470,7 @@ class GeneralAdmin extends Backend
         $back_url = ADMIN_URL."socialLinks";
         $self_url = ADMIN_URL."socialLinksForm";
         if($id > 0){
-            $current_data = $this->model->Social_links()->getOne($id);
+            $current_data = $this->model->socialLinks()->getOne($id);
             if(!is_array($current_data) || count($current_data) == 0){
                 return $this->errorMessage("Social link not found.", $back_url);
             }
@@ -1542,8 +1543,8 @@ class GeneralAdmin extends Backend
         $myform = new Form($this);
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()){
-            if(!$this->identity->isAdmin())
-                return $this->identity->getResponse();
+            if(!Services::identity()->isAdmin())
+                return Services::identity()->getResponse();
             $data = $myform->getPost();
             // Stop Page
             if($data === false){
@@ -1553,10 +1554,10 @@ class GeneralAdmin extends Backend
             $titles = array_combine(array_column($social_types, 'class'), array_column($social_types, 'title'));
             $data['title'] = $titles[$data['class']];
             if ($id > 0) {
-                $this->model->Social_links()->edit($id, $data);
+                $this->model->socialLinks()->edit($id, $data);
                 return $this->successMessage("Social link has been updated.", $back_url);
             }
-            $this->model->Social_links()->add($data);
+            $this->model->socialLinks()->add($data);
             return $this->successMessage("Social link has been inserted.", $back_url);
         }
 
@@ -1567,7 +1568,7 @@ class GeneralAdmin extends Backend
         );
         $this->data['page'] = "social_links_edit";
 
-        return $this->viewRender($myform->fetch('', array('data-redirect'=>1)));
+        return $this->viewRenderString($myform->fetch('', array('data-redirect'=>1)));
     }
 
     /**
@@ -1577,10 +1578,10 @@ class GeneralAdmin extends Backend
      * @param int $confirm
      */
     function socialLinksDelete($id, $confirm = 0)
-    {if(!$this->identity->isAdmin())
-        return $this->identity->getResponse();
+    {if(!Services::identity()->isAdmin())
+        return Services::identity()->getResponse();
 
-        $current_data = $this->model->Social_links()->getOne($id);
+        $current_data = $this->model->socialLinks()->getOne($id);
         if(count($current_data)==0){
             return $this->errorMessage("Link not found!", ADMIN_URL."user");
         }
@@ -1606,7 +1607,7 @@ class GeneralAdmin extends Backend
             ));
         }
 
-        $this->model->Social_links()->remove($id);
+        $this->model->socialLinks()->remove($id);
         $this->successMessage("The social link has been deleted successfully.", $back_url);
     }
 
@@ -1614,15 +1615,16 @@ class GeneralAdmin extends Backend
      * Site members list
      *
      * @param int $page
+     * @return string
+     * @throws \Exception
      */
-    function user($page = 1)
+    function user($page = 1): string
     {
         $this->data['title'] = _l("Users",$this);
         $this->data['sub_title'] = _l("User's list",$this);
         $this->data['page'] = "users";
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
-        $this->load->helper('date');
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $config = array();
         $config['base_url'] = ADMIN_URL.'user';
@@ -1633,7 +1635,7 @@ class GeneralAdmin extends Backend
         $config['per_page'] = 10;
         $this->mkPagination($config);
 
-        $this->data['data_list'] = $this->model->users()->getAll(null, $config['per_page'], $page);
+        $this->data['data_list'] = $this->model->users()->getAllWithGroups(null, $config['per_page'], $page);
         return $this->viewRender("user");
     }
 
@@ -1644,8 +1646,8 @@ class GeneralAdmin extends Backend
      */
     function userProfile($id)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $user = $this->model->Users()->getOne($id);
         if(!is_array($user) || count($user)==0){
@@ -1675,7 +1677,7 @@ class GeneralAdmin extends Backend
         $this->data['title'] = _l("Members",$this);
         $this->data['sub_title'] = _l("Profile",$this);
         $this->data['page'] = "user_profile";
-        if($this->input->is_ajax_request()){
+        if(Services::request()->isAJAX()){
             return json_encode(array(
                 'status'=>'success',
                 'content'=>$this->view->setData($this->data)->render("user_profile_ajax"),
@@ -1710,8 +1712,8 @@ class GeneralAdmin extends Backend
      */
     function userUploadedFiles($id, $page = 1)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $user = $this->model->users()->getOne($id);
         if(count($user)==0){
@@ -1770,7 +1772,7 @@ class GeneralAdmin extends Backend
             return;
         }
 
-        if($this->input->is_ajax_request()){
+        if(Services::request()->isAJAX()){
             $this->data['the_list'] = $theList->getPage();
             return json_encode(array(
                 'status'=>"success",
@@ -1796,8 +1798,8 @@ class GeneralAdmin extends Backend
      */
     function uploadedFile($id)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $current_data = $this->model->uploadFiles()->getOne($id);
         if(count($current_data)==0){
@@ -1808,7 +1810,7 @@ class GeneralAdmin extends Backend
         if($current_data['user_id']!=0){
             $this->data['user'] = $this->model->users()->getOne($current_data['user_id']);
         }
-        if($this->input->is_ajax_request()){
+        if(Services::request()->isAJAX()){
             return json_encode(array(
                 'status'=>"success",
                 'title'=>$this->data['title'],
@@ -1828,8 +1830,8 @@ class GeneralAdmin extends Backend
      */
     function uploadedFileDelete($id, $confirm = 0)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $current_data = $this->model->uploadFiles()->getOne($id);
         if(count($current_data)==0){
@@ -1870,8 +1872,8 @@ class GeneralAdmin extends Backend
      */
     function userDelete($id, $confirm = 0)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $user = $this->model->users()->getOne($id);
         if(count($user)==0){
@@ -1912,8 +1914,8 @@ class GeneralAdmin extends Backend
      */
     function userEdit($id='')
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
         if($id!=''){
             $data = $this->model->users()->getOne($id);
             if($data==null)
@@ -2028,7 +2030,7 @@ class GeneralAdmin extends Backend
         );
         $this->data['title'] = _l("Members",$this);
         $this->data['page'] = "user";
-        return $this->viewRender($myform->fetch('',$form_attr));
+        return $this->viewRenderString($myform->fetch('',$form_attr));
     }
 
     /**
@@ -2038,8 +2040,8 @@ class GeneralAdmin extends Backend
      */
     function userDeactive($id)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $user = $this->model->users()->getOne($id);
         if(count($user)==0){
@@ -2104,8 +2106,8 @@ class GeneralAdmin extends Backend
 
     function imageDelete($id=0, $confirm = 0)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $current_data = $this->model->Images()->getOne($id);
         if(!is_array($current_data) || count($current_data)==0){
@@ -2147,8 +2149,8 @@ class GeneralAdmin extends Backend
      */
     function uploadImage($type=null)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
         $types = $this->image_library_types;
         if(!key_exists($type, $types)){
             return json_encode(array("status"=>"error","errors"=>str_replace("{data}", "'<strong>$type</strong>'",  _l("The {data} upload type is undefined.", $this))));
@@ -2418,8 +2420,8 @@ class GeneralAdmin extends Backend
         $myform->config($config, ADMIN_URL."settingsHomepage", 'post', 'ajax');
         // * Submit form
         if($myform->ispost()){
-            if(!$this->identity->isAdmin())
-                return $this->identity->getResponse();
+            if(!Services::identity()->isAdmin())
+                return Services::identity()->getResponse();
             $data = $myform->getPost();
             // Stop Page
             if($data === false){
@@ -2454,8 +2456,8 @@ class GeneralAdmin extends Backend
         // * Update Sort
         $post_data = $this->input->post("data");
         if($post_data != null){
-            if(!$this->identity->isAdmin())
-                return $this->identity->getResponse();
+            if(!Services::identity()->isAdmin())
+                return Services::identity()->getResponse();
             $post_data = json_decode($post_data);
             foreach($post_data as $i=>$item){
                 $update_data = array(
@@ -2472,7 +2474,7 @@ class GeneralAdmin extends Backend
         $this->data['sub_title'] = _l("Sort homepage", $this);
         $this->data['title'] = _l('Settings',$this);
 
-        if($this->input->is_ajax_request()){
+        if(Services::request()->isAJAX()){
             return json_encode(array(
                 'status'=>"success",
                 'content'=>$this->view->setData($this->data)->render("homepage_sort"),
@@ -2494,19 +2496,19 @@ class GeneralAdmin extends Backend
      */
     function packageToggleActive($id)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
-        $current_data = $this->model->Packages_dashboard()->getOne($id);
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
+        $current_data = $this->model->packagesDashboard()->getOne($id);
         if($current_data==null || count($current_data)==0){
             return $this->errorMessage("The package not found.", ADMIN_URL);
         }
 
         if($current_data['active']==1){
-            $this->model->Packages_dashboard()->edit($id, array('active'=>0));
+            $this->model->packagesDashboard()->edit($id, array('active'=>0));
             return $this->successMessage("The package has been successfully deactivated.", ADMIN_URL);
         }
-        $this->model->Packages_dashboard()->edit($id, array('active'=>1));
-        $this->successMessage("The package has been successfully activated.", ADMIN_URL);
+        $this->model->packagesDashboard()->edit($id, array('active'=>1));
+        return $this->successMessage("The package has been successfully activated.", ADMIN_URL);
     }
 
     /**
@@ -2516,8 +2518,8 @@ class GeneralAdmin extends Backend
      */
     function settingsHomepageToggleActive($id)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
         $current_data = $this->model->packages()->getOne($id);
         if($current_data==null || count($current_data)==0){
             return $this->errorMessage("The package not found.", ADMIN_URL);
@@ -2528,7 +2530,7 @@ class GeneralAdmin extends Backend
             return $this->successMessage("The package has been successfully deactivated.", ADMIN_URL);
         }
         $this->model->packages()->edit($id, array('active'=>1));
-        $this->successMessage("The package has been successfully activated.", ADMIN_URL);
+        return $this->successMessage("The package has been successfully activated.", ADMIN_URL);
     }
 
     /**
@@ -2564,19 +2566,19 @@ class GeneralAdmin extends Backend
      * List of all modules
      *
      * @param int $page
+     * @return string
      */
-    public function modules($page = 1)
+    public function modules($page = 1): string
     {
-        $_packages = $this->load->packageList();
+        $_packages = Services::modules()->getAllBootstraps();
+        $activePackages = Services::modules()->getAllActiveNames();
         $packages = array();
-        foreach($_packages as $item) {
-            $package = $this->model->packages()->getOne(null, array('package_name'=>$item));
-            $module = $this->load->packageReturn($item, "description");
+        foreach($_packages as $package_name=>$bootstrap) {
             $packages[] = array(
-                'name'=>$item,
-                'title'=>empty($module)?$item:$module['title'],
-                'description'=>empty($module)?"":$module['description'],
-                'installed'=>intval(is_array($package) && count($package) > 0),
+                'name'=>$package_name,
+                'title'=>$bootstrap->title(),
+                'description'=>$bootstrap->description(),
+                'installed'=>intval(in_array($package_name, $activePackages)),
             );
         }
 
@@ -2659,12 +2661,12 @@ class GeneralAdmin extends Backend
      */
     function moduleInstall($name, $confirm = 0)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $back_url = ADMIN_URL."modules";
 
-        if(!key_exists($name, $this->load->packages)){
+        if(!in_array($name, Services::modules()->getNames())){
             return $this->errorMessage("Module not found.", $back_url);
         }
         $current_data = $this->model->packages()->getOne(null, array('package_name'=>$name));
@@ -2721,8 +2723,8 @@ class GeneralAdmin extends Backend
      */
     function moduleUninstall($name, $confirm = 0)
     {
-        if(!$this->identity->isAdmin())
-            return $this->identity->getResponse();
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $back_url = ADMIN_URL."modules";
 

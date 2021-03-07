@@ -34,8 +34,8 @@ abstract class Backend extends App
     public function __construct()
     {
         parent::__construct();
-        $this->view->config->frameFile = $this->config->backend_template_frame;
-        $this->view->config->viewPath .= "/{$this->config->backend_template}";
+        Services::layout()->config->frameFile = $this->config->backend_template_frame;
+        Services::layout()->config->viewPath .= "/{$this->config->backend_template}";
         Services::sidebar()->config->viewPath .= "/{$this->config->backend_template}";
 
         $this->data['base_url'] = base_url()."admin/";
@@ -155,6 +155,6 @@ abstract class Backend extends App
         );
 
         // Call backend of startup of all modules
-        Services::modules()->backend();
+        Services::modules()->executeBackend();
     }
 }

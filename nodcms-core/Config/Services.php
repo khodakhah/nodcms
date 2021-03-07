@@ -6,6 +6,7 @@ use NodCMS\Core\Libraries\Language;
 use NodCMS\Core\Models\ModelMap;
 use NodCMS\Core\Notification\EmailNotification;
 use NodCMS\Core\Response\QuickResponse;
+use NodCMS\Core\View\Layout;
 use NodCMS\Core\View\LinkList;
 use NodCMS\Core\Modules\Modules;
 use NodCMS\Core\View\Sidebar;
@@ -36,6 +37,21 @@ class Services extends CoreServices
 	//
 	//        return new \CodeIgniter\Example();
 	//    }
+
+    /**
+     * @param null $config
+     * @param bool $getShared
+     * @return Layout
+     */
+    public static function layout($config = null, bool $getShared = true): Layout
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('layout', $config);
+        }
+
+        return new Layout($config);
+    }
 
     /**
      * @param string $locale

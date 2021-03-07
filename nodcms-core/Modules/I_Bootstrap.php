@@ -19,12 +19,66 @@
  *
  */
 
-namespace NodCMS\Core;
+namespace NodCMS\Core\Modules;
 
 
-use NodCMS\Core\Modules\I_Startup;
+use NodCMS\Core\Types\Link;
 
-abstract class Startup implements I_Startup
+interface I_Bootstrap
 {
+    /**
+     * Returns Module title
+     *
+     * @return string
+     */
+    public function title(): string;
 
+    /**
+     * Returns Module description
+     *
+     * @return string
+     */
+    public function description(): string;
+
+    /**
+     * True means there this module has a dashboard
+     *
+     * @return bool
+     */
+    public function hasDashboard(): bool;
+
+    /**
+     * Addon admin sidebar
+     *
+     * @return Link[]
+     */
+    public function adminSidebar(): array;
+
+    /**
+     * Addon frontend top menu
+     *
+     * @return Link[]
+     */
+    public function topMenu(): array;
+
+    /**
+     * General hooks on all frontend controllers
+     *
+     * @return void
+     */
+    public function frontend();
+
+    /**
+     * General hooks on all backend controllers
+     *
+     * @return void
+     */
+    public function backend();
+
+    /**
+     * General hooks on all membership controllers
+     *
+     * @return void
+     */
+    public function membership();
 }

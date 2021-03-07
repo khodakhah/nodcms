@@ -21,35 +21,20 @@
 
 namespace NodCMS\Core\Modules;
 
-
-use NodCMS\Core\Types\Link;
-
-interface I_Startup
+abstract class Bootstrap implements I_Bootstrap
 {
-    /**
-     * True means there this module has a dashboard
-     *
-     * @return bool
-     */
-    public function hasDashboard(): bool;
+    public function frontend()
+    {
+        // Do notting by default
+    }
 
-    /**
-     * Addon admin sidebar
-     *
-     * @return Link[]
-     */
-    public function adminSidebar(): array;
+    public function backend()
+    {
+        // Do notting by default
+    }
 
-    /**
-     * Addon frontend top menu
-     *
-     * @return Link[]
-     */
-    public function topMenu(): array;
-
-    public function frontend();
-
-    public function backend();
-
-    public function membership();
+    public function membership()
+    {
+        // Do notting by default
+    }
 }

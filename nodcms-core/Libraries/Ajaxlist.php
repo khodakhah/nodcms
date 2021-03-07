@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * NodCMS
  *
  * Copyright (c) 2015-2020.
@@ -18,10 +18,17 @@
  *  @filesource
  *
  */
+namespace NodCMS\Core\Libraries;
+use CodeIgniter\Exceptions\EmergencyError;
+use Config\Services;
+use Config\View;
 
+/**
+ * Class Ajaxlist
+ * convert an array to ajax load.
+ */
 class Ajaxlist
 {
-    public $CI;
     public $options = array(
         'data' => array(),
         'type' => "ajax",
@@ -43,7 +50,23 @@ class Ajaxlist
 
     function __construct()
     {
-        $this->CI =& get_instance();
+        $this->view = Services::layout(new View(), false);
+        $this->view->getData();
+        Services::layout()->setData();
+    }
+
+    /**
+     * @param string $view_file
+     * @param array $data
+     * @return string
+     */
+    public function renderView(string $view_file, array $data): string
+    {
+        $view = Services::layout(new View(), false);
+        $data = array_merge(Services::layout()->getData(), $data);
+        $view->setData($data);
+        Services::layout()->setData($data);
+        return $view->render($view_file);
     }
 
     /**
@@ -103,7 +126,7 @@ class Ajaxlist
                     $exists_theme = "common/ajaxlist/item_themes/$item[theme].php";
                     // Set theme patch
                     if(file_exists(VIEWPATH.$exists_theme)) $theme = $exists_theme; else $theme = $item['theme'];
-                    $content = $this->CI->load->view($theme, array('content' => $content, 'data'=>$data, 'config'=>$item, 'row_id'=>$row_id), true);
+                    $content = $this->renderView($theme, array('content' => $content, 'data'=>$data, 'config'=>$item, 'row_id'=>$row_id));
                 }
                 $row['columns'][$key] = array_merge($item, array('content' => $content, 'row_id'=>$row_id, 'column_class'=>$item['column_class']));
             }
@@ -147,15 +170,19 @@ class Ajaxlist
         ));
     }
 
-    function getPage()
+    /**
+     * Return the list
+     *
+     * @return string
+     */
+    public function getPage(): string
     {
         if($this->options['type']=='static'){
             $this->options['data'] = $this->getData($this->options['data']);
         }else{
             $this->options['data'] = null;
         }
-        $this->CI->data['options'] = $this->options;
-        return $this->CI->load->view("common/ajaxlist/handel-page", $this->CI->data, true);
+        return $this->renderView("common/ajaxlist/handel-page", ['options'=>$this->options]);
     }
 
     /**
@@ -175,7 +202,7 @@ class Ajaxlist
                 $result['row_bold'] = 1;
         }
         elseif(count($params)!=2){
-            show_error("The parameter of check_bold shall be a single value or an array with two element.");
+            throw new EmergencyError("The parameter of check_bold shall be a single value or an array with two element.");
         }
         else{
             if($data[$params[0]]==$params[1])

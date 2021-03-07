@@ -87,7 +87,7 @@ abstract class Base extends Controller
         $this->config = new Settings();
         $this->settings = $this->config->settings_default;
         $this->router = \Config\Services::router();
-        $this->view = new Layout();
+        $this->view = Services::layout();
         $this->request = Services::request();
         $this->session = Services::session();
         $this->model = Services::model();

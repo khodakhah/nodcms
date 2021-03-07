@@ -142,7 +142,7 @@ class QuickResponse
      */
     private function get(string $type, string $message = null, string $uri = null)
     {
-        if(!in_array($type, $this->_types)) {
+        if(!key_exists($type, $this->_types)) {
             throw new \Exception("Response type \"{$type}\" is undefined.");
         }
 
