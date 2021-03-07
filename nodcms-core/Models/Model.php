@@ -21,6 +21,7 @@
 
 namespace NodCMS\Core\Models;
 
+use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Database\Exceptions\DatabaseException;
 
@@ -207,11 +208,13 @@ class Model extends CoreModel
      * @param null|int $limit
      * @param int $page
      * @param null|array $sort_by
+     * @param BaseBuilder|null $builder
      * @return mixed
      */
-    function getAll($conditions = null, $limit=null, $page=1, $sort_by = null): array
+    function getAll($conditions = null, $limit=null, $page=1, $sort_by = null, BaseBuilder $builder = null): array
     {
-        $builder = $this->getBuilder();
+        if(!$builder != null)
+            $builder = $this->getBuilder();
         $builder->select('*');
 
         if($conditions!=null) {
@@ -258,9 +261,9 @@ class Model extends CoreModel
      * Decode search data
      *
      * @param array $conditions
-     * @param \CodeIgniter\Database\BaseBuilder $builder
+     * @param BaseBuilder $builder
      */
-    function searchDecode(array $conditions, \CodeIgniter\Database\BaseBuilder $builder)
+    function searchDecode(array $conditions, BaseBuilder $builder)
     {
         if(!is_array($conditions)){
             $builder->where($conditions);
@@ -683,10 +686,10 @@ class Model extends CoreModel
     /**
      * Returns an instance of the query builder for this connection.
      *
-     * @return \CodeIgniter\Database\BaseBuilder
+     * @return BaseBuilder
      * @throws DatabaseException
      */
-    protected function getBuilder(): \CodeIgniter\Database\BaseBuilder
+    protected function getBuilder(): BaseBuilder
     {
         return $this->db->table($this->table_name);
     }

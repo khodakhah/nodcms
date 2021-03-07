@@ -21,6 +21,8 @@
 
 namespace NodCMS\Core\Models;
 
+use Config\Services;
+
 class Users_model extends Model
 {
     function init()
@@ -136,5 +138,22 @@ class Users_model extends Model
     public function loginMatch($username, $password) : ?array
     {
         return $this->getOne(null, ['username'=>$username, 'password'=>md5($password)]);
+    }
+
+    /**
+     * Select and join with groups table
+     *
+     * @param null $conditions
+     * @param null $limit
+     * @param int $page
+     * @param null $sort_by
+     * @return array|mixed
+     */
+    public function getAllWithGroups($conditions = null, $limit=null, $page=1, $sort_by = null) {
+        $joinWithT = Services::model()->groups()->tableName();
+        $joinWithF = Services::model()->groups()->primaryKey();
+        $builder = $this->getBuilder();
+        $builder->join($joinWithT, "{$joinWithT}.{$joinWithF} = {$this->tableName()}.group_id");
+        return $this->getAll($conditions, $limit, $page, $sort_by, $builder);
     }
 }
