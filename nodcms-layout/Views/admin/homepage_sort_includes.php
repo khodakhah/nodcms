@@ -1,2 +1,2 @@
-<?php $this->load->addCssFile("assets/plugins/jquery-nestable/jquery.nestable"); ?>
-<?php $this->load->addJsFile("assets/plugins/jquery-nestable/jquery.nestable"); ?>
+<?php $this->addCssFile("assets/plugins/jquery-nestable/jquery.nestable"); ?>
+<?php $this->addJsFile("assets/plugins/jquery-nestable/jquery.nestable"); ?>

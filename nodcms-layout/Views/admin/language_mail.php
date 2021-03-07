@@ -1,4 +1,4 @@
-<?php $this->load->addJsFile("assets/ckeditor/ckeditor"); ?>
+<?php $this->addJsFile("assets/ckeditor/ckeditor"); ?>
 <div class="row">
     <div class="col-lg-12 col-md-12 col-xs-12">
         <section class="portlet">

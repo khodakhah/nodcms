@@ -1,4 +1,4 @@
-<?php $this->load->addJsFile("assets/plugins/ckeditor/ckeditor"); ?>
+<?php $this->addJsFile("assets/plugins/ckeditor/ckeditor"); ?>
 <?php if(isset($data_list) && count($data_list)!=0){ ?>
     <div class="row">
         <div class="col-md-4">

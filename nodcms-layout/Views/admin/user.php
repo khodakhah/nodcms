@@ -24,14 +24,14 @@
                     <tr id="row_<?php echo $data["user_id"]?>">
                         <td><?php echo $data['user_id']; ?></td>
                         <td class="fit">
-                            <img style="height: 36px;" class="user-pic" src="<?php echo base_url().($data['avatar']!=''?$data['avatar']:"upload_file/images/user.png"); ?>">
+                            <img style="height: 36px;" class="user-pic" src="<?php echo base_url($data['avatar']!=''?$data['avatar']:"upload_file/images/user.png"); ?>">
                         </td>
                         <td><a href="javascript:;" class="view-details" data-id="<?php echo $data["user_id"]; ?>"><?php echo $data["username"]; ?></a></td>
                         <td><?php echo $data["email"]; ?></td>
                         <td><?php echo $data["fullname"]; ?></td>
                         <td><?php echo timespan($data["created_date"], '', 2); ?></td>
                         <td>
-                            <?php if($data["group_id"]==1){ ?>
+                            <?php if($data["group_id"]==1) { ?>
                                 <span class="label label-success"><?php echo $data['group_name']; ?></span>
                             <?php }elseif(in_array($data["group_id"],array(2,20))){ ?>
                                 <span class="label label-primary"><?php echo $data['group_name']; ?></span>

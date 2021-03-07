@@ -1,4 +1,4 @@
-<?php $this->load->addCssFile("assets/metronic/pages/css/profile","assets/metronic/pages/css/profile-rtl"); ?>
+<?php $this->addCssFile("assets/metronic/pages/css/profile","assets/metronic/pages/css/profile-rtl"); ?>
 <div class="portlet">
     <div class="portlet-body">
         <div class="row">
