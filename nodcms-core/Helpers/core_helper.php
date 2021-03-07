@@ -2747,3 +2747,22 @@ if(!function_exists('country_iso_code')){
         return $_countries[$name];
     }
 }
+
+if( ! function_exists("timespan")) {
+    /**
+     * Carry an old function!
+     *
+     * @param int $seconds
+     * @param string $nowTime
+     * @param int $units
+     * @return string
+     * @throws Exception
+     */
+    function timespan(int $seconds = 1, string $nowTime = 'now', int $units = 1) {
+        $time = new \CodeIgniter\I18n\Time();
+        $now = new \CodeIgniter\I18n\Time(!empty($nowTime) ? $nowTime : "now");
+        $time->setTimestamp($seconds);
+        $diff = $time->difference($now);
+        return $diff->humanize();
+    }
+}
