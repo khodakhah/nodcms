@@ -11,6 +11,7 @@ class Filters extends BaseConfig
 		'toolbar'  => \CodeIgniter\Filters\DebugToolbar::class,
 		'honeypot' => \CodeIgniter\Filters\Honeypot::class,
 		'urlLocale' => \NodCMS\Core\Filters\UrlLocale::class,
+		'identityVerification' => \NodCMS\Core\Filters\IdentityVerification::class,
 	];
 
 	// Always applied before every request

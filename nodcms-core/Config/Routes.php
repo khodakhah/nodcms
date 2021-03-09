@@ -53,8 +53,8 @@ $routes->setAutoRoute(true);
 // route since we don't have to scan directories.
 
 // Admin URLs
-$routes->get('admin', "GeneralAdmin::dashboard");
-$routes->get('admin/(.+)', "GeneralAdmin::$1");
+$routes->get('admin', "GeneralAdmin::dashboard", ['filter'=>"identityVerification"]);
+$routes->get('admin/(.+)', "GeneralAdmin::$1", ['filter'=>"identityVerification"]);
 $routes->get('admin-provider', "Providers_admin::index");
 $routes->get('admin-provider/(.+)', "Providers_admin::$1");
 

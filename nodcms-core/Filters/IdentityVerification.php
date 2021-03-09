@@ -38,7 +38,7 @@ class IdentityVerification implements \CodeIgniter\Filters\FilterInterface
         $response = Services::quickResponse();
 
         if(!Services::identity()->isValid()){
-            return $response->getError(_l("Please login to access to access.", $this), "/admin-sign");
+            return $response->getError(lang("Please login to access to access."), "/admin-sign");
         }
 
         if(!Services::identity()->isActive()) {
@@ -48,7 +48,7 @@ class IdentityVerification implements \CodeIgniter\Filters\FilterInterface
         }
 
         if(!Services::identity()->isAdmin(true)) {
-            return $response->getError(_l("Access denied!", "/"));
+            return $response->getError(lang("Access denied!"), base_url());
         }
 
         return true;

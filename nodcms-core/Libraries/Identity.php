@@ -110,7 +110,8 @@ class Identity
 
     public function isActive(): bool
     {
-        return boolval(Services::session()->get('active'));
+        $userdata = $this->getUserData();
+        return boolval($userdata['active']);
     }
 
     public function getResponse()
