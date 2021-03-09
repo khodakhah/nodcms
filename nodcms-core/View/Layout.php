@@ -129,7 +129,8 @@ class Layout extends View
      * @param string $path
      * @param string|null $ltr_path
      */
-    private function addAsset(&$variable, string $file_type, string $path, string $ltr_path = null) {
+    private function addAsset(&$variable, string $file_type, string $path, string $ltr_path = null)
+    {
         if($ltr_path != null) {
             if(!isset($this->language) || $this->language == null)
                 return;

@@ -14,10 +14,11 @@ class Validation
 	 */
 	public $ruleSets = [
 		\CodeIgniter\Validation\Rules::class,
-		\CodeIgniter\Validation\FormatRules::class,
+//		\CodeIgniter\Validation\FormatRules::class,
 		\CodeIgniter\Validation\FileRules::class,
 		\CodeIgniter\Validation\CreditCardRules::class,
 		\NodCMS\Core\Validation\Rules::class,
+		\NodCMS\Core\Validation\FormatRules::class,
 	];
 
 	/**

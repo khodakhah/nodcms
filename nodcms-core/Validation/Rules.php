@@ -21,6 +21,8 @@
 
 namespace NodCMS\Core\Validation;
 
+use Config\Services;
+
 /**
  * Class Rules
  * @package NodCMS\Validation
@@ -221,7 +223,7 @@ class Rules
             $this->setError('validateUsername', _l("The {field} field must be between 3 und 18 characters in length.", $this));
             return FALSE;
         }
-        if($this->Nodcms_admin_model->checkUserUnique(array('username'=>$value), $except_user_id)){
+        if(Services::model()->users()->getCount(['username' => $value, 'user_id <>' => $except_user_id]) > 0){
             $this->setError('validateUsername', _l("The {field} field must be unique in the system.", $this));
             return FALSE;
         }
@@ -238,7 +240,7 @@ class Rules
      */
     public function emailUnique($value, $except_user_id = 0): bool
     {
-        if($this->Public_model->isUnique($value, "users", "email", "user_id", $except_user_id)!=0){
+        if(Services::model()->users()->getCount(['email' => $value, 'user_id <>' => $except_user_id]) > 0){
             $this->setError('emailUnique', _l("The {field} field must be unique in the system.", $this));
             return false;
         }else{

@@ -94,9 +94,9 @@ class QuickResponse
     /**
      * Set the error message.
      *
-     * @param string $message
+     * @param string|array $message
      */
-    public function setMessage(string $message)
+    public function setMessage($message)
     {
         $this->message = $message;
     }
@@ -135,12 +135,12 @@ class QuickResponse
      * Returns response result
      *
      * @param string $type
-     * @param string|null $message
+     * @param array|string|null $message
      * @param string|null $uri
      * @return \CodeIgniter\HTTP\RedirectResponse|string
      * @throws \Exception
      */
-    private function get(string $type, string $message = null, string $uri = null)
+    private function get(string $type, $message = null, string $uri = null)
     {
         if(!key_exists($type, $this->_types)) {
             throw new \Exception("Response type \"{$type}\" is undefined.");

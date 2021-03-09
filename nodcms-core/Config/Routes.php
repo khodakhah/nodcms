@@ -54,7 +54,7 @@ $routes->setAutoRoute(true);
 
 // Admin URLs
 $routes->get('admin', "GeneralAdmin::dashboard", ['filter'=>"identityVerification"]);
-$routes->get('admin/(.+)', "GeneralAdmin::$1", ['filter'=>"identityVerification"]);
+$routes->match(['post', 'get'],'admin/(.+)', "GeneralAdmin::$1", ['filter'=>"identityVerification"]);
 $routes->get('admin-provider', "Providers_admin::index");
 $routes->get('admin-provider/(.+)', "Providers_admin::$1");
 

@@ -9,6 +9,7 @@ use NodCMS\Core\Response\QuickResponse;
 use NodCMS\Core\View\Layout;
 use NodCMS\Core\View\LinkList;
 use NodCMS\Core\Modules\Modules;
+use NodCMS\Core\View\View;
 use NodCMS\Core\View\Sidebar;
 use NodCMS\Core\View\TopMenu;
 
@@ -39,6 +40,25 @@ class Services extends CoreServices
 	//    }
 
     /**
+     * Returns the NodCMS View class
+     *
+     * @param null $config
+     * @param false $getShared
+     * @return View
+     */
+    public static function neutralView($config = null, $getShared = false) : View
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('neutralView', $config);
+        }
+
+        return new View($config);
+    }
+
+    /**
+     * Returns the layout
+     *
      * @param null $config
      * @param bool $getShared
      * @return Layout

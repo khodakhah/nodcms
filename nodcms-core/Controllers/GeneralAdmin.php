@@ -150,14 +150,14 @@ class GeneralAdmin extends Backend
                     array(
                         'field'=>"phone",
                         'label'=>_l("Phone number", $this),
-                        'rules'=>"callback_validPhone",
+                        'rules'=>"validPhone",
                         'type'=>"text",
                         'default'=>$this->settings['phone'],
                     ),
                     array(
                         'field'=>"fax",
                         'label'=>_l("Fax number", $this),
-                        'rules'=>"callback_validPhone",
+                        'rules'=>"validPhone",
                         'type'=>"text",
                         'default'=>$this->settings['fax'],
                     ),
@@ -171,7 +171,7 @@ class GeneralAdmin extends Backend
                     array(
                         'field'=>"google_map",
                         'label'=>_l("Google map", $this),
-                        'rules'=>"callback_validGoogleMapIframe",
+                        'rules'=>"validGoogleMapIframe",
                         'type'=>"textarea",
                         'default'=>$this->settings['google_map'],
                     ),
@@ -1093,7 +1093,7 @@ class GeneralAdmin extends Backend
                 'field'=>"language_name",
                 'label'=>_l("Directory Name", $this),
                 'type'=>"text",
-                'rules'=>"required|callback_validateUsernameType",
+                'rules'=>"required|validateUsernameType",
                 'default'=>isset($current_data['language_name'])?$current_data['language_name']:"",
             ),
             array(
@@ -1476,10 +1476,10 @@ class GeneralAdmin extends Backend
             }
             $self_url .= "/$id";
             $this->data["sub_title"] = _l("Edit Item", $this);
-            $isUniqueValidationRules = "|callback_isUnique[social_links,class,id,$id]";
+            $isUniqueValidationRules = "|isUnique[social_links,class,id,$id]";
         }else{
             $this->data["sub_title"] = _l("Insert New Item", $this);
-            $isUniqueValidationRules = '|callback_isUnique[social_links,class]';
+            $isUniqueValidationRules = '|isUnique[social_links,class]';
         }
 
         $social_types = array(
@@ -1732,12 +1732,12 @@ class GeneralAdmin extends Backend
                 array(
                     'label'=>_l("Size", $this),
                     'content'=>"size",
-                    'callback_function'=>"human_file_size"
+                    'function'=>"human_file_size"
                 ),
                 array(
                     'label'=>_l("Upload", $this),
                     'content'=>"created_date",
-                    'callback_function'=>"my_int_date"
+                    'function'=>"my_int_date"
                 ),
                 array(
                     'label'=>_l("Using", $this),
@@ -1911,6 +1911,7 @@ class GeneralAdmin extends Backend
      * Add or edit a user
      *
      * @param string $id
+     * @throws \Exception
      */
     function userEdit($id='')
     {
@@ -1954,42 +1955,42 @@ class GeneralAdmin extends Backend
             array(
                 'field' => 'email',
                 'label' => _l("Email", $this),
-                'rules' => 'required|valid_email|callback_emailUnique'.(isset($data)?'['.$data['user_id'].']':''),
+                'rules' => 'required|valid_email|emailUnique'.(isset($data)?'['.$data['user_id'].']':''),
                 'type' => "email",
                 'default'=>isset($data)?$data["email"]:''
             ),
             array(
                 'field' => 'username',
                 'label' => _l("Username", $this),
-                'rules' => 'required|callback_validateUsername'.(isset($data)?'['.$data['user_id'].']':''),
+                'rules' => 'required|validateUsername'.(isset($data)?'['.$data['user_id'].']':''),
                 'type' => "text",
                 'default'=>isset($data)?$data["username"]:''
             ),
             array(
                 'field' => 'password',
                 'label' => _l("Password", $this),
-                'rules' => (isset($data)?'':'required|').'callback_formRulesPassword',
+                'rules' => (isset($data)?'':'required|').'formRulesPassword',
                 'type' => "password",
                 'default'=>''
             ),
             array(
                 'field' => 'firstname',
                 'label' => _l("First Name", $this),
-                'rules' => 'callback_formRulesName',
+                'rules' => 'formRulesName',
                 'type' => "text",
                 'default'=>isset($data)?$data["firstname"]:''
             ),
             array(
                 'field' => 'lastname',
                 'label' => _l("Last Name", $this),
-                'rules' => 'callback_formRulesName',
+                'rules' => 'formRulesName',
                 'type' => "text",
                 'default'=>isset($data)?$data["lastname"]:''
             ),
             array(
                 'field' => 'mobile',
                 'label' => _l("Phone Number", $this),
-                'rules' => 'callback_validPhone',
+                'rules' => 'validPhone',
                 'type' => "text",
                 'default'=>isset($data)?$data["mobile"]:''
             ),
@@ -2284,7 +2285,7 @@ class GeneralAdmin extends Backend
             array(
                 'field'=>"custom_view_path_home",
                 'label'=>_l("Custom view file path", $this),
-                'rules'=>"callback_validateRequiredIf[homepage_type,custom_view]|callback_validateFileExists[".SELF_PATH."custom_views".DIRECTORY_SEPARATOR.",.php]",
+                'rules'=>"validateRequiredIf[homepage_type,custom_view]|validateFileExists[".SELF_PATH."custom_views".DIRECTORY_SEPARATOR.",.php]",
                 'type'=>"text",
                 'input_prefix'=>SELF_PATH."custom_views".DIRECTORY_SEPARATOR,
                 'input_postfix'=>".php",
@@ -2330,7 +2331,7 @@ class GeneralAdmin extends Backend
             array(
                 'field'=>"homepage_redirect",
                 'label'=>_l('Redirect URL',$this),
-                'rules'=>"callback_validateRequiredIf[homepage_type,redirect]|callback_validateNotEqual[".join(',',$unable_urls)."]",
+                'rules'=>"validateRequiredIf[homepage_type,redirect]|validateNotEqual[".join(',',$unable_urls)."]",
                 'type'=>"text",
                 'default'=>$this->settings['homepage_redirect'],
                 'group_class'=>"inputs_redirect ".($this->settings['homepage_type']!="redirect"?"hidden":""),
@@ -2338,7 +2339,7 @@ class GeneralAdmin extends Backend
             array(
                 'field'=>"homepage_display_file",
                 'label'=>_l('File patch',$this),
-                'rules'=>"callback_validateRequiredIf[homepage_type,display_file]|callback_validateFileExists[".SELF_PATH."]",
+                'rules'=>"validateRequiredIf[homepage_type,display_file]|validateFileExists[".SELF_PATH."]",
                 'type'=>"text",
                 'input_prefix'=>SELF_PATH,
                 'default'=>$this->settings['homepage_display_file'],
@@ -2347,7 +2348,7 @@ class GeneralAdmin extends Backend
             array(
                 'field'=>"homepage_display_page",
                 'label'=>_l('Page URL',$this),
-                'rules'=>"callback_validateRequiredIf[homepage_type,display_page]",
+                'rules'=>"validateRequiredIf[homepage_type,display_page]",
                 'type'=>"text",
                 'default'=>$this->settings['homepage_display_page'],
                 'group_class'=>"inputs_display_page ".($this->settings['homepage_type']!="display_page"?"hidden":""),
