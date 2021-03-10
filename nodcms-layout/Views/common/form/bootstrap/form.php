@@ -5,11 +5,12 @@
 <script>
     $(function () {
         <?php if($this->request->isAjax()){ ?>
-        var import_js_files = <?php  echo (isset($this->js_files) && count($this->js_files)!=0)?json_encode($this->js_files):'[]'; ?>;
-        var import_css_files = <?php echo (isset($this->css_files) && count($this->css_files)!=0)?json_encode($this->css_files):'[]'; ?>;
+        var import_js_files = <?php  echo json_encode($this->getAllJsAssets()); ?>;
+        var import_css_files = <?php echo json_encode($this->getAllCssAssets()); ?>;
+        console.log(import_js_files, import_css_files);
         if(import_js_files.length > 0){
             $.each(import_js_files, function (key, val) {
-                var url = $('body').attr('data-base-url') + '/' + val+".js";
+                var url = $('body').attr('data-base-url') + '/' + val;
                 if($('script[src="'+url+'"]').length == 0){
                     $.ajax({
                         url: url,
@@ -20,7 +21,7 @@
         }
         if(import_css_files.length > 0){
             $.each(import_css_files, function (key, val) {
-                var url = $('body').attr('data-base-url') + '/' + val+".css";
+                var url = $('body').attr('data-base-url') + '/' + val;
                 if($('link[href="'+url+'"]').length == 0){
                     $('head').append('<link rel="stylesheet" href="'+url+'" type="text/css" />');
                 }

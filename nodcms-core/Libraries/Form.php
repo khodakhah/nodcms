@@ -382,13 +382,13 @@ class Form
         }
 
         if(count($this->data['notes'])!=0)
-            $this->data['notes'] = Services::neutralView()->setData(array('notes'=>$this->data['notes']))->render($this->theme_patch.'notes');
+            $this->data['notes'] = Services::formLayout()->setData(array('notes'=>$this->data['notes']))->render($this->theme_patch.'notes');
         else
             $this->data['notes'] = '';
 
         if($this->custom_file != ''){
             $this->is_custom = true;
-            $form_content = Services::neutralView()->setData(array_merge(array('inputs'=>$this->inputs),$this->CI->data))->render($this->custom_file);
+            $form_content = Services::formLayout()->setData(array_merge(array('inputs'=>$this->inputs),$this->CI->data))->render($this->custom_file);
         }
 
         elseif(isset($this->data['columns']) && count($this->data['columns'])!=0){
@@ -443,7 +443,7 @@ class Form
         $data_output = array_merge($data_output, $this->data);
 
         $this->htmlIncludeFiles($this->data['inputs']);
-        $form_content = Services::neutralView()->setData($data_output)->render($this->theme_patch.'form');
+        $form_content = Services::formLayout()->setData($data_output)->render($this->theme_patch.'form');
 
         if($this->CI->request->isAjax() && $ajax_modal_format){
             return json_encode(array(
@@ -480,11 +480,11 @@ class Form
         }
 
         if(count($this->data['notes'])!=0)
-            $this->data['notes'] = Services::neutralView()->setData(array('notes'=>$this->data['notes']))->render($this->theme_patch.'notes');
+            $this->data['notes'] = Services::formLayout()->setData(array('notes'=>$this->data['notes']))->render($this->theme_patch.'notes');
         else
             $this->data['notes'] = '';
 
-        $form_content = Services::neutralView()->setData(array_merge(array('inputs'=>$this->inputs),$this->CI->data))->render($custom_file);
+        $form_content = Services::formLayout()->setData(array_merge(array('inputs'=>$this->inputs),$this->CI->data))->render($custom_file);
 
         $submit_attr = array();
         $submit_class = array();
@@ -515,7 +515,7 @@ class Form
 
         $this->htmlIncludeFiles($this->data['inputs']);
 
-        $form_content = Services::neutralView()->setData($data_output)->render($this->theme_patch.'form');
+        $form_content = Services::formLayout()->setData($data_output)->render($this->theme_patch.'form');
 
         if($this->CI->request->isAjax()){
             return json_encode(array(
@@ -545,87 +545,89 @@ class Form
             $all_types = array_merge($all_types, $sub_inputs_types);
         }
 
+        Services::formLayout()->addJsFile("assets/nodcms/form-handler/form-handler.min");
+
         if(in_array('datepicker', $all_types)){
-            Services::layout()->addCssFile("assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min");
-            Services::layout()->addJsFile("assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min");
+            Services::formLayout()->addCssFile("assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min");
+            Services::formLayout()->addJsFile("assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min");
         }
         if(in_array('date', $all_types)){
-            Services::layout()->addCssFile("assets/plugins/jquery-ui-1.12.1/jquery-ui.min");
-            Services::layout()->addJsFile("assets/plugins/jquery-ui-1.12.1/jquery-ui.min");
+            Services::formLayout()->addCssFile("assets/plugins/jquery-ui-1.12.1/jquery-ui.min");
+            Services::formLayout()->addJsFile("assets/plugins/jquery-ui-1.12.1/jquery-ui.min");
         }
         if(in_array('image', $all_types)){
-            Services::layout()->addCssFile("assets/plugins/bootstrap-fileinput/bootstrap-fileinput");
-            Services::layout()->addJsFile("assets/plugins/bootstrap-fileinput/bootstrap-fileinput");
+            Services::formLayout()->addCssFile("assets/plugins/bootstrap-fileinput/bootstrap-fileinput");
+            Services::formLayout()->addJsFile("assets/plugins/bootstrap-fileinput/bootstrap-fileinput");
         }
         if(in_array('image-library', $all_types)){
-            Services::layout()->addCssFile("assets/mini-upload-image/css/style");
-            Services::layout()->addJsFile("assets/mini-upload-image/js/jquery.knob");
-            Services::layout()->addJsFile("assets/mini-upload-image/js/jquery.ui.widget");
-            Services::layout()->addJsFile("assets/mini-upload-image/js/jquery.iframe-transport");
-            Services::layout()->addJsFile("assets/mini-upload-image/js/jquery.fileupload");
-            Services::layout()->addJsFile("assets/mini-upload-image/js/script");
-            Services::layout()->addJsFile("assets/nodcms/form-handler/input-image-library.min");
+            Services::formLayout()->addCssFile("assets/mini-upload-image/css/style");
+            Services::formLayout()->addJsFile("assets/mini-upload-image/js/jquery.knob");
+            Services::formLayout()->addJsFile("assets/mini-upload-image/js/jquery.ui.widget");
+            Services::formLayout()->addJsFile("assets/mini-upload-image/js/jquery.iframe-transport");
+            Services::formLayout()->addJsFile("assets/mini-upload-image/js/jquery.fileupload");
+            Services::formLayout()->addJsFile("assets/mini-upload-image/js/script");
+            Services::formLayout()->addJsFile("assets/nodcms/form-handler/input-image-library.min");
         }
 
         if(in_array('icons', $all_types)){
-            Services::layout()->addJsFile("assets/nodcms/form-handler/select-icons");
+            Services::formLayout()->addJsFile("assets/nodcms/form-handler/select-icons");
         }
         if(in_array('texteditor', $all_types)){
-            Services::layout()->addJsFile("assets/plugins/ckeditor/ckeditor");
+            Services::formLayout()->addJsFile("assets/plugins/ckeditor/ckeditor");
         }
         if(in_array('texteditor-quick', $all_types)){
-            Services::layout()->addJsFile("assets/plugins/ckeditor/ckeditor");
+            Services::formLayout()->addJsFile("assets/plugins/ckeditor/ckeditor");
         }
         if(in_array('codeeditor', $all_types)){
-            Services::layout()->addCssFile("assets/plugins/codemirror/lib/codemirror");
-            Services::layout()->addCssFile("assets/plugins/codemirror/theme/neat");
-            Services::layout()->addCssFile("assets/plugins/codemirror/theme/ambiance");
-            Services::layout()->addCssFile("assets/plugins/codemirror/theme/material");
-            Services::layout()->addCssFile("assets/plugins/codemirror/theme/neo");
+            Services::formLayout()->addCssFile("assets/plugins/codemirror/lib/codemirror");
+            Services::formLayout()->addCssFile("assets/plugins/codemirror/theme/neat");
+            Services::formLayout()->addCssFile("assets/plugins/codemirror/theme/ambiance");
+            Services::formLayout()->addCssFile("assets/plugins/codemirror/theme/material");
+            Services::formLayout()->addCssFile("assets/plugins/codemirror/theme/neo");
 
-            Services::layout()->addJsFile("assets/plugins/codemirror/lib/codemirror");
-            Services::layout()->addJsFile("assets/plugins/codemirror/mode/javascript/javascript");
-            Services::layout()->addJsFile("assets/plugins/codemirror/mode/htmlmixed/htmlmixed");
+            Services::formLayout()->addJsFile("assets/plugins/codemirror/lib/codemirror");
+            Services::formLayout()->addJsFile("assets/plugins/codemirror/mode/javascript/javascript");
+            Services::formLayout()->addJsFile("assets/plugins/codemirror/mode/htmlmixed/htmlmixed");
 //            \Configself::layout()->addJsFile("assets/plugins/codemirror/mode/htmlembedded/htmlembedded");
-            Services::layout()->addJsFile("assets/plugins/codemirror/mode/css/css");
+            Services::formLayout()->addJsFile("assets/plugins/codemirror/mode/css/css");
         }
         // Multi upload files
         if(in_array('files', $all_types)){
-            Services::layout()->addCssFile("assets/plugins/dropzone/dropzone");
-            Services::layout()->addCssFile("assets/plugins/dropzone/basic");
-            Services::layout()->addJsFile("assets/plugins/dropzone/dropzone");
-            Services::layout()->addJsFile("assets/nodcms/form-handler/files");
+            Services::formLayout()->addCssFile("assets/plugins/dropzone/dropzone");
+            Services::formLayout()->addCssFile("assets/plugins/dropzone/basic");
+            Services::formLayout()->addJsFile("assets/plugins/dropzone/dropzone");
+            Services::formLayout()->addJsFile("assets/nodcms/form-handler/files");
         }
 
         if(in_array('jquery-repeater', $all_types)){
-            Services::layout()->addJsFile("assets/plugins/jquery-repeater/jquery.repeater");
+            Services::formLayout()->addJsFile("assets/plugins/jquery-repeater/jquery.repeater");
         }
         if(in_array('currency', $all_types)){
-            Services::layout()->addJsFile("assets/nodcms/form-handler/input-currency");
+            Services::formLayout()->addJsFile("assets/nodcms/form-handler/input-currency");
         }
         if(in_array('attachment', $all_types)){
-            Services::layout()->addJsFile("assets/nodcms/form-handler/input-attachment");
+            Services::formLayout()->addJsFile("assets/nodcms/form-handler/input-attachment");
         }
         if(in_array('number', $all_types)){
-            Services::layout()->addJsFile("assets/nodcms/form-handler/input-number");
+            Services::formLayout()->addJsFile("assets/nodcms/form-handler/input-number");
         }
 
         if(in_array('range-select', $all_types) || in_array('range', $all_types)){
-            Services::layout()->addJsFile("assets/plugins/ion.rangeSlider-2.1.7/js/ion-rangeSlider/ion.rangeSlider");
-            Services::layout()->addCssFile("assets/plugins/ion.rangeSlider-2.1.7/css/ion.rangeSlider");
-            Services::layout()->addCssFile("assets/plugins/ion.rangeSlider-2.1.7/css/ion.rangeSlider.skinHTML5");
-            Services::layout()->addJsFile("assets/nodcms/form-handler/input-range");
+            Services::formLayout()->addJsFile("assets/plugins/ion.rangeSlider-2.1.7/js/ion-rangeSlider/ion.rangeSlider");
+            Services::formLayout()->addCssFile("assets/plugins/ion.rangeSlider-2.1.7/css/ion.rangeSlider");
+            Services::formLayout()->addCssFile("assets/plugins/ion.rangeSlider-2.1.7/css/ion.rangeSlider.skinHTML5");
+            Services::formLayout()->addJsFile("assets/nodcms/form-handler/input-range");
         }
 
-        Services::layout()->addCssFile("assets/plugins/icheck/skins/all");
-        Services::layout()->addJsFile("assets/plugins/icheck/icheck.min");
-        Services::layout()->addCssFile("assets/plugins/bootstrap-touchspin/bootstrap.touchspin");
-        Services::layout()->addJsFile("assets/plugins/bootstrap-touchspin/bootstrap.touchspin");
+        Services::formLayout()->addCssFile("assets/plugins/icheck/skins/all");
+        Services::formLayout()->addJsFile("assets/plugins/icheck/icheck.min");
+        Services::formLayout()->addCssFile("assets/plugins/bootstrap-touchspin/bootstrap.touchspin");
+        Services::formLayout()->addJsFile("assets/plugins/bootstrap-touchspin/bootstrap.touchspin");
         // Switch
-        Services::layout()->addCssFile("assets/plugins/bootstrap-switch/css/bootstrap-switch.min", "assets/plugins/bootstrap-switch/css/bootstrap-switch-rtl.min");
-        Services::layout()->addJsFile("assets/plugins/bootstrap-switch/js/bootstrap-switch.min");
+        Services::formLayout()->addCssFile("assets/plugins/bootstrap-switch/css/bootstrap-switch.min", "assets/plugins/bootstrap-switch/css/bootstrap-switch-rtl.min");
+        Services::formLayout()->addJsFile("assets/plugins/bootstrap-switch/js/bootstrap-switch.min");
         // Global js
-        Services::layout()->addJsFile("assets/nodcms/form-handler/form-handler");
+        Services::formLayout()->addJsFile("assets/nodcms/form-handler/form-handler");
 
     }
 
@@ -698,12 +700,12 @@ class Form
         // Set label prefix
         $data['prefix'] = isset($data['prefix'])?$data['prefix']:'';
         if(isset($data['prefix_language'])){
-            $data['prefix'] .= Services::neutralView()->setData($data["prefix_language"])->render($this->theme_patch.'postfix_language');
+            $data['prefix'] .= Services::formLayout()->setData($data["prefix_language"])->render($this->theme_patch.'postfix_language');
         }
         // Set label postfix
         $data['postfix'] = isset($data['postfix'])?$data['postfix']:'';
         if(isset($data['postfix_language'])){
-            $data['postfix'] .= Services::neutralView()->setData($data["postfix_language"])->render($this->theme_patch.'postfix_language');
+            $data['postfix'] .= Services::formLayout()->setData($data["postfix_language"])->render($this->theme_patch.'postfix_language');
         }
 
         if(in_array($data['type'], $this->headers)){
@@ -807,7 +809,7 @@ class Form
             'prefix'=>"",
         );
         $data_output = array_merge($default, $data);
-        $output = Services::neutralView()->setData($data_output)->render($this->theme_patch.$this->styles[$this->style]['form_header']);
+        $output = Services::formLayout()->setData($data_output)->render($this->theme_patch.$this->styles[$this->style]['form_header']);
         return $output;
     }
 
@@ -825,7 +827,7 @@ class Form
                 'input_postfix'=>"",
             );
             $data = array_merge($data_default,$data);
-            $input = Services::neutralView()->setData($data)->render($this->theme_patch.'input');
+            $input = Services::formLayout()->setData($data)->render($this->theme_patch.'input');
             if($data['type']=="hidden"){
                 return $input;
             }
@@ -834,7 +836,7 @@ class Form
             return $input;
         }
         if(isset($data['help']) && $data['help']!='')
-            $help = Services::neutralView()->setData(array('message'=>$data['help']))->render($this->theme_patch.'help');
+            $help = Services::formLayout()->setData(array('message'=>$data['help']))->render($this->theme_patch.'help');
         else
             $help = '';
         if($this->style=="bootstrap-inline" && $data['label']!=""){
@@ -851,7 +853,7 @@ class Form
             'prefix'=>"",
         );
         $data_output = array_merge($data_output_default, $data);
-        $output = Services::neutralView()->setData($data_output)->render($this->theme_patch.$this->styles[$this->style]['form_group']);
+        $output = Services::formLayout()->setData($data_output)->render($this->theme_patch.$this->styles[$this->style]['form_group']);
         return $output;
     }
 
@@ -930,9 +932,9 @@ class Form
 
         $data['items'] = str_replace(array('<','>'),array("&lt;","&gt;"),join('', array_column($data['sub_items'], 'form')));
         if($data['custom_file']!=''){
-            $input = Services::neutralView()->setData($data)->render($data['custom_file']);
+            $input = Services::formLayout()->setData($data)->render($data['custom_file']);
         }else{
-            $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+            $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         }
         if($this->custom_file == '') $this->is_custom = false;
         return $this->addInput($data, $input);
@@ -957,9 +959,9 @@ class Form
         );
         $data = array_merge($default_data, $data);
         if($data['custom_file']!=''){
-            $input = Services::neutralView()->setData($data)->render($data['custom_file']);
+            $input = Services::formLayout()->setData($data)->render($data['custom_file']);
         }else{
-            $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+            $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         }
         return $this->addInput($data, $input);
     }
@@ -975,7 +977,7 @@ class Form
             'default'=>'',
         );
         $data = array_merge($default_data, $data);
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 
@@ -993,7 +995,7 @@ class Form
             'default'=>"",
         );
         $data = array_merge($default_data, $data);
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 
@@ -1013,7 +1015,7 @@ class Form
         $data = array_merge($data_default, $data);
         $data['image_library_url'] = ADMIN_URL."getImagesLibrary/$data[name]/$data[library_type]";
         $data['img_src'] = base_url($data['default']!=""?$data['default']:"noimage-200-50-Not_Set");
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 
@@ -1040,7 +1042,7 @@ class Form
         if($data['default']=="from-cookies"){
             $data['default'] = $this->getLastUploadedFiles($data['upload_key']);
         }
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 
@@ -1056,7 +1058,7 @@ class Form
             'default'=>"",
         );
         $data = array_merge($data_default, $data);
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 
@@ -1073,7 +1075,7 @@ class Form
             'default'=>"",
         );
         $data = array_merge($data_default, $data);
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 
@@ -1089,7 +1091,7 @@ class Form
             'max'=>0,
         );
         $data = array_merge($data_default, $data);
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 
@@ -1107,7 +1109,7 @@ class Form
             'divider' => ".",
         );
         $data = array_merge($data_default, $data);
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 
@@ -1125,7 +1127,7 @@ class Form
             'grid' => 1,
         );
         $data = array_merge($data_default, $data);
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 
@@ -1140,7 +1142,7 @@ class Form
             'url' => "-",
         );
         $data = array_merge($data_default, $data);
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 
@@ -1156,7 +1158,7 @@ class Form
         );
         $data = array_merge($data_default, $data);
         $data['default'] = $data['default']!=1?'':'checked';
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 
@@ -1172,7 +1174,7 @@ class Form
             'sub_items'=>array(),
         );
         $data = array_merge($data_default, $data);
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 
@@ -1187,7 +1189,7 @@ class Form
             'modal_title'=>_l("Select Icons", $this->CI),
         );
         $data = array_merge($data_default, $data);
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 
@@ -1203,7 +1205,7 @@ class Form
             'attr'=>array(),
         );
         $data = array_merge($data_default, $data);
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 
@@ -1219,7 +1221,7 @@ class Form
             'attr'=>array(),
         );
         $data = array_merge($data_default, $data);
-        $input = Services::neutralView()->setData($data)->render($this->theme_patch.$data['type']);
+        $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
 

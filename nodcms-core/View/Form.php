@@ -22,35 +22,7 @@
 namespace NodCMS\Core\View;
 
 
-use Config\Services;
-
-class Layout extends View
+class Form extends View
 {
-    /**
-     * Render the frame
-     *
-     * @param array|null $options
-     * @param bool|null $saveData
-     * @return string
-     */
-    public function renderFrame(array $options = null, bool $saveData = null): string
-    {
-        return $this->render($this->config->frameFile, $options, $saveData);
-    }
 
-    /**
-     * Render sidebar
-     *
-     * @param string $view_file
-     * @return string
-     */
-    public function sidebar(string $view_file = "sidebar"): string
-    {
-        return Services::sidebar()->render($view_file);
-    }
-
-    public function hasSidebar(): bool
-    {
-        return Services::sidebar()->hasLinks();
-    }
 }

@@ -794,7 +794,7 @@ class GeneralAdmin extends Backend
         }
 
         if(Services::request()->isAJAX()){
-            echo $myform->fetch('',array('data-redirect'=>1));
+            return $myform->fetch('',array('data-redirect'=>1));
         }
 
         $this->data['title'] = _l("Menu Manager", $this);

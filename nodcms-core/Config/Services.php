@@ -6,6 +6,7 @@ use NodCMS\Core\Libraries\Language;
 use NodCMS\Core\Models\ModelMap;
 use NodCMS\Core\Notification\EmailNotification;
 use NodCMS\Core\Response\QuickResponse;
+use NodCMS\Core\View\Form;
 use NodCMS\Core\View\Layout;
 use NodCMS\Core\View\LinkList;
 use NodCMS\Core\Modules\Modules;
@@ -46,14 +47,14 @@ class Services extends CoreServices
      * @param false $getShared
      * @return View
      */
-    public static function neutralView($config = null, $getShared = false) : View
+    public static function formLayout($config = null, $getShared = true) : Form
     {
         if ($getShared)
         {
-            return static::getSharedInstance('neutralView', $config);
+            return static::getSharedInstance('formLayout', $config);
         }
 
-        return new View($config);
+        return new Form($config);
     }
 
     /**
