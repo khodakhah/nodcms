@@ -27,6 +27,33 @@ use Config\Services;
 class Layout extends View
 {
     /**
+     * Attach form assets on the layout
+     */
+    public function fetchAllCSS()
+    {
+        parent::fetchAllCSS();
+        Services::formLayout()->fetchAllCSS();
+    }
+
+    /**
+     * Attach form assets on the layout
+     */
+    public function fetchAllJS()
+    {
+        parent::fetchAllJS();
+        Services::formLayout()->fetchAllJS();
+    }
+
+    /**
+     * Attach form assets on the layout
+     */
+    public function fetchAllHeaderJS()
+    {
+        parent::fetchAllHeaderJS();
+        Services::formLayout()->fetchAllHeaderJS();
+    }
+
+    /**
      * Render the frame
      *
      * @param array|null $options
