@@ -7,7 +7,6 @@
         <?php if($this->request->isAjax()){ ?>
         var import_js_files = <?php  echo json_encode($this->getAllJsAssets()); ?>;
         var import_css_files = <?php echo json_encode($this->getAllCssAssets()); ?>;
-        console.log(import_js_files, import_css_files);
         if(import_js_files.length > 0){
             $.each(import_js_files, function (key, val) {
                 var url = $('body').attr('data-base-url') + '/' + val;
