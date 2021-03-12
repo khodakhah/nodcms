@@ -53,15 +53,15 @@ class GeneralAdmin extends Backend
                 $update_data = array(
                     'package_sort'=>$i,
                 );
-                $this->model->packagesDashboard()->edit($item, $update_data);
+                Services::model()->packagesDashboard()->edit($item, $update_data);
             }
             return $this->successMessage("The packages has been successfully sorted.", ADMIN_URL);
         }
         $this->modules->resort();
-        $packages = $this->model->packagesDashboard()->getAll(null, null, 1, array('package_sort', 'ASC'));
+        $packages = Services::model()->packagesDashboard()->getAll(null, null, 1, array('package_sort', 'ASC'));
         $this->data['dashboards'] = array();
         foreach ($packages as $item){
-            if($this->model->packages()->getCount(array('package_name'=>$item['package_name'])) == 0)
+            if(Services::model()->packages()->getCount(array('package_name'=>$item['package_name'])) == 0)
                 continue;
             $name = strtolower($item['package_name']);
             $curl =  $this->curlJSON(base_url("admin-$name/dashboard"), null, 0, SSL_PROTOCOL, true);
@@ -407,9 +407,9 @@ class GeneralAdmin extends Backend
             ),
         );
 
-        $languages = $this->model->languages()->getAll();
+        $languages = Services::model()->languages()->getAll();
         foreach($languages as $language){
-            $setting = $this->model->settings()->getSettings($language['language_id']);
+            $setting = Services::model()->settings()->getSettings($language['language_id']);
             $language_head = array(
                 'label'=>$language['language_title'],
                 'type'=>"h4",
@@ -498,15 +498,15 @@ class GeneralAdmin extends Backend
                 foreach($data["auto_messages"] as $language_id=>$value){
                     foreach($auto_emails as $code_key=>$msg_val){
                         $item = $value[$code_key];
-                        $message = $this->model->emailMessages()->getOne(null, array('code_key'=>$code_key, 'language_id'=>$language_id));
+                        $message = Services::model()->emailMessages()->getOne(null, array('code_key'=>$code_key, 'language_id'=>$language_id));
                         if($message!=null){
-                            $this->model->emailMessages()->edit($message['msg_id'], $item);
+                            Services::model()->emailMessages()->edit($message['msg_id'], $item);
                         }
                         // Add new message
                         else{
                             $item['language_id'] = $language_id;
                             $item['code_key'] = $code_key;
-                            $this->model->emailMessages()->add($item);
+                            Services::model()->emailMessages()->add($item);
                         }
                     }
                 }
@@ -515,7 +515,7 @@ class GeneralAdmin extends Backend
             // Options in all languages save
             if(isset($data["options"])){
                 foreach($data["options"] as $language_id=>$item){
-                    if(!$this->model->settings()->updateSettings($item, $language_id)){
+                    if(!Services::model()->settings()->updateSettings($item, $language_id)){
                         return $this->errorMessage("A settings options could not be saved.", $this);
                     }
                 }
@@ -544,7 +544,7 @@ class GeneralAdmin extends Backend
             }
 
             // The settings without language_id
-            $this->model->settings()->updateSettings($data);
+            Services::model()->settings()->updateSettings($data);
             return $this->successMessage("Your Setting has been updated successfully!", ADMIN_URL."settings/$sub_page");
         }
 
@@ -564,7 +564,7 @@ class GeneralAdmin extends Backend
 
             $auto_messages_data = array();
             foreach($this->data['auto_emails'] as $language_id=>$val){
-                $autoMsgData = $this->model->emailMessages()->getAll(array('language_id'=>$language_id));
+                $autoMsgData = Services::model()->emailMessages()->getAll(array('language_id'=>$language_id));
                 foreach($autoMsgData as $value){
                     $auto_messages_data[$value["language_id"]][$language_id] = $value;
                 }
@@ -593,9 +593,9 @@ class GeneralAdmin extends Backend
                 $auto_emails = array_merge($auto_emails, $package_auto_emails);
         }
         $keys = array_keys($auto_emails);
-        $languages = $this->model->languages()->getCount();
+        $languages = Services::model()->languages()->getCount();
         foreach ($auto_emails as $key=>&$item){
-            $_missed = $this->model->emailMessages()->getCount(array('code_key'=>$key));
+            $_missed = Services::model()->emailMessages()->getCount(array('code_key'=>$key));
             $item['form_url'] = ADMIN_URL."automaticEmailTextForm/$key";
             if($_missed<$languages){
                 $item['form_badge'] = str_replace("{data}", $languages-$_missed, _l("{data} Empty", $this));
@@ -633,7 +633,7 @@ class GeneralAdmin extends Backend
         if(!key_exists($email_key,$auto_emails)){
             return $this->errorMessage("The email message isn't exists.", $back_url);
         }
-        $languages = $this->model->languages()->getAll();
+        $languages = Services::model()->languages()->getAll();
         // Form configuration
         $config = array(
             array(
@@ -643,7 +643,7 @@ class GeneralAdmin extends Backend
         );
         foreach ($languages as $item){
             // Get contents from database
-            $autoMsgData = $this->model->emailMessages()->getOne(null, array('code_key'=>$email_key, 'language_id'=>$item['language_id']));
+            $autoMsgData = Services::model()->emailMessages()->getOne(null, array('code_key'=>$email_key, 'language_id'=>$item['language_id']));
             $config = array_merge($config, array(
                 array(
                     'field'=>$email_key."[$item[language_id]][subject]",
@@ -680,15 +680,15 @@ class GeneralAdmin extends Backend
                 if(!in_array($key, $language_ids))
                     continue;
                 // Edit message
-                $message = $this->model->emailMessages()->getOne(null, array('code_key'=>$email_key, 'language_id'=>$key));
+                $message = Services::model()->emailMessages()->getOne(null, array('code_key'=>$email_key, 'language_id'=>$key));
                 if($message!=null){
-                    $this->model->emailMessages()->edit($message['msg_id'], $item);
+                    Services::model()->emailMessages()->edit($message['msg_id'], $item);
                 }
                 // Add new message
                 else{
                     $item['language_id'] = $key;
                     $item['code_key'] = $email_key;
-                    $this->model->emailMessages()->add($item);
+                    Services::model()->emailMessages()->add($item);
                 }
             }
             // Options in all languages save
@@ -710,9 +710,9 @@ class GeneralAdmin extends Backend
             array('title'=>_l('Footer menu',$this), 'description'=>_l("This menu will display in the pre footer.", $this), 'key'=>"footer_menu"),
         );
         foreach($this->data['menu_types'] as &$val){
-            $val['data_list'] = $this->model->menu()->getAll(array('menu_key'=>$val['key'], 'sub_menu'=>0));
+            $val['data_list'] = Services::model()->menu()->getAll(array('menu_key'=>$val['key'], 'sub_menu'=>0));
             foreach($val['data_list'] as &$item){
-                $item['sub_menu_data'] = $this->model->menu()->getAll(array('menu_key'=>$val['key'], 'sub_menu'=>$item['menu_id']));
+                $item['sub_menu_data'] = Services::model()->menu()->getAll(array('menu_key'=>$val['key'], 'sub_menu'=>$item['menu_id']));
             }
         }
         $this->data['breadcrumb']=array(
@@ -726,20 +726,23 @@ class GeneralAdmin extends Backend
      * Menu add and edit form
      *
      * @param int $id
+     * @param string $menu_type
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|mixed|string
+     * @throws \Exception
      */
-    function menuForm($id=0, $menu_type)
+    function menuForm(int $id, string $menu_type)
     {
         if($id!=0)
         {
-            $current_data = $this->model->menu()->getOne($id);
+            $current_data = Services::model()->menu()->getOne($id);
             if(count($current_data)==0)
-                $this->showError("The menu couldn't find.",ADMIN_URL."menuForm");
+                return $this->errorMessage("The menu couldn't find.", ADMIN_URL."menuForm");
             $this->data["form_title"] = _l("Edit", $this);
         }else{
             $this->data["form_title"] = _l("Add", $this);
         }
 
-        $languages = $this->model->languages()->getAll();
+        $languages = Services::model()->languages()->getAll();
         $config = array(
             array(
                 'field'=>"menu_name",
@@ -751,14 +754,16 @@ class GeneralAdmin extends Backend
         );
         foreach($languages as $item){
             if(isset($current_data))
-                $title = $this->model->titles()->getTitle("menu",$current_data['menu_id'], $item['language_id']);
+                $translations = Services::model()->menu()->getTranslations($id, $item['language_id']);
+            else
+                $translations = [];
             $config[] = array(
-                'field'=>"titles[$item[language_id]]",
+                'field'=>"titles[$item[language_id]][menu_name]",
                 'label'=>_l("Title", $this),
                 'rules'=>"required",
                 'type'=>"text",
                 'prefix_language'=>$item,
-                'default'=>isset($title)?$title['title_caption']:'',
+                'default'=>key_exists("menu_name", $translations)?$translations['menu_name']:'',
             );
         }
 
@@ -771,6 +776,13 @@ class GeneralAdmin extends Backend
             'option_name'=>"title",
             'option_value'=>"url",
             'default'=>isset($current_data)?$current_data['menu_url']:'',
+        );
+        $config[] = array(
+            'field'=>"public",
+            'label'=>_l("Public", $this),
+            'rules'=>"required|in_list[0,1]",
+            'type'=>"switch",
+            'default'=>isset($current_data)?$current_data['public']:'',
         );
         $config[] = array(
             'field'=>"menu_key",
@@ -787,10 +799,22 @@ class GeneralAdmin extends Backend
             if($data === false){
                 return $myform->getResponse();
             }
+
+            $titles = $data['titles'];
+            unset($data['titles']);
+
             if(!Services::identity()->isAdmin())
                 return Services::identity()->getResponse();
-            $this->model->menu()->edit($id, $data);
-            return $this->successMessage("Menu has been successfully updated.", ADMIN_URL."menu");
+
+            if($id != 0) {
+                Services::model()->menu()->edit($id, $data);
+                Services::model()->menu()->updateTranslations($id, $titles, $languages);
+                return $this->successMessage("Menu has been successfully updated.", ADMIN_URL."menu");
+            }
+
+            $new_id = Services::model()->menu()->add($data);
+            Services::model()->menu()->updateTranslations($new_id, $titles, $languages);
+            return $this->successMessage("Menu has been successfully added.", ADMIN_URL."menu");
         }
 
         if(Services::request()->isAJAX()){
@@ -808,7 +832,7 @@ class GeneralAdmin extends Backend
 
     function menuVisibility($id)
     {
-        $data = $this->model->menu()->getOne($id);
+        $data = Services::model()->menu()->getOne($id);
         if(count($data)==0){
             return $this->errorMessage("Couldn't find the menu item.", ADMIN_URL."menu");
         }
@@ -823,7 +847,7 @@ class GeneralAdmin extends Backend
         $update_data = array(
             'public'=>$public
         );
-        $this->model->menu()->edit($id, $update_data);
+        Services::model()->menu()->edit($id, $update_data);
         $this->successMessage("Success", ADMIN_URL."menu");
     }
 
@@ -846,7 +870,7 @@ class GeneralAdmin extends Backend
                     'sub_menu'=>$sub_menu[$index],
                     'menu_key'=>$menu_key,
                 );
-                $this->model->menu()->edit($item->id, $update_data);
+                Services::model()->menu()->edit($item->id, $update_data);
                 if(isset($item->children)){
                     $sub_menu[$index+1] = $item->id;
                     $children[$index+1] = $item->children;
@@ -867,7 +891,7 @@ class GeneralAdmin extends Backend
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
-        $this->model->menu()->edit($id, $this->input->post('data',TRUE));
+        Services::model()->menu()->edit($id, $this->input->post('data',TRUE));
         return Services::quickResponse()->getSuccess(_l('Updated menu',$this), ADMIN_URL."menu");
     }
 
@@ -896,7 +920,7 @@ class GeneralAdmin extends Backend
         $this->data['breadcrumb']=array(
             array('title'=>$this->data['title'])
         );
-        $this->data['data_list']=$this->model->languages()->getAll(null,null,1,array('sort_order','asc'));
+        $this->data['data_list']=Services::model()->languages()->getAll(null,null,1,array('sort_order','asc'));
         $this->data['key_changes'] = findNewLangKeys($this);
         $this->data['page'] = "language";
         return $this->viewRender("language_sort");
@@ -912,7 +936,7 @@ class GeneralAdmin extends Backend
         $this->data['title'] = _l("Languages",$this);
         if($id!=null)
         {
-            $current_data = $this->model->languages()->getOne($id);
+            $current_data = Services::model()->languages()->getOne($id);
             if($current_data==null || count($current_data)==0){
                 return $this->errorMessage("Language not found.", ADMIN_URL."language");
             }
@@ -1139,9 +1163,9 @@ class GeneralAdmin extends Backend
 
             unset($data['languages']);
             if($id != null){
-                $this->model->languages()->edit($id, $data);
+                Services::model()->languages()->edit($id, $data);
             }else{
-                $inserted_id = $this->model->languages()->add($data);
+                $inserted_id = Services::model()->languages()->add($data);
             }
 
             $dir = APPPATH."language/$data[language_name]/";
@@ -1195,7 +1219,7 @@ class GeneralAdmin extends Backend
             $update_data = array(
                 'sort_order'=>$i,
             );
-            $this->model->languages()->edit($item->id, $update_data);
+            Services::model()->languages()->edit($item->id, $update_data);
         }
         $this->successMessage("Languages have been successfully sorted.", ADMIN_URL."language");
     }
@@ -1211,7 +1235,7 @@ class GeneralAdmin extends Backend
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
-        $current_data = $this->model->languages()->getOne($id);
+        $current_data = Services::model()->languages()->getOne($id);
         if(count($current_data)==0){
             return $this->errorMessage("Language not found!", ADMIN_URL."language");
         }
@@ -1237,7 +1261,7 @@ class GeneralAdmin extends Backend
             ));
         }
 
-        $this->model->languages()->remove($id);
+        Services::model()->languages()->remove($id);
         $this->successMessage("Language has been deleted successfully.", $back_url);
     }
 
@@ -1249,7 +1273,7 @@ class GeneralAdmin extends Backend
      */
     function languageEditFile($id,$file_name)
     {
-        $this->data['data']=$this->model->languages()->getOne($id);
+        $this->data['data']=Services::model()->languages()->getOne($id);
         if($this->data['data']==null || !file_exists( SELF_PATH.'nodcms/language/'.$this->data['data']['language_name'].'/'.$file_name.'_lang.php')){
             $this->session->set_flashdata('error', _l('URL-Request was not exists!',$this));
             return redirect(ADMIN_URL."language");
@@ -1284,7 +1308,7 @@ class GeneralAdmin extends Backend
             }
         }
         $this->data['file_name'] = $file_name;
-        $this->data['languages']=$this->model->languages()->getAll();
+        $this->data['languages']=Services::model()->languages()->getAll();
         $this->data['title'] = _l("Edit language file",$this);
         $this->data['page'] = "edit lang file";
         return $this->viewRender("language_edit_file");
@@ -1301,7 +1325,7 @@ class GeneralAdmin extends Backend
         if(!isset($lang_temp)){
             return $this->errorMessage("lang_temp.php file not found.", ADMIN_URL."language");
         }
-        $this->data['data'] = $this->model->languages()->getOne($id);
+        $this->data['data'] = Services::model()->languages()->getOne($id);
         if($this->data['data']==null){
             return $this->errorMessage("The language was not found.", ADMIN_URL."language");
         }
@@ -1378,7 +1402,7 @@ class GeneralAdmin extends Backend
             file_put_contents($file, $fileContent);
             return $this->successMessage("Edit language file successfully!", ADMIN_URL."languageTranslation/$id");
         }
-        $this->data['languages'] = $this->model->languages()->getAll();
+        $this->data['languages'] = Services::model()->languages()->getAll();
         $this->data['title'] = _l("Edit Translation File",$this);
         $this->data['sub_title'] = $this->data['data']['language_name'];
         $this->data['page'] = "language_translation";
@@ -1439,16 +1463,16 @@ class GeneralAdmin extends Backend
             'page'=>$page,
         );
         $conditions = null;
-        $config['total_rows'] = $this->model->socialLinks()->getCount($conditions);
+        $config['total_rows'] = Services::model()->socialLinks()->getCount($conditions);
         $theList->setOptions($config);
         if(Services::request()->isAJAX()){
-            $data = $this->model->socialLinks()->getAll($conditions, $config['per_page'], $config['page']);
+            $data = Services::model()->socialLinks()->getAll($conditions, $config['per_page'], $config['page']);
             echo $theList->ajaxData($data);
             return;
         }
         $this->data['title'] = _l("Social Links", $this);
         $this->data['sub_title'] = _l("List", $this);
-        $this->data['data_list'] = $this->model->socialLinks()->getAll();
+        $this->data['data_list'] = Services::model()->socialLinks()->getAll();
         $this->data['breadcrumb']=array(
             array('title'=>$this->data['title']),
         );
@@ -1470,7 +1494,7 @@ class GeneralAdmin extends Backend
         $back_url = ADMIN_URL."socialLinks";
         $self_url = ADMIN_URL."socialLinksForm";
         if($id > 0){
-            $current_data = $this->model->socialLinks()->getOne($id);
+            $current_data = Services::model()->socialLinks()->getOne($id);
             if(!is_array($current_data) || count($current_data) == 0){
                 return $this->errorMessage("Social link not found.", $back_url);
             }
@@ -1554,10 +1578,10 @@ class GeneralAdmin extends Backend
             $titles = array_combine(array_column($social_types, 'class'), array_column($social_types, 'title'));
             $data['title'] = $titles[$data['class']];
             if ($id > 0) {
-                $this->model->socialLinks()->edit($id, $data);
+                Services::model()->socialLinks()->edit($id, $data);
                 return $this->successMessage("Social link has been updated.", $back_url);
             }
-            $this->model->socialLinks()->add($data);
+            Services::model()->socialLinks()->add($data);
             return $this->successMessage("Social link has been inserted.", $back_url);
         }
 
@@ -1581,7 +1605,7 @@ class GeneralAdmin extends Backend
     {if(!Services::identity()->isAdmin())
         return Services::identity()->getResponse();
 
-        $current_data = $this->model->socialLinks()->getOne($id);
+        $current_data = Services::model()->socialLinks()->getOne($id);
         if(count($current_data)==0){
             return $this->errorMessage("Link not found!", ADMIN_URL."user");
         }
@@ -1607,7 +1631,7 @@ class GeneralAdmin extends Backend
             ));
         }
 
-        $this->model->socialLinks()->remove($id);
+        Services::model()->socialLinks()->remove($id);
         $this->successMessage("The social link has been deleted successfully.", $back_url);
     }
 
@@ -1630,12 +1654,12 @@ class GeneralAdmin extends Backend
         $config['base_url'] = ADMIN_URL.'user';
         $config['query_string_segment'] = '';
         $config['reuse_query_string'] = TRUE;
-        $config['total_rows'] = $this->model->users()->getCount();
+        $config['total_rows'] = Services::model()->users()->getCount();
         $config['uri_segment'] = 3;
         $config['per_page'] = 10;
         $this->mkPagination($config);
 
-        $this->data['data_list'] = $this->model->users()->getAllWithGroups(null, $config['per_page'], $page);
+        $this->data['data_list'] = Services::model()->users()->getAllWithGroups(null, $config['per_page'], $page);
         return $this->viewRender("user");
     }
 
@@ -1649,11 +1673,11 @@ class GeneralAdmin extends Backend
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
-        $user = $this->model->Users()->getOne($id);
+        $user = Services::model()->Users()->getOne($id);
         if(!is_array($user) || count($user)==0){
             return $this->errorMessage("The user is not exists.", ADMIN_URL."user");
         }
-        $user_group = $this->model->Groups()->getOne($user['group_id']);
+        $user_group = Services::model()->Groups()->getOne($user['group_id']);
         if(!is_array($user) || count($user)==0){
             $user['group_name'] = "undefined";
         }else{
@@ -1664,7 +1688,7 @@ class GeneralAdmin extends Backend
             $user['avatar'] = 'upload_file/images/user.png';
 
         if($user['language_id']!=-0){
-            $user_language = $this->model->languages()->getOne($user['language_id']);
+            $user_language = Services::model()->languages()->getOne($user['language_id']);
             if(count($user_language)!=0){
                 $user['language'] = $user_language;
             }
@@ -1672,7 +1696,7 @@ class GeneralAdmin extends Backend
 
         $this->data['data'] = $user;
 
-        $this->data['uploaded_files_size'] = human_file_size($this->model->uploadFiles()->getSum("size", array('user_id'=>$user['user_id'])));
+        $this->data['uploaded_files_size'] = human_file_size(Services::model()->uploadFiles()->getSum("size", array('user_id'=>$user['user_id'])));
 
         $this->data['title'] = _l("Members",$this);
         $this->data['sub_title'] = _l("Profile",$this);
@@ -1715,7 +1739,7 @@ class GeneralAdmin extends Backend
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
-        $user = $this->model->users()->getOne($id);
+        $user = Services::model()->users()->getOne($id);
         if(count($user)==0){
             return $this->errorMessage("User not found!", ADMIN_URL."user");
         }
@@ -1764,10 +1788,10 @@ class GeneralAdmin extends Backend
             'page'=>$page,
         );
         $conditions = null;
-        $config['total_rows'] = $this->model->uploadFiles()->getCount($conditions);
+        $config['total_rows'] = Services::model()->uploadFiles()->getCount($conditions);
         $theList->setOptions($config);
         if($this->input->post('record_result')==1){
-            $data = $this->model->uploadFiles()->getAll($conditions, $config['per_page'], $config['page']);
+            $data = Services::model()->uploadFiles()->getAll($conditions, $config['per_page'], $config['page']);
             echo $theList->ajaxData($data);
             return;
         }
@@ -1801,14 +1825,14 @@ class GeneralAdmin extends Backend
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
-        $current_data = $this->model->uploadFiles()->getOne($id);
+        $current_data = Services::model()->uploadFiles()->getOne($id);
         if(count($current_data)==0){
             return $this->errorMessage("File not found!", ADMIN_URL."user");
         }
         $this->data['title'] = _l('An Uploaded file details ',$this);
         $this->data['data'] = $current_data;
         if($current_data['user_id']!=0){
-            $this->data['user'] = $this->model->users()->getOne($current_data['user_id']);
+            $this->data['user'] = Services::model()->users()->getOne($current_data['user_id']);
         }
         if(Services::request()->isAJAX()){
             return json_encode(array(
@@ -1833,7 +1857,7 @@ class GeneralAdmin extends Backend
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
-        $current_data = $this->model->uploadFiles()->getOne($id);
+        $current_data = Services::model()->uploadFiles()->getOne($id);
         if(count($current_data)==0){
             return $this->errorMessage("File not found!", ADMIN_URL."user");
         }
@@ -1875,7 +1899,7 @@ class GeneralAdmin extends Backend
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
-        $user = $this->model->users()->getOne($id);
+        $user = Services::model()->users()->getOne($id);
         if(count($user)==0){
             return $this->errorMessage("User not found!", ADMIN_URL."user");
         }
@@ -1902,7 +1926,7 @@ class GeneralAdmin extends Backend
             ));
         }
 
-        $this->model->users()->remove($id);
+        Services::model()->users()->remove($id);
 
         return $this->successMessage("The user account has been deleted successfully.", $back_url);
     }
@@ -1918,7 +1942,7 @@ class GeneralAdmin extends Backend
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
         if($id!=''){
-            $data = $this->model->users()->getOne($id);
+            $data = Services::model()->users()->getOne($id);
             if($data==null)
                 $this->errorMessage("The user couldn't find.", ADMIN_URL."user");
             $this->data['sub_title'] = _l("Edit a user",$this);
@@ -1937,7 +1961,7 @@ class GeneralAdmin extends Backend
                 'label' => _l("Language", $this),
                 'rules' => 'required',
                 'type' => "select",
-                'options' => $this->model->languages()->getAll(),
+                'options' => Services::model()->languages()->getAll(),
                 'option_value'=>"language_id",
                 'option_name'=>"language_name",
                 'default'=>isset($data)?$data["language_id"]:''
@@ -1947,7 +1971,7 @@ class GeneralAdmin extends Backend
                 'label' => _l("Group", $this),
                 'rules' => 'required',
                 'type' => "select",
-                'options' => $this->model->groups()->getAll(),
+                'options' => Services::model()->groups()->getAll(),
                 'option_value'=>"group_id",
                 'option_name'=>"group_name",
                 'default'=>isset($data)?$data["group_id"]:''
@@ -2021,7 +2045,7 @@ class GeneralAdmin extends Backend
                 return $myform->getResponse();
             }
             $data["fullname"] = $data["firstname"]." ".$data["lastname"];
-            $this->model->users()->edit($id, $data);
+            Services::model()->users()->edit($id, $data);
             return $this->successMessage("The users has successfully updated", ADMIN_URL."userEdit/$id");
         }
 
@@ -2044,7 +2068,7 @@ class GeneralAdmin extends Backend
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
-        $user = $this->model->users()->getOne($id);
+        $user = Services::model()->users()->getOne($id);
         if(count($user)==0){
             return $this->errorMessage("User not found!", ADMIN_URL."user");
         }
@@ -2055,11 +2079,11 @@ class GeneralAdmin extends Backend
 
         // * Deactive the user
         if($user["active"]==1){
-            $this->model->users()->edit($user["user_id"], array('active'=>0));
+            Services::model()->users()->edit($user["user_id"], array('active'=>0));
             return $this->successMessage("The user has been successfully banned!", ADMIN_URL."user");
         }
         // * Active the user
-        $this->model->users()->edit($user["user_id"], array('active'=>1));
+        Services::model()->users()->edit($user["user_id"], array('active'=>1));
         return $this->successMessage("The user has been successfully activated!", ADMIN_URL."user");
     }
 
@@ -2081,7 +2105,7 @@ class GeneralAdmin extends Backend
         }
         $this->data["upload_url"] = ADMIN_URL."uploadImage/$type";
         $this->data['input_id'] = $input_id;
-        $this->data['images'] = $this->model->Images()->getAll(array('folder'=>$this->image_library_types[$type]['dir']), null, 1, array('image_id','DESC'));
+        $this->data['images'] = Services::model()->Images()->getAll(array('folder'=>$this->image_library_types[$type]['dir']), null, 1, array('image_id','DESC'));
         $data = array(
             'status'=>"success",
             'content'=>$this->view->setData($this->data)->render("images_library"),
@@ -2093,12 +2117,12 @@ class GeneralAdmin extends Backend
 
     function uploaded_images()
     {
-        $this->data["data_list"] = $this->model->images()->getAll();
+        $this->data["data_list"] = Services::model()->images()->getAll();
         return $this->view->setData($this->data)->render("uploaded_images");
     }
     function imagesLibrary()
     {
-        $this->data["data_list"] = $this->model->Images()->getAll(null, null, 1, array('image_id','DESC'));
+        $this->data["data_list"] = Services::model()->Images()->getAll(null, null, 1, array('image_id','DESC'));
         $this->data['upload_url'] = ADMIN_URL."uploadImage/images-library";
         $this->data['page'] = "uploaded_images";
         $this->data['title'] = _l("Images Library",$this);
@@ -2110,7 +2134,7 @@ class GeneralAdmin extends Backend
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
-        $current_data = $this->model->Images()->getOne($id);
+        $current_data = Services::model()->Images()->getOne($id);
         if(!is_array($current_data) || count($current_data)==0){
             return $this->errorMessage("Image not found.", ADMIN_URL."imagesLibrary");
         }
@@ -2139,7 +2163,7 @@ class GeneralAdmin extends Backend
         if(file_exists(SELF_PATH.$current_data["image"])){
             unlink(SELF_PATH.$current_data["image"]);
         }
-        $this->model->Images()->remove($id);
+        Services::model()->Images()->remove($id);
         $this->successMessage("Language has been deleted successfully.", $back_url, array('removed'=>$id));
     }
 
@@ -2196,7 +2220,7 @@ class GeneralAdmin extends Backend
             "size"=>$data["file_size"],
             'user_id'=>$this->userdata['user_id']
         );
-        $image_id = $this->model->Images()->add($data_image);
+        $image_id = Services::model()->Images()->add($data_image);
         if($image_id!=0) {
             return json_encode(array(
                 "status" => "success",
@@ -2260,7 +2284,7 @@ class GeneralAdmin extends Backend
             ),
         );
         $unable_urls = array(base_url(),substr(base_url(),0,-1));
-        $languages = $this->model->languages()->getAll();
+        $languages = Services::model()->languages()->getAll();
         foreach($languages as $language){
             $unable_urls[] = base_url($language['code']);
             $unable_urls[] = base_url($language['code'])."/";
@@ -2374,7 +2398,7 @@ class GeneralAdmin extends Backend
 
         $seo_group_class = "inputs_default inputs_custom_view ".(in_array($this->settings['homepage_type'], array("default", "custom_view"))?"":"hidden");
         foreach($languages as $language){
-            $setting = $this->model->settings()->getSettings($language['language_id']);
+            $setting = Services::model()->settings()->getSettings($language['language_id']);
             $language_head = array(
                 'label'=>$language['language_title'],
                 'type'=>"h4",
@@ -2431,12 +2455,12 @@ class GeneralAdmin extends Backend
             // Options in all languages save
             if(isset($data["options"])){
                 foreach($data["options"] as $language_id=>$item){
-                    $this->model->settings()->updateSettings($item, $language_id);
+                    Services::model()->settings()->updateSettings($item, $language_id);
                 }
                 unset($data["options"]);
             }
             // The settings without language_id
-            $this->model->settings()->updateSettings($data);
+            Services::model()->settings()->updateSettings($data);
             return $this->successMessage("Your Setting has been updated successfully!", ADMIN_URL."settingsHomepage");
         }
 
@@ -2464,7 +2488,7 @@ class GeneralAdmin extends Backend
                 $update_data = array(
                     'package_sort'=>$i,
                 );
-                $this->model->packages()->edit($item->id, $update_data);
+                Services::model()->packages()->edit($item->id, $update_data);
             }
             return $this->successMessage("The packages has been successfully sorted.", ADMIN_URL."settingsHomepageSort");
         }
@@ -2499,16 +2523,16 @@ class GeneralAdmin extends Backend
     {
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
-        $current_data = $this->model->packagesDashboard()->getOne($id);
+        $current_data = Services::model()->packagesDashboard()->getOne($id);
         if($current_data==null || count($current_data)==0){
             return $this->errorMessage("The package not found.", ADMIN_URL);
         }
 
         if($current_data['active']==1){
-            $this->model->packagesDashboard()->edit($id, array('active'=>0));
+            Services::model()->packagesDashboard()->edit($id, array('active'=>0));
             return $this->successMessage("The package has been successfully deactivated.", ADMIN_URL);
         }
-        $this->model->packagesDashboard()->edit($id, array('active'=>1));
+        Services::model()->packagesDashboard()->edit($id, array('active'=>1));
         return $this->successMessage("The package has been successfully activated.", ADMIN_URL);
     }
 
@@ -2521,16 +2545,16 @@ class GeneralAdmin extends Backend
     {
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
-        $current_data = $this->model->packages()->getOne($id);
+        $current_data = Services::model()->packages()->getOne($id);
         if($current_data==null || count($current_data)==0){
             return $this->errorMessage("The package not found.", ADMIN_URL);
         }
 
         if($current_data['active']==1){
-            $this->model->packages()->edit($id, array('active'=>0));
+            Services::model()->packages()->edit($id, array('active'=>0));
             return $this->successMessage("The package has been successfully deactivated.", ADMIN_URL);
         }
-        $this->model->packages()->edit($id, array('active'=>1));
+        Services::model()->packages()->edit($id, array('active'=>1));
         return $this->successMessage("The package has been successfully activated.", ADMIN_URL);
     }
 
@@ -2542,7 +2566,7 @@ class GeneralAdmin extends Backend
     private function homepageSortedPackages()
     {
         // Get packages from DB
-        $packages = $this->model->packages()->getAll(null, null, 1, array('package_sort', 'ASC'));
+        $packages = Services::model()->packages()->getAll(null, null, 1, array('package_sort', 'ASC'));
         // Check packages home method exists.
         foreach ($packages as $key=>$item){
             if(file_exists(APPPATH."controllers/{$item['package_name']}.php")){
@@ -2622,7 +2646,7 @@ class GeneralAdmin extends Backend
         $theList->setOptions($config);
         $this->data['title'] = _l("Social Links", $this);
         $this->data['sub_title'] = _l("List", $this);
-        $this->data['data_list'] = $this->model->socialLinks()->getAll();
+        $this->data['data_list'] = Services::model()->socialLinks()->getAll();
         $this->data['breadcrumb']=array(
             array('title'=>$this->data['title']),
         );
@@ -2637,7 +2661,7 @@ class GeneralAdmin extends Backend
         if(!$this->load->packageExists($package)){
             return $this->errorMessage("Module not found.", $back_url);
         }
-        $current_data = $this->model->packages()->getOne(null, array('package_name'=>$package));
+        $current_data = Services::model()->packages()->getOne(null, array('package_name'=>$package));
         if(is_array($current_data) && count($current_data) > 0){
             $this->data['data'] = $current_data;
         }
@@ -2670,7 +2694,7 @@ class GeneralAdmin extends Backend
         if(!in_array($name, Services::modules()->getNames())){
             return $this->errorMessage("Module not found.", $back_url);
         }
-        $current_data = $this->model->packages()->getOne(null, array('package_name'=>$name));
+        $current_data = Services::model()->packages()->getOne(null, array('package_name'=>$name));
         if(is_array($current_data) && count($current_data)==0){
             return $this->errorMessage("Module has been installed before.", $back_url);
         }
@@ -2710,8 +2734,8 @@ class GeneralAdmin extends Backend
             }
         }
 
-        $max = $this->model->packages()->getMax('package_sort');
-        $this->model->packages()->add(array('package_name'=>$name, 'package_sort'=>$max+1, 'active'=>1));
+        $max = Services::model()->packages()->getMax('package_sort');
+        Services::model()->packages()->add(array('package_name'=>$name, 'package_sort'=>$max+1, 'active'=>1));
 
         return $this->successMessage("The module has been successfully installed.", $back_url);
     }
@@ -2729,7 +2753,7 @@ class GeneralAdmin extends Backend
 
         $back_url = ADMIN_URL."modules";
 
-        $current_data = $this->model->packages()->getOne(null, array('package_name'=>$name));
+        $current_data = Services::model()->packages()->getOne(null, array('package_name'=>$name));
         if(!is_array($current_data) || count($current_data)==0){
             return $this->errorMessage("Module not found.", $back_url);
         }
@@ -2759,7 +2783,7 @@ class GeneralAdmin extends Backend
             ));
         }
 
-        $this->model->packages()->remove($current_data['package_id']);
+        Services::model()->packages()->remove($current_data['package_id']);
 
         return $this->successMessage("The module has been successfully uninstalled.", $back_url);
     }

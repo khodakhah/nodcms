@@ -24,6 +24,7 @@ namespace NodCMS\Core\Models;
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Database\Exceptions\DatabaseException;
+use Config\Services;
 
 class Model extends CoreModel
 {
@@ -421,15 +422,14 @@ class Model extends CoreModel
     /**
      * Get a result of translations
      *
-     * @param $id
-     * @param null $language_id
+     * @param int $id
+     * @param int $language_id
      * @return array
      */
-    function getTranslations($id, $language_id = null): array
+    function getTranslations(int $id, int $language_id = 0): array
     {
-        if($language_id==null)
-            // TODO: Solve this
-            $language_id = $this->language['language_id'];
+        if($language_id != 0)
+            $language_id = Services::language()->get()['language_id'];
 
         $_translations = new Translations_model();
         $result = $_translations->getAll(array(

@@ -303,7 +303,7 @@ class Form
             // Form Error
             if ($validation->run($input_data) != TRUE) {
                 $response = Services::quickResponse();
-                $this->errorResponse = $response->getFormError($validation->getErrors(), $validation->listErrors(), $this->data['back_url']);
+                $this->errorResponse = $response->getFormError($this->convertKeysToFields($validation->getErrors()), $validation->listErrors(), $this->data['back_url']);
                 return false;
             }
         }
@@ -319,16 +319,16 @@ class Form
         return $input_data;
     }
 
-    function getRules()
+    function getRules(): ?array
     {
-        if(count($this->data['inputs'])==0){
+        if(empty($this->data['inputs'])){
             return null;
         }
         $remove_types = array_merge($this->headers,$this->statics);
         // Remove headers tag from rules
-        foreach ($this->data['inputs'] as $key=>&$item) {
+        $inputs = [];
+        foreach ((array) $this->data['inputs'] as $key=>$item) {
             if (!isset($item['type']) || in_array($item['type'], $remove_types)){
-                unset($this->data['inputs'][$key]);
                 continue;
             }
             if(in_array($item['type'], $this->sub_items)){
@@ -336,30 +336,38 @@ class Form
                     $post_key = explode('[',$item['field']);
                     $post_key = count($post_key)!=0?$post_key[0]:$item['field'];
                     if(isset($_POST[$post_key]) && is_array($_POST[$post_key])){
-                        $index = 0;
                         foreach ($_POST[$post_key] as $theKey=>$post_item){
                             foreach ($item['sub_items'] as $sun_item){
-                                $sun_item['field'] = str_replace('[]',"[$theKey]",$item['field'].$sun_item['field']);
-                                array_push($this->data['inputs'], $sun_item);
+                                if(empty($sun_item['rules']))
+                                    continue;
+                                $sun_item['field'] = str_replace('[]',".$theKey",$item['field'].$sun_item['field']);
+                                array_push($inputs, $sun_item);
                             }
-                            $index++;
                         }
-                        unset($this->data['inputs'][$key]);
+                        continue;
                     }
                 }
             }
+
+            if(empty($item['rules']))
+                continue;
+
+            $inputs[$key] = $item;
         }
-        $sub_items = array_column($this->data['inputs'], 'sub_items');
+
+        $sub_items = array_column($inputs, 'sub_items');
         if(count($sub_items)!=0)
-            $inputs = array_merge($this->data['inputs'], $sub_items[0]);
-        else
-            $inputs = $this->data['inputs'];
+            $inputs = array_merge($inputs, $sub_items[0]);
+
         // Check empty rules
-        $rules = implode('', array_column($inputs, 'rules'));
-        if($rules=='')
+        if(empty($inputs))
             return null;
 
-        return $inputs;
+        foreach($inputs as $key=>$item) {
+            $inputs[$key]['field'] = preg_replace('/\[([\w\d\-_]+)]/', ".$1", $item['field']);
+        }
+
+        return $this->convertFieldsToKeys($inputs);
     }
 
     /**
@@ -1412,6 +1420,35 @@ class Form
     function getFileUniqueCookie()
     {
         return get_cookie($this->upload_cookie_name);
+    }
+
+    /**
+     * @param array $inputs
+     * @return array
+     */
+    private function convertFieldsToKeys(array $inputs): array
+    {
+        foreach($inputs as $key=>$item) {
+            $inputs[$key]['field'] = preg_replace('/\[([\w\d\-_]+)]/', ".$1", $item['field']);
+        }
+
+        return $inputs;
+    }
+
+    /**
+     * @param array $errors
+     * @return array
+     */
+    private function convertKeysToFields(array $errors): array
+    {
+        log_message('alert', print_r($errors, true));
+        $result = [];
+        foreach($errors as $key=>$item) {
+            $result[preg_replace('/\.([\w\d\-_]+)/', "[$1]", $key)] = $item;
+        }
+        log_message('alert', print_r($errors, true));
+
+        return $result;
     }
 
     /**

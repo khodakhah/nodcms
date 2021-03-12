@@ -41,7 +41,7 @@ class Menu_model extends Model
             'menu_key'=>"varchar(300) DEFAULT NULL",
         );
         $foreign_tables = null;
-        $translation_fields = null;
+        $translation_fields = ["menu_name"];
         parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
 
