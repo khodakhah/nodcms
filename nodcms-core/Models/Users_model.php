@@ -115,21 +115,19 @@ class Users_model extends Model
      */
     public function edit($id, $data)
     {
-        $_data = $this->getOne($id);
-        if(!is_array($_data) || count($_data) == 0) {
-            return;
-        }
-        $data = array_merge(array(
-            'firstname'=>$_data['firstname'],
-            'lastname'=>$_data['lastname'],
-        ), $data);
 
-        if(!key_exists('fullname', $_data)) {
-            $data['fullname'] = "$data[firstname] $data[lastname]";
-        }
-
-        if(key_exists('password', $_data)) {
+        if(key_exists('password', $data)) {
             $data['password'] = md5($data['password']);
+        }
+
+
+        $_data = $this->getOne($id);
+        if(!empty($_data)) {
+            $__data = array_merge(array(
+                'firstname'=>$_data['firstname'],
+                'lastname'=>$_data['lastname'],
+            ), $data);
+            $data['fullname'] = "{$__data['firstname']} {$__data['lastname']}";
         }
 
         parent::edit($id, $data);

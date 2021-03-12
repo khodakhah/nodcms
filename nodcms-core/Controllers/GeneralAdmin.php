@@ -876,7 +876,6 @@ class GeneralAdmin extends Backend
         $sub_menu = array(0);
         $children = array(Services::request()->getPost('data',TRUE));
         $children[$index] = (object) json_decode($children[$index]);
-        log_message('alert', print_r($children, true));
         do{
             $data = $children[$index];
             foreach($data as $key=>$item){
@@ -1934,14 +1933,14 @@ class GeneralAdmin extends Backend
     /**
      * Add or edit a user
      *
-     * @param string $id
+     * @param int $id
      * @throws \Exception
      */
-    function userEdit($id='')
+    function userEdit(int $id = 0)
     {
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
-        if($id!=''){
+        if($id != 0){
             $data = Services::model()->users()->getOne($id);
             if($data==null)
                 $this->errorMessage("The user couldn't find.", ADMIN_URL."user");
@@ -2045,8 +2044,13 @@ class GeneralAdmin extends Backend
                 return $myform->getResponse();
             }
             $data["fullname"] = $data["firstname"]." ".$data["lastname"];
-            Services::model()->users()->edit($id, $data);
-            return $this->successMessage("The users has successfully updated", ADMIN_URL."userEdit/$id");
+            if($id != 0) {
+                Services::model()->users()->edit($id, $data);
+                return $this->successMessage("The users has successfully updated", ADMIN_URL . "userEdit/$id");
+            }
+
+            $newId = Services::model()->users()->add($data);
+            return $this->successMessage("The users has successfully added", ADMIN_URL . "userEdit/$newId");
         }
 
         $this->data['breadcrumb']=array(
@@ -2062,6 +2066,8 @@ class GeneralAdmin extends Backend
      * Make a user active or de-active
      *
      * @param $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function userDeactive($id)
     {
