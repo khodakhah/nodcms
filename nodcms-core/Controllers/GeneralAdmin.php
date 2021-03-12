@@ -830,27 +830,42 @@ class GeneralAdmin extends Backend
         return $this->viewRenderString($myform->fetch('',array('data-redirect'=>1)));
     }
 
+    /**
+     * Change visibility of a menu item
+     *
+     * @param $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     */
     function menuVisibility($id)
     {
         $data = Services::model()->menu()->getOne($id);
         if(count($data)==0){
             return $this->errorMessage("Couldn't find the menu item.", ADMIN_URL."menu");
         }
-        $public = $this->input->post('data');
+        $public = Services::request()->getPost('data');
         if($public == 1){
             $public = 0;
-        }elseif($public == 0){
+        }
+        elseif($public == 0){
             $public = 1;
-        }else{
+        }
+        else{
             return $this->errorMessage("Visibility value isn't correct. Please reload the page to solve this problem.", ADMIN_URL."menu");
         }
         $update_data = array(
             'public'=>$public
         );
         Services::model()->menu()->edit($id, $update_data);
-        $this->successMessage("Success", ADMIN_URL."menu");
+        return $this->successMessage("Success", ADMIN_URL."menu");
     }
 
+    /**
+     * Save the sort of menu items
+     *
+     * @param string $menu_key
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
+     */
     function menuSort($menu_key='')
     {
         if(!Services::identity()->isAdmin())
@@ -859,8 +874,9 @@ class GeneralAdmin extends Backend
         $i = 0;
         $index = 0;
         $sub_menu = array(0);
-        $children = array($this->input->post('data',TRUE));
-        $children[$index] = json_decode($children[$index]);
+        $children = array(Services::request()->getPost('data',TRUE));
+        $children[$index] = (object) json_decode($children[$index]);
+        log_message('alert', print_r($children, true));
         do{
             $data = $children[$index];
             foreach($data as $key=>$item){
@@ -878,21 +894,7 @@ class GeneralAdmin extends Backend
             }
             $index++;
         }while(isset($children[$index]));
-        $this->successMessage("Your menu items has been successfully sorted.", ADMIN_URL."menu");
-    }
-
-    /**
-     * Menu add and edit post action
-     *
-     * @param null $id
-     */
-    function menu_manipulate($id=null)
-    {
-        if(!Services::identity()->isAdmin())
-            return Services::identity()->getResponse();
-
-        Services::model()->menu()->edit($id, $this->input->post('data',TRUE));
-        return Services::quickResponse()->getSuccess(_l('Updated menu',$this), ADMIN_URL."menu");
+        return $this->successMessage("Your menu items has been successfully sorted.", ADMIN_URL."menu");
     }
 
     /**
@@ -905,10 +907,8 @@ class GeneralAdmin extends Backend
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
-        $this->db->trans_start();
-        $this->db->delete('menu', array('menu_id' => $id));
-        $this->db->trans_complete();
-        $this->successMessage("Menu item has been successfully removed.", ADMIN_URL."menu");
+        Services::model()->menu()->remove($id);
+        return $this->successMessage("Menu item has been successfully removed.", ADMIN_URL."menu");
     }
 
     /**
