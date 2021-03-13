@@ -22,6 +22,7 @@
 namespace NodCMS\Users\Controllers;
 
 use Config\Autoload;
+use Config\Services;
 use NodCMS\Core\Libraries;
 
 class Users extends \NodCMS\Core\Controllers\Frontend {
@@ -332,12 +333,11 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
             $username = $data['username'];
             $password = $data['password'];
 
-            $user = $this->model->users()->loginMatch($username, $password);
+            $user = Services::model()->users()->loginMatch($username, $password);
             if(empty($user)){
                 return $this->errorMessage("Password or username is incorrect.", base_url("{$this->lang}/login"));
             }
 
-            log_message('alert',"before hasDashboard()");
             $login_data = array(
                 'fullname'  => $user['fullname'],
                 'username'  => $user['username'],
@@ -431,19 +431,11 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
     /**
      * Log out user (remove all user sessions)
      *
-     * @param string $lang
+     * @return \CodeIgniter\HTTP\RedirectResponse
      */
-    function logout($lang = "")
+    function logout(): \CodeIgniter\HTTP\RedirectResponse
     {
-        $this->session->unset_userdata('fullname');
-        $this->session->unset_userdata('username');
-        $this->session->unset_userdata('user_id');
-        $this->session->unset_userdata('group');
-        $this->session->unset_userdata('avatar');
-        $this->session->unset_userdata('email');
-        $this->session->unset_userdata('logged_in_status');
-        $this->session->unset_userdata('provider_id');
-        $this->session->unset_userdata('provider_name');
-        redirect(base_url().$lang);
+        Services::session()->destroy();
+        return redirect()->to("/{$this->language['code']}");
     }
 }

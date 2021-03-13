@@ -41,7 +41,7 @@
                                         <a class="dropdown-item" href="<?php echo base_url("admin/settings"); ?>"><i class="icon-settings"></i><?=_l('Settings',$this);?></a>
                                     <?php } ?>
                                     <a class="dropdown-item" href="<?php echo base_url("user/account"); ?>"><i class="icon-user"></i><?=_l('Account Setting',$this);?></a>
-                                    <a class="dropdown-item" href="<?php echo base_url("logout/".$this->language['code']); ?>"><i class="icon-power"></i><?=_l('Log Out',$this);?></a>
+                                    <a class="dropdown-item" href="<?php echo base_url("{$this->language['code']}/logout"); ?>"><i class="icon-power"></i><?=_l('Log Out',$this);?></a>
                                 </div>
                             </li>
                         <?php }else{ ?>
