@@ -2135,6 +2135,12 @@ class GeneralAdmin extends Backend
         return $this->viewRender("uploaded_images_manager");
     }
 
+    /**
+     * @param int $id
+     * @param int $confirm
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
+     */
     function imageDelete($id=0, $confirm = 0)
     {
         if(!Services::identity()->isAdmin())
@@ -2170,15 +2176,16 @@ class GeneralAdmin extends Backend
             unlink(SELF_PATH.$current_data["image"]);
         }
         Services::model()->Images()->remove($id);
-        $this->successMessage("Language has been deleted successfully.", $back_url, array('removed'=>$id));
+        return $this->successMessage("Language has been deleted successfully.", $back_url, array('removed'=>$id));
     }
 
     /**
      * Upload images on images library
      *
      * @param null|string $type
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      */
-    function uploadImage($type=null)
+    function uploadImage(string $type=null)
     {
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
