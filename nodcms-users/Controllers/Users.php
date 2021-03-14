@@ -204,8 +204,8 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
 
             $data = array_merge($user, array(
                 'company'=> $this->settings["company"],
-                'first_name'=> $user["fname"],
-                'last_name'=> $user["lname"],
+                'first_name'=> $user["firstname"],
+                'last_name'=> $user["lastname"],
                 'username'=> $user["username"],
                 'email'=> $user["email"],
                 'date'=>my_int_date(time()),
