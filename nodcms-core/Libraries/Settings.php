@@ -19,42 +19,59 @@
  *
  */
 
-namespace NodCMS\Core\Models;
+namespace NodCMS\Core\Libraries;
+
 
 use Config\Services;
-use http\Params;
 
-class Email_messages_model extends Model
+class Settings
 {
-    function init()
+    private $data;
+    /**
+     * @var bool
+     */
+    private $loaded = false;
+
+    /**
+     * Settings constructor.
+     */
+    public function __construct()
     {
-        $table_name = "auto_email_messages";
-        $primary_key = "msg_id";
-        $fields = array(
-            'msg_id'=> "int(10) unsigned NOT NULL AUTO_INCREMENT",
-            'code_key'=> "varchar(100) DEFAULT NULL",
-            'subject'=> "varchar(255) DEFAULT NULL",
-            'content'=> "text",
-            'language_id'=> "int(10) unsigned NOT NULL DEFAULT '0'",
-            'lang'=> "varchar(2) DEFAULT NULL",
-        );
-        $foreign_tables = null;
-        $translation_fields = null;
-        parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
+        $config = new \Config\Settings();
+        $this->data = $config->settings_default;
     }
 
     /**
-     * @param $key
-     * @param null $language_id
-     * @return array|null
+     * Load settings data from database
+     *
+     * @param int $languageId
      */
-    public function getOneByKey($key, $language_id = NULL): ?array
+    public function load(int $languageId = 0)
     {
-        if($language_id==NULL)
-            $language_id = Services::language()->get()["language_id"];
-        return $this->getOne(null, [
-            'code_key' => $key,
-            'language_id' => $language_id,
-        ]);
+        $this->loaded = true;
+        if($languageId == 0) {
+            $languageId = Services::language()->get()['language_id'];
+        }
+        $this->data = array_merge($this->data, Services::model()->settings()->getSettings($languageId));
+    }
+
+    /**
+     * Returns settings data
+     *
+     * @return array
+     */
+    public function get(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * Check if settings data has been loaded from database
+     *
+     * @return bool
+     */
+    public function isLoaded(): bool
+    {
+        return $this->loaded;
     }
 }

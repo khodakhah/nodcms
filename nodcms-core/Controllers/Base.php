@@ -85,7 +85,7 @@ abstract class Base extends Controller
     public function __construct()
     {
         $this->config = new Settings();
-        $this->settings = $this->config->settings_default;
+        $this->settings = Services::settings()->get();
         $this->router = \Config\Services::router();
         $this->view = Services::layout();
         $this->request = Services::request();

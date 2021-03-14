@@ -255,6 +255,20 @@ class View extends \CodeIgniter\View\View
     }
 
     /**
+     * Check view file exists
+     *
+     * @param string $view
+     * @return bool
+     */
+    public function fileExists(string $view): bool
+    {
+        $view = $this->config->viewPath . "/" . $view;
+        $fileExt = pathinfo($view, PATHINFO_EXTENSION);
+        $realPath = empty($fileExt) ? $view . '.php' : $view; // allow Views as .html, .tpl, etc (from CI3)
+        return file_exists($realPath);
+    }
+
+    /**
      * Keep the old flashdata() usage in view files
      *
      * @param string $key

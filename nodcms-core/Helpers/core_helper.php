@@ -153,24 +153,7 @@ if ( ! function_exists('email_key_replace')){
 // TODO: check the function (! email not found!)
 if ( ! function_exists('send_notification_email')){
     function send_notification_email($key, $to, $data, $language_id = NULL, $from = NULL){
-        $CI = &get_instance();
-        $autoEmailMSG = $CI->Public_model->getAutoMessages($key, $language_id);
-        if (!isset($autoEmailMSG['content'])){
-            if(!file_exists(VIEWPATH."emails/$key.html")){
-                log_message('Error', "Couldn't find notification email content for $key.");
-                return;
-            }
-            $autoEmailMSG['content'] = $CI->load->view("emails/$key", true);
-            $autoEmailMSG['subject'] = "Automatic Email";
-        }
-        $search = array();
-        $replace = array();
-        foreach($data as $key=>$value){
-            array_push($search, '[--$'.$key.'--]');
-            array_push($replace, $value);
-        }
-        $content = str_replace($search, $replace, $autoEmailMSG['content']);
-        $CI->sendEmailAutomatic($to, $autoEmailMSG['subject'], $content, $from);
+        \Config\Services::notification($key, $language_id)->sendEmail($data, $to, null, $from);
     }
 }
 if ( ! function_exists('send_notification_sms')){

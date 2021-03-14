@@ -3,8 +3,10 @@
 use CodeIgniter\Config\Services as CoreServices;
 use NodCMS\Core\Libraries\Identity;
 use NodCMS\Core\Libraries\Language;
+use NodCMS\Core\Libraries\Settings as SettingsLibrary;
 use NodCMS\Core\Models\ModelMap;
 use NodCMS\Core\Notification\EmailNotification;
+use NodCMS\Core\Notification\Notification;
 use NodCMS\Core\Response\QuickResponse;
 use NodCMS\Core\View\Form;
 use NodCMS\Core\View\Layout;
@@ -75,6 +77,23 @@ class Services extends CoreServices
     }
 
     /**
+     * Returns the layout
+     *
+     * @param null $config
+     * @param bool $getShared
+     * @return View
+     */
+    public static function view($config = null, bool $getShared = true): View
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('view', $config);
+        }
+
+        return new View($config);
+    }
+
+    /**
      * @param string $locale
      * @param bool $getShared
      * @return Language
@@ -91,6 +110,20 @@ class Services extends CoreServices
             ->getLocale();
 
         return new Language($locale);
+    }
+
+    /**
+     * @param bool $getShared
+     * @return SettingsLibrary
+     */
+    public static function settings(bool $getShared = true): SettingsLibrary
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('settings');
+        }
+
+        return new SettingsLibrary();
     }
 
     /**
@@ -124,6 +157,24 @@ class Services extends CoreServices
         }
 
         return new EmailNotification();
+    }
+
+    /**
+     * Notification handle
+     *
+     * @param string $key
+     * @param int|null $languageId
+     * @param bool $getShared
+     * @return Notification
+     */
+    public static function notification(string $key, int $languageId = null, bool $getShared = true): Notification
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('notification', $key, $languageId);
+        }
+
+        return new Notification($key, $languageId);
     }
 
     /**
