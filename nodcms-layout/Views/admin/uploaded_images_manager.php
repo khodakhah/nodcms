@@ -15,7 +15,7 @@
     <?php if(isset($data_list) && count($data_list)!=0){ ?>
         <?php $i=0; foreach($data_list as $data){ $i++; ?>
             <div class="card" id="row<?=$data['image_id']?>" >
-                <img class="card-img-top" src="<?php echo base_url().$data["image"]; ?>">
+                <img class="card-img-top" src="<?php echo base_url($data["image"]); ?>">
                 <div class="card-body">
                     <h5 class="card-title"><?php echo $data['name']; ?></h5>
                     <div class="row no-gutters">
@@ -26,10 +26,10 @@
                         <?php echo _l("URL", $this); ?>:
                     </div>
                     <div class="margin-bottom-10 card-text">
-                        <input class="border-0 w-100 input-sm" value="<?php echo base_url().$data["image"]; ?>" onClick="this.select();">
+                        <input class="border-0 w-100 input-sm" value="<?php echo base_url($data["image"]); ?>" onClick="this.select();">
                     </div>
                     <div class="margin-bottom-10 card-text">
-                        <a class="fancybox btn default btn-sm" rel="group" href="<?php echo base_url().$data['image']; ?>" title="<?php echo $data['name']; ?>">
+                        <a class="fancybox btn default btn-sm" rel="group" href="<?php echo base_url($data['image']); ?>" title="<?php echo $data['name']; ?>">
                             <?php echo _l('Preview', $this)?></a>
                         <a href="javascript:;" onclick="$.loadConfirmModal('<?php echo ADMIN_URL."imageDelete/$data[image_id]"; ?>',removeImage)" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i> <?=_l("Delete",$this)?></a>
                     </div>
@@ -132,7 +132,8 @@
                     $(this).removeClass("notok");
                 }else{
                     $(this).addClass("notok");
-                    alert(resultFile.errors);
+                    $.showInModal(translate("Error"), resultFile.error);
+                    data.context.remove();
                 }
             },
             fail:function(e, data){

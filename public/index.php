@@ -23,6 +23,8 @@ define("ROOTPATH", dirname(FCPATH).DIRECTORY_SEPARATOR);
 define("SYSTEMPATH", ROOTPATH."system".DIRECTORY_SEPARATOR);
 // NodCMS core path
 define("COREPATH", ROOTPATH."nodcms-core".DIRECTORY_SEPARATOR);
+// NodCMS public path
+define("SELF_PATH", FCPATH);
 
 // Find the requested protocol
 $protocol_status = intval(isset($_SERVER['HTTPS']));

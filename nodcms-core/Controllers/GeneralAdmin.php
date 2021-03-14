@@ -2202,41 +2202,44 @@ class GeneralAdmin extends Backend
             fclose($myfile);
         }
 
-        $current_file_name = basename($_FILES["file"]["name"]);
-        $uri = "upload_file/$type_dir/";
-        $config = array(
-            'upload_path'=>SELF_PATH.$uri,
-            'allowed_types'=>"gif|jpg|png",
-            'encrypt_name'=> $types[$type]['encrypt_name'],
-        );
-        $this->load->library('upload', $config);
-        if ( ! $this->upload->do_upload("file"))
-        {
-            return json_encode(array("status"=>"error","errors"=>$this->upload->display_errors('<p>', '</p>')));
-        }
+        $inputFile = Services::request()->getFile('file');
+        if(!$inputFile->isValid())
+            return $this->errorMessage($inputFile->getErrorString(), ADMIN_URL."imagesLibrary");
 
-        $data = $this->upload->data();
+        $fileType = $inputFile->guessExtension();
+        if(!in_array($fileType, ['jpg', 'gif', 'png']))
+            return $this->errorMessage("The file type \"{$fileType}\" is not able to upload as image.", ADMIN_URL."imagesLibrary");
+
+        $clientName = $inputFile->getClientName();
+        $newName = $inputFile->getRandomName();
+        $fileSize = $inputFile->getSize();
+        $uri = "upload_file/$type_dir/";
+        if ( ! $inputFile->move(SELF_PATH.$uri, $newName))
+            return $this->errorMessage($inputFile->getError(), ADMIN_URL."imagesLibrary");
+
+        $image = Services::image()->withFile(SELF_PATH.$uri.$newName);
+
         $data_image = array(
-            "image"=>$uri.$data["file_name"],
-            "width"=>$data["image_width"],
-            "height"=>$data["image_height"],
-            "name"=>$current_file_name,
-            "root"=>$config["upload_path"],
+            "image"=>$uri.$newName,
+            "width"=>$image->getWidth(),
+            "height"=>$image->getHeight(),
+            "name"=>$clientName,
+            "root"=>SELF_PATH.$uri,
             "folder"=>$type_dir,
-            "size"=>$data["file_size"],
+            "size"=>$fileSize,
             'user_id'=>$this->userdata['user_id']
         );
         $image_id = Services::model()->Images()->add($data_image);
         if($image_id!=0) {
             return json_encode(array(
                 "status" => "success",
-                "file_patch" => $uri . $data["file_name"],
-                "file_url" => base_url() . $uri . $data["file_name"],
-                "width" => $data["image_width"],
-                "height" => $data["image_height"],
+                "file_patch" => $uri.$newName,
+                "file_url" => base_url($uri.$newName),
+                "width" => $image->getWidth(),
+                "height" => $image->getHeight(),
                 "image_id" => $image_id,
-                "image_name" => $current_file_name,
-                "size" => $data["file_size"]));
+                "image_name" => $clientName,
+                "size" => $fileSize));
         }
         unlink(SELF_PATH.$data_image["image"]);
         return json_encode(array("status"=>"error","errors"=>_l("Could not save images data in database.",$this)));
