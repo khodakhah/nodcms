@@ -736,4 +736,20 @@ class Rules
         }
         return true;
     }
+
+    /**
+     * Validation exists email for user return password
+     *
+     * @param $value
+     * @return bool
+     */
+    public function existsEmail($value)
+    {
+        if (Services::model()->users()->getCount(['email'=>$value]) == 0) {
+            $this->form_validation->set_message('existsEmail', _l("The {field} didn't find.", $this));
+            return false;
+        }
+
+        return true;
+    }
 }

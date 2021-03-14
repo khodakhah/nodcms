@@ -69,11 +69,32 @@ abstract class App extends Base
      *
      * @param array $config
      */
-    public function mkPagination(array $config)
+    protected function mkPagination(array $config)
     {
         $pagination = Services::pager();
         $pagination->setSegment($config['uri_segment']);
         if($pagination->getPageCount() > 1)
             $this->data['pagination'] = $pagination->makeLinks($pagination->getCurrentPage(), $config['per_page'], $config['total_rows']);
+    }
+
+    /**
+     * Display a general error page
+     * TODO: Rename this
+     *
+     * @param null $message
+     * @param int $status_code
+     * @param null $heading
+     * @param array $buttons
+     * @return string
+     */
+    protected function showError($message = null, $status_code = 404, $heading = null, $buttons = array()): string
+    {
+        http_response_code($status_code);
+        $this->data["title"] = _l("Error", $this)." $status_code";
+        $this->data["status_code"] = $status_code;
+        $this->data["heading"] = $heading!=null?$heading:_l("Page not found!", $this);
+        $this->data["message"] = $message!=null?$message:_l("Your requested page not found.", $this);
+        $this->data["buttons"] = $buttons;
+        return $this->viewCommon("common/show_error", $this->data);
     }
 }

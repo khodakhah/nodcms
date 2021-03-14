@@ -133,9 +133,41 @@ class Users_model extends Model
         parent::edit($id, $data);
     }
 
+    /**
+     * Set a user status active
+     *
+     * @param int $id
+     */
+    public function setActive(int $id)
+    {
+        parent::edit($id, [
+            'status'=>1,
+            'active_register'=>1
+        ]);
+    }
+
+    /**
+     * Fetch a user with username and password
+     *
+     * @param $username
+     * @param $password
+     * @return array|null
+     */
     public function loginMatch($username, $password) : ?array
     {
         return $this->getOne(null, ['username'=>$username, 'password'=>md5($password)]);
+    }
+
+    /**
+     * Fetch a user with secret keys
+     *
+     * @param string $user_unique_key
+     * @param string $active_code
+     * @return array|null
+     */
+    public function getOneWithSecretKeys(string $user_unique_key, string $active_code): ?array
+    {
+        return Services::model()->users()->getOne(null, ['user_unique_key'=>$user_unique_key, 'active_code'=>$active_code]);
     }
 
     /**
@@ -145,9 +177,10 @@ class Users_model extends Model
      * @param null $limit
      * @param int $page
      * @param null $sort_by
-     * @return array|mixed
+     * @return array|null
      */
-    public function getAllWithGroups($conditions = null, $limit=null, $page=1, $sort_by = null) {
+    public function getAllWithGroups($conditions = null, $limit=null, $page=1, $sort_by = null): ?array
+    {
         $joinWithT = Services::model()->groups()->tableName();
         $joinWithF = Services::model()->groups()->primaryKey();
         $builder = $this->getBuilder();
