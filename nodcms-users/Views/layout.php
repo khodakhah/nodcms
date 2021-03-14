@@ -37,7 +37,7 @@ $this->addJsFile("assets/nodcms/js/common");
         <div class="col-md-5 margin-top-40">
             <div class="text-center margin-bottom-40">
                 <a href="<?php echo base_url(); ?>">
-                    <img class="img-fluid" src="<?php echo base_url().$this->settings['logo_light']; ?>" alt=""/>
+                    <img class="img-fluid" src="<?php echo base_url($this->settings['logo_light']); ?>" alt=""/>
                 </a>
             </div>
             <div class="card">

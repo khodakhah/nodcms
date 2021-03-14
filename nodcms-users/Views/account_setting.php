@@ -12,12 +12,12 @@
         <div class="portlet">
             <div class="portlet-body">
                 <?php
-                mk_hpostform_multipart(base_url()."user/account-avatar-change");
+                mk_hpostform_multipart(base_url("user/account-avatar-change"));
                 mk_hidden("image","1");
                 ?>
                 <div class="fileinput fileinput-new" data-provides="fileinput">
                     <div class="fileinput-new thumbnail" style="width: 200px; height: 200px;">
-                        <img src="<?php echo (isset($data["avatar"])&&$data["avatar"]!="")?base_url().$data["avatar"]:base_url()."noimage-200-200-NO+IMAGE"; ?>" alt=""/>
+                        <img src="<?php echo (isset($data["avatar"])&&$data["avatar"]!="")?base_url($data["avatar"]):base_url("noimage-200-200-NO+IMAGE"); ?>" alt=""/>
                     </div>
                     <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 200px;">
                     </div>

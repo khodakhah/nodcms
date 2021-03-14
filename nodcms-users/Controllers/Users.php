@@ -210,10 +210,10 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
                 'email'=> $user["email"],
                 'date'=>my_int_date(time()),
                 'active_code_expired'=>$active_code_expired,
-                'reference_url'=>base_url().$this->language['code']."/set-new-password/$user[user_unique_key]/$active_code_expired",
+                'reference_url'=>base_url("/{$this->lang}/set-new-password/$user[user_unique_key]/$active_code_expired"),
             ));
             send_notification_email('reset_password', $email, $data, $this->language['language_id']);
-            return $this->successMessage("Your account has been activated successfully. Now you can sign in with your account.", base_url().$this->language['code']."/login");
+            return $this->successMessage("Your account has been activated successfully. Now you can sign in with your account.", "/{$this->lang}/login");
         }
 
         $this->data['the_form'] = $myform->fetch('login_form', array('data-reset'=>1,'data-message'=>1, 'data-redirect'=>1));
@@ -382,7 +382,7 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
     }
 
     // Set new password for users after restoring request
-    function activeAccount($lang, $user_unique_key, $active_code)
+    function activeAccount($user_unique_key, $active_code)
     {
         $user = Services::model()->users()->getOneWithSecretKeys($user_unique_key, $active_code);
         if(!empty($user) && $user["reset_pass_exp"] > time() && $user["active_register"]==0) {
@@ -398,8 +398,8 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
 
         $buttons = array(
             array('url'=>base_url(),'label'=>_l("Home", $this)),
-            array('url'=>base_url()."$lang/login",'label'=>_l("Login", $this)),
-            array('url'=>base_url()."$lang/user-registration",'label'=>_l("Registration", $this)),
+            array('url'=>base_url("/{$this->lang}/login"),'label'=>_l("Login", $this)),
+            array('url'=>base_url("/{$this->lang}/user-registration"),'label'=>_l("Registration", $this)),
         );
         return $this->showError(null,404,null,$buttons);
     }
