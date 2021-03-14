@@ -50,7 +50,7 @@ if ( ! function_exists('my_int_date')){
     function my_int_date($date)
     {
         if($date==0) return "";
-        return date($_SESSION["settings"]["date_format"] ,$date);
+        return date(\Config\Services::settings()->get()["date_format"] ,$date);
     }
 }
 
