@@ -51,12 +51,13 @@ class Notification
     {
         $this->key = $key;
         $autoEmailMSG = \Config\Services::model()->emailMessages()->getOneByKey($this->key, $language_id);
-        if (!isset($autoEmailMSG['content'])){
+        if (empty($autoEmailMSG)){
             if(!\Config\Services::view()->fileExists("emails/{$this->key}")){
                 log_message('error', "Couldn't find notification email content for $this->key.");
                 return;
             }
-            $autoEmailMSG['content'] = \Config\Services::view()->render("emails/{$this->key}");
+            $this->emailHtmlTemplate = \Config\Services::view()->render("emails/{$this->key}");
+            return;
         }
 
         $this->emailHtmlTemplate = $autoEmailMSG['content'];
@@ -107,21 +108,21 @@ class Notification
             if(isset($setting['use_smtp']) && $setting['use_smtp']==1){
                 $config = array(
                     'protocol' => 'smtp',
-                    'smtp_host' => $setting['smtp_host'],
-                    'smtp_port' => $setting['smtp_port'],
-                    'smtp_user' => $setting['smtp_username'],
-                    'smtp_pass' => $setting['smtp_password'],
-                    'mailtype'  => 'html',
+                    'SMTPHost' => $setting['smtp_host'],
+                    'SMTPPort' => $setting['smtp_port'],
+                    'SMTPUser' => $setting['smtp_username'],
+                    'SMTPPass' => $setting['smtp_password'],
+                    'mailType'  => 'html',
                     'charset'   => 'iso-8859-1',
-                    'starttls'  => true,
+                    'SMTPCrypto'  => true,
                     'newline'   => "\r\n"
                 );
             }else{
                 $config = array(
                     'protocol' => 'mail',
-                    'mailtype'  => 'html',
+                    'mailType'  => 'html',
                     'charset'   => 'utf8',
-                    'starttls'  => true,
+                    'SMTPCrypto'  => true,
                     'newline'   => "\r\n"
                 );
             }
