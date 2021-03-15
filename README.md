@@ -1,27 +1,20 @@
-# [NodCMS](http://nodcms.com) 
+#[NodCMS](http://nodcms.com) 
 NodCMS – A Free CMS powered by CodeIgniter
 
-## NodCMS v2.0
-After some years I'm developing a public version of NodCMS again. 
+## NodCMS v3.0 `Developing`
+NodCMS on [CodeIgniter4](https://codeigniter.com/)
 
-The new version of NodCMS is under has been released:
- 
-- database has totally redesigned
-- the <strong>ADMIN SIDE</strong> theme is totally changed (using a quick customize of bootstrap 4.1.3)
-- the <strong>FRONTEND SIDE</strong> theme is totally changed (using a quick customize of bootstrap 4.1.3)
-- Codeigniter version is upgraded to 3.1.10
-- created a modular system to add or remove different features
-- created a Controller core to manage different type of controllers such as: 
-    - <strong>backend</strong>: for admin side pages
-    - <strong>frontend</strong>: for frontend side pages
-    - <strong>membership</strong>: for the pages thad are using only for members
-- created a Model core to use database tables as objects instead of writing a method for each query.
-- created a Load core to use to manage modular system and load the CSS and JS file in different pages only when they are necessary
-- created a library to create and manage forms, and keep them in one style
-- created a library to create and manage data table lists and keep theme in one style
-- and all over the system has been reviewed and rewritten.
+Because of the new version of CodeIgniter, I decided to rebuild NodCMS with CodeIgniter4. During this update NodCMS will be more object-oriented.
 
-I apologize for the long delay.
+>This branch is in progress. You can have a vision on update process on its [project page](https://github.com/khodakhah/nodcms/projects/2).
+
+###NodCMS v3.0 going to have:
+
+1. New Object-Oriented core
+2. Better modular structure
+3. New view rendering
+---
+##NodCMS v2.0
 
 ### What is NodCMS
 
