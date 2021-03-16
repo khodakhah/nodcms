@@ -62,10 +62,10 @@ class Ajaxlist
      */
     public function renderView(string $view_file, array $data): string
     {
-        $view = Services::layout(new View(), false);
-        $data = array_merge(Services::layout()->getData(), $data);
-        $view->setData($data);
+        Services::layout()->addJsFile("assets/nodcms/js/ajaxlist");
         Services::layout()->setData($data);
+        $view = clone Services::layout();
+        $view->setConfig(new View());
         return $view->render($view_file);
     }
 
