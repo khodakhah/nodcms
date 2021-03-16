@@ -2,6 +2,10 @@
 <script>
     $(function(){
         $.fn.makeConfirmationBtn = function () {
+            // TODO: Make an alternative.
+            // Force stop confirmation button. Because it not working with jquery latest version.
+            return;
+
             if(typeof $(this).attr('onclick')!="undefined"){
                 var the_action = $(this).attr('onclick');
                 $(this).on('confirmed.bs.confirmation', function () {
