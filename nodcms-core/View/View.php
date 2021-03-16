@@ -81,7 +81,6 @@ class View extends \CodeIgniter\View\View
 
     /**
      * Define controller public variables as view variables to use in the view files.
-     * For example: $this->language, $this->settings, etc.
      * TODO: Change this routine.
      *
      * @param $controller
@@ -196,9 +195,7 @@ class View extends \CodeIgniter\View\View
     private function addAsset(&$variable, string $file_type, string $path, string $ltr_path = null)
     {
         if($ltr_path != null) {
-            if(!isset($this->language) || $this->language == null)
-                return;
-            if($this->language["rtl"]){
+            if(\Config\Services::language()->get()["rtl"]){
                 if(!in_array($ltr_path . $file_type, $variable))
                     array_push($variable, $ltr_path . $file_type);
                 return;
