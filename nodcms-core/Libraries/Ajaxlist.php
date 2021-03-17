@@ -123,10 +123,7 @@ class Ajaxlist
                     $content = $item['callback_function']($content);
                 }
                 if(key_exists('theme', $item)){
-                    $exists_theme = "common/ajaxlist/item_themes/$item[theme].php";
-                    // Set theme patch
-                    if(file_exists(VIEWPATH.$exists_theme)) $theme = $exists_theme; else $theme = $item['theme'];
-                    $content = $this->renderView($theme, array('content' => $content, 'data'=>$data, 'config'=>$item, 'row_id'=>$row_id));
+                    $content = $this->renderView("common/ajaxlist/item_themes/{$item['theme']}", array('content' => $content, 'data'=>$data, 'config'=>$item, 'row_id'=>$row_id));
                 }
                 $row['columns'][$key] = array_merge($item, array('content' => $content, 'row_id'=>$row_id, 'column_class'=>$item['column_class']));
             }

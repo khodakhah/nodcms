@@ -1446,7 +1446,7 @@ class GeneralAdmin extends Backend
                 ),
                 array(
                     'label'=>"",
-                    'theme'=>"open_btn",
+                    'theme'=>"edit_btn",
                     'url'=>ADMIN_URL.'socialLinksForm/$content',
                     'content'=>"id",
                 ),
@@ -1466,8 +1466,7 @@ class GeneralAdmin extends Backend
         $theList->setOptions($config);
         if(Services::request()->isAJAX()){
             $data = Services::model()->socialLinks()->getAll($conditions, $config['per_page'], $config['page']);
-            echo $theList->ajaxData($data);
-            return;
+            return $theList->ajaxData($data);
         }
         $this->data['title'] = _l("Social Links", $this);
         $this->data['sub_title'] = _l("List", $this);
@@ -1499,10 +1498,10 @@ class GeneralAdmin extends Backend
             }
             $self_url .= "/$id";
             $this->data["sub_title"] = _l("Edit Item", $this);
-            $isUniqueValidationRules = "|isUnique[social_links,class,id,$id]";
+            $isUniqueValidationRules = "|is_unique[social_links.class,id,$id]";
         }else{
             $this->data["sub_title"] = _l("Insert New Item", $this);
-            $isUniqueValidationRules = '|isUnique[social_links,class]';
+            $isUniqueValidationRules = '|is_unique[social_links.class]';
         }
 
         $social_types = array(
@@ -1631,7 +1630,7 @@ class GeneralAdmin extends Backend
         }
 
         Services::model()->socialLinks()->remove($id);
-        $this->successMessage("The social link has been deleted successfully.", $back_url);
+        return $this->successMessage("The social link has been deleted successfully.", $back_url);
     }
 
     /**
