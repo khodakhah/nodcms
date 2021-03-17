@@ -77,6 +77,28 @@ class Modules
     }
 
     /**
+     * Returns autoMailMessages settings of all modules as a single array
+     *
+     * @return array
+     */
+    public function getAllAutoEmailMessages() : array
+    {
+        $result = [];
+        foreach($this->modulesDirs as $name=>$item) {
+            $className = "NodCMS\\".ucfirst($name)."\Config\Settings";
+            if(class_exists($className)) {
+                $class = new $className();
+                if(!property_exists($class, 'autoEmailMessages'))
+                    continue;
+
+                $result = array_merge($result, $class->autoEmailMessages);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * @return string[]
      */
     public function getAllActiveNames() : array

@@ -580,19 +580,16 @@ class GeneralAdmin extends Backend
 
     /**
      * Automatic email text management
+     *
+     * @return string
      */
-    function automaticEmailTexts()
+    public function automaticEmailTexts()
     {
         $this->data['page'] = "emails_texts";
-        $auto_emails = $this->config->item('autoEmailMessages');
+        // Get auto messages keys from config
+        $auto_emails = $this->config->autoEmailMessages;
         // Load auto messages from packages directories
-        $packages = Services::modules()->getNames();
-        foreach ($packages as $item){
-            $package_auto_emails = $this->config->item($item.'_autoEmailMessages');
-            if(is_array($package_auto_emails))
-                $auto_emails = array_merge($auto_emails, $package_auto_emails);
-        }
-        $keys = array_keys($auto_emails);
+        $auto_emails = array_merge($auto_emails, Services::modules()->getAllAutoEmailMessages());
         $languages = Services::model()->languages()->getCount();
         foreach ($auto_emails as $key=>&$item){
             $_missed = Services::model()->emailMessages()->getCount(array('code_key'=>$key));
@@ -615,21 +612,18 @@ class GeneralAdmin extends Backend
     /**
      * Automatic email text submit form
      *
-     * @param $email_key
+     * @param string $email_key
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|mixed|string
+     * @throws \Exception
      */
-    function automaticEmailTextForm($email_key)
+    public function automaticEmailTextForm(string $email_key)
     {
         $self_url = ADMIN_URL."automaticEmailTextForm/$email_key";
         $back_url = ADMIN_URL."automaticEmailTexts";
         // Get auto messages keys from config
-        $auto_emails = $this->config->item('autoEmailMessages');
+        $auto_emails = $this->config->autoEmailMessages;
         // Load auto messages from packages directories
-        $packages = Services::modules()->getNames();
-        foreach ($packages as $item){
-            $package_auto_emails = $this->config->item($item.'_autoEmailMessages');
-            if(is_array($package_auto_emails))
-                $auto_emails = array_merge($auto_emails, $package_auto_emails);
-        }
+        $auto_emails = array_merge($auto_emails, Services::modules()->getAllAutoEmailMessages());
         if(!key_exists($email_key,$auto_emails)){
             return $this->errorMessage("The email message isn't exists.", $back_url);
         }
@@ -694,7 +688,7 @@ class GeneralAdmin extends Backend
             // Options in all languages save
             return $this->successMessage("The message has been edited successfully.", $back_url);
         }
-        echo $myform->fetch('', array(), true);
+        return $myform->fetch('', array(), true);
     }
 
     /**
