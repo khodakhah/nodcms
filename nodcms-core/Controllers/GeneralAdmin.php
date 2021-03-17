@@ -551,27 +551,6 @@ class GeneralAdmin extends Backend
         $this->data['page'] = $forms[$sub_page]['page'];
         $this->data['sub_title'] = $forms[$sub_page]['sub_title'];
 
-        //Set auto messages properties
-        if($sub_page=='mail'){
-            $this->data['auto_emails'] = $this->config->item('autoEmailMessages');
-            // Load auto messages from packages directories
-            $packages = Services::modules()->getNames();
-            foreach ($packages as $item){
-                $package_auto_emails = $this->config->item($item.'_autoEmailMessages');
-                if(is_array($package_auto_emails))
-                    $this->data['auto_emails'] = array_merge($this->data['auto_emails'], $package_auto_emails);
-            }
-
-            $auto_messages_data = array();
-            foreach($this->data['auto_emails'] as $language_id=>$val){
-                $autoMsgData = Services::model()->emailMessages()->getAll(array('language_id'=>$language_id));
-                foreach($autoMsgData as $value){
-                    $auto_messages_data[$value["language_id"]][$language_id] = $value;
-                }
-            }
-            $this->data['auto_messages_data'] = $auto_messages_data;
-        }
-
         $this->data['title'] = _l('Settings',$this);
         $this->data['breadcrumb'] = array(array('title'=>$this->data['title']),
             array('title'=>$this->data['sub_title']));
