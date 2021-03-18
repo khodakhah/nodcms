@@ -434,20 +434,23 @@ if( ! function_exists('findNewLangKeys')){
         $lang_regex = '/\_l\([\'\"]('.LANGUAGE_KEYS_PATTERN.')[\'\"\&]\,[\s]?\$this(\-\>CI)?[\s]?\)/';
         $system_message_regex = '/\$this(\-\>CI)?\-\>(systemError|systemSuccess)\([\'\"]('.LANGUAGE_KEYS_PATTERN.')[\'\"]\,[\s]?.+[\s]?\)/';
         // * Find all paths
-        $core = get_all_php_files(APPPATH."core");
-        $controllers= get_all_php_files(APPPATH."controllers");
-        $views = get_all_php_files(APPPATH."views");
-        $dirs = array_merge($core, $controllers, $views);
-        $packages = get_instance()->load->packageList();
+        $controllers= get_all_php_files(COREPATH."controllers");
+        $dirs = !empty($controllers) ? $controllers : [];
+        $packages = \Config\Services::modules()->getPaths();
+        $moduleFiles = ["Views", "Container"];
         foreach($packages as $item){
-            $third_party = get_all_php_files(APPPATH."third_party/$item/views");
-            if(is_array($third_party))
-                $dirs = array_merge($dirs, $third_party);
-            array_push($dirs, APPPATH."third_party/$item/$item".'Hooks.php');
+            foreach($moduleFiles as $moduleFile) {
+                $third_party = get_all_php_files("{$item}{$moduleFile}");
+                if(is_array($third_party))
+                    $dirs = array_merge($dirs, $third_party);
+            }
+            if(file_exists("{$item}Bootstrap.php")) {
+                array_push($dirs, "{$item}Bootstrap.php");
+            }
         }
 
         // Find the patterns from all paths
-        foreach($dirs as $key=>$item){
+        foreach($dirs as $key=>$item) {
             $file_content = file_get_contents($item);
             preg_match_all($lang_regex, $file_content, $matches);
             if(count($matches[1])!=0)
@@ -457,7 +460,7 @@ if( ! function_exists('findNewLangKeys')){
                 $unique_array = array_unique(array_merge($unique_array, $matches[3]));
         }
 
-        $temp_file = APPPATH.'language/lang_temp.php';
+        $temp_file = COREPATH.'Language/lang_temp.php';
         if(file_exists($temp_file)){
             include $temp_file;
             $in_my_temp = isset($lang_temp)?$lang_temp:array();
@@ -470,7 +473,7 @@ if( ! function_exists('findNewLangKeys')){
 
         // * Find removed labels
         $removed_keys = array();
-        foreach ($in_my_temp as &$keys){
+        foreach ($in_my_temp as $keys){
             if (!in_array($keys, $unique_array)) {
                 array_push($removed_keys, $keys);
             }
@@ -485,50 +488,45 @@ if( ! function_exists('findNewLangKeys')){
 
         // * Update temp_lang.php
         if($overwrite){
-            $languages = array_filter(glob(APPPATH.'language/*'), 'is_dir');
-            foreach ($languages as $item){
-                preg_match('/.*\/([A-Za-z0-9\-\_]+)/', $item, $my_match);
+            $languages = array_filter(glob(COREPATH.'Language/*'), 'is_dir');
+            foreach ($languages as $language_dir){
+                preg_match('/.*\/([A-Za-z]{2})/', $language_dir, $my_match);
 
-                $my_lang_file = APPPATH.'language/'.$my_match[1].'/nodcms_lang.php';
+                $my_lang_file = COREPATH.'Language/'.$my_match[1].'/app.php';
                 if(file_exists($my_lang_file)){
-                    $my_language_file_content = file_get_contents($my_lang_file);
+                    $my_language_file_content = str_replace("];", "", file_get_contents($my_lang_file));
                 }else{
-                    $my_language_file_content = "";
+                    $my_language_file_content = "<?php\n" .
+                        "/**\n" .
+                        " * Made automatically by NodCMS\n" .
+                        " * Date: ".date("Y.m.d")."\n" .
+                        " * Time: ".date("H:i")."\n" .
+                        "*/\n" .
+                        "return [\n";
                 }
 
-                $lang_files = glob($item.'/*.php');
-                $lang = array();
-                get_instance()->load->library('Get_lang_in_array');
-                $CI = new Get_lang_in_array();
-                foreach ($lang_files as $file_item){
-                    if(!file_exists($file_item))
-                        continue;
-                    preg_match('/.*\/([A-Za-z0-9\-\_]+)\_lang.php/', $file_item, $my_match_file_name);
-                    if(count($my_match_file_name) < 2)
-                        continue;
-                    $new_lang = $CI->load($my_match_file_name[1], $my_match[1]);
-                    if(is_array($new_lang))
-                        $lang = array_merge($lang, $new_lang);
-                }
+                $lang = \Config\Services::language()->getLines($my_match[1], "app");
 
                 // * Remove unused keys
                 if($remove){
                     foreach ($removed_keys as $keys) {
-                        $pattern = '/\$lang\[\"'.$keys.'\"\][\s]?\=[\s]\"(.*)\"\;\n/';
+                        $pattern = '/\t\"'.$keys.'\"[\s]?\=\>[\s]\"(.*)\"\,\n/';
                         $replace = '';
                         $my_language_file_content = preg_replace($pattern, $replace, $my_language_file_content);
                     }
                 }
 
-                // * Add the new keys
+                // * Add a new keys
                 foreach ($unique_array as $keys) {
                     if (!isset($lang[$keys])) {
                         $values = $keys;
                     } else {
                         $values = $lang[$keys];
                     }
-                    $my_language_file_content .= '// * Added by '.$CONTROLLER->userdata["username"]." at ".date("d.m.Y H:i")."\n".'$lang["' . $keys . '"] = "' . $values . '";' . "\n";
+                    $my_language_file_content .= "\t".'"' . $keys . '" => "' . $values . '",' . "\n";
                 }
+
+                $my_language_file_content .= "];";
 
                 if(file_exists($my_lang_file)){
                     file_put_contents($my_lang_file, $my_language_file_content);

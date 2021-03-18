@@ -50,6 +50,16 @@ class Modules
     }
 
     /**
+     * Returns a list of all modules directories
+     *
+     * @return array
+     */
+    public function getPaths(): array
+    {
+        return $this->modulesDirs;
+    }
+
+    /**
      * Returns a list of all modules names
      *
      * @return string[]

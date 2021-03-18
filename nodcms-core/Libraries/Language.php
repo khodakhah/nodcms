@@ -73,4 +73,35 @@ class Language extends CI_Language
     {
         return $this->DBlanguage;
     }
+
+    /**
+     * Fetch NodCMS old school translation file and line
+     *
+     * @param string $line
+     * @param array $args
+     * @return string|string[]
+     */
+    public function getLine(string $line, array $args = [])
+    {
+        if (!strpos($line, '.')) {
+            $line = "app.{$line}";
+        }
+
+        return parent::getLine($line, $args);
+    }
+
+    /**
+     * Returns all lines of a file in a language
+     *
+     * @param string $locale
+     * @param string $file
+     * @return array
+     */
+    public function getLines(string $locale, string $file): array
+    {
+        if(!isset($this->language[$locale]) && !isset($this->language[$locale][$file]))
+            return [];
+
+        return $this->language[$locale][$file];
+    }
 }
