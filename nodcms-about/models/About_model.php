@@ -7,7 +7,6 @@
  * Website: http://www.nodcms.com
  */
 
-defined('BASEPATH') OR exit('No direct script access allowed');
 class About_model extends NodCMS_Model
 {
     function __construct()
