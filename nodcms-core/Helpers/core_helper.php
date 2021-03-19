@@ -432,7 +432,7 @@ if( ! function_exists('findNewLangKeys')){
             "pm",
         );
         $lang_regex = '/\_l\([\'\"]('.LANGUAGE_KEYS_PATTERN.')[\'\"\&]\,[\s]?\$this(\-\>CI)?[\s]?\)/';
-        $system_message_regex = '/\$this(\-\>CI)?\-\>(systemError|systemSuccess)\([\'\"]('.LANGUAGE_KEYS_PATTERN.')[\'\"]\,[\s]?.+[\s]?\)/';
+        $system_message_regex = '/\$this(\-\>CI)?\-\>(errorMessage|successMessage)\([\'\"]('.LANGUAGE_KEYS_PATTERN.')[\'\"]\,[\s]?.+[\s]?\)/';
         // * Find all paths
         $controllers= get_all_php_files(COREPATH."controllers");
         $dirs = !empty($controllers) ? $controllers : [];

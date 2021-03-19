@@ -20,7 +20,7 @@
                             <div class="dd-handle dd3-handle"> </div>
                             <div class="dd3-content">
                                 <?php if($item["image"]!=''){ ?>
-                                    <img style="height: 18px;" src="<?php echo base_url().$item["image"]; ?>">
+                                    <img style="height: 18px;" src="<?php echo base_url($item["image"]); ?>">
                                 <?php } ?>
                                 <?=$item["language_title"]?> <?=$item["default"]==1?"("._l('Default',$this).")":""?>
                                 <button type="button" class="btn btn-xs btn-link font-red" data-target="#item<?php echo $item['language_id']; ?>" onclick="$(this).removeAnItemFromList('<?php echo ADMIN_URL."languageDelete/$item[language_id]"; ?>');"><i class="fa fa-trash-o"></i> <?=_l('Delete',$this)?></button>

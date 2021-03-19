@@ -32,7 +32,7 @@ class GeneralAdmin extends Backend
             'dir'=>"logo",
             'encrypt_name'=>false,
         ),
-        'language'=>array(
+        'lang'=>array(
             'dir'=>"lang",
             'encrypt_name'=>false,
         ),
