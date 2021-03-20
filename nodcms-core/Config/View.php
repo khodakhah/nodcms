@@ -50,5 +50,5 @@ class View extends \CodeIgniter\Config\View
      *
      * @var string
      */
-    public $frameFile = '';
+    public $frameFile = 'layout';
 }

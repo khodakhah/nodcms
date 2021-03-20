@@ -21,7 +21,7 @@
 
 namespace NodCMS\Core\Models;
 
-class Sessions_model extends Model
+class Sessions extends Model
 {
     function init()
     {

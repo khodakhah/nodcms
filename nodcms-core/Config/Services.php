@@ -4,7 +4,6 @@ use CodeIgniter\Config\Services as CoreServices;
 use NodCMS\Core\Libraries\Identity;
 use NodCMS\Core\Libraries\Language;
 use NodCMS\Core\Libraries\Settings as SettingsLibrary;
-use NodCMS\Core\Models\ModelMap;
 use NodCMS\Core\Notification\EmailNotification;
 use NodCMS\Core\Notification\Notification;
 use NodCMS\Core\Response\QuickResponse;
@@ -181,7 +180,7 @@ class Services extends CoreServices
      * ModelMap is a luncher class to
      *
      * @param bool $getShared
-     * @return ModelMap
+     * @return Models
      */
     public static function model(bool $getShared = true)
     {
@@ -190,7 +189,7 @@ class Services extends CoreServices
             return static::getSharedInstance('model');
         }
 
-        return new ModelMap();
+        return new Models();
     }
 
     /**

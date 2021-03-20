@@ -78,7 +78,7 @@ abstract class Base extends Controller
     protected $config;
 
     /**
-     * @var \NodCMS\Core\Models\ModelMap
+     * @var \Config\Models
      */
     protected $model;
 

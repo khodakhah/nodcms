@@ -42,7 +42,7 @@
 namespace NodCMS\Core\Libraries;
 
 use \CodeIgniter\Language\Language as CI_Language;
-use NodCMS\Core\Models\Languages_model;
+use NodCMS\Core\Models\Languages;
 
 class Language extends CI_Language
 {

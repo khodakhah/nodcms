@@ -21,40 +21,33 @@
 
 namespace NodCMS\Core\Models;
 
-use Config\Services;
-use http\Params;
-
-class Email_messages_model extends Model
+class Groups extends Model
 {
     function init()
     {
-        $table_name = "auto_email_messages";
-        $primary_key = "msg_id";
+        $table_name = "groups";
+        $primary_key = "group_id";
         $fields = array(
-            'msg_id'=> "int(10) unsigned NOT NULL AUTO_INCREMENT",
-            'code_key'=> "varchar(100) DEFAULT NULL",
-            'subject'=> "varchar(255) DEFAULT NULL",
-            'content'=> "text",
-            'language_id'=> "int(10) unsigned NOT NULL DEFAULT '0'",
-            'lang'=> "varchar(2) DEFAULT NULL",
+            'group_id'=>"int(10) NOT NULL AUTO_INCREMENT",
+            'group_name'=>"varchar(50) DEFAULT NULL",
+            'backend_login'=>"int(1) DEFAULT '0'",
         );
-        $foreign_tables = null;
+        $foreign_tables = array("gallery_image");
         $translation_fields = null;
         parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
 
     /**
-     * @param $key
-     * @param null $language_id
-     * @return array|null
+     * Insert first data
      */
-    public function getOneByKey($key, $language_id = NULL): ?array
+    function defaultData()
     {
-        if($language_id==NULL)
-            $language_id = Services::language()->get()["language_id"];
-        return $this->getOne(null, [
-            'code_key' => $key,
-            'language_id' => $language_id,
-        ]);
+        $data = array(
+            array('group_id'=>1,'group_name'=>"Admin", 'backend_login'=>1),
+            array('group_id'=>20,'group_name'=>"Users", 'backend_login'=>0),
+        );
+        foreach($data as $item) {
+            $this->add($item);
+        }
     }
 }

@@ -21,7 +21,7 @@
 
 namespace NodCMS\Core\Models;
 
-class Languages_model extends Model
+class Languages extends Model
 {
     function init()
     {

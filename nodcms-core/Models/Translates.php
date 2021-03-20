@@ -21,18 +21,19 @@
 
 namespace NodCMS\Core\Models;
 
-class Packages_dashboard_model extends Model
+class Translates extends Model
 {
     function init()
     {
-        $table_name = "packages_dashboard";
-        $primary_key = "package_id";
+        $table_name = "translates";
+        $primary_key = "translate_id";
         $fields = array(
-            'package_id'=>"int(11) unsigned NOT NULL AUTO_INCREMENT",
-            'package_name'=>"varchar(255) DEFAULT NULL",
-            'package_sort'=>"int(11) unsigned NOT NULL",
-            'created_date'=>"int(11) unsigned NOT NULL",
-            'active'=>"int(1) unsigned NOT NULL",
+            'translate_id'=>"int(10) unsigned NOT NULL AUTO_INCREMENT",
+            'language_id'=>"int(10) unsigned DEFAULT NULL",
+            'translate_table'=>"varchar(255) DEFAULT NULL",
+            'translate_table_key'=>"int(10) unsigned DEFAULT NULL",
+            'translate_field'=>"varchar(255) DEFAULT NULL",
+            'translate_text'=>"text",
         );
         $foreign_tables = null;
         $translation_fields = null;

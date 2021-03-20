@@ -23,8 +23,7 @@ namespace NodCMS\Core\Modules;
 
 use Config\Autoload;
 use Config\Services;
-use NodCMS\Core\Models\ModelMap;
-use NodCMS\Core\Bootstrap;
+use Config\Models;
 
 class Modules
 {
@@ -39,10 +38,10 @@ class Modules
     public function __construct()
     {
         $this->modulesDirs = Autoload::modulesPaths();
-        $this->dbModules = ModelMap::packages()->getAll();
+        $this->dbModules = Models::packages()->getAll();
         $this->activeModules = [];
 
-        $modules = ModelMap::packages()->getAll(['active'=>1]);
+        $modules = Models::packages()->getAll(['active'=>1]);
         foreach($modules as $item) {
             $class = "\\".$this->getNameSpace($item['package_name'])."\Bootstrap";
             $this->activeModules[strtolower($item['package_name'])] = new $class();

@@ -126,7 +126,7 @@ class Model extends CoreModel
         $this->getBuilder()->delete(array($this->primary_key=>$id));
         // Delete Translations
         if($this->translation_fields != null && is_array($this->translation_fields) && count($this->translation_fields)!=0){
-            $translations = new Translations_model();
+            $translations = new Translations();
             $translations->cleanup($this->table_name, $id, $this->translation_fields);
         }
     }
@@ -359,7 +359,7 @@ class Model extends CoreModel
             // TODO: Solve this
             $language_id = $this->language['language_id'];
 
-        $_translations = new Translations_model();
+        $_translations = new Translations();
         $translations = $_translations->getAllOfATable($this->table_name, $first_result[$this->primary_key], $this->translation_fields, $language_id);
 
         $second_result = array_combine(array_column($translations, 'field_name'),array_column($translations,'translated_text'));
@@ -391,7 +391,7 @@ class Model extends CoreModel
             $language_id = $this->language['language_id'];
 
         foreach ($first_result as &$item){
-            $_translations = new Translations_model();
+            $_translations = new Translations();
             $translations = $_translations->getAllOfATable($this->table_name, $first_result[$this->primary_key], $this->translation_fields, $language_id);
 
             $second_result = array_combine(array_column($translations, 'field_name'),array_column($translations,'translated_text'));
@@ -415,7 +415,7 @@ class Model extends CoreModel
             // TODO: Solve this
             $language_id = $this->language['language_id'];
 
-        $_translations = new Translations_model();
+        $_translations = new Translations();
         return $_translations->getAllOfATable($this->table_name, $id, array($field), $language_id);
     }
 
@@ -431,7 +431,7 @@ class Model extends CoreModel
         if($language_id != 0)
             $language_id = Services::language()->get()['language_id'];
 
-        $_translations = new Translations_model();
+        $_translations = new Translations();
         $result = $_translations->getAll(array(
             'table_id' => $id,
             'table_name' => $this->table_name,
@@ -464,7 +464,7 @@ class Model extends CoreModel
 
         $data = array('translated_text'=>$value);
 
-        $_translations = new Translations_model();
+        $_translations = new Translations();
 
         $translation_count = $_translations->getCount($condition);
 

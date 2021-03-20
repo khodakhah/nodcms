@@ -428,8 +428,8 @@ class Installer extends Base
                 return;
             }
 
-            $Settings = new \NodCMS\Core\Models\Settings_model($this->db);
-            $Users = new \NodCMS\Core\Models\Users_model($this->db);
+            $Settings = new \NodCMS\Core\Models\Settings($this->db);
+            $Users = new \NodCMS\Core\Models\Users($this->db);
 
             $update_data = $data;
             unset($update_data['password']);
@@ -475,8 +475,8 @@ class Installer extends Base
 
         $this->data['sub_title'] = "Complete";
 
-        $Settings = new \NodCMS\Core\Models\Settings_model($this->db);
-        $Users = new \NodCMS\Core\Models\Users_model($this->db);
+        $Settings = new \NodCMS\Core\Models\Settings($this->db);
+        $Users = new \NodCMS\Core\Models\Users($this->db);
 
         $admin_user = $Users->getOne(1);
         $prepare_settings = $Settings->getCount() > 0;

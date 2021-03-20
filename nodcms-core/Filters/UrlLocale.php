@@ -23,7 +23,7 @@ namespace NodCMS\Core\Filters;
 
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
-use NodCMS\Core\Models\Languages_model;
+use NodCMS\Core\Models\Languages;
 
 /**
  * Class UrlLocale

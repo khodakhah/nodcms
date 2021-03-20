@@ -60,7 +60,7 @@ class Identity
     public function getUserData()
     {
         if(Services::session()->has("user_id")) {
-            $userModel = new \NodCMS\Core\Models\Users_model();
+            $userModel = new \NodCMS\Core\Models\Users();
             $user = $userModel->getOne(Services::session()->get("user_id"));
 //            if($user["active"]!=1 && $this->router->methodName() != "logout"){
 //                $this->accountLock();
@@ -83,7 +83,7 @@ class Identity
     public function isValid(): bool
     {
         if(Services::session()->has("user_id")) {
-            $userModel = new \NodCMS\Core\Models\Users_model();
+            $userModel = new \NodCMS\Core\Models\Users();
             $user = $userModel->getOne(Services::session()->get("user_id"));
             return !empty($user);
         }

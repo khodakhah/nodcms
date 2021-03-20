@@ -23,7 +23,7 @@ namespace NodCMS\Core\Models;
 
 use Config\Services;
 
-class Users_model extends Model
+class Users extends Model
 {
     function init()
     {
