@@ -44,8 +44,8 @@ class Modules
 
         $modules = ModelMap::packages()->getAll(['active'=>1]);
         foreach($modules as $item) {
-            $class = "NodCMS\\".ucfirst($item['package_name'])."\Bootstrap";
-            $this->activeModules[ucfirst($item['package_name'])] = new $class();
+            $class = "\\".$this->getNameSpace($item['package_name'])."\Bootstrap";
+            $this->activeModules[strtolower($item['package_name'])] = new $class();
         }
     }
 
@@ -70,6 +70,71 @@ class Modules
     }
 
     /**
+     * Check if module exists
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function packageExists(string $name): bool
+    {
+        return key_exists(strtolower($name), $this->modulesDirs);
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    private function getPath(string $name): string
+    {
+        if(!$this->packageExists($name)) return "";
+
+        return $this->modulesDirs[strtolower($name)];
+    }
+
+    /**
+     * Convert module name to its namespace
+     *
+     * @param string $name
+     * @return string
+     */
+    private function getNameSpace(string $name): string
+    {
+        $_module = ucfirst(str_replace("nodcms-", "", $name));
+        return "NodCMS\\$_module";
+    }
+
+    /**
+     * @param string $name
+     * @return array
+     */
+    public function getTablesInfo(string $name): array
+    {
+        $path = $this->getPath($name);
+        $tables = array();
+        $models_paths = get_all_php_files("{$path}/Models/");
+        if(!$models_paths) {
+            return $tables;
+        }
+        foreach($models_paths as $model_path) {
+            $model_name = "\\".$this->getNameSpace($name)."\Models\\".basename($model_path,".php");
+
+            $theModel = new $model_name();
+            if(!method_exists($theModel, 'tableName')) {
+                continue;
+            }
+
+            $tables[] = array(
+                'path' => $model_path,
+                'table' => $theModel->tableName(),
+                'exists' => $theModel->tableExists(),
+                'model' => $theModel,
+            );
+        }
+
+        return $tables;
+    }
+
+    /**
      * Returns a list of all modules names
      *
      * @return \NodCMS\Core\Modules\Bootstrap[]
@@ -78,7 +143,7 @@ class Modules
     {
         $result = [];
         foreach($this->modulesDirs as $name=>$item) {
-            $class = "NodCMS\\".ucfirst($name)."\Bootstrap";
+            $class = $this->getNameSpace($name)."\Bootstrap";
             if(class_exists($class))
                 $result[$name] = new $class();
         }

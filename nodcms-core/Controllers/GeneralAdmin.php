@@ -2527,9 +2527,11 @@ class GeneralAdmin extends Backend
     /**
      * Toggle active status of a package for dashboard
      *
-     * @param $id
+     * @param int $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
-    function settingsHomepageToggleActive($id)
+    function settingsHomepageToggleActive(int $id)
     {
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
@@ -2549,7 +2551,7 @@ class GeneralAdmin extends Backend
     /**
      * Return list of packages that are able to home preview
      *
-     * @return array
+     * @return array|mixed
      */
     private function homepageSortedPackages()
     {
@@ -2646,7 +2648,7 @@ class GeneralAdmin extends Backend
     public function module($package)
     {
         $back_url = ADMIN_URL."modules";
-        if(!$this->load->packageExists($package)){
+        if(!Services::modules()->packageExists($package)){
             return $this->errorMessage("Module not found.", $back_url);
         }
         $current_data = Services::model()->packages()->getOne(null, array('package_name'=>$package));
@@ -2654,7 +2656,7 @@ class GeneralAdmin extends Backend
             $this->data['data'] = $current_data;
         }
 
-        $this->data['tables'] = $this->getModuleTables($package);
+        $this->data['tables'] = Services::modules()->getTablesInfo($package);
 
         $this->data['package'] = $package;
         $this->data['title'] = _l("Module", $this);
@@ -2669,8 +2671,10 @@ class GeneralAdmin extends Backend
     /**
      * Install a module/package
      *
-     * @param string $name
+     * @param $name
      * @param int $confirm
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function moduleInstall($name, $confirm = 0)
     {
@@ -2689,7 +2693,7 @@ class GeneralAdmin extends Backend
 
         $self_url = ADMIN_URL."moduleInstall/$name";
 
-        $tables = $this->getModuleTables($name);
+        $tables = Services::modules()->getTablesInfo($name);
         if($confirm!=1){
             return json_encode(array(
                 'status'=>'success',
@@ -2731,8 +2735,10 @@ class GeneralAdmin extends Backend
     /**
      * Uninstall a module/package
      *
-     * @param string $name
+     * @param $name
      * @param int $confirm
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function moduleUninstall($name, $confirm = 0)
     {
@@ -2748,7 +2754,7 @@ class GeneralAdmin extends Backend
 
         $self_url = ADMIN_URL."moduleUninstall/$name";
 
-        $tables = $this->getModuleTables($name);
+        $tables = Services::modules()->getTablesInfo($name);
         if($confirm!=1){
             return json_encode(array(
                 'status'=>'success',
@@ -2779,7 +2785,7 @@ class GeneralAdmin extends Backend
     /**
      * Get the list of a module/package tables
      *
-     * @param string $package
+     * @param $package
      * @return array
      */
     private function getModuleTables($package)

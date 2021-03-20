@@ -199,7 +199,7 @@ class Model extends CoreModel
             $this->searchDecode($conditions, $builder);
         $query = $builder->get();
         $result = $query->getRowArray();
-        return count($result)!=0?$result["max($field)"]:0;
+        return count($result)!=0?(int)$result["max($field)"]:0;
     }
 
     /**

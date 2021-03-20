@@ -19,60 +19,18 @@
  *
  */
 
-namespace NodCMS\Core\Modules;
+namespace NodCMS\Core\Types;
 
 
-use NodCMS\Core\Types\Link;
-use NodCMS\Core\Types\MenuLink;
-
-interface I_Bootstrap
+class MenuLink extends Link
 {
     /**
-     * Returns Module title
-     *
-     * @return string
+     * @var int
      */
-    public function title(): string;
+    public $order = 0;
 
     /**
-     * Returns Module description
-     *
-     * @return string
+     * @var MenuLink[]
      */
-    public function description(): string;
-
-    /**
-     * True means there this module has a dashboard
-     *
-     * @return bool
-     */
-    public function hasDashboard(): bool;
-
-    /**
-     * A link list that will be able to add as header and footer menu
-     *
-     * @return MenuLink[]
-     */
-    public function menuList(): array;
-
-    /**
-     * General hooks on all frontend controllers
-     *
-     * @return void
-     */
-    public function frontend();
-
-    /**
-     * General hooks on all backend controllers
-     *
-     * @return void
-     */
-    public function backend();
-
-    /**
-     * General hooks on all membership controllers
-     *
-     * @return void
-     */
-    public function membership();
+    public $subLinks = [];
 }

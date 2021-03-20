@@ -21,8 +21,19 @@
 
 namespace NodCMS\Core\Modules;
 
+use NodCMS\Core\Types\MenuLink;
+
 abstract class Bootstrap implements I_Bootstrap
 {
+    /**
+     * @return MenuLink[]
+     */
+    public function menuList(): array
+    {
+        // Default is empty
+        return [];
+    }
+
     public function frontend()
     {
         // Do notting by default

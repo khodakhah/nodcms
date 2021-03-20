@@ -183,7 +183,7 @@ class Services extends CoreServices
      * @param bool $getShared
      * @return ModelMap
      */
-    public static function model(bool $getShared = true): ModelMap
+    public static function model(bool $getShared = true)
     {
         if ($getShared)
         {

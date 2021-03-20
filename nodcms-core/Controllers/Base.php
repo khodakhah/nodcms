@@ -250,8 +250,8 @@ abstract class Base extends Controller
     protected function viewRender(string $view_file, bool $saveData = null): string
     {
         $this->viewPrepare();
-        $this->view->setVar("content", $this->view->render($view_file));
-        return $this->view->renderFrame(null, $saveData);
+        Services::layout()->setVar("content", Services::layout()->render($view_file));
+        return Services::layout()->renderFrame(null, $saveData);
     }
 
     /**
