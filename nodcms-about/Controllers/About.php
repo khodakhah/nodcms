@@ -23,7 +23,7 @@ namespace NodCMS\About\Controllers;
 
 use Config\Services;
 use NodCMS\About\Config\Models;
-use NodCMS\About\Config\View;
+use NodCMS\About\Config\ViewFrontend;
 use NodCMS\Core\Controllers\Frontend;
 
 class About extends Frontend
@@ -31,7 +31,7 @@ class About extends Frontend
     public function __construct()
     {
         parent::__construct();
-        Services::layout()->setConfig(new View());
+        Services::layout()->setConfig(new ViewFrontend());
     }
 
     static function home($CI){

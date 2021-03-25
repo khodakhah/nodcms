@@ -22,14 +22,11 @@
 namespace NodCMS\About\Config;
 
 
-class View extends \Config\View
+class ViewFrontend extends \Config\ViewFrontend
 {
     /**
-     * NodCMS variable!
-     * Path of view file. This path will attached before view files with
-     * using Base::viewRender()
-     *
+     * @inheritdoc
      * @var string
      */
-    public $viewPath = 'NodCMS\About';
+    public $namespacePieces = 'NodCMS\About/frontend';
 }

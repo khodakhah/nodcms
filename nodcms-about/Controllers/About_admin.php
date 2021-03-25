@@ -12,19 +12,21 @@ namespace NodCMS\About\Controllers;
 use NodCMS\About\Config\Models;
 use NodCMS\Core\Controllers\Backend;
 use Config\Services;
-use NodCMS\About\Config\View;
+use NodCMS\About\Config\ViewBackend;
 use NodCMS\Core\Libraries\Form;
 
 class About_admin extends Backend
 {
     function __construct()
     {
-        Services::layout()->setConfig(new View());
         parent::__construct();
+        Services::layout()->setConfig(new ViewBackend());
     }
 
     /**
      * List of all profiles
+     *
+     * @return string
      */
     function profiles()
     {
@@ -32,9 +34,9 @@ class About_admin extends Backend
         $this->data['breadcrumb'] = array(
             array('title'=>$this->data['title']),
         );
-        $this->data['data_list']=Models::about()->getAll();
+        $this->data['data_list']=Models::about()->getAll(null, null, 1, ['order', 'asc']);
         $this->data['page'] = "about_profiles";
-        $this->viewRender("about_sort");
+        return $this->viewRender("about_sort");
     }
 
     /**
@@ -279,7 +281,11 @@ class About_admin extends Backend
             return Services::identity()->getResponse();
         }
         $i = 0;
-        $data = json_decode(Services::request()->getPost('data',TRUE));
+        // TODO: input validate
+        $data = json_decode(Services::request()->getPost('data'));
+        if(empty($data))
+            return $this->errorMessage("There is no data to save.", ABOUT_ADMIN_URL."profiles");
+
         foreach($data as $key=>$item){
             $i++;
             $update_data = array(
