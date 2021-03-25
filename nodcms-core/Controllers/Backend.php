@@ -23,6 +23,7 @@ namespace NodCMS\Core\Controllers;
 
 
 use Config\Services;
+use Config\ViewBackend;
 
 abstract class Backend extends App
 {
@@ -34,10 +35,8 @@ abstract class Backend extends App
     public function __construct()
     {
         parent::__construct();
-        Services::layout()->config->frameFile = $this->config->backend_template_frame;
-        Services::layout()->config->viewPath .= "/{$this->config->backend_template}";
-        Services::sidebar()->config->viewPath .= "/{$this->config->backend_template}";
-
+        Services::layout()->setConfig(new ViewBackend());
+        Services::sidebar()->setConfig(new ViewBackend());
         $this->data['base_url'] = base_url()."admin/";
 
         $this->userdata = Services::identity()->getUserData();

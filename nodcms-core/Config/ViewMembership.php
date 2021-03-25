@@ -19,66 +19,20 @@
  *
  */
 
-namespace NodCMS\Core\View;
+namespace Config;
 
 
-use Config\Services;
-
-class Layout extends View
+class ViewMembership extends View
 {
     /**
-     * Attach form assets on the layout
+     * @inheritdoc
+     * @var string
      */
-    public function fetchAllCSS()
-    {
-        parent::fetchAllCSS();
-        Services::formLayout()->fetchAllCSS();
-    }
+    public $namespacePieces = 'NodCMS\Layout/membership';
 
     /**
-     * Attach form assets on the layout
+     * @inheritdoc
+     * @var string
      */
-    public function fetchAllJS()
-    {
-        parent::fetchAllJS();
-        Services::formLayout()->fetchAllJS();
-    }
-
-    /**
-     * Attach form assets on the layout
-     */
-    public function fetchAllHeaderJS()
-    {
-        parent::fetchAllHeaderJS();
-        Services::formLayout()->fetchAllHeaderJS();
-    }
-
-    /**
-     * Render the frame
-     *
-     * @param array|null $options
-     * @param bool|null $saveData
-     * @return string
-     */
-    public function renderFrame(array $options = null, bool $saveData = null): string
-    {
-        $this->viewPrefix = $this->config->namespaceLayout;
-        return $this->render($this->config->frameFile, $options, $saveData);
-    }
-
-    /**
-     * Render sidebar
-     *
-     * @param string $view_file
-     * @return string
-     */
-    public function sidebar(string $view_file = "sidebar"): string
-    {
-        return Services::sidebar()->render($view_file);
-    }
-
-    public function hasSidebar(): bool
-    {
-        return Services::sidebar()->hasLinks();
-    }
+    public $frameFile = 'nodcms-membership';
 }

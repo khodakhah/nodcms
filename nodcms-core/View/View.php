@@ -27,11 +27,9 @@ use Psr\Log\LoggerInterface;
 class View extends \CodeIgniter\View\View
 {
     /**
-     * Reset Config default
-     *
-     * @var \Config\View
+     * @var string
      */
-    public $config;
+    protected $viewPrefix;
 
     /**
      * @var \CodeIgniter\HTTP\IncomingRequest
@@ -77,6 +75,7 @@ class View extends \CodeIgniter\View\View
         $config == null && $config = new \Config\View();
         parent::__construct($config, $viewPath, $loader, $debug, $logger);
         $this->request = Services::request();
+        $this->viewPrefix = $this->config->namespacePieces;
     }
 
     /**
@@ -225,16 +224,7 @@ class View extends \CodeIgniter\View\View
      */
     public function setConfig($config) {
         $this->config = $config;
-    }
-
-    /**
-     * Reset viewPath
-     *
-     * @param string $viewPath
-     */
-    public function setViewPath(string $viewPath)
-    {
-        $this->viewPath = $viewPath;
+        $this->viewPrefix = $this->config->namespacePieces;
     }
 
     /**
@@ -247,7 +237,7 @@ class View extends \CodeIgniter\View\View
      */
     public function render(string $view, array $options = null, bool $saveData = null): string
     {
-        $view = $this->config->viewPath . "/" . $view;
+        $view = $this->viewPrefix . "/" . $view;
         return parent::render($view, $options, $saveData);
     }
 
@@ -259,7 +249,7 @@ class View extends \CodeIgniter\View\View
      */
     public function fileExists(string $view): bool
     {
-        $view = $this->config->viewPath . "/" . $view;
+        $view = $this->viewPrefix . "/" . $view;
         $fileExt = pathinfo($view, PATHINFO_EXTENSION);
         $realPath = empty($fileExt) ? $view . '.php' : $view; // allow Views as .html, .tpl, etc (from CI3)
         return file_exists($realPath);

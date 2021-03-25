@@ -22,6 +22,7 @@
 namespace NodCMS\Core\Controllers;
 
 use Config\Services;
+use Config\ViewFrontend;
 
 abstract class Frontend extends App
 {
@@ -37,7 +38,7 @@ abstract class Frontend extends App
 
         // Sidebar view file
         $this->page_sidebar = "frontend_sidebar";
-        $this->view->config->frameFile = $this->config->frontend_template_frame;
+        Services::layout()->setConfig(new ViewFrontend());
 
         if($this->frameTemplate==null)
             $this->frameTemplate = $this->mainTemplate;

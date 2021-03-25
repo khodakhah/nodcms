@@ -5,11 +5,18 @@ class View extends \Config\View
 	/**
          * NodCMS variable!
          * Path of view file. This path will attached before view files with
-         * using Base::viewRender()
          *
          * @var string
      */
-    public $viewPath = 'NodCMS\Installer';
+    public $namespacePieces = 'NodCMS\Installer';
+
+    /**
+     * NodCMS variable!
+     * Path of view namespace for layout view file.
+     *
+     * @var string
+     */
+    public $namespaceLayout = 'NodCMS\Installer';
 
     /**
          * NodCMS variable!

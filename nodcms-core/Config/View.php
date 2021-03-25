@@ -36,12 +36,20 @@ class View extends \CodeIgniter\Config\View
 
     /**
      * NodCMS variable!
-     * Path of view file. This path will attached before view files with
+     * Path of view namespace for view files.
      * using Base::viewRender()
      *
      * @var string
      */
-    public $viewPath = 'NodCMS\Layout';
+    public $namespacePieces = 'NodCMS\Layout';
+
+    /**
+     * NodCMS variable!
+     * Path of view namespace for layout view file.
+     *
+     * @var string
+     */
+    public $namespaceLayout = 'NodCMS\Layout';
 
     /**
      * NodCMS variable!
@@ -50,5 +58,5 @@ class View extends \CodeIgniter\Config\View
      *
      * @var string
      */
-    public $frameFile = 'layout';
+    public $frameFile = 'nodcms-clean';
 }

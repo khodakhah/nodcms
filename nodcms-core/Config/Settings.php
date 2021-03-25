@@ -34,36 +34,6 @@ class Settings extends \CodeIgniter\Config\BaseConfig
     public $clean_template_frame =  'nodcms-clean';
 
     /**
-     * Frontend pages frame template name
-     */
-    public $frontend_template_frame =  'nodcms-frontend';
-
-    /**
-     * Frontend pages template folder name
-     */
-    public $frontend_template =  'frontend';
-
-    /**
-     * Backend pages template folder name
-     */
-    public $backend_template =  'admin';
-
-    /**
-     * Backend pages frame template name
-     */
-    public $backend_template_frame =  'layout';
-
-    /**
-     * Membership/Users pages template folder name
-     */
-    public $membership_template =  'membership';
-
-    /**
-     * Membership/Users pages frame template name
-     */
-    public $membership_template_frame =  'nodcms-membership';
-
-    /**
      * Maximum upload file size for whole system
      * *    It shall be under your server configured limit.
      */
