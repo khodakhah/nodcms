@@ -21,6 +21,7 @@
 namespace NodCMS\About;
 
 use Config\Services;
+use NodCMS\About\Config\Models;
 use NodCMS\Core\Types\MenuLink;
 
 class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
@@ -81,7 +82,7 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
     public function menuList(): array
     {
         $list = [];
-        $data_list = Services::model()->about()->getAll();
+        $data_list = Models::about()->getAll();
         foreach($data_list as $item) {
             $link = new MenuLink();
             $link->title = str_replace("{data}", $item['profile_name'], _l("Profile {data}", $this));
