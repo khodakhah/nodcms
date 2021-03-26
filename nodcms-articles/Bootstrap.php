@@ -21,6 +21,7 @@
 namespace NodCMS\Articles;
 
 use Config\Services;
+use NodCMS\Articles\Config\Models;
 use NodCMS\Core\Types\MenuLink;
 
 class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
