@@ -212,7 +212,7 @@ class Model extends CoreModel
      * @param BaseBuilder|null $builder
      * @return mixed
      */
-    function getAll($conditions = null, $limit=null, $page=1, $sort_by = null, BaseBuilder $builder = null): array
+    function getAll($conditions = null, $limit=null, $page=1, ?array $sort_by = null, BaseBuilder $builder = null): array
     {
         if(!$builder != null)
             $builder = $this->getBuilder();
@@ -373,11 +373,11 @@ class Model extends CoreModel
      * @param array|null $conditions
      * @param int|null $limit
      * @param int $page
-     * @param string|null $sort_by
+     * @param array|null $sort_by
      * @param int|null $language_id
      * @return array
      */
-    function getAllTrans(array $conditions = null, int $limit = null, int $page = 1, string $sort_by = null, int $language_id = null): array
+    function getAllTrans(array $conditions = null, int $limit = null, int $page = 1, ?array $sort_by = null, int $language_id = null): array
     {
         $first_result = $this->getAll($conditions, $limit, $page, $sort_by);
 
