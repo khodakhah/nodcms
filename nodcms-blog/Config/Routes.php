@@ -21,11 +21,11 @@
 
 if(!isset($routes)) throw new \Exception('$routes not defined.');
 
-$routes->match(['post', 'get'], 'admin-blog/(.+)', "Blog_admin/$1");
-$routes->get('{locale}/blog', 'Blog/posts');
-$routes->get('{locale}/blog/([0-9]+)', 'Blog/posts/$1');
-$routes->get('{locale}/blog-post-([0-9]+)', 'Blog/post/$1');
-$routes->get('{locale}/blog-comment-([0-9]+)', 'Blog/comment/$1');
-$routes->get('{locale}/blog-comment-([0-9]+)-([0-9]+)', 'Blog/comment/$1/$2');
-$routes->get('{locale}/blog-cat-([0-9]+)', 'Blog/posts/1/$1');
-$routes->get('{locale}/blog-cat-([0-9]+)/([0-9]+)', 'Blog/posts/$1/$3');
+$routes->match(['post', 'get'], 'admin-blog/(.+)', "NodCMS\Blog\Blog_admin::$1");
+$routes->get('{locale}/blog', 'NodCMS\Blog\Blog::posts');
+$routes->get('{locale}/blog/([0-9]+)', 'NodCMS\Blog\Blog::posts/$1');
+$routes->get('{locale}/blog-post-([0-9]+)', 'NodCMS\Blog\Blog::post/$1');
+$routes->get('{locale}/blog-comment-([0-9]+)', 'NodCMS\Blog\Blog::comment/$1');
+$routes->get('{locale}/blog-comment-([0-9]+)-([0-9]+)', 'NodCMS\Blog\Blog::comment/$1/$2');
+$routes->get('{locale}/blog-cat-([0-9]+)', 'NodCMS\Blog\Blog::posts/1/$1');
+$routes->get('{locale}/blog-cat-([0-9]+)/([0-9]+)', 'NodCMS\Blog\Blog::posts/$1/$3');
