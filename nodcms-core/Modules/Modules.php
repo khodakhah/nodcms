@@ -44,6 +44,8 @@ class Modules
         $modules = Models::packages()->getAll(['active'=>1]);
         foreach($modules as $item) {
             $class = "\\".$this->getNameSpace($item['package_name'])."\Bootstrap";
+            if(!class_exists($class))
+                continue;
             $this->activeModules[strtolower($item['package_name'])] = new $class();
         }
     }
