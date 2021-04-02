@@ -1,18 +1,36 @@
 <?php
-/**
- * Created by Mojtaba Khodakhah.
- * Date: 22-May-19
- * Time: 7:52 PM
- * Project: NodCMS
- * Website: http://www.nodcms.com
+/*
+ * NodCMS
+ *
+ * Copyright (c) 2015-2021.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ *  @author     Mojtaba Khodakhah
+ *  @copyright  2015-2021 Mojtaba Khodakhah
+ *  @license    https://opensource.org/licenses/MIT	MIT License
+ *  @link       https://nodcms.com
+ *  @since      Version 3.0.0
+ *  @filesource
+ *
  */
 
-defined('BASEPATH') OR exit('No direct script access allowed');
-class Pricing_table_admin extends NodCMS_Controller
+namespace NodCMS\Pricingtable\Controllers;
+
+use Config\Services;
+use NodCMS\Core\Controllers\Backend;
+use NodCMS\Core\Libraries\Form;
+use NodCMS\Pricingtable\Config\Models;
+
+class PricingTableAdmin extends Backend
 {
     function __construct()
     {
-        parent::__construct('backend');
+        parent::__construct();
     }
 
     /**
@@ -26,11 +44,11 @@ class Pricing_table_admin extends NodCMS_Controller
         );
 
         $list_items = array();
-        $data_list = $this->Pricing_table_model->getAll(null,null,1,array('sort_order','asc'), null, 1, array("sort_order","ASC"));
+        $data_list = Models::pricingTable()->getAll(null,null,1,array('sort_order','ASC'));
         foreach ($data_list as &$item){
             $_sub_items = array();
             $item['table_name'] = '<i class="fas fa-table"></i> '.$item['table_name'];
-            $sub_items = $this->Pricing_table_record_model->getAll(array('table_id'=>$item['table_id']), null, 1, array("sort_order","ASC"));
+            $sub_items = Models::pricingTableRecord()->getAll(array('table_id'=>$item['table_id']), null, 1, array("sort_order","ASC"));
             if($sub_items!=null && count($sub_items)!=0){
                 foreach($sub_items as $sub_item){
                     $data = array(
@@ -44,7 +62,7 @@ class Pricing_table_admin extends NodCMS_Controller
                         'visibility_url'=>"",
                         'sub_items'=>"",
                     );
-                    $_sub_items[] = $this->load->view($this->mainTemplate."/list_sort_item", $data, true);
+                    $_sub_items[] = Services::layout()->setData($data)->render("list_sort_item");
                 }
             }
 
@@ -59,7 +77,7 @@ class Pricing_table_admin extends NodCMS_Controller
                 'visibility_url'=>PRICING_TABLE_ADMIN_URL."tableVisibility/$item[table_id]",
                 'sub_items'=>join("\n",$_sub_items),
             );
-            $list_items[] = $this->load->view($this->mainTemplate."/list_sort_item", $data, true);
+            $list_items[] = Services::layout()->setData($data)->render("list_sort_item");
         }
         $this->data['data_list'] = $data_list;
 
@@ -73,22 +91,21 @@ class Pricing_table_admin extends NodCMS_Controller
         $this->data['save_sort_url'] = PRICING_TABLE_ADMIN_URL."sortSubmit/";
         $this->data['page'] = "pricing_tables";
 
-        $this->data['content'] = $this->load->view($this->mainTemplate.'/list_sort',$this->data,true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("list_sort");
     }
 
     /**
      * Save new sort
+     * @throws \Exception
      */
     function sortSubmit()
     {
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
-        if(!$this->checkAccessGroup(1))
-            return;
-        $post_data = $this->input->post("data");
+        if(!Services::identity()->isAdmin(true))
+            return Services::identity()->getResponse();
+        $post_data = Services::request()->getPost("data");
         if($post_data == null) {
-            $this->systemError("Sort data shouldn't be empty.", $back_url);
-            return;
+            return $this->errorMessage("Sort data shouldn't be empty.", $back_url);
         }
         $post_data = json_decode($post_data);
         foreach($post_data as $i=>$item){
@@ -98,21 +115,23 @@ class Pricing_table_admin extends NodCMS_Controller
                         'sort_order'=>$j,
                         'table_id'=>$item->id,
                     );
-                    $this->Pricing_table_record_model->edit($sub_item->id, $update_data);
+                    Models::pricingTableRecord()->edit($sub_item->id, $update_data);
                 }
             }
             $update_data = array(
                 'sort_order'=>$i,
             );
-            $this->Pricing_table_model->edit($item->id, $update_data);
+            Models::pricingTable()->edit($item->id, $update_data);
         }
-        $this->systemSuccess("Pricing tables have been successfully sorted.", $back_url);
+        return $this->successMessage("Pricing tables have been successfully sorted.", $back_url);
     }
 
     /**
      * Table post edit/add form
      *
      * @param null $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function tableSubmit($id = null)
     {
@@ -120,10 +139,9 @@ class Pricing_table_admin extends NodCMS_Controller
         $self_url = PRICING_TABLE_ADMIN_URL."tableSubmit/$id";
 
         if($id!=null){
-            $data = $this->Pricing_table_model->getOne($id);
+            $data = Models::pricingTable()->getOne($id);
             if(count($data)==0){
-                $this->systemError("The table couldn't find.", $back_url);
-                return;
+                return $this->errorMessage("The table couldn't find.", $back_url);
             }
             $this->data['sub_title'] = _l("Edit", $this);
             $form_attr = array('data-redirect'=>1);
@@ -132,7 +150,7 @@ class Pricing_table_admin extends NodCMS_Controller
             $form_attr = array('data-reset'=>1,'data-redirect'=>1);
         }
 
-        $myform = new Form();
+        $myform = new Form($this);
         $config = array(
             array(
                 'field' => 'table_name',
@@ -174,9 +192,9 @@ class Pricing_table_admin extends NodCMS_Controller
             ),
         );
 
-        $languages = $this->Public_model->getAllLanguages();
+        $languages = Models::languages()->getAll();
         foreach ($languages as $language){
-            $translate = $this->Pricing_table_model->getTranslations($id, $language['language_id']);
+            $translate = Models::pricingTable()->getTranslations($id, $language['language_id']);
             array_push($config,array(
                 'prefix_language'=>$language,
                 'label'=>$language['language_title'],
@@ -201,12 +219,12 @@ class Pricing_table_admin extends NodCMS_Controller
 
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()){
-            if(!$this->checkAccessGroup(1))
-                return;
+            if(!Services::identity()->isAdmin(true))
+                return Services::identity()->getResponse();
             $post_data = $myform->getPost();
             // Stop Page
-            if($post_data === false || !is_array($post_data)){
-                return;
+            if($post_data === false){
+                return $myform->getResponse();
             }
 
             if(key_exists('translate', $post_data)){
@@ -215,61 +233,59 @@ class Pricing_table_admin extends NodCMS_Controller
             }
 
             if($id!=null){
-                $this->Pricing_table_model->edit($id, $post_data);
+                Models::pricingTable()->edit($id, $post_data);
                 if(isset($translates)){
-                    $this->Pricing_table_model->updateTranslations($id,$translates,$languages);
+                    Models::pricingTable()->updateTranslations($id,$translates,$languages);
                 }
-                $this->systemSuccess("The table has been edited successfully.", $back_url);
+                return $this->successMessage("The table has been edited successfully.", $back_url);
             }
             else{
-                $new_id = $this->Pricing_table_model->add($post_data);
+                $new_id = Models::pricingTable()->add($post_data);
                 if(isset($translates)){
-                    $this->Pricing_table_model->updateTranslations($new_id,$translates,$languages);
+                    Models::pricingTable()->updateTranslations($new_id,$translates,$languages);
                 }
-                $this->systemSuccess("A new table has been added successfully.", $back_url);
+                return $this->successMessage("A new table has been added successfully.", $back_url);
             }
-            return;
         }
 
         $this->data['title'] = _l("Table tables", $this);
         $this->data['breadcrumb'] = array(
             array('title'=>_l("Table tables", $this), 'url'=>$back_url),
             array('title'=>$this->data['sub_title']));
-        $this->data['content'] = $myform->fetch(null,$form_attr);
         $this->data['page'] = "pricing_table_submit";
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRenderString($myform->fetch(null,$form_attr));
     }
 
     /**
      * @param $id
      *
      * Toggle table_public value
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function tableVisibility($id)
     {
-        if(!$this->checkAccessGroup(1)){
-            return;
+        if(!Services::identity()->isAdmin(true)){
+            return Services::identity()->getResponse();
         }
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
-        $data= $this->Pricing_table_model->getOne($id);
+        $data= Models::pricingTable()->getOne($id);
         if($data == null || count($data)==0){
-            $this->systemError("Couldn't find the table.", $back_url);
-            return;
+            return $this->errorMessage("Couldn't find the table.", $back_url);
         }
-        $public = $this->input->post('data');
+        $public = Services::request()->getPost('data');
         if($public == 1){
             $public = 0;
         }elseif($public == 0){
             $public = 1;
         }else{
-            $this->systemError("Visibility value isn't correct. Please reload the page to solve this problem.", $back_url);
-            return;
+            return $this->errorMessage("Visibility value isn't correct. Please reload the page to solve this problem.", $back_url);
         }
         $update_data = array(
             'table_public'=>$public
         );
-        $this->Pricing_table_model->edit($id, $update_data);
-        $this->systemSuccess("Success", PRICING_TABLE_ADMIN_URL."tables");
+        Models::pricingTable()->edit($id, $update_data);
+        return $this->successMessage("Success", PRICING_TABLE_ADMIN_URL."tables");
     }
 
     /**
@@ -277,22 +293,23 @@ class Pricing_table_admin extends NodCMS_Controller
      *
      * @param $id
      * @param int $confirm
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function deleteTable($id, $confirm = 0)
     {
-        if(!$this->checkAccessGroup(1))
-            return;
+        if(!Services::identity()->isAdmin(true))
+            return Services::identity()->getResponse();
 
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
         $self_url = PRICING_TABLE_ADMIN_URL."deleteTable/$id";
-        $data = $this->Pricing_table_model->getOne($id);
+        $data = Models::pricingTable()->getOne($id);
         if(count($data)==0){
-            $this->systemError("Couldn't find the table.", $back_url);
-            return;
+            return $this->errorMessage("Couldn't find the table.", $back_url);
         }
 
         if($confirm!=1){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">'._l("This action will delete the pricing table with its records.", $this).
                     '<br>'._l("After this, you will not to able to restore it.", $this).'</p>'.
@@ -303,21 +320,22 @@ class Pricing_table_admin extends NodCMS_Controller
                 'confirmUrl'=>"$self_url/1",
                 'redirect'=>1,
             ));
-            return;
         }
 
-        $childes = $this->Pricing_table_record_model->getAll(array('table_id'=>$id));
+        $childes = Models::pricingTableRecord()->getAll(array('table_id'=>$id));
         foreach($childes as $item){
-            $this->Pricing_table_record_model->remove($item['record_id']);
+            Models::pricingTableRecord()->remove($item['record_id']);
         }
-        $this->Pricing_table_model->remove($id);
-        $this->systemSuccess("Pricing table has been deleted successfully.", $back_url);
+        Models::pricingTable()->remove($id);
+        return $this->successMessage("Pricing table has been deleted successfully.", $back_url);
     }
 
     /**
      * Table post edit/add form
      *
      * @param null $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function recordSubmit($id = null)
     {
@@ -325,10 +343,9 @@ class Pricing_table_admin extends NodCMS_Controller
         $self_url = PRICING_TABLE_ADMIN_URL."recordSubmit/$id";
 
         if($id!=null){
-            $data = $this->Pricing_table_record_model->getOne($id);
+            $data = Models::pricingTableRecord()->getOne($id);
             if(count($data)==0){
-                $this->systemError("The record couldn't find.", $back_url);
-                return;
+                return $this->errorMessage("The record couldn't find.", $back_url);
             }
             $this->data['sub_title'] = _l("Edit", $this);
             $form_attr = array('data-redirect'=>1);
@@ -337,10 +354,9 @@ class Pricing_table_admin extends NodCMS_Controller
             $form_attr = array('data-reset'=>1,'data-redirect'=>1);
         }
 
-        $tables = $this->Pricing_table_model->getAll();
+        $tables = Models::pricingTable()->getAll();
         if($tables==null || count($tables)==0){
-            $this->systemError("Before add a record you need to have a table.", $back_url);
-            return;
+            return $this->errorMessage("Before add a record you need to have a table.", $back_url);
         }
 
         if($id ==  null){
@@ -350,7 +366,7 @@ class Pricing_table_admin extends NodCMS_Controller
             ));
         }
 
-        $myform = new Form();
+        $myform = new Form($this);
         $config = array(
             array(
                 'field' => 'record_name',
@@ -371,9 +387,9 @@ class Pricing_table_admin extends NodCMS_Controller
             ),
         );
 
-        $languages = $this->Public_model->getAllLanguages();
+        $languages = Models::languages()->getAll();
         foreach ($languages as $language){
-            $translate = $this->Pricing_table_model->getTranslations($id, $language['language_id']);
+            $translate = Models::pricingTable()->getTranslations($id, $language['language_id']);
             array_push($config,array(
                 'prefix_language'=>$language,
                 'label'=>$language['language_title'],
@@ -391,12 +407,12 @@ class Pricing_table_admin extends NodCMS_Controller
 
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()){
-            if(!$this->checkAccessGroup(1))
-                return;
+            if(!Services::identity()->isAdmin(true))
+                return Services::identity()->getResponse();
             $post_data = $myform->getPost();
             // Stop Page
-            if($post_data === false || !is_array($post_data)){
-                return;
+            if($post_data === false){
+                return $myform->getResponse();
             }
 
             if(key_exists('translate', $post_data)){
@@ -410,63 +426,59 @@ class Pricing_table_admin extends NodCMS_Controller
                     if($i==0)
                         continue;
                     $post_data['table_id'] = $table['table_id'];
-                    $new_id = $this->Pricing_table_record_model->add($post_data);
+                    $new_id = Models::pricingTableRecord()->add($post_data);
                     if(isset($translates)){
-                        $this->Pricing_table_record_model->updateTranslations($new_id,$translates,$languages);
+                        Models::pricingTableRecord()->updateTranslations($new_id,$translates,$languages);
                     }
                 }
-                $this->systemSuccess("A new record has been on all tables added successfully.", $back_url);
-                return;
+                return $this->successMessage("A new record has been on all tables added successfully.", $back_url);
             }
 
             if($id!=null){
-                $this->Pricing_table_record_model->edit($id, $post_data);
+                Models::pricingTableRecord()->edit($id, $post_data);
                 if(isset($translates)){
-                    $this->Pricing_table_record_model->updateTranslations($id,$translates,$languages);
+                    Models::pricingTableRecord()->updateTranslations($id,$translates,$languages);
                 }
-                $this->systemSuccess("The table record has been edited successfully.", $back_url);
+                return $this->successMessage("The table record has been edited successfully.", $back_url);
             }
             else{
-                $new_id = $this->Pricing_table_record_model->add($post_data);
+                $new_id = Models::pricingTableRecord()->add($post_data);
                 if(isset($translates)){
-                    $this->Pricing_table_record_model->updateTranslations($new_id,$translates,$languages);
+                    Models::pricingTableRecord()->updateTranslations($new_id,$translates,$languages);
                 }
-                $this->systemSuccess("A new table record has been added successfully.", $back_url);
+                return $this->successMessage("A new table record has been added successfully.", $back_url);
             }
-
-            return;
         }
 
         $this->data['title'] = _l("Table Records", $this);
         $this->data['breadcrumb'] = array(
             array('title'=>_l("Tables Records", $this), 'url'=>$back_url),
             array('title'=>$this->data['sub_title']));
-        $this->data['content'] = $myform->fetch(null,$form_attr);
         $this->data['page'] = "pricing_table_record_submit";
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRenderString($myform->fetch(null,$form_attr));
     }
 
     /**
      * Save new sort
+     * @throws \Exception
      */
     function recordSortSubmit()
     {
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
-        if(!$this->checkAccessGroup(1))
-            return;
-        $post_data = $this->input->post("data");
+        if(!Services::identity()->isAdmin(true))
+            return Services::identity()->getResponse();
+        $post_data = Services::request()->getPost("data");
         if($post_data == null) {
-            $this->systemError("Sort data shouldn't be empty.", $back_url);
-            return;
+            return $this->errorMessage("Sort data shouldn't be empty.", $back_url);
         }
         $post_data = json_decode($post_data);
         foreach($post_data as $i=>$item){
             $update_data = array(
                 'sort_order'=>$i,
             );
-            $this->Pricing_table_record_model->edit($item->id, $update_data);
+            Models::pricingTableRecord()->edit($item->id, $update_data);
         }
-        $this->systemSuccess("Pricing table records have been successfully sorted.", $back_url);
+        return $this->successMessage("Pricing table records have been successfully sorted.", $back_url);
     }
 
     /**
@@ -474,22 +486,23 @@ class Pricing_table_admin extends NodCMS_Controller
      *
      * @param $id
      * @param int $confirm
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function deleteRecord($id, $confirm = 0)
     {
-        if(!$this->checkAccessGroup(1))
-            return;
+        if(!Services::identity()->isAdmin(true))
+            return Services::identity()->getResponse();
 
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
         $self_url = PRICING_TABLE_ADMIN_URL."deleteRecord/$id";
-        $data = $this->Pricing_table_record_model->getOne($id);
+        $data = Models::pricingTableRecord()->getOne($id);
         if($data==null || count($data)==0){
-            $this->systemError("Couldn't find the record.", $back_url);
-            return;
+            return $this->errorMessage("Couldn't find the record.", $back_url);
         }
 
         if($confirm!=1){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">'._l("This action will delete the pricing table record.", $this).
                     '<br>'._l("After this, you will not to able to restore it.", $this).'</p>'.
@@ -500,10 +513,9 @@ class Pricing_table_admin extends NodCMS_Controller
                 'confirmUrl'=>"$self_url/1",
                 'redirect'=>1,
             ));
-            return;
         }
 
-        $this->Pricing_table_record_model->remove($id);
-        $this->systemSuccess("Pricing table record has been deleted successfully.", $back_url);
+        Models::pricingTableRecord()->remove($id);
+        return $this->successMessage("Pricing table record has been deleted successfully.", $back_url);
     }
 }
