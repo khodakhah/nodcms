@@ -1,18 +1,38 @@
 <?php
-/**
- * Created by Mojtaba Khodakhah.
- * Date: 25-May-19
- * Time: 11:09 AM
- * Project: NodCMS
- * Website: http://www.nodcms.com
+/*
+ * NodCMS
+ *
+ * Copyright (c) 2015-2021.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ *  @author     Mojtaba Khodakhah
+ *  @copyright  2015-2021 Mojtaba Khodakhah
+ *  @license    https://opensource.org/licenses/MIT	MIT License
+ *  @link       https://nodcms.com
+ *  @since      Version 3.0.0
+ *  @filesource
+ *
  */
 
-defined('BASEPATH') OR exit('No direct script access allowed');
-class Gallery_admin extends NodCMS_Controller
+namespace NodCMS\Gallery\Controllers;
+
+use Config\Services;
+use NodCMS\Core\Controllers\Backend;
+use NodCMS\Core\Libraries\Form;
+use NodCMS\Gallery\Config\Models;
+use NodCMS\Gallery\Config\ViewBackend;
+
+class GalleryAdmin extends Backend
 {
-    function __construct()
+    public function __construct()
     {
-        parent::__construct('backend');
+        parent::__construct();
+        Services::layout()->setConfig(new ViewBackend());
     }
 
     /**
@@ -29,7 +49,7 @@ class Gallery_admin extends NodCMS_Controller
         );
 
         $list_items = array();
-        $data_list = $this->Gallery_model->getAll(null,null,1,array('sort_order','asc'));
+        $data_list = Models::gallery()->getAll(null,null,1,array('sort_order','asc'));
         foreach ($data_list as &$item){
             $data = array(
                 'id'=>$item['gallery_id'],
@@ -47,15 +67,14 @@ class Gallery_admin extends NodCMS_Controller
                     ),
                 ),
             );
-            $list_items[] = $this->load->view($this->mainTemplate."/list_sort_item", $data, true);
+            $list_items[] = Services::layout()->setData($data)->render("list_sort_item");
         }
         $this->data['save_sort_url'] = GALLERY_ADMIN_URL."sortSubmit";
         $this->data['max_depth'] = 1;
         $this->data['list_items'] = join("\n", $list_items);
 
         $this->data['page'] = "galleries";
-        $this->data['content'] = $this->load->view($this->mainTemplate.'/list_sort',$this->data,true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender('list_sort');
     }
 
     /**
@@ -70,10 +89,9 @@ class Gallery_admin extends NodCMS_Controller
         $this->data['title'] = _l("Galleries",$this);
         if($id!=null)
         {
-            $current_data = $this->Gallery_model->getOne($id);
+            $current_data = Models::gallery()->getOne($id);
             if($current_data==null || count($current_data)==0){
-                $this->systemError("Gallery not found.", $back_url);
-                return;
+                return $this->errorMessage("Gallery not found.", $back_url);
             }
             $form_attr = array();
             $this->data['sub_title'] = _l("Edit",$this);
@@ -124,11 +142,11 @@ class Gallery_admin extends NodCMS_Controller
             ),
         );
 
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, $self_url, 'post', 'ajax');
-        $languages = $this->Languages_model->getAll();
+        $languages = Models::languages()->getAll();
         foreach($languages as $language){
-            $translate = $this->Gallery_model->getTranslations($id, $language['language_id']);
+            $translate = Models::gallery()->getTranslations($id, $language['language_id']);
             // Add language title
             array_push($config,array(
                 'prefix_language'=>$language,
@@ -166,17 +184,17 @@ class Gallery_admin extends NodCMS_Controller
             ));
         }
 
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, $self_url, 'post', 'ajax');
 
         if($myform->ispost()){
-            if(!$this->checkAccessGroup(1)){
-                return;
+            if(!Services::identity()->isAdmin(true)){
+                return Services::identity()->getResponse();
             }
             $post_data = $myform->getPost();
             // Stop Page
-            if($post_data === false || !is_array($post_data)){
-                return;
+            if($post_data === false){
+                return $myform->getResponse();
             }
 
             if(key_exists('translate',$post_data)){
@@ -185,18 +203,18 @@ class Gallery_admin extends NodCMS_Controller
             }
 
             if($id!=null){
-                $this->Gallery_model->edit($id, $post_data);
+                Models::gallery()->edit($id, $post_data);
                 if(isset($translates)){
-                    $this->Gallery_model->updateTranslations($id,$translates,$languages);
+                    Models::gallery()->updateTranslations($id,$translates,$languages);
                 }
-                $this->systemSuccess("Service has been edited successfully.", $back_url);
+                return $this->successMessage("Service has been edited successfully.", $back_url);
             }
             else{
-                $new_id = $this->Gallery_model->add($post_data);
+                $new_id = Models::gallery()->add($post_data);
                 if(isset($translates)){
-                    $this->Gallery_model->updateTranslations($new_id,$translates,$languages);
+                    Models::gallery()->updateTranslations($new_id,$translates,$languages);
                 }
-                $this->systemSuccess("Gallery has been sent successfully.", $back_url);
+                return $this->successMessage("Gallery has been sent successfully.", $back_url);
             }
             return;
         }
@@ -217,11 +235,11 @@ class Gallery_admin extends NodCMS_Controller
     function sortSubmit()
     {
         $back_url = GALLERY_ADMIN_URL."galleries";
-        if(!$this->checkAccessGroup(1))
-            return;
+        if(!Services::identity()->isAdmin(true))
+            return Services::identity()->getResponse();
         $post_data = $this->input->post("data");
         if($post_data == null) {
-            $this->systemError("Sort data shouldn't be empty.", $back_url);
+            return $this->errorMessage("Sort data shouldn't be empty.", $back_url);
             return;
         }
         $post_data = json_decode($post_data);
@@ -229,9 +247,9 @@ class Gallery_admin extends NodCMS_Controller
             $update_data = array(
                 'sort_order'=>$i,
             );
-            $this->Gallery_model->edit($item->id, $update_data);
+            Models::gallery()->edit($item->id, $update_data);
         }
-        $this->systemSuccess("Galleries have been successfully sorted.", $back_url);
+        return $this->successMessage("Galleries have been successfully sorted.", $back_url);
     }
 
     /**
@@ -242,14 +260,14 @@ class Gallery_admin extends NodCMS_Controller
      */
     function galleryDelete($id, $confirm = 0)
     {
-        if(!$this->checkAccessGroup(1))
-            return;
+        if(!Services::identity()->isAdmin(true))
+            return Services::identity()->getResponse();
 
         $back_url = GALLERY_ADMIN_URL."galleries";
         $self_url = GALLERY_ADMIN_URL."galleryDelete/$id";
-        $data = $this->Gallery_model->getOne($id);
+        $data = Models::gallery()->getOne($id);
         if(count($data)==0){
-            $this->systemError("The gallery couldn't find.", $back_url);
+            return $this->errorMessage("The gallery couldn't find.", $back_url);
             return;
         }
 
@@ -268,12 +286,12 @@ class Gallery_admin extends NodCMS_Controller
             return;
         }
 
-        $childes = $this->Gallery_images_model->getAll(array('gallery_id'=>$id));
+        $childes = Models::galleryImages()->getAll(array('gallery_id'=>$id));
         foreach($childes as $item){
-            $this->Gallery_images_model->remove($item['image_id']);
+            Models::galleryImages()->remove($item['image_id']);
         }
-        $this->Gallery_model->remove($id);
-        $this->systemSuccess("Gallery has been deleted successfully.", $back_url);
+        Models::gallery()->remove($id);
+        return $this->successMessage("Gallery has been deleted successfully.", $back_url);
     }
 
     /**
@@ -284,13 +302,13 @@ class Gallery_admin extends NodCMS_Controller
     function images($gallery_id)
     {
         $back_url = GALLERY_ADMIN_URL."galleries";
-        $current_data = $this->Gallery_model->getOne($gallery_id);
+        $current_data = Models::gallery()->getOne($gallery_id);
         if(!is_array($current_data) || count($current_data)==0){
-            $this->systemError("Gallery not found.", $back_url);
+            return $this->errorMessage("Gallery not found.", $back_url);
             return;
         }
         $self_url = GALLERY_ADMIN_URL."images";
-        $this->data['data_list'] = $this->Gallery_images_model->getAll(array('gallery_id'=>$gallery_id), null, 1, array('image_id','DESC'));
+        $this->data['data_list'] = Models::galleryImages()->getAll(array('gallery_id'=>$gallery_id), null, 1, array('image_id','DESC'));
         $this->data["upload_url"] = GALLERY_ADMIN_URL."uploadImage/$gallery_id";
         $this->data['title'] = str_replace("{data}", $current_data['gallery_name'], _l("Gallery {data}", $this));
         $this->data['sub_title'] = _l('Images', $this);
@@ -311,16 +329,17 @@ class Gallery_admin extends NodCMS_Controller
      * Upload an image and add it into database
      *
      * @param $gallery_id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function uploadImage($gallery_id)
     {
-        if (!$this->checkAccessGroup(1))
-            return;
+        if (!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
         $back_url = GALLERY_ADMIN_URL."galleries";
-        $current_data = $this->Gallery_model->getOne($gallery_id);
+        $current_data = Models::gallery()->getOne($gallery_id);
         if(!is_array($current_data) || count($current_data)==0){
-            $this->systemError("Gallery not found.", $back_url);
-            return;
+            return $this->errorMessage("Gallery not found.", $back_url);
         }
 
         $type_dir = "gallery-$current_data[gallery_id]";
@@ -347,8 +366,7 @@ class Gallery_admin extends NodCMS_Controller
         $this->load->library('upload', $config);
         if ( ! $this->upload->do_upload("file"))
         {
-            echo json_encode(array("status"=>"error","errors"=>$this->upload->display_errors('<p>', '</p>')));
-            return;
+            return  json_encode(array("status"=>"error","errors"=>$this->upload->display_errors('<p>', '</p>')));
         }
 
         $data = $this->upload->data();
@@ -357,9 +375,9 @@ class Gallery_admin extends NodCMS_Controller
             "image_name"=>$current_file_name,
             "gallery_id"=>$gallery_id,
         );
-        $image_id = $this->Gallery_images_model->add($data_image);
+        $image_id = Models::galleryImages()->add($data_image);
         if($image_id!=0) {
-            echo json_encode(array(
+            return json_encode(array(
                 "status" => "success",
                 "file_patch" => $config['upload_path'] . $data["file_name"],
                 "file_url" => base_url() . $config['upload_path'] . $data["file_name"],
@@ -369,7 +387,6 @@ class Gallery_admin extends NodCMS_Controller
                 "image_name" => $current_file_name,
                 "submit_url" => GALLERY_ADMIN_URL."imageSubmit/$image_id",
                 "size" => $data["file_size"]));
-            return;
         }
         unlink(FCPATH.$data_image["image"]);
         echo json_encode(array("status"=>"error","errors"=>_l("Could not save images data in database.",$this)));
@@ -386,10 +403,9 @@ class Gallery_admin extends NodCMS_Controller
         $self_url = GALLERY_ADMIN_URL."imageSubmit/$id";
 
         if($id!=null){
-            $data = $this->Gallery_images_model->getOne($id);
+            $data = Models::galleryImages()->getOne($id);
             if(count($data)==0){
-                $this->systemError("Couldn't find the image.", $back_url);
-                return;
+                return $this->errorMessage("Couldn't find the image.", $back_url);
             }
             $this->data['sub_title'] = _l("Edit", $this);
             $form_attr = array();
@@ -409,9 +425,9 @@ class Gallery_admin extends NodCMS_Controller
 //            );
 //        }
 
-        $languages = $this->Public_model->getAllLanguages();
+        $languages = Models::languages()->getAll();
         foreach ($languages as $language){
-            $translate = $this->Gallery_images_model->getTranslations($id, $language['language_id']);
+            $translate = Models::galleryImages()->getTranslations($id, $language['language_id']);
             $prefix = "translate[$language[language_id]]";
             array_push($config, array(
                 'prefix_language'=>$language,
@@ -423,15 +439,15 @@ class Gallery_admin extends NodCMS_Controller
             ));
         }
 
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()){
-            if(!$this->checkAccessGroup(1))
-                return;
+            if(!Services::identity()->isAdmin(true))
+                return Services::identity()->getResponse();
             $post_data = $myform->getPost();
             // Stop Page
             if($post_data === false){
-                return;
+                return $myform->getResponse();
             }
 
             if(key_exists('translate',$post_data)){
@@ -440,20 +456,19 @@ class Gallery_admin extends NodCMS_Controller
             }
 
             if($id!=null){
-//                $this->Gallery_images_model->edit($id, $post_data);
+//                Models::self::galleryImages()->edit($id, $post_data);
                 if(isset($translates)){
-                    $this->Gallery_images_model->updateTranslations($id,$translates,$languages);
+                    Models::galleryImages()->updateTranslations($id,$translates,$languages);
                 }
-                $this->systemSuccess("The image has been edited successfully.", $back_url);
+                return $this->successMessage("The image has been edited successfully.", $back_url);
             }
             else{
-                $new_id = $this->Gallery_images_model->add($post_data);
+                $new_id = Models::galleryImages()->add($post_data);
                 if(isset($translates)){
-                    $this->Gallery_images_model->updateTranslations($new_id,$translates,$languages);
+                    Models::galleryImages()->updateTranslations($new_id,$translates,$languages);
                 }
-                $this->systemSuccess("The image has been sent successfully.", $back_url);
+                return $this->successMessage("The image has been sent successfully.", $back_url);
             }
-            return;
         }
 
         $myform->setSubmitLabel(_l("Save", $this));
@@ -469,9 +484,8 @@ class Gallery_admin extends NodCMS_Controller
         $this->data['breadcrumb'] = array(
             array('title'=>_l("Galleries", $this), 'url'=>$back_url),
             array('title'=>$this->data['sub_title']));
-        $this->data['content'] = $myform->fetch(null,$form_attr);
         $this->data['page'] = "gallery_image_submit";
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRenderString($myform->fetch(null,$form_attr));
     }
 
     /**
@@ -482,19 +496,18 @@ class Gallery_admin extends NodCMS_Controller
      */
     function imageDelete($id, $confirm = 0)
     {
-        if(!$this->checkAccessGroup(1))
-            return;
+        if(!Services::identity()->isAdmin(true))
+            return Services::identity()->getResponse();
 
         $back_url = GALLERY_ADMIN_URL."galleries";
         $self_url = GALLERY_ADMIN_URL."imageDelete/$id";
-        $data = $this->Gallery_images_model->getOne($id);
+        $data = Models::galleryImages()->getOne($id);
         if(count($data)==0){
-            $this->systemError("Couldn't find the image.", $back_url);
-            return;
+            return $this->errorMessage("Couldn't find the image.", $back_url);
         }
 
         if($confirm!=1){
-            echo json_encode(array(
+            return  json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">'._l("This action will delete the image from database.", $this).
                     '<br>'._l("After this, you will not to able to restore it.", $this).'</p>'.
@@ -505,10 +518,9 @@ class Gallery_admin extends NodCMS_Controller
                 'confirmUrl'=>"$self_url/1",
                 'redirect'=>1,
             ));
-            return;
         }
 
-        $this->Gallery_images_model->remove($id);
-        $this->systemSuccess("The image has been deleted successfully.", $back_url);
+        Models::galleryImages()->remove($id);
+        return $this->successMessage("The image has been deleted successfully.", $back_url);
     }
 }
