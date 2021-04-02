@@ -1,13 +1,23 @@
 <?php
-if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-class Articles_admin extends NodCMS_Controller {
+
+namespace NodCMS\Articles\Controllers;
+
+use Config\Services;
+use NodCMS\Articles\Config\Models;
+use NodCMS\Articles\Config\ViewBackend;
+use NodCMS\Core\Controllers\Backend;
+use NodCMS\Core\Libraries\Form;
+
+class ArticlesAdmin extends Backend {
     public $langArray = array();
+
+    /**
+     * ArticlesAdmin constructor.
+     */
 	function __construct()
     {
         parent::__construct();
-        $this->load->add_package_path(APPPATH."third_party/Articles");
-        $this->load->model("Articles_model");
-        $this->mainTemplate = "admin";
+        Services::layout()->setConfig(new ViewBackend());
     }
 
     /**
@@ -15,8 +25,8 @@ class Articles_admin extends NodCMS_Controller {
      */
     function dashboard()
     {
-        $this->data['data_count'] = $this->Articles_model->getCount();
-        echo json_encode(array(
+        $this->data['data_count'] = Models::articles()->getCount();
+        return json_encode(array(
             'status'=>"success",
             'content'=>$this->load->view($this->mainTemplate."/article_dashboard", $this->data, true)
         ));
@@ -35,10 +45,10 @@ class Articles_admin extends NodCMS_Controller {
         $this->data['sub_title'] = _l("Sort",$this);
 
         $list_items = array();
-        $data_list = $this->Articles_model->getAll(array('parent'=>0));
+        $data_list = Models::articles()->getAll(array('parent'=>0));
         foreach($data_list as $item) {
             $sub_data = array();
-            $sub_data_list = $this->Articles_model->getAll(array('parent'=>$item['article_id']));
+            $sub_data_list = Models::articles()->getAll(array('parent'=>$item['article_id']));
             foreach($sub_data_list as $_item) {
                 $sub_data[] = $this->setSortRow($_item);
             }
@@ -50,11 +60,10 @@ class Articles_admin extends NodCMS_Controller {
         );
         $this->data['max_depth'] = 2;
         $this->data['save_sort_url'] = ARTICLES_ADMIN_URL."articleSort";
-        $this->data['list_items'] = join("\n", array_merge($this->Articles_model->getAll(array('parent'=>-1)), $list_items));
+        $this->data['list_items'] = join("\n", array_merge(Models::articles()->getAll(array('parent'=>-1)), $list_items));
 
         $this->data['page'] = "article_list";
-        $this->data['content'] = $this->load->view($this->mainTemplate."/list_sort",$this->data,true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender('list_sort');
     }
 
     /**
@@ -68,10 +77,9 @@ class Articles_admin extends NodCMS_Controller {
         $back_url = ARTICLES_ADMIN_URL."article";
         $self_url = ARTICLES_ADMIN_URL."articleForm";
         if($id!=null){
-            $current_data = $this->Articles_model->getOne($id);
+            $current_data = Models::articles()->getOne($id);
             if($current_data==null || count($current_data)==0){
-                $this->systemError("The article couldn't find.",$back_url);
-                return;
+                return $this->errorMessage("The article couldn't find.",$back_url);
             }
             $self_url.="/$id";
             $this->data['sub_title'] = _l("Edit",$this);
@@ -115,9 +123,9 @@ class Articles_admin extends NodCMS_Controller {
                 'type'=>"h3",
             ),
         );
-        $languages = $this->Public_model->getAllLanguages();
+        $languages = Models::languages()->getAll();
         foreach($languages as $language){
-            $translate = $this->Articles_model->getTranslations($id, $language['language_id']);
+            $translate = Models::articles()->getTranslations($id, $language['language_id']);
             // Add language title
             array_push($config,array(
                 'prefix_language'=>$language,
@@ -155,17 +163,17 @@ class Articles_admin extends NodCMS_Controller {
             ));
         }
 
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, $self_url, 'post', 'ajax');
 
         if($myform->ispost()){
-            if(!$this->checkAccessGroup(1)){
-                return;
+            if(!Services::identity()->isAdmin()){
+                return Services::identity()->getResponse();
             }
             $post_data = $myform->getPost();
             // Stop Page
-            if($post_data === false || !is_array($post_data)){
-                return;
+            if($post_data === false){
+                return $myform->getResponse();
             }
 
             if(key_exists('translate',$post_data)){
@@ -174,20 +182,19 @@ class Articles_admin extends NodCMS_Controller {
             }
 
             if($id!=null){
-                $this->Articles_model->edit($id, $post_data);
+                Models::articles()->edit($id, $post_data);
                 if(isset($translates)){
-                    $this->Articles_model->updateTranslations($id,$translates,$languages);
+                    Models::articles()->updateTranslations($id,$translates,$languages);
                 }
-                $this->systemSuccess("Article has been edited successfully.", $back_url);
+                return $this->successMessage("Article has been edited successfully.", $back_url);
             }
             else{
-                $new_id = $this->Articles_model->add($post_data);
+                $new_id = Models::articles()->add($post_data);
                 if(isset($translates)){
-                    $this->Articles_model->updateTranslations($new_id,$translates,$languages);
+                    Models::articles()->updateTranslations($new_id,$translates,$languages);
                 }
-                $this->systemSuccess("Article has been sent successfully.", $back_url);
+                return $this->successMessage("Article has been sent successfully.", $back_url);
             }
-            return;
         }
 
         $this->data['breadcrumb'] = array(
@@ -195,10 +202,9 @@ class Articles_admin extends NodCMS_Controller {
             array('title'=>$this->data['sub_title']),
         );
 
-        $this->data['parents'] = $this->Articles_model->getAll(array('parent'=>0));
+        $this->data['parents'] = Models::articles()->getAll(array('parent'=>0));
         $this->data['page'] = "article_form";
-        $this->data['content']=$myform->fetch('', array('data-redirect'=>1));
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRenderString($myform->fetch('', array('data-redirect'=>1)));
     }
 
     /**
@@ -209,19 +215,18 @@ class Articles_admin extends NodCMS_Controller {
      */
     function articleRemove($id, $confirm = 0)
     {
-        if(!$this->checkAccessGroup(1))
-            return;
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
 
         $back_url = ARTICLES_ADMIN_URL."article";
         $self_url = ARTICLES_ADMIN_URL."articleRemove/$id";
-        $data = $this->Articles_model->getOne($id);
+        $data = Models::articles()->getOne($id);
         if(count($data)==0){
-            $this->systemError("The article couldn't find.", $back_url);
-            return;
+            return $this->errorMessage("The article couldn't find.", $back_url);
         }
 
         if($confirm!=1){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">'._l("This action will delete the article from database.", $this).
                     '<br>'._l("After this, you will not to able to restore it.", $this).'</p>'.
@@ -232,11 +237,10 @@ class Articles_admin extends NodCMS_Controller {
                 'confirmUrl'=>"$self_url/1",
                 'redirect'=>1,
             ));
-            return;
         }
 
-        $this->Articles_model->remove($id);
-        $this->systemSuccess("The article has been deleted successfully.", $back_url);
+        Models::articles()->remove($id);
+        return $this->successMessage("The article has been deleted successfully.", $back_url);
     }
 
     /**
@@ -244,14 +248,13 @@ class Articles_admin extends NodCMS_Controller {
      */
     function articleVisibility($id)
     {
-        if(!$this->checkAccessGroup(1)){
-            return;
+        if(!Services::identity()->isAdmin()){
+            return Services::identity()->getResponse();
         }
         $back_url = ARTICLES_ADMIN_URL."article";
-        $data= $this->Articles_model->getOne($id);
+        $data= Models::articles()->getOne($id);
         if($data == null || count($data)==0){
-            $this->systemError("Couldn't find the article.", $back_url);
-            return;
+            return $this->errorMessage("Couldn't find the article.", $back_url);
         }
         $public = $this->input->post('data');
         if($public == 1){
@@ -259,14 +262,13 @@ class Articles_admin extends NodCMS_Controller {
         }elseif($public == 0){
             $public = 1;
         }else{
-            $this->systemError("Visibility value isn't correct. Please reload the page to solve this problem.", $back_url);
-            return;
+            return $this->errorMessage("Visibility value isn't correct. Please reload the page to solve this problem.", $back_url);
         }
         $update_data = array(
             'public'=>$public
         );
-        $this->Articles_model->edit($id, $update_data);
-        $this->systemSuccess("Success", ARTICLES_ADMIN_URL."article");
+        Models::articles()->edit($id, $update_data);
+        return $this->successMessage("Success", ARTICLES_ADMIN_URL."article");
     }
 
     /**
@@ -274,8 +276,8 @@ class Articles_admin extends NodCMS_Controller {
      */
     function articleSort()
     {
-        if(!$this->checkAccessGroup(1)){
-            return;
+        if(!Services::identity()->isAdmin()){
+            return Services::identity()->getResponse();
         }
         $i = 0;
         $index = 0;
@@ -290,7 +292,7 @@ class Articles_admin extends NodCMS_Controller {
                     'order'=>$i,
                     'parent'=>$parent[$index]
                 );
-                $this->Articles_model->edit($item->id, $update_data);
+                Models::articles()->edit($item->id, $update_data);
                 if(isset($item->children)){
                     $parent[$index+1] = $item->id;
                     $children[$index+1] = $item->children;
@@ -298,7 +300,7 @@ class Articles_admin extends NodCMS_Controller {
             }
             $index++;
         }while(isset($children[$index]));
-        $this->systemSuccess("Your articles has been successfully sorted.", ARTICLES_ADMIN_URL."article");
+        return $this->successMessage("Your articles has been successfully sorted.", ARTICLES_ADMIN_URL."article");
     }
 
     /**
@@ -327,6 +329,6 @@ class Articles_admin extends NodCMS_Controller {
             'sub_items'=>join("\n", $sub_item),
         );
 
-        return $this->load->view($this->mainTemplate."/list_sort_item", $data, true);
+        return Services::layout()->setData($this->data)->render('list_sort_item');
     }
 }
