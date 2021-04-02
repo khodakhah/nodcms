@@ -19,51 +19,13 @@
  *
  */
 
-namespace NodCMS\Portfolio\Controllers;
+namespace NodCMS\Portfolio\Config;
 
-use Config\Services;
-use NodCMS\Core\Controllers\Frontend;
-use NodCMS\Portfolio\Config\Models;
-use NodCMS\Portfolio\Config\ViewFrontend;
 
-class Portfolio extends Frontend
+class ViewBackend extends \Config\ViewBackend
 {
-    function __construct()
-    {
-        parent::__construct();
-       Services::layout()->setConfig(new ViewFrontend());
-    }
-
     /**
-     * Home preview
-     *
-     * @param $CI
-     * @return string
+     * @var string
      */
-    static function home($CI){
-        $data = [];
-        $data['title'] = _l("Portfolio", $CI);
-        $data_list = Models::portfolio()->getAllTrans(array('portfolio_public'=>1), null, 1, array('portfolio_date', 'DESC'));
-        if(is_array($data_list)){
-            $data['data_list'] = $data_list;
-        }
-        return Services::layout()->setData($data)->render("portfolio_home");
-    }
-
-    /**
-     * @param $id
-     * @return string
-     */
-    public function portfolio($id){
-        $data = Models::portfolio()->getOneTrans($id);
-        if(!is_array($data) || count($data)==0){
-            return $this->showError(_l("Portfolio not found.", $this));
-        }
-        $this->data['data'] = $data;
-        if(Services::request()->isAJAX()){
-            return Services::layout()->setData($this->data)->render('portfolio_details_ajax');
-        }
-
-        return "";
-    }
+    public $namespacePieces = "NodCMS\Portfolio/backend";
 }

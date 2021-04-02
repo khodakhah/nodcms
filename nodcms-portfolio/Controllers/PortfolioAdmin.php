@@ -1,24 +1,46 @@
 <?php
-/**
- * Created by Mojtaba Khodakhah.
- * Date: 22-May-19
- * Time: 3:21 PM
- * Project: NodCMS
- * Website: http://www.nodcms.com
+/*
+ * NodCMS
+ *
+ * Copyright (c) 2015-2021.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ *  @author     Mojtaba Khodakhah
+ *  @copyright  2015-2021 Mojtaba Khodakhah
+ *  @license    https://opensource.org/licenses/MIT	MIT License
+ *  @link       https://nodcms.com
+ *  @since      Version 3.0.0
+ *  @filesource
+ *
  */
 
-defined('BASEPATH') OR exit('No direct script access allowed');
-class Portfolio_admin extends NodCMS_Controller
+namespace NodCMS\Portfolio\Controllers;
+
+use Config\Services;
+use NodCMS\Core\Controllers\Backend;
+use NodCMS\Core\Libraries\Ajaxlist;
+use NodCMS\Core\Libraries\Form;
+use NodCMS\Portfolio\Config\Models;
+use NodCMS\Portfolio\Config\ViewBackend;
+
+class PortfolioAdmin extends Backend
 {
     function __construct()
     {
-        parent::__construct('backend');
+        parent::__construct();
+        Services::layout()->setConfig(new ViewBackend());
     }
 
     /**
      * Portfolio post list
      *
      * @param int $page
+     * @return false|string
      */
     function posts($page = 1)
     {
@@ -57,17 +79,15 @@ class Portfolio_admin extends NodCMS_Controller
         $conditions = null;
         $search_form = null;
         $sort_by = array("portfolio_id", "DESC");
-        $this->load->library("Ajaxlist");
-        $myList = new Ajaxlist;
+        $myList = new Ajaxlist();
 
-        $config['total_rows'] = $this->Portfolio_model->getCount($conditions);
+        $config['total_rows'] = Models::portfolio()->getCount($conditions);
 
         $myList->setOptions($config);
 
-        if ($this->input->is_ajax_request()) {
-            $result = $this->Portfolio_model->getAll($conditions, $config['per_page'], $config['page'], $sort_by);
-            echo $myList->ajaxData($result);
-            return;
+        if (Services::request()->isAJAX()) {
+            $result = Models::portfolio()->getAll($conditions, $config['per_page'], $config['page'], $sort_by);
+            return $myList->ajaxData($result);
         }
 
         $this->data['title'] = _l("Portfolio posts", $this);
@@ -80,15 +100,15 @@ class Portfolio_admin extends NodCMS_Controller
         );
 
         $this->data['the_list'] = $myList->getPage();
-        $this->data['content'] = $this->load->view($this->mainTemplate."/data_list", $this->data, true);
         $this->data['page'] = "portfolio_posts";
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("data_list");
     }
 
     /**
      * Portfolio post edit/add form
      *
      * @param null $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      */
     function postSubmit($id = null)
     {
@@ -96,10 +116,9 @@ class Portfolio_admin extends NodCMS_Controller
         $self_url = PORTFOLIO_ADMIN_URL."postSubmit/$id";
 
         if($id!=null){
-            $data = $this->Portfolio_model->getOne($id);
+            $data = Models::portfolio()->getOne($id);
             if(count($data)==0){
-                $this->systemError("The post couldn't find.", $back_url);
-                return;
+                return $this->errorMessage("The post couldn't find.", $back_url);
             }
             $this->data['sub_title'] = _l("Edit", $this);
             $form_attr = array('data-redirect'=>1);
@@ -108,7 +127,7 @@ class Portfolio_admin extends NodCMS_Controller
             $form_attr = array('data-reset'=>1,'data-redirect'=>1);
         }
 
-        $myform = new Form();
+        $myform = new Form($this);
         $config = array(
             array(
                 'field' => 'portfolio_name',
@@ -144,9 +163,9 @@ class Portfolio_admin extends NodCMS_Controller
             ),
         );
         
-        $languages = $this->Public_model->getAllLanguages();
+        $languages = Models::languages()->getAll();
         foreach ($languages as $language){
-            $translate = $this->Portfolio_model->getTranslations($id, $language['language_id']);
+            $translate = Models::portfolio()->getTranslations($id, $language['language_id']);
             array_push($config,array(
                 'prefix_language'=>$language,
                 'label'=>$language['language_title'],
@@ -171,12 +190,12 @@ class Portfolio_admin extends NodCMS_Controller
 
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()){
-            if(!$this->checkAccessGroup(1))
-                return;
+            if(!Services::identity()->isAdmin(true))
+                return Services::identity()->getResponse();
             $post_data = $myform->getPost();
             // Stop Page
-            if($post_data === false || !is_array($post_data)){
-                return;
+            if($post_data === false){
+                return $myform->getResponse();
             }
 
             if(key_exists('portfolio_date', $post_data)){
@@ -189,29 +208,27 @@ class Portfolio_admin extends NodCMS_Controller
             }
 
             if($id!=null){
-                $this->Portfolio_model->edit($id, $post_data);
+                Models::portfolio()->edit($id, $post_data);
                 if(isset($translates)){
-                    $this->Portfolio_model->updateTranslations($id,$translates,$languages);
+                    Models::portfolio()->updateTranslations($id,$translates,$languages);
                 }
-                $this->systemSuccess("The post has been edited successfully.", $back_url);
+                return $this->successMessage("The post has been edited successfully.", $back_url);
             }
             else{
-                $new_id = $this->Portfolio_model->add($post_data);
+                $new_id = Models::portfolio()->add($post_data);
                 if(isset($translates)){
-                    $this->Portfolio_model->updateTranslations($new_id,$translates,$languages);
+                    Models::portfolio()->updateTranslations($new_id,$translates,$languages);
                 }
-                $this->systemSuccess("A new post has been added successfully.", $back_url);
+                return $this->successMessage("A new post has been added successfully.", $back_url);
             }
-            return;
         }
 
         $this->data['title'] = _l("Portfolio Posts", $this);
         $this->data['breadcrumb'] = array(
             array('title'=>_l("Portfolio Posts", $this), 'url'=>$back_url),
             array('title'=>$this->data['sub_title']));
-        $this->data['content'] = $myform->fetch(null,$form_attr);
         $this->data['page'] = "portfolio_portfolio_submit";
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRenderString($myform->fetch(null,$form_attr));
     }
 
     /**
@@ -219,22 +236,23 @@ class Portfolio_admin extends NodCMS_Controller
      *
      * @param $id
      * @param int $confirm
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function postDelete($id, $confirm = 0)
     {
-        if(!$this->checkAccessGroup(1))
-            return;
+        if(!Services::identity()->isAdmin(true))
+            return Services::identity()->getResponse();
 
         $back_url = PORTFOLIO_ADMIN_URL."posts";
         $self_url = PORTFOLIO_ADMIN_URL."postDelete/$id";
-        $data = $this->Portfolio_model->getOne($id);
+        $data = Models::portfolio()->getOne($id);
         if(count($data)==0){
-            $this->systemError("Couldn't find the post.", $back_url);
-            return;
+            return $this->errorMessage("Couldn't find the post.", $back_url);
         }
 
         if($confirm!=1){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">'._l("This action will delete the Portfolio post with its comments.", $this).
                     '<br>'._l("After this, you will not to able to restore it.", $this).'</p>'.
@@ -245,10 +263,9 @@ class Portfolio_admin extends NodCMS_Controller
                 'confirmUrl'=>"$self_url/1",
                 'redirect'=>1,
             ));
-            return;
         }
 
-        $this->Portfolio_model->remove($id);
-        $this->systemSuccess("Portfolio post has been deleted successfully.", $back_url);
+        Models::portfolio()->remove($id);
+        return $this->successMessage("Portfolio post has been deleted successfully.", $back_url);
     }
 }
