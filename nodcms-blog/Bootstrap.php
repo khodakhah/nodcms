@@ -28,14 +28,6 @@ use NodCMS\Core\Types\MenuLink;
 class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
 {
     /**
-     * Bootstrap constructor.
-     */
-    public function __construct()
-    {
-        define('BLOG_ADMIN_URL', base_url("admin-blog").'/');
-    }
-
-    /**
      * @inheritDoc
      */
     public function title(): string
@@ -65,6 +57,7 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
      */
     function backend()
     {
+        define('BLOG_ADMIN_URL', base_url("admin-blog").'/');
         $unread_comments_count = Models::blogComments()->getCount(array('comment_read'=>0));
         if(Services::identity()->isAdmin(true)){
             Services::sidebar()->addLink(

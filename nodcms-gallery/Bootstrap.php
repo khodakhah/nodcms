@@ -26,11 +26,6 @@ use NodCMS\Core\Types\MenuLink;
 
 class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
 {
-    public function __construct()
-    {
-        define('GALLERY_ADMIN_URL',base_url('admin-gallery').'/');
-    }
-
     /**
      * @inheritDoc
      */
@@ -61,6 +56,7 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
      */
     function backend()
     {
+        define('GALLERY_ADMIN_URL',base_url('admin-gallery').'/');
         if(Services::identity()->isAdmin(true)){
             Services::sidebar()->addLink(
                 'galleries',

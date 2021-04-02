@@ -27,14 +27,6 @@ use NodCMS\Core\Types\MenuLink;
 class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
 {
     /**
-     * Bootstrap constructor.
-     */
-    public function __construct()
-    {
-        define('ARTICLES_ADMIN_URL',base_url('admin-articles').'/');
-    }
-
-    /**
      * @inheritdoc
      * @return string
      */
@@ -67,6 +59,7 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
      */
     public function backend()
     {
+        define('ARTICLES_ADMIN_URL',base_url('admin-articles').'/');
         if(Services::identity()->isAdmin(true)) {
             Services::sidebar()->addLink(
                 "article_list",
