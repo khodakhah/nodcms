@@ -53,7 +53,7 @@ class Models extends \Config\Models
     {
         if ($getShared)
         {
-            return self::getSharedInstance('articles');
+            return self::getSharedInstance('about');
         }
         return new About();
     }
