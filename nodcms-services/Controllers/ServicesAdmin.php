@@ -1,21 +1,37 @@
 <?php
-/**
- * Created by Mojtaba Khodakhah.
- * Date: 22-May-19
- * Time: 11:16 AM
- * Project: NodCMS
- * Website: http://www.nodcms.com
+/*
+ * NodCMS
+ *
+ * Copyright (c) 2015-2021.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ *  @author     Mojtaba Khodakhah
+ *  @copyright  2015-2021 Mojtaba Khodakhah
+ *  @license    https://opensource.org/licenses/MIT	MIT License
+ *  @link       https://nodcms.com
+ *  @since      Version 3.0.0
+ *  @filesource
+ *
  */
 
-class Services_admin extends NodCMS_Controller
-{
-    function __construct()
-    {
-        parent::__construct('backend');
-    }
+namespace NodCMS\Services\Controllers;
 
+use Config\Services;
+use NodCMS\Core\Controllers\Backend;
+use NodCMS\Core\Libraries\Form;
+use NodCMS\Services\Config\Models;
+
+class ServicesAdmin extends Backend
+{
     /**
      * Sortable list display
+     *
+     * @return string
      */
     function services()
     {
@@ -28,7 +44,7 @@ class Services_admin extends NodCMS_Controller
         );
 
         $list_items = array();
-        $data_list = $this->Services_model->getAll(null,null,1,array('sort_order','asc'));
+        $data_list = Models::services()->getAll(null,null,1,array('sort_order','asc'));
         foreach ($data_list as &$item){
             $data = array(
                 'id'=>$item['service_id'],
@@ -40,21 +56,22 @@ class Services_admin extends NodCMS_Controller
                 'remove_url'=>SERVICES_ADMIN_URL."deleteService/$item[service_id]",
                 'visibility_url'=>SERVICES_ADMIN_URL."serviceVisibility/$item[service_id]",
             );
-            $list_items[] = $this->load->view($this->mainTemplate."/list_sort_item", $data, true);
+            $list_items[] = Services::layout()->setData($data)->render("list_sort_item");
         }
         $this->data['save_sort_url'] = SERVICES_ADMIN_URL."sortSubmit";
         $this->data['max_depth'] = 1;
         $this->data['list_items'] = join("\n", $list_items);
 
         $this->data['page'] = "services_list";
-        $this->data['content'] = $this->load->view($this->mainTemplate.'/list_sort',$this->data,true);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRender("list_sort");
     }
 
     /**
      * Add/Edit submit form
      *
      * @param null|int $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string|void
+     * @throws \Exception
      */
     function serviceSubmit($id = null)
     {
@@ -63,10 +80,9 @@ class Services_admin extends NodCMS_Controller
         $this->data['title'] = _l("Services",$this);
         if($id!=null)
         {
-            $current_data = $this->Services_model->getOne($id);
+            $current_data = Models::services()->getOne($id);
             if($current_data==null || count($current_data)==0){
-                $this->systemError("Service not found.", $back_url);
-                return;
+                return $this->errorMessage("Service not found.", $back_url);
             }
             $form_attr = array();
             $this->data['sub_title'] = _l("Edit",$this);
@@ -136,9 +152,9 @@ class Services_admin extends NodCMS_Controller
             );
         }
 
-        $languages = $this->Languages_model->getAll();
+        $languages = Models::languages()->getAll();
         foreach($languages as $language){
-            $translate = $this->Services_model->getTranslations($id, $language['language_id']);
+            $translate = Models::services()->getTranslations($id, $language['language_id']);
             // Add language title
             array_push($config,array(
                 'prefix_language'=>$language,
@@ -185,12 +201,12 @@ class Services_admin extends NodCMS_Controller
             }
         }
 
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, $self_url, 'post', 'ajax');
 
         if($myform->ispost()){
-            if(!$this->checkAccessGroup(1)){
-                return;
+            if(!Services::identity()->isAdmin(true)){
+                return Services::identity()->getResponse();
             }
             $post_data = $myform->getPost();
             // Stop Page
@@ -204,20 +220,19 @@ class Services_admin extends NodCMS_Controller
             }
 
             if($id!=null){
-                $this->Services_model->edit($id, $post_data);
+                Models::services()->edit($id, $post_data);
                 if(isset($translates)){
-                    $this->Services_model->updateTranslations($id,$translates,$languages);
+                    Models::services()->updateTranslations($id,$translates,$languages);
                 }
-                $this->systemSuccess("Service has been edited successfully.", $back_url);
+                return $this->successMessage("Service has been edited successfully.", $back_url);
             }
             else{
-                $new_id = $this->Services_model->add($post_data);
+                $new_id = Models::services()->add($post_data);
                 if(isset($translates)){
-                    $this->Services_model->updateTranslations($new_id,$translates,$languages);
+                    Models::services()->updateTranslations($new_id,$translates,$languages);
                 }
-                $this->systemSuccess("Service has been sent successfully.", $back_url);
+                return $this->successMessage("Service has been sent successfully.", $back_url);
             }
-            return;
         }
 
         $this->data['breadcrumb'] = array(
@@ -226,8 +241,7 @@ class Services_admin extends NodCMS_Controller
         );
 
         $this->data['page'] = "service_submit_form";
-        $this->data['content']=$myform->fetch('', $form_attr);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRenderString($myform->fetch('', $form_attr));
     }
 
     /**
@@ -236,21 +250,20 @@ class Services_admin extends NodCMS_Controller
     function sortSubmit()
     {
         $back_url = SERVICES_ADMIN_URL."services";
-        if(!$this->checkAccessGroup(1))
-            return;
+        if(!Services::identity()->isAdmin(true))
+            return Services::identity()->getResponse();
         $post_data = $this->input->post("data");
         if($post_data == null) {
-            $this->systemError("Sort data shouldn't be empty.", $back_url);
-            return;
+            return $this->errorMessage("Sort data shouldn't be empty.", $back_url);
         }
         $post_data = json_decode($post_data);
         foreach($post_data as $i=>$item){
             $update_data = array(
                 'sort_order'=>$i,
             );
-            $this->Services_model->edit($item->id, $update_data);
+            Models::services()->edit($item->id, $update_data);
         }
-        $this->systemSuccess("Services have been successfully sorted.", $back_url);
+        return $this->successMessage("Services have been successfully sorted.", $back_url);
     }
 
     /**
@@ -258,22 +271,23 @@ class Services_admin extends NodCMS_Controller
      *
      * @param $id
      * @param int $confirm
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function deleteService($id, $confirm = 0)
     {
-        if(!$this->checkAccessGroup(1))
-            return;
+        if(!Services::identity()->isAdmin(true))
+            return Services::identity()->getResponse();
 
         $back_url = SERVICES_ADMIN_URL."services";
         $self_url = SERVICES_ADMIN_URL."deleteService/$id";
-        $data = $this->Services_model->getOne($id);
+        $data = Models::services()->getOne($id);
         if(count($data)==0){
-            $this->systemError("The service couldn't find.", $back_url);
-            return;
+            return $this->errorMessage("The service couldn't find.", $back_url);
         }
 
         if($confirm!=1){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">'._l("This action will delete the service from database.", $this).
                     '<br>'._l("After this, you will not to able to restore it.", $this).'</p>'.
@@ -284,13 +298,16 @@ class Services_admin extends NodCMS_Controller
                 'confirmUrl'=>"$self_url/1",
                 'redirect'=>1,
             ));
-            return;
         }
 
-        $this->Services_model->remove($id);
-        $this->systemSuccess("Service has been deleted successfully.", $back_url);
+        Models::services()->remove($id);
+        return $this->successMessage("Service has been deleted successfully.", $back_url);
     }
 
+    /**
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string|void
+     * @throws \Exception
+     */
     function settings()
     {
         $self_url = SERVICES_ADMIN_URL."settings";
@@ -329,7 +346,7 @@ class Services_admin extends NodCMS_Controller
             ),
         );
 
-        $languages = $this->Languages_model->getAll();
+        $languages = Models::languages()->getAll();
         foreach($languages as $language){
             $config[] = array(
                 'label'=>$language['language_title'],
@@ -337,7 +354,7 @@ class Services_admin extends NodCMS_Controller
                 'prefix_language'=>$language,
             );
             $prefix = "options[$language[language_id]]";
-            $setting = $this->Public_model->getSettings($language['language_id']);
+            $setting = Models::settings()->getSettings($language['language_id']);
             $config[] = array(
                 'field'=>$prefix."[services_page_title]",
                 'label' => _l("Page title", $this),
@@ -346,28 +363,27 @@ class Services_admin extends NodCMS_Controller
                 'default'=>isset($setting['services_page_title'])?$setting['services_page_title']:'',
             );
         }
-        $myform = new Form();
+        $myform = new Form($this);
         $myform->config($config, $self_url, 'post', 'ajax');
 
         if($myform->ispost()){
-            $this->checkAccessGroup(1);
+            if(!Services::identity()->isAdmin(true))
+                return Services::identity()->getResponse();
             $data = $myform->getPost();
             // Stop Page
-            if($data == null){
-                return;
+            if($data === false){
+                return $myform->getResponse();
             }
             if(isset($data["options"])){
                 foreach($data["options"] as $language_id=>$item){
-                    if(!$this->Nodcms_admin_model->updateSettings($item, $language_id)){
-                        $this->systemError("A settings options could not be saved.", $this);
-                        return;
+                    if(!Models::settings()->updateSettings($item, $language_id)){
+                        return $this->errorMessage("A settings options could not be saved.", $this);
                     }
                 }
                 unset($data["options"]);
             }
-            $this->Nodcms_admin_model->updateSettings($data);
-            $this->systemSuccess("Your Setting has been updated successfully!", $self_url);
-            return;
+            Models::settings()->updateSettings($data);
+            return $this->successMessage("Your Setting has been updated successfully!", $self_url);
         }
 
         $this->data['breadcrumb'] = array(
@@ -376,7 +392,6 @@ class Services_admin extends NodCMS_Controller
         );
 
         $this->data['page'] = "services_settings";
-        $this->data['content'] = $myform->fetch();
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRenderString($myform->fetch());
     }
 }
