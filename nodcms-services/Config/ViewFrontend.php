@@ -22,20 +22,7 @@
 namespace NodCMS\Services\Config;
 
 
-use NodCMS\Services\Models\Services;
-
-class Modes extends \Config\Models
+class ViewFrontend extends \Config\ViewFrontend
 {
-    /**
-     * @param bool $getShared
-     * @return Services
-     */
-    public static function services(bool $getShared = true): Services
-    {
-        if ($getShared)
-        {
-            return self::getSharedInstance('services');
-        }
-        return new Services();
-    }
+    public $namespacePieces = "NodCMS\Services/frontend";
 }
