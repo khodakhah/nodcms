@@ -127,8 +127,19 @@ class Language extends CI_Language
             foreach ($languages as $language_dir){
                 preg_match('/.*\/([A-Za-z]{2})/', $language_dir, $my_match);
 
-                $this->removeLines($removed_keys, $my_match[1]);
-                $this->saveTranslations($unique_array, $my_match[1]);
+                $locale = $my_match[1];
+                $this->removeLines($removed_keys, $locale);
+                $lines = $this->getLines($locale, "app");
+                $_lines = array_combine($unique_array, $unique_array);
+                foreach ($unique_array as $key) {
+                    if (!isset($lines[$key])) {
+                        $_lines[$key] = $key;
+                    }
+                    else {
+                        $_lines[$key] = $lines[$key];
+                    }
+                }
+                $this->saveTranslations($_lines, $locale);
             }
 
             if($remove){
@@ -168,10 +179,29 @@ class Language extends CI_Language
         else{
             $languages = array_filter(glob(COREPATH.'Language/*'), 'is_dir');
         }
+
+        // Generate untranslated lines
+        $untranslated_lines = array_combine($unique_array, $unique_array);
+
         foreach ($languages as $item){
             if(preg_match('/.*\/([A-Za-z]{2}})/', $item, $my_match))
-                $this->saveTranslations($unique_array, $my_match[1], true);
+                $this->saveTranslations($untranslated_lines, $my_match[1], true);
         }
+    }
+
+    /**
+     * Update a specific line
+     *
+     * @param string $locale
+     * @param string $key
+     * @param string $value
+     * @throws \Exception
+     */
+    public function updateLine(string $locale, string $key, string $value)
+    {
+        $lines = $this->getLines($locale, "app");
+        $lines[$key] = $value;
+        $this->saveTranslations($lines, $locale);
     }
 
     /**
@@ -334,14 +364,13 @@ class Language extends CI_Language
     /**
      * Create/Update a language translation file
      *
-     * @param array $unique_keys
+     * @param array $lines
      * @param string $locale
      * @param bool $reset
      * @throws \Exception
      */
-    private function saveTranslations(array $unique_keys, string $locale, bool $reset = false)
+    private function saveTranslations(array $lines, string $locale, bool $reset = false)
     {
-        $lang = !$reset ? $this->getLines($locale, "app") : [];
         $my_lang_file = COREPATH."Language/{$locale}/app.php";
         if(!$reset && file_exists($my_lang_file)){
             $my_language_file_content = str_replace("];", "", file_get_contents($my_lang_file));
@@ -355,13 +384,8 @@ class Language extends CI_Language
                 "*/\n" .
                 "return [\n";
         }
-        foreach ($unique_keys as $keys) {
-            if (!isset($lang[$keys])) {
-                $values = $keys;
-            } else {
-                $values = $lang[$keys];
-            }
-            $my_language_file_content .= "\t".'"' . $keys . '" => "' . $values . '",' . "\n";
+        foreach ($lines as $key=>$value) {
+            $my_language_file_content .= "\t".'"' . $key . '" => "' . $value . '",' . "\n";
         }
 
         $my_language_file_content .= "];";

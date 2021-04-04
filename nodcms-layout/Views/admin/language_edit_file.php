@@ -1,7 +1,7 @@
 <section class="portlet light">
     <div class="portlet-title">
         <div class="caption" style="direction: ltr;">
-            <?php echo APPPATH."language\\".$data["language_name"]."\\nodcms_lang.php"; ?>
+            <?php echo $file_path; ?>
         </div>
     </div>
     <div class="portlet-body">
@@ -69,6 +69,7 @@
                 method:'post',
                 dataType:'json',
                 success:function (data) {
+                    console.log(data);
                     if(data.status == "success"){
                         $('#caption-'+data_id).text(post_data.value);
                         $('#data'+data_id+', #save-btn-'+data_id+', #cancel-btn-'+data_id+', #edit-btn-'+data_id+', #caption-'+data_id).toggleClass("hidden");
@@ -81,14 +82,10 @@
                     toastr.error("Send data fail!");
                 },
                 beforeSend: function(){
-                    App.blockUI({
-                        target: '#row-'+data_id,
-                        animate: true
-                    });
+                    this_button.addClass("disabled");
                 },
                 complete: function(){
-                    App.unblockUI('#row-'+data_id);
-//                    this_button.addClass("disabled");
+                    this_button.removeClass("disabled");
                 },
             });
         });

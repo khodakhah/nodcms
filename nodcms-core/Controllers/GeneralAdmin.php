@@ -1292,102 +1292,64 @@ class GeneralAdmin extends Backend
      * Edit languages translation files
      *
      * @param $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
-    function languageTranslation($id)
+    public function languageTranslation($id)
     {
         include COREPATH."Language/lang_temp.php";
         if(!isset($lang_temp)){
             return $this->errorMessage("lang_temp.php file not found.", ADMIN_URL."language");
         }
-        $this->data['data'] = Services::model()->languages()->getOne($id);
-        if($this->data['data']==null){
+        $data = Services::model()->languages()->getOne($id);
+        if(empty($data)){
             return $this->errorMessage("The language was not found.", ADMIN_URL."language");
         }
 
+        $file = COREPATH."Language/{$data['code']}/app.php";
+        if(!file_exists($file)){
+            return $this->errorMessage("System couldn't find the language file.", ADMIN_URL."language");
+        }
+
         $this->data['title'] = _l("Edit Translation File",$this);
-        $this->data['sub_title'] = $this->data['data']['language_name'];
+        $this->data['sub_title'] = $data['language_name'];
         $this->data['breadcrumb'] = array(
             array('title'=>_l("Languages", $this), 'url'=>ADMIN_URL."language"),
             array('title'=>$this->data['sub_title'])
         );
 
         $langArray = new GetLangAsArray();
-        $this->data['lang_list'] = $langArray->load("app", $this->data['data']['code']);
+        $this->data['lang_list'] = $langArray->load("app", $data['code']);
         $key = Services::request()->getPost('key');
         $value = Services::request()->getPost('value');
         if($key != null) {
             if(!Services::identity()->isAdmin())
                 return Services::identity()->getResponse();
 
-            $file = SELF_PATH.'nodcms/language/'.$this->data['data']['language_name'].'/nodcms_lang.php';
-            if(!file_exists($file)){
-                $this->errorMessage("System couldn't find the language file.", ADMIN_URL."language");
-            }
-            $key_pattern = str_replace(array(
-                '?',
-                '!',
-                '%',
-                '$',
-                '/',
-                '(',
-                ')',
-                '-',
-                '_',
-                '[',
-                ']',
-                '{',
-                '}',
-                '@',
-                '|',
-                ':',
-                ';',
-                '#',
-                "'",
-                '.',
-                ',',
-            ),array(
-                '\?',
-                '\!',
-                '\%',
-                '\$',
-                '\/',
-                '\(',
-                '\)',
-                '\-',
-                '\_',
-                '\[',
-                '\]',
-                '\{',
-                '\}',
-                '\@',
-                '\|',
-                '\:',
-                '\;',
-                '\#',
-                "\'",
-                '\.',
-                '\,',
-            ), $key);
-            $fileContent = file_get_contents($file);
-            $pattern = '/\$lang\[\"'.$key_pattern.'\"\][\s]?\=[\s]\"(.*)\"\;/';
-            $replace = '$lang["'.$key.'"] = "'.str_replace('"',"''", $value).'";';
-            $fileContent = preg_replace($pattern, $replace, $fileContent);
-            file_put_contents($file, $fileContent);
+            // Update the translation line.
+            Services::language()->updateLine($data['code'], $key, $value);
+
             return $this->successMessage("Edit language file successfully!", ADMIN_URL."languageTranslation/$id");
         }
+        $this->data['data'] = $data;
+        $this->data['file_path'] = $file;
         $this->data['languages'] = Services::model()->languages()->getAll();
         $this->data['title'] = _l("Edit Translation File",$this);
-        $this->data['sub_title'] = $this->data['data']['language_name'];
+        $this->data['sub_title'] = $data['language_name'];
         $this->data['page'] = "language_translation";
         return $this->viewRender("language_edit_file");
     }
 
-    function languageUpdateTranslation()
+    /**
+     * @return mixed
+     * @throws \Exception
+     */
+    public function languageUpdateTranslation()
     {
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
         Services::language()->currentLangLines(true, true);
-        $this->successMessage("The translation file successfully updated.", ADMIN_URL."language");
+        return $this->successMessage("The translation file successfully updated.", ADMIN_URL."language");
     }
 
     /**
