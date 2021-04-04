@@ -24,6 +24,7 @@ namespace NodCMS\Core\Controllers;
 use Config\Services;
 use NodCMS\Core\Libraries\Ajaxlist;
 use NodCMS\Core\Libraries\Form;
+use NodCMS\Core\Libraries\GetLangAsArray;
 
 class GeneralAdmin extends Backend
 {
@@ -885,6 +886,7 @@ class GeneralAdmin extends Backend
 
     /**
      * Languages management page
+     * @throws \Exception
      */
     function language()
     {
@@ -893,7 +895,7 @@ class GeneralAdmin extends Backend
             array('title'=>$this->data['title'])
         );
         $this->data['data_list']=Services::model()->languages()->getAll(null,null,1,array('sort_order','asc'));
-        $this->data['key_changes'] = findNewLangKeys($this);
+        $this->data['key_changes'] = Services::language()->currentLangLines();
         $this->data['page'] = "language";
         return $this->viewRender("language_sort");
     }
@@ -1158,7 +1160,7 @@ class GeneralAdmin extends Backend
                 $this->successMessage("Your language has been successfully updated.", ADMIN_URL."language");
             }else{
                 // Fix language translations
-                resetLanguageTempFile($data['language_name']);
+                Services::language()->resetLanguageTempFile($data['language_name']);
 
                 $this->successMessage("A new language was successfully added.", ADMIN_URL."language");
             }
@@ -1293,7 +1295,7 @@ class GeneralAdmin extends Backend
      */
     function languageTranslation($id)
     {
-        include APPPATH."language/lang_temp.php";
+        include COREPATH."Language/lang_temp.php";
         if(!isset($lang_temp)){
             return $this->errorMessage("lang_temp.php file not found.", ADMIN_URL."language");
         }
@@ -1309,14 +1311,13 @@ class GeneralAdmin extends Backend
             array('title'=>$this->data['sub_title'])
         );
 
-        $this->load->library('Get_lang_in_array');
-        $CI = new Get_lang_in_array();
-        $this->data['lang_list'] = $CI->load("nodcms", $this->data['data']['language_name']);
-        if($this->input->input_stream('key')){
+        $langArray = new GetLangAsArray();
+        $this->data['lang_list'] = $langArray->load("app", $this->data['data']['code']);
+        $key = Services::request()->getPost('key');
+        $value = Services::request()->getPost('value');
+        if($key != null) {
             if(!Services::identity()->isAdmin())
                 return Services::identity()->getResponse();
-            $key = $this->input->post('key');
-            $value = $this->input->post('value');
 
             $file = SELF_PATH.'nodcms/language/'.$this->data['data']['language_name'].'/nodcms_lang.php';
             if(!file_exists($file)){
@@ -1385,7 +1386,7 @@ class GeneralAdmin extends Backend
     {
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
-        findNewLangKeys($this, 1, 1);
+        Services::language()->currentLangLines(true, true);
         $this->successMessage("The translation file successfully updated.", ADMIN_URL."language");
     }
 
