@@ -262,7 +262,7 @@ class Form
      */
     function ispost()
     {
-        if($this->CI->request->getMethod() == 'post' && count($this->CI->request->getPost()) != 0)
+        if(Services::request()->getMethod() == 'post' && count(Services::request()->getPost()) != 0)
             return true;
         return false;
     }

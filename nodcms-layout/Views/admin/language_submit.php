@@ -6,12 +6,10 @@
             if(this.val()!="?" && this.val() != 0){
                 if(language_codes[this.val()] != 'undefined'){
                     $("#language_title").val(language_codes[this.val()].title);
-                    $("#language_name").attr("readonly","readonly").val(language_codes[this.val()].name);
                     $("#code").attr("readonly","readonly").val(language_codes[this.val()].code);
                 }
             }else if(this.val() != 0){
                 $("#language_title").val("");
-                $("#language_name").removeAttr("readonly").val("");
                 $("#code").removeAttr("readonly").val("");
             }
             return this;
@@ -22,7 +20,6 @@
         });
 
         if(typeof $("#languages").val()!== 'undefined' && language_codes[$("#languages").val()] != 'undefined'){
-            $("#language_name").attr("readonly","readonly");
             $("#code").attr("readonly","readonly");
         }
 

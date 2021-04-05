@@ -538,10 +538,10 @@ class GeneralAdmin extends Backend
 
             // Encode html special chars
             if(isset($data['add_on_header']) && !empty($data['add_on_header'])){
-            	$data['add_on_header'] = htmlspecialchars($this->input->post('add_on_header'));
+            	$data['add_on_header'] = htmlspecialchars(Services::request()->getPost('add_on_header'));
             }
             if(isset($data['add_on_script']) && !empty($data['add_on_script'])){
-            	$data['add_on_script'] = htmlspecialchars($this->input->post('add_on_script'));
+            	$data['add_on_script'] = htmlspecialchars(Services::request()->getPost('add_on_script'));
             }
 
             // The settings without language_id
@@ -903,12 +903,14 @@ class GeneralAdmin extends Backend
     /**
      * Language add and edit form
      *
-     * @param string $id
+     * @param int $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
-    function languageSubmit($id=null)
+    function languageSubmit(int $id=0)
     {
         $this->data['title'] = _l("Languages",$this);
-        if($id!=null)
+        if($id != 0)
         {
             $current_data = Services::model()->languages()->getOne($id);
             if($current_data==null || count($current_data)==0){
@@ -1088,13 +1090,6 @@ class GeneralAdmin extends Backend
                 'default'=>isset($current_data['language_title'])?$current_data['language_title']:"",
             ),
             array(
-                'field'=>"language_name",
-                'label'=>_l("Directory Name", $this),
-                'type'=>"text",
-                'rules'=>"required|validateUsernameType",
-                'default'=>isset($current_data['language_name'])?$current_data['language_name']:"",
-            ),
-            array(
                 'field'=>"code",
                 'label'=>_l("Language Code", $this),
                 'type'=>"text",
@@ -1125,7 +1120,7 @@ class GeneralAdmin extends Backend
         );
 
         $myform = new Form($this);
-        $myform->config($config, ADMIN_URL."languageSubmit/$id", 'post', 'ajax');
+        $myform->config($config, ADMIN_URL."languageSubmit/{$id}", 'post', 'ajax');
         if($myform->ispost()){
             $data = $myform->getPost();
             // Stop Page
@@ -1136,13 +1131,13 @@ class GeneralAdmin extends Backend
                 return Services::identity()->getResponse();
 
             unset($data['languages']);
-            if($id != null){
+            if($id != 0){
                 Services::model()->languages()->edit($id, $data);
             }else{
                 $inserted_id = Services::model()->languages()->add($data);
             }
 
-            $dir = APPPATH."language/$data[language_name]/";
+            $dir = COREPATH."Language/{$data['code']}/";
             // Make directory
             if(!file_exists($dir)){
                 mkdir($dir);
@@ -1151,18 +1146,18 @@ class GeneralAdmin extends Backend
             $file = $dir.'index.php';
             if(!file_exists($file)){
                 $myfile = fopen($file, "w") or die("Unable to open file!");
-                $txt = "<?php\n http_response_code(404)";
+                $txt = "";
                 fwrite($myfile, $txt);
                 fclose($myfile);
             }
 
-            if($id!=null){
-                $this->successMessage("Your language has been successfully updated.", ADMIN_URL."language");
-            }else{
+            if($id != 0){
+                return $this->successMessage("Your language has been successfully updated.", ADMIN_URL."language");
+            }
+            else{
                 // Fix language translations
-                Services::language()->resetLanguageTempFile($data['language_name']);
-
-                $this->successMessage("A new language was successfully added.", ADMIN_URL."language");
+                Services::language()->resetLanguageTempFile($data['code']);
+                return $this->successMessage("A new language was successfully added.", ADMIN_URL."language");
             }
         }
 
@@ -1184,7 +1179,7 @@ class GeneralAdmin extends Backend
     {
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
-        $post_data = $this->input->post("data");
+        $post_data = Services::request()->getPost("data");
         if($post_data == null) {
             return $this->errorMessage("Sort data shouldn't be empty.", ADMIN_URL."language");
         }
@@ -1195,7 +1190,7 @@ class GeneralAdmin extends Backend
             );
             Services::model()->languages()->edit($item->id, $update_data);
         }
-        $this->successMessage("Languages have been successfully sorted.", ADMIN_URL."language");
+        return $this->successMessage("Languages have been successfully sorted.", ADMIN_URL."language");
     }
 
     /**
@@ -1203,6 +1198,7 @@ class GeneralAdmin extends Backend
      *
      * @param int $id
      * @param int $confirm
+     * @throws \Exception
      */
     function languageDelete($id, $confirm = 0)
     {
@@ -1236,7 +1232,7 @@ class GeneralAdmin extends Backend
         }
 
         Services::model()->languages()->remove($id);
-        $this->successMessage("Language has been deleted successfully.", $back_url);
+        return $this->successMessage("Language has been deleted successfully.", $back_url);
     }
 
     /**
@@ -1259,9 +1255,9 @@ class GeneralAdmin extends Backend
             $defaultLangFileName = strlen($file_name)==2?$_SESSION['language']['code']:$file_name;
             $this->data['lang_list'] = $CI->load($defaultLangFileName,$_SESSION['language']['language_name']);
         }
-        if($this->input->input_stream('data')){
+        if(Services::request()->getPost('data')){
             if ($this->session->userdata['group']==1) {
-                $post_data = $this->input->post('data');
+                $post_data = Services::request()->getPost('data');
                 $i=0;
                 $fileContent = "<?php\n";
                 foreach ($this->data['lang_list'] as $key=>&$val) {
@@ -1724,7 +1720,7 @@ class GeneralAdmin extends Backend
         $conditions = null;
         $config['total_rows'] = Services::model()->uploadFiles()->getCount($conditions);
         $theList->setOptions($config);
-        if($this->input->post('record_result')==1){
+        if(Services::request()->getPost('record_result')==1){
             $data = Services::model()->uploadFiles()->getAll($conditions, $config['per_page'], $config['page']);
             echo $theList->ajaxData($data);
             return;
@@ -2430,7 +2426,7 @@ class GeneralAdmin extends Backend
     function settingsHomepageSort()
     {
         // * Update Sort
-        $post_data = $this->input->post("data");
+        $post_data = Services::request()->getPost("data");
         if($post_data != null){
             if(!Services::identity()->isAdmin())
                 return Services::identity()->getResponse();
