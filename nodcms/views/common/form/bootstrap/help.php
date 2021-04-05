@@ -1,1 +1,0 @@
-<span class="help-block"><i class="fa fa-info-circle"></i> <?php echo $message; ?></span>

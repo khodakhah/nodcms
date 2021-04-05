@@ -1,1 +1,0 @@
-<a href="<?php echo str_replace('$content', $content, $config['url']); ?>" class="btn btn-sm green-jungle"><i class="fas fa-download"></i> <?php echo _l("Download", $this); ?></a>
