@@ -49,15 +49,13 @@
 	},
 	"scripts": {
 		"post-update-cmd": [
-			"CodeIgniter\\ComposerScripts::postUpdate",
-			"bash admin/setup.sh"
+			"CodeIgniter\\ComposerScripts::postUpdate"
 		],
 		"analyze": "phpstan analyze",
 		"test": "phpunit"
 	},
 	"support": {
-		"forum": "http://forum.codeigniter.com/",
-		"source": "https://github.com/codeigniter4/CodeIgniter4",
-		"slack": "https://codeigniterchat.slack.com"
+		"forum": "https://nodecms.com/",
+		"source": "https://github.com/khodakhah/nodcms"
 	}
 }
