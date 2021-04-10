@@ -1142,14 +1142,6 @@ class GeneralAdmin extends Backend
             if(!file_exists($dir)){
                 mkdir($dir);
             }
-            // Create index file
-            $file = $dir.'index.php';
-            if(!file_exists($file)){
-                $myfile = fopen($file, "w") or die("Unable to open file!");
-                $txt = "";
-                fwrite($myfile, $txt);
-                fclose($myfile);
-            }
 
             if($id != 0){
                 return $this->successMessage("Your language has been successfully updated.", ADMIN_URL."language");
