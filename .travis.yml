@@ -1,0 +1,73 @@
+# Travis CI
+
+# Use new container based environment
+sudo: false
+
+# Declare project language.
+language: php
+
+env:
+  global:
+    # Name and folder of the the standard to test.
+    - STANDARD="CodeIgniter4"
+    # Upload covarage to coveralls.
+    - COVERALLS="1"
+    # Xdebug3 needs this.
+    - XDEBUG_MODE=coverage
+
+matrix:
+  fast_finish: true
+
+  # Declare versions of PHP to use. Use one decimal max.
+  include:
+    # aliased to a recent 5.4.x version
+    # - php: '5.4'
+    # aliased to a recent 5.5.x version
+    # - php: '5.5'
+    # aliased to a recent 5.6.x version
+    # - php: '5.6'
+    # aliased to a recent 7.x version
+    # - php: '7.0'
+    # aliased to a recent 7.x version
+    # - php: '7.1'
+    - php: '7.2'
+    - php: '7.3'
+    - php: '7.4'
+    - php: '8.0'
+    # aliased to a recent hhvm version
+    # - php: 'hhvm'
+    # php nightly
+    # - php: 'nightly'
+
+    # allow_failures:
+    # - php: 'hhvm'
+    # - php: 'nightly'
+
+before_install:
+# Remove xdebug. Needed for coverage.
+# - phpenv config-rm xdebug.ini
+
+install:
+  # Update composer to latest version.
+  - composer self-update
+  # Install project composer deps in composer.json
+  - composer install --no-interaction
+
+before_script:
+# Rehash the php environment if testing on several PHP versions.
+# - phpenv rehash
+
+script:
+  # Check for PHP syntax errors.
+  - find -L . -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
+  # - Check files match the PHPCS standard.
+  - ./vendor/bin/phpcs --ignore=*/Tests/* ./$STANDARD/ --standard=./vendor/squizlabs/php_codesniffer/phpcs.xml.dist
+  # Change the default standard.
+  - ./vendor/bin/phpcs --config-set installed_paths $TRAVIS_BUILD_DIR/$STANDARD
+  # Verify it's installed.
+  - ./vendor/bin/phpcs -i
+  # Run unit tests for the standard.
+  - ./vendor/bin/phpunit --debug --filter $STANDARD
+
+after_success:
+  - if [[ "$COVERALLS" == "1" && "$TRAVIS_PHP_VERSION" == "7.4" ]]; then ./vendor/bin/coveralls -v -x ./build/logs/coverage/clover/clover.xml; fi
