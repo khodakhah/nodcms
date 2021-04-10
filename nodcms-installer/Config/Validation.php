@@ -1,4 +1,4 @@
-<?php namespace Config;
+<?php namespace NodCMS\Installer\Config;
 
 class Validation
 {
