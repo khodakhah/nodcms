@@ -574,7 +574,9 @@ class Installer extends Base
                 return;
             }
 
-            $replace = array();
+            $replace = array(
+                "<?php" => "\<?php namespace Config;"
+            );
             foreach($_SESSION['database_connect'] as $key=>$item) {
                 $replace["@$key@"] = $item;
             }
