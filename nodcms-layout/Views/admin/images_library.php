@@ -12,11 +12,11 @@
     <?php if(isset($images) && count($images)!=0){ ?>
         <?php foreach($images as $data){ ?>
             <div class="col-md-3 col-sm-4 col-xs-6">
-                <p style="height:100px;overflow: hidden;"><img src="<?php echo base_url().image($data['image'],$settings['default_image'],300,200); ?>" style="width: 100%" alt="Image"></p>
+                <p style="height:100px;overflow: hidden;"><img src="<?php echo base_url(image($data['image'],$settings['default_image'],300,200)); ?>" style="width: 100%" alt="Image"></p>
                 <p class="text-center"><?=$data["width"]?> <?=_l("px",$this)?> X <?=$data["height"]?> <?=_l("px",$this)?></p>
                 <p class="text-center"><?=$data["size"]?> <?=_l("MG",$this)?></p>
                 <p class="text-center">
-                    <button type="button" class="btn blue" onclick="$('#<?php echo $input_id; ?>').attr('value','<?php echo $data['image']?>'); $('#<?php echo $input_id; ?>_image').attr('src','<?php echo base_url().$data['image']; ?>');" data-dismiss="modal"><i class="fa fa-copy"></i> <?=_l("Use",$this)?></button>
+                    <button type="button" class="btn blue" onclick="$('#<?php echo $input_id; ?>').attr('value','<?php echo $data['image']?>'); $('#<?php echo $input_id; ?>_image').attr('src','<?php echo base_url($data['image']); ?>');" data-dismiss="modal"><i class="fa fa-copy"></i> <?=_l("Use",$this)?></button>
                 </p>
             </div>
         <?php } ?>
