@@ -238,6 +238,8 @@ class View extends \CodeIgniter\View\View
     public function render(string $view, array $options = null, bool $saveData = null): string
     {
         $view = $this->viewPrefix . "/" . $view;
+        if(empty($this->tempData['settings']))
+            $this->setData(['settings'=>\Config\Services::settings()->get()]);
         return parent::render($view, $options, $saveData);
     }
 

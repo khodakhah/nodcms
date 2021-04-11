@@ -2416,3 +2416,27 @@ if( ! function_exists("timespan")) {
         return $diff->humanize();
     }
 }
+
+if( ! function_exists("image")) {
+    function image($image_path,$default_image, $width = 0, $height = 0) {
+        if(!file_exists($image_path)) {
+            return $default_image;
+        }
+
+        //Alternative image if file was not found
+        if($image_path=="")
+            $image_path = $default_image;
+
+        //The new generated filename we want
+        $fileinfo = pathinfo($image_path);
+        $new_image_path = $fileinfo['dirname'] . '/' . $fileinfo['filename'] . '_' . $width . 'x' . $height . '.' . $fileinfo['extension'];
+
+        if ((! file_exists($new_image_path)) || filemtime($new_image_path) < filemtime($image_path)) {
+            \Config\Services::image()
+                ->withFile($image_path)->fit($width, $height)
+                ->save($new_image_path);
+        }
+
+        return $new_image_path;
+    }
+}
