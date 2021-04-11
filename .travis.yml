@@ -9,7 +9,7 @@ language: php
 env:
   global:
     # Name and folder of the the standard to test.
-    - STANDARD="CodeIgniter4"
+    - STANDARD="nodcms"
     # Upload covarage to coveralls.
     - COVERALLS="1"
     # Xdebug3 needs this.
