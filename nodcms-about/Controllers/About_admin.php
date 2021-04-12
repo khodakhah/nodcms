@@ -44,11 +44,11 @@ class About_admin extends Backend
      *
      * @param null|int $id
      */
-    function profileForm($id = null)
+    function profileForm($id = 0)
     {
         $this->data['title'] = _l("Profile",$this);
         $back_url = ABOUT_ADMIN_URL."profiles";
-        if($id!=null){
+        if(!empty($id)){
             $current_data = Models::about()->getOne($id);
             if($current_data==null || count($current_data)==0){
                 return $this->errorMessage("The profile couldn't find.",$back_url);
@@ -71,7 +71,7 @@ class About_admin extends Backend
             array(
                 'field' => 'profile_uri',
                 'label' => _l("Page URI", $this),
-                'rules' => 'callback_validURI|callback_isUnique[about_profiles,profile_uri'.(isset($current_data)?",profile_id,$current_data[profile_id]":"").']',
+                'rules' => 'validURI|is_unique[about_profiles.profile_uri'.(isset($current_data)?",profile_id,$current_data[profile_id]":"").']',
                 'type' => "text",
                 'default'=>isset($current_data)?$current_data["profile_uri"]:'',
                 'input_prefix'=>base_url().$this->language['code']."/about-",
@@ -111,7 +111,8 @@ class About_admin extends Backend
         );
         $languages = Models::languages()->getAll();
         foreach($languages as $language){
-            $translate = Models::about()->getTranslations($id, $language['language_id']);
+            if(!empty($id))
+                $translate = Models::about()->getTranslations($id, $language['language_id']);
             // Add language title
             array_push($config,array(
                 'prefix_language'=>$language,
@@ -183,14 +184,17 @@ class About_admin extends Backend
 
             if(!Services::identity()->isAdmin(true))
                 return Services::identity()->getResponse();
-            if($id!=null){
+            if(!empty($id)){
                 Models::about()->edit($id, $post_data);
                 if(isset($translates)){
                     Models::about()->updateTranslations($id,$translates,$languages);
                 }
+//                log_message('alert', "EDIT".json_encode($post_data));
+//                log_message('alert', "\$_POST".json_encode($_POST));
                 return $this->successMessage("Profile has been edited successfully.", $back_url);
             }
             else{
+                log_message('alert', json_encode($post_data));
                 $new_id = Models::about()->add($post_data);
                 if(isset($translates)){
                     Models::about()->updateTranslations($new_id,$translates,$languages);

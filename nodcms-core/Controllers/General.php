@@ -22,6 +22,7 @@
 namespace NodCMS\Core\Controllers;
 
 use Config\Autoload;
+use Config\Services;
 use NodCMS\Core\Libraries;
 
 class General extends Frontend
@@ -180,7 +181,7 @@ class General extends Frontend
     public function noimage($width, $height, $text = "No Image")
     {
         $font_size = 20;
-        header("Content-Type: image/png");
+        Services::response()->setHeader("Content-Type", "image/png");
         $im = @imagecreate($width, $height)
         or die("Cannot Initialize new GD image stream");
         imagecolorallocate($im, 240, 240, 240);
@@ -189,11 +190,10 @@ class General extends Frontend
         $x = ($width/2)-(strlen($text)*($font_size/3));
         $y = ($height/2)+($font_size/2);
         $text = str_replace("_", " ", $text);
-        $font = APPPATH.'OpenSans-Regular.ttf';
+        $font = ROOTPATH.'public/assets/OpenSans-Regular.ttf';
         imagettftext($im, $font_size, 0, $x, $y, $text_color, $font, $text);
 //        imagestring($im, 3, $x, $y, $text, $text_color);
         imagepng($im);
-//        echo file_get_contents($im);
         imagedestroy($im);
     }
 

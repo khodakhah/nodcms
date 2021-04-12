@@ -34,6 +34,10 @@ class Form
      */
     private $errorResponse;
 
+    private $lang;
+
+    private $acceptedFields;
+
     public $CI;
     public $template_form = '';
     public $template_inputs = '';
@@ -119,6 +123,7 @@ class Form
     {
         $this->CI = $CI;
         $this->upload_cookie_name = md5($this->upload_cookie_name);
+        $this->lang = Services::language()->getLocale();
     }
 
     function config($inputs, $action = '', $method = 'post', $type = 'ajax', $notes = array())
@@ -310,10 +315,11 @@ class Form
 
         // Remove unset data
         if($config!=null){
-            $config_fields = array_column($config, 'field');
+            $config_fields = $this->acceptedFields;
             foreach ($input_data as $key=>$val){
-                if(!is_array($val) && !in_array($key, $config_fields))
+                if(!is_array($val) && !in_array($key, $config_fields)) {
                     unset($input_data[$key]);
+                }
             }
         }
         return $input_data;
@@ -327,6 +333,7 @@ class Form
         $remove_types = array_merge($this->headers,$this->statics);
         // Remove headers tag from rules
         $inputs = [];
+        $_inputs = [];
         foreach ((array) $this->data['inputs'] as $key=>$item) {
             if (!isset($item['type']) || in_array($item['type'], $remove_types)){
                 continue;
@@ -338,6 +345,7 @@ class Form
                     if(isset($_POST[$post_key]) && is_array($_POST[$post_key])){
                         foreach ($_POST[$post_key] as $theKey=>$post_item){
                             foreach ($item['sub_items'] as $sun_item){
+                                $_inputs[] = $sun_item['field'];
                                 if(empty($sun_item['rules']))
                                     continue;
                                 $sun_item['field'] = str_replace('[]',".$theKey",$item['field'].$sun_item['field']);
@@ -349,11 +357,15 @@ class Form
                 }
             }
 
+            $_inputs[] = $item['field'];
+
             if(empty($item['rules']))
                 continue;
 
             $inputs[$key] = $item;
         }
+
+        $this->acceptedFields = $_inputs;
 
         $sub_items = array_column($inputs, 'sub_items');
         if(count($sub_items)!=0)
@@ -1017,12 +1029,12 @@ class Form
             'type'=>"",
             'default'=>"",
             'remove_url'=>"",
-            'not_set_preview'=>base_url("noimage-200-50-Not_Set"),
+            'not_set_preview'=>base_url("{$this->lang}/noimage-200-50-Not_Set"),
             'library_type'=>"images-library",
         );
         $data = array_merge($data_default, $data);
         $data['image_library_url'] = ADMIN_URL."getImagesLibrary/$data[name]/$data[library_type]";
-        $data['img_src'] = base_url($data['default']!=""?$data['default']:"noimage-200-50-Not_Set");
+        $data['img_src'] = base_url($data['default']!=""?$data['default']:"{$this->lang}/noimage-200-50-Not_Set");
         $input = Services::formLayout()->setData($data)->render($this->theme_patch.$data['type']);
         return $this->addInput($data, $input);
     }
