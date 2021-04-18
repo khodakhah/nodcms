@@ -42,11 +42,18 @@ interface I_Bootstrap
     public function description(): string;
 
     /**
-     * True means there this module has a dashboard
+     * True means, this module has a dashboard
      *
      * @return bool
      */
     public function hasDashboard(): bool;
+
+    /**
+     * True means, this module has something to display in home
+     *
+     * @return bool
+     */
+    public function hasHomePreview(): bool;
 
     /**
      * A link list that will be able to add as header and footer menu
@@ -75,4 +82,18 @@ interface I_Bootstrap
      * @return void
      */
     public function membership();
+
+    /**
+     * Returns database result of current module
+     *
+     * @return array
+     */
+    public function getData(): array;
+
+    /**
+     * Set database result of current module
+     *
+     * @param array $data
+     */
+    public function setData(array $data): void;
 }

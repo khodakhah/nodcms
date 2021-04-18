@@ -2506,26 +2506,16 @@ class GeneralAdmin extends Backend
      */
     private function homepageSortedPackages()
     {
+        $result = [];
         // Get packages from DB
-        $packages = Services::model()->packages()->getAll(null, null, 1, array('package_sort', 'ASC'));
+        $packages = Services::modules()->getAllInstalled();
         // Check packages home method exists.
-        foreach ($packages as $key=>$item){
-            if(file_exists(APPPATH."controllers/{$item['package_name']}.php")){
-                require_once APPPATH."controllers/{$item['package_name']}.php";
+        foreach ($packages as $key=>$item) {
+            if($item->hasHomePreview() && !empty($item->getData())) {
+                $result[$key] = $item->getData();
             }
-            if(file_exists(APPPATH."third_party/{$item['package_name']}/controllers/{$item['package_name']}.php")){
-                require_once APPPATH."third_party/{$item['package_name']}/controllers/{$item['package_name']}.php";
-            }
-            else{
-                unset($packages[$key]);
-                continue;
-            }
-            if ( class_exists($item['package_name'], FALSE) && method_exists($item['package_name'], 'home')){
-                continue;
-            }
-            unset($packages[$key]);
         }
-        return $packages;
+        return $result;
     }
 
     /**

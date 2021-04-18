@@ -21,7 +21,7 @@
 
 namespace NodCMS\Core\Models;
 
-class Packages_model extends Model
+class Packages extends Model
 {
     function init()
     {

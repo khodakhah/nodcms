@@ -28,7 +28,7 @@ use NodCMS\Core\Models\Images;
 use NodCMS\Core\Models\Languages;
 use NodCMS\Core\Models\Menu;
 use NodCMS\Core\Models\PackagesDashboard;
-use NodCMS\Core\Models\Packages_model;
+use NodCMS\Core\Models\Packages;
 use NodCMS\Core\Models\Sessions;
 use NodCMS\Core\Models\Settings;
 use NodCMS\Core\Models\SocialLinks;
@@ -138,16 +138,16 @@ class Models extends BaseService
     }
 
     /**
-     * @return Packages_model
+     * @return Packages
      */
-    public static function packages(bool $getShared = true): Packages_model
+    public static function packages(bool $getShared = true): Packages
     {
 
         if ($getShared)
         {
             return self::getSharedInstance('packages');
         }
-        return new Packages_model();
+        return new Packages();
     }
 
     /**

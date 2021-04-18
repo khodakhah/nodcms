@@ -33,20 +33,32 @@ class Modules
     /**
      * @var I_Bootstrap[]
      */
+    private $installedModules;
     private $activeModules;
 
     public function __construct()
     {
         $this->modulesDirs = Autoload::modulesPaths();
         $this->dbModules = Models::packages()->getAll();
+        $this->installedModules = [];
         $this->activeModules = [];
 
-        $modules = Models::packages()->getAll(['active'=>1]);
+        $modules = Models::packages()->getAll(null, null, 1, ['package_sort', 'ASC']);
         foreach($modules as $item) {
             $class = "\\".$this->getNameSpace($item['package_name'])."\Bootstrap";
             if(!class_exists($class))
                 continue;
-            $this->activeModules[strtolower($item['package_name'])] = new $class();
+
+            $key = strtolower($item['package_name']);
+
+            // Create a class
+            $this->installedModules[$key] = new $class();
+
+            // Set DB data on the class
+            $this->installedModules[$key]->setData($item);
+
+            if($item['active'] == 1)
+                $this->activeModules[$key] = $this->installedModules[$key];
         }
     }
 
@@ -172,6 +184,16 @@ class Modules
         }
 
         return $result;
+    }
+
+    /**
+     * Returns all installed modules on NodCMS
+     *
+     * @return array|I_Bootstrap[]
+     */
+    public function getAllInstalled() : array
+    {
+        return $this->installedModules;
     }
 
     /**

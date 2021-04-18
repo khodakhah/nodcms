@@ -26,6 +26,11 @@ use NodCMS\Core\Types\MenuLink;
 abstract class Bootstrap implements I_Bootstrap
 {
     /**
+     * @var array
+     */
+    private $_data;
+
+    /**
      * @return MenuLink[]
      */
     public function menuList(): array
@@ -47,5 +52,23 @@ abstract class Bootstrap implements I_Bootstrap
     public function membership()
     {
         // Do notting by default
+    }
+
+    /**
+     * @inheritDoc
+     * @return array
+     */
+    public function getData(): array
+    {
+        return $this->_data;
+    }
+
+    /**
+     * @inheritDoc
+     * @param array $data
+     */
+    public function setData(array $data): void
+    {
+        $this->_data = $data;
     }
 }

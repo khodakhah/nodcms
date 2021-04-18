@@ -27,7 +27,7 @@
     </div>
 </div>
 <textarea id="output" class="form-control hidden"></textarea>
-<?php $this->load->view($this->mainTemplate."/homepage_sort_includes"); ?>
+<?php $this->render("homepage_sort_includes"); ?>
 <script>
     $(function () {
         var output = $('#output');

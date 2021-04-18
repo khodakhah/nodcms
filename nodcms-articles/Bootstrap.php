@@ -55,6 +55,15 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
 
     /**
      * @inheritdoc
+     * @return bool
+     */
+    public function hasHomePreview(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritdoc
      * @throws \Exception
      */
     public function backend()
