@@ -23,6 +23,7 @@ namespace NodCMS\Core\Filters;
 
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use Config\Services;
 use NodCMS\Core\Models\Languages;
 
 /**
@@ -65,7 +66,10 @@ class UrlLocale implements \CodeIgniter\Filters\FilterInterface
         }
 
         // Set language from database
-        \Config\Services::language()->set($language);
+        Services::language()->set($language);
+
+        // Load settings from database
+        Services::settings()->load($language['language_id']);
 
         return true;
     }

@@ -52,7 +52,7 @@ class Settings
         if($languageId == 0) {
             $languageId = Services::language()->get()['language_id'];
         }
-        $this->data = array_merge($this->data, Services::model()->settings()->getSettings($languageId));
+        $this->data = array_merge($this->data, Services::model()->settings()->getSettings(), Services::model()->settings()->getSettings($languageId));
     }
 
     /**

@@ -28,7 +28,7 @@ class ViewFrontend extends View
      * @inheritdoc
      * @var string
      */
-    public $namespacePieces = 'NodCMS\Layout/frontend';
+    public $namespacePieces = 'NodCMS\Layout';
 
     /**
      * @inheritdoc
