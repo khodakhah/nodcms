@@ -48,10 +48,22 @@ class Settings
      */
     public function load(int $languageId = 0)
     {
+        // Only one time merge
+        if($this->loaded)
+            return;
+
+        // Set the merged flag
         $this->loaded = true;
+
+        // Merge all default settings of modules
+        $this->data = array_merge($this->data, Services::modules()->getModulesDefaultSettings());
+
+        // Set the language id automatically
         if($languageId == 0) {
             $languageId = Services::language()->get()['language_id'];
         }
+
+        // Merge not translated and translated settings from database
         $this->data = array_merge($this->data, Services::model()->settings()->getSettings(), Services::model()->settings()->getSettings($languageId));
     }
 
@@ -63,15 +75,5 @@ class Settings
     public function get(): array
     {
         return $this->data;
-    }
-
-    /**
-     * Check if settings data has been loaded from database
-     *
-     * @return bool
-     */
-    public function isLoaded(): bool
-    {
-        return $this->loaded;
     }
 }

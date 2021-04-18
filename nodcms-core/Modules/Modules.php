@@ -165,25 +165,46 @@ class Modules
     }
 
     /**
-     * Returns autoMailMessages settings of all modules as a single array
+     * Return a entity of the config settings class in all modules
      *
+     * @param string $entity
      * @return array
      */
-    public function getAllAutoEmailMessages() : array
+    private function _getSettings(string $entity): array
     {
         $result = [];
         foreach($this->modulesDirs as $name=>$item) {
             $className = "NodCMS\\".ucfirst($name)."\Config\Settings";
             if(class_exists($className)) {
                 $class = new $className();
-                if(!property_exists($class, 'autoEmailMessages'))
+                if(!property_exists($class, $entity))
                     continue;
 
-                $result = array_merge($result, $class->autoEmailMessages);
+                $result = array_merge($result, $class->$entity);
             }
         }
 
         return $result;
+    }
+
+    /**
+     * Returns autoMailMessages settings of all modules as a single array
+     *
+     * @return array
+     */
+    public function getAllAutoEmailMessages() : array
+    {
+        return $this->_getSettings("autoEmailMessages");
+    }
+
+    /**
+     * Return default settings af all modules
+     *
+     * @return array
+     */
+    public function getModulesDefaultSettings() : array
+    {
+        return $this->_getSettings("settings_default");
     }
 
     /**
