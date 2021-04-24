@@ -15,7 +15,7 @@ use Config\Services;
 use NodCMS\About\Config\ViewBackend;
 use NodCMS\Core\Libraries\Form;
 
-class About_admin extends Backend
+class AboutAdmin extends Backend
 {
     function __construct()
     {
