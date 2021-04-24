@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-md-8">
                     <div class="margin-40">
-                        <img alt="<?php echo $item['name']; ?>" title="<?php echo $item['name']; ?>" class="img-fluid" src="<?php echo base_url().$item['profile_image']; ?>">
+                        <img alt="<?php echo $item['name']; ?>" title="<?php echo $item['name']; ?>" class="img-fluid" src="<?php echo base_url($item['profile_image']); ?>">
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -12,7 +12,7 @@
                     <p><?php echo $item['name_title']; ?></p>
                     <div class="font-lg font-grey-mint"><?php echo $item['preview_description']?></div>
                     <?php if($item['profile_uri']!=""){ ?>
-                        <a href="<?php echo base_url().$this->language['code']."/about-$item[profile_uri]"; ?>">
+                        <a href="<?php echo base_url("{$this->lang}/about-$item[profile_uri]"); ?>">
                             <?php echo _l("Learn more", $this); ?>
                         </a>
                     <?php }?>

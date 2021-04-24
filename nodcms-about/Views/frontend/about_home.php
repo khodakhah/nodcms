@@ -6,14 +6,14 @@
                     <div class="col-md-6">
                         <div class="card h-100">
                             <div class="row no-gutters">
-                                <div class="col-4"><img alt="<?php echo $item['name']; ?>" title="<?php echo $item['name']; ?>" class="card-img" src="<?php echo base_url().$item['profile_image']; ?>"></div>
+                                <div class="col-4"><img alt="<?php echo $item['name']; ?>" title="<?php echo $item['name']; ?>" class="card-img" src="<?php echo base_url($item['profile_image']); ?>"></div>
                                 <div class="col-8">
                                     <div class="card-body">
                                         <h2 class="card-title"><?php echo $item['name']; ?></h2>
                                         <p class="card-text"><?php echo $item['name_title']; ?></p>
                                         <div class="card-text font-grey-mint"><?php echo $item['preview_description']?></div>
                                         <?php if($item['profile_uri']!=""){ ?>
-                                            <a href="<?php echo base_url().$this->language['code']."/about-$item[profile_uri]"; ?>">
+                                            <a href="<?php echo base_url("{$this->lang}/about-$item[profile_uri]"); ?>">
                                                 <?php echo _l("Learn more", $this); ?>
                                             </a>
                                         <?php }?>

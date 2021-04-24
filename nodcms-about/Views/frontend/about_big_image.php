@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
-                <img alt="<?php echo $data['name']; ?>" title="<?php echo $data['name']; ?>" class="img-fluid" src="<?php echo base_url().$data['profile_image']; ?>">
+                <img alt="<?php echo $data['name']; ?>" title="<?php echo $data['name']; ?>" class="img-fluid" src="<?php echo base_url($data['profile_image']); ?>">
             </div>
             <div class="col-md-4">
                 <h1 class="margin-top-40"><?php echo $data['name']; ?></h1>

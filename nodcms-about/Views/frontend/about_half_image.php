@@ -1,7 +1,7 @@
 <div class="bg-grey-steel">
     <div class="row no-gutters">
         <div class="col-md-6 order-md-2">
-            <img alt="<?php echo $data['name']; ?>" title="<?php echo $data['name']; ?>" class="img-fluid" src="<?php echo base_url().$data['profile_image']; ?>">
+            <img alt="<?php echo $data['name']; ?>" title="<?php echo $data['name']; ?>" class="img-fluid" src="<?php echo base_url($data['profile_image']); ?>">
         </div>
         <div class="col-md-6 order-md-1">
             <div class="padding-40">

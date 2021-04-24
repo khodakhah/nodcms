@@ -74,7 +74,7 @@ class AboutAdmin extends Backend
                 'rules' => 'validURI|is_unique[about_profiles.profile_uri'.(isset($current_data)?",profile_id,$current_data[profile_id]":"").']',
                 'type' => "text",
                 'default'=>isset($current_data)?$current_data["profile_uri"]:'',
-                'input_prefix'=>base_url().$this->language['code']."/about-",
+                'input_prefix'=>base_url($this->language['code']."/about-"),
                 'help'=>_l("The unique text that will be in URI to open this profile.", $this),
             ),
             array(
