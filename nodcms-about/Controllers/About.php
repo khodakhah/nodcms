@@ -47,18 +47,20 @@ class About extends Frontend
 
     /**
      * Load preview of Aboutme profiles
+     * @return string
      */
     function index()
     {
         $data_list = Models::about()->getAllTrans();
         $this->data['data_list'] = $data_list;
-        echo Services::layout()->setData($this->data)->render("about_home");
+        return Services::layout()->setData($this->data)->render("about_home");
     }
 
     /**
      * Display an AboutMe profile
      *
      * @param string $uri
+     * @return string
      */
     function profile(string $uri)
     {
@@ -68,6 +70,6 @@ class About extends Frontend
         $this->data['title'] = $data['name'];
         $this->data['description'] = $data['description'];
         $this->data['keyword'] = $data['keywords'];
-        $this->viewRender("about_$data[profile_theme]");
+        return $this->viewRender("about_$data[profile_theme]");
     }
 }
