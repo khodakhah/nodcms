@@ -316,11 +316,11 @@ class Model extends CoreModel
                         $where .= "LIKE '$item'";
                     }
                     $where = $where!=""?"($where) AND":"";
-                    $builder->where($this->primary_key." IN (SELECT table_id FROM translations WHERE $where field_name = '$parameters[1]' AND table_name = '".$this->table_name."' AND language_id = ".$this->language['language_id'].")");
+                    $builder->where($this->primary_key." IN (SELECT table_id FROM translations WHERE $where field_name = '$parameters[1]' AND table_name = '".$this->table_name."' AND language_id = ".Services::language()->get()['language_id'].")");
                     $builder->group_end();
                     continue;
                 }
-                $builder->where($this->primary_key." IN (SELECT table_id FROM translations WHERE field_name = '$key' AND translated_text = '$value' AND table_name = '".$this->table_name."' AND language_id = ".$this->language['language_id'].")");
+                $builder->where($this->primary_key." IN (SELECT table_id FROM translations WHERE field_name = '$key' AND translated_text = '$value' AND table_name = '".$this->table_name."' AND language_id = ".Services::language()->get()['language_id'].")");
             }
             unset($conditions['trans_search']);
         }
@@ -356,8 +356,7 @@ class Model extends CoreModel
             return $first_result;
 
         if($language_id==null)
-            // TODO: Solve this
-            $language_id = $this->language['language_id'];
+            $language_id = Services::language()->get()['language_id'];
 
         $_translations = new Translations();
         $translations = $_translations->getAllOfATable($this->table_name, $first_result[$this->primary_key], $this->translation_fields, $language_id);
@@ -387,8 +386,7 @@ class Model extends CoreModel
         $default_trans = array_fill_keys($this->translation_fields,"");
 
         if($language_id==null)
-            // TODO: Solve this
-            $language_id = $this->language['language_id'];
+            $language_id = Services::language()->get()['language_id'];
 
         foreach ($first_result as &$item){
             $_translations = new Translations();
@@ -412,8 +410,7 @@ class Model extends CoreModel
     function getTranslation(int $id, string $field, int $language_id = null): array
     {
         if($language_id==null)
-            // TODO: Solve this
-            $language_id = $this->language['language_id'];
+            $language_id = Services::language()->get()['language_id'];
 
         $_translations = new Translations();
         return $_translations->getAllOfATable($this->table_name, $id, array($field), $language_id);
