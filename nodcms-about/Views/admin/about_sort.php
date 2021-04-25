@@ -19,6 +19,7 @@
                                 <a href="javascript: $(this).removeItem('<?php echo ABOUT_ADMIN_URL; ?>profileRemove/<?php echo $item["profile_id"]; ?>', <?=$item["profile_id"]?>);" class="btn btn-xs btn-link font-red pull-right"><i class="fa fa-trash-o"></i> <?=_l('Delete',$this)?></a>
                                 <a href="<?php echo ABOUT_ADMIN_URL; ?>profileForm/<?=$item["profile_id"]?>" class="btn btn-xs btn-link font-blue pull-right load-form"><i class="fa fa-pencil"></i> <?=_l('Edit',$this)?></a>
                                 <button type="button" data-href="<?php echo ABOUT_ADMIN_URL; ?>profileVisibility/<?=$item["profile_id"]?>" data-id="<?=$item["profile_id"]?>" class="btn btn-xs btn-link font-grey-gallery pull-right visibility" title="<?=_l('Visibility',$this)?>"><i class="fa <?php echo (isset($item['public'])&&$item['public']==1)?"fa-eye":"fa-eye-slash"; ?>"></i></button>
+                                <a target="_blank" href="<?php echo base_url("{$this->language['code']}/about-{$item["profile_uri"]}"); ?>" class="btn btn-xs btn-link font-grey-gallery pull-right" title="<?=_l('Display',$this)?>"><i class="fa fa-link"></i></a>
                             </div>
                         </li>
                     <?php } ?>
