@@ -388,13 +388,13 @@ class Model extends CoreModel
         if($language_id==null)
             $language_id = Services::language()->get()['language_id'];
 
-        foreach ($first_result as &$item){
+        foreach ($first_result as $key=>$item){
             $_translations = new Translations();
-            $translations = $_translations->getAllOfATable($this->table_name, $first_result[$this->primary_key], $this->translation_fields, $language_id);
+            $translations = $_translations->getAllOfATable($this->table_name, $item[$this->primary_key], $this->translation_fields, $language_id);
 
             $second_result = array_combine(array_column($translations, 'field_name'),array_column($translations,'translated_text'));
             $second_result = array_merge($default_trans, $second_result);
-            $item = array_merge($item, $second_result);
+            $first_result[$key] = array_merge($item, $second_result);
         }
         return $first_result;
     }
