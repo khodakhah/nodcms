@@ -22,6 +22,7 @@ namespace NodCMS\About;
 
 use Config\Services;
 use NodCMS\About\Config\Models;
+use NodCMS\About\Controllers\About;
 use NodCMS\Core\Types\MenuLink;
 
 class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
@@ -69,6 +70,16 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
     public function hasHomePreview(): bool
     {
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @return string
+     */
+    public function getHomePreview(): string
+    {
+        return About::home();
     }
 
     /**

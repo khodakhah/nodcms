@@ -34,14 +34,14 @@ class About extends Frontend
         Services::layout()->setConfig(new ViewFrontend());
     }
 
-    static function home($CI){
+    static function home() {
         $result = "";
-        $data_list = $CI->About_model->getAllTrans(array('profile_theme<>'=>"card"));
+        $data_list = Models::about()->getAllTrans(array('profile_theme<>'=>"card"));
         foreach($data_list as $item){
-            $result .= $CI->load->view($CI->mainTemplate."/about_item_$item[profile_theme]", array('item'=>$item), true);
+            $result .= Services::layout(new ViewFrontend(), false)->setData(array('item'=>$item))->render("about_item_$item[profile_theme]");
         }
-        $CI->data['data_list'] = $CI->About_model->getAllTrans(array('profile_theme'=>"card"));
-        $result .= $CI->load->view($CI->mainTemplate."/about_home", $CI->data, true);
+        $data = ['data_list' => Models::about()->getAllTrans(array('profile_theme'=>"card"))];
+        $result .= Services::layout(new ViewFrontend(), false)->setData($data)->render("about_home");
         return $result;
     }
 
