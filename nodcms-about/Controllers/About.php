@@ -28,19 +28,28 @@ use NodCMS\Core\Controllers\Frontend;
 
 class About extends Frontend
 {
+    /**
+     * About constructor.
+     */
     public function __construct()
     {
         parent::__construct();
         Services::layout()->setConfig(new ViewFrontend());
     }
 
-    static function home() {
+    /**
+     * Display a preview content of the module in the public homepage
+     *
+     * @return string
+     */
+    static function home(): string
+    {
         $result = "";
-        $data_list = Models::about()->getAllTrans(array('profile_theme<>'=>"card"));
+        $data_list = Models::about()->getAllTrans(['profile_theme<>'=>"card"], null, 1, ["order", "ASC"]);
         foreach($data_list as $item){
             $result .= Services::layout(new ViewFrontend(), false)->setData(array('item'=>$item))->render("about_item_$item[profile_theme]");
         }
-        $data = ['data_list' => Models::about()->getAllTrans(array('profile_theme'=>"card"))];
+        $data = ['data_list' => Models::about()->getAllTrans(['profile_theme'=>"card"], null, 1, ["order", "ASC"])];
         $result .= Services::layout(new ViewFrontend(), false)->setData($data)->render("about_home");
         return $result;
     }
