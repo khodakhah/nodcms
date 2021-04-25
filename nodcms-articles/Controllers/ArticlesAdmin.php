@@ -17,19 +17,15 @@ class ArticlesAdmin extends Backend {
 	function __construct()
     {
         parent::__construct();
-        Services::layout()->setConfig(new ViewBackend());
     }
 
     /**
      * Dashboard page
      */
-    function dashboard()
+    public static function dashboard(): string
     {
-        $this->data['data_count'] = Models::articles()->getCount();
-        return json_encode(array(
-            'status'=>"success",
-            'content'=>$this->load->view($this->mainTemplate."/article_dashboard", $this->data, true)
-        ));
+        $data = ['data_count'=> Models::articles()->getCount()];
+        return Services::layout(new ViewBackend(), false)->setData($data)->render("article_dashboard");
     }
 
     /**
@@ -69,16 +65,16 @@ class ArticlesAdmin extends Backend {
     /**
      * Article edit/add form
      *
-     * @param string $id
+     * @param int $id
      */
-    function articleForm($id=null)
+    function articleForm(int $id=0)
     {
         $this->data['title'] = _l("Article",$this);
         $back_url = ARTICLES_ADMIN_URL."article";
         $self_url = ARTICLES_ADMIN_URL."articleForm";
-        if($id!=null){
+        if($id!=0){
             $current_data = Models::articles()->getOne($id);
-            if($current_data==null || count($current_data)==0){
+            if(empty($current_data)){
                 return $this->errorMessage("The article couldn't find.",$back_url);
             }
             $self_url.="/$id";
@@ -91,7 +87,7 @@ class ArticlesAdmin extends Backend {
             array(
                 'field' => 'article_uri',
                 'label' => _l("Document URI", $this),
-                'rules' => 'required|callback_validURI|callback_isUnique[article,article_uri'.(isset($current_data)?",article_id,$current_data[article_id]":"").']',
+                'rules' => 'required|validURI|is_unique[article.article_uri'.(isset($current_data)?",article_id,$current_data[article_id]":"").']',
                 'type' => "text",
                 'default'=>isset($current_data)?$current_data["article_uri"]:'',
                 'input_prefix'=>base_url().$this->language['code']."/article/",
@@ -181,7 +177,7 @@ class ArticlesAdmin extends Backend {
                 unset($post_data['translate']);
             }
 
-            if($id!=null){
+            if($id!=0){
                 Models::articles()->edit($id, $post_data);
                 if(isset($translates)){
                     Models::articles()->updateTranslations($id,$translates,$languages);
@@ -256,7 +252,7 @@ class ArticlesAdmin extends Backend {
         if($data == null || count($data)==0){
             return $this->errorMessage("Couldn't find the article.", $back_url);
         }
-        $public = $this->input->post('data');
+        $public = Services::request()->getPost('data' );
         if($public == 1){
             $public = 0;
         }elseif($public == 0){
@@ -282,7 +278,7 @@ class ArticlesAdmin extends Backend {
         $i = 0;
         $index = 0;
         $parent = array(0);
-        $children = array($this->input->post('data',TRUE));
+        $children = array(Services::request()->getPost('data'));
         $children[$index] = json_decode($children[$index]);
         do{
             $data = $children[$index];
@@ -329,6 +325,6 @@ class ArticlesAdmin extends Backend {
             'sub_items'=>join("\n", $sub_item),
         );
 
-        return Services::layout()->setData($this->data)->render('list_sort_item');
+        return Services::layout()->setData($data)->render('list_sort_item');
     }
 }

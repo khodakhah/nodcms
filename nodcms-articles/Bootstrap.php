@@ -22,6 +22,7 @@ namespace NodCMS\Articles;
 
 use Config\Services;
 use NodCMS\Articles\Config\Models;
+use NodCMS\Articles\Controllers\ArticlesAdmin;
 use NodCMS\Core\Types\MenuLink;
 
 class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
@@ -54,12 +55,21 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
     }
 
     /**
+     * @inheritDoc
+     * @return string
+     */
+    public function getDashboard(): string
+    {
+        return ArticlesAdmin::dashboard();
+    }
+
+    /**
      * @inheritdoc
      * @return bool
      */
     public function hasHomePreview(): bool
     {
-        return true;
+        return false;
     }
 
     /**
