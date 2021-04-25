@@ -270,7 +270,7 @@ class Modules
      */
     public function executeBackend()
     {
-        foreach($this->activeModules as $module) {
+        foreach($this->installedModules as $module) {
             if(method_exists($module, 'backend'))
                 $module->backend();
         }
