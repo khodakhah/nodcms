@@ -345,9 +345,9 @@ class Model extends CoreModel
      * @param $id
      * @param null $conditions
      * @param null $language_id
-     * @return array
+     * @return null|array
      */
-    function getOneTrans($id, $conditions = null, $language_id = null): array
+    function getOneTrans($id, $conditions = null, $language_id = null): ?array
     {
         $default_trans = array_fill_keys($this->translation_fields,"");
         $first_result = $this->getOne($id, $conditions);
