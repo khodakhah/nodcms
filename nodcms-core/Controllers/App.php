@@ -95,6 +95,6 @@ abstract class App extends Base
         $this->data["heading"] = $heading!=null?$heading:_l("Page not found!", $this);
         $this->data["message"] = $message!=null?$message:_l("Your requested page not found.", $this);
         $this->data["buttons"] = $buttons;
-        return $this->viewCommon("common/show_error", $this->data);
+        return $this->viewRenderString($this->viewCommon("common/show_error", $this->data));
     }
 }
