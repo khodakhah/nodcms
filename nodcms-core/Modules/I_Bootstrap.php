@@ -56,6 +56,13 @@ interface I_Bootstrap
     public function hasHomePreview(): bool;
 
     /**
+     * Return the home preview content
+     *
+     * @return string
+     */
+    public function getHomePreview(): string;
+
+    /**
      * A link list that will be able to add as header and footer menu
      *
      * @return MenuLink[]

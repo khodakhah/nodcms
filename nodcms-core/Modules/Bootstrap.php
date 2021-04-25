@@ -31,6 +31,16 @@ abstract class Bootstrap implements I_Bootstrap
     private $_data;
 
     /**
+     * Set empty home preview content as default
+     *
+     * @return string
+     */
+    public function getHomePreview(): string
+    {
+        return "";
+    }
+
+    /**
      * @return MenuLink[]
      */
     public function menuList(): array

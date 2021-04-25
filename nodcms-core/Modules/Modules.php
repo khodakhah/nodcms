@@ -34,6 +34,10 @@ class Modules
      * @var I_Bootstrap[]
      */
     private $installedModules;
+
+    /**
+     * @var I_Bootstrap[]
+     */
     private $activeModules;
 
     public function __construct()
@@ -274,5 +278,20 @@ class Modules
             if(method_exists($module, 'backend'))
                 $module->backend();
         }
+    }
+
+    /**
+     * Returns home preview content of all active modules.
+     *
+     * @return array
+     */
+    public function getHomePreviews(): array
+    {
+        $result = [];
+        foreach($this->activeModules as $key=>$module) {
+            if($module->hasHomePreview())
+                $result[$key] = $module->getHomePreview();
+        }
+        return $result;
     }
 }

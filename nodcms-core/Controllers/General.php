@@ -35,50 +35,26 @@ class General extends Frontend
     {
         // Redirect to a URL
         if($this->settings['homepage_type'] == "redirect"){
-            redirect($this->settings['homepage_redirect']);
-            return;
+            return redirect($this->settings['homepage_redirect']);
         }
 
         // Open and return a file content
         if($this->settings['homepage_type'] == "display_file"){
             $myfile = fopen(SELF_PATH.$this->settings['homepage_display_file'], "r") or die("Unable to open file!");
-            echo fread($myfile,filesize($this->settings['homepage_display_file']));
+            $result = fread($myfile,filesize($this->settings['homepage_display_file']));
             fclose($myfile);
-            return;
+            return $result;
         }
 
         // Display/curl a web page
         if($this->settings['homepage_type'] == "display_page"){
-            echo $this->curlWebPage($this->settings['homepage_display_page']);
-            return;
+            return $this->curlWebPage($this->settings['homepage_display_page']);
         }
 
-        $packages_home_contents = array();
-        $_packages = $this->model->packages()->getAll(array('active'=>1),null,1,array('package_sort','ASC'));
-        if($_packages!=null && count($_packages)>0){
-            $packages = array_column($_packages, "package_name");
-        }
-        else{
-            $packages = array();
-        }
-
-        $packagePaths = Autoload::modulesPaths();
-
-        foreach ($packages as $item){
-            if(!key_exists($item, $packagePaths)) {
-                continue;
-            }
-
-            // Load controller in system
-            if ( ! class_exists($item, FALSE) || !method_exists($item, 'home')) {
-                continue;
-            }
-            $packages_home_contents[$item] = $item::home($this);
-        }
-
-        $this->data['packages'] = $packages_home_contents;
+        $this->data['packages'] = Services::modules()->getHomePreviews();
         // Custom home view file
         if($this->settings['homepage_type'] == "custom_view" && file_exists(SELF_PATH . "custom_views/{$this->settings['custom_view_path_home']}.php")){
+            // TODO: Solve this!
             $index_content = $this->load->externalView(SELF_PATH, "custom_views/".$this->settings['custom_view_path_home'], $this->data, true);
         }
         // * System homepage default
@@ -101,11 +77,11 @@ class General extends Frontend
         }
         $this->data['title_bg_blur'] = $this->settings['home_page_title_bg_blur'];
         $this->data['title'] = $this->settings['company'];
-        $this->data['sub_title'] = isset($this->settings["site_title"])?$this->settings["site_title"]:$this->settings['company'];
-        $this->data['keyword'] = isset($this->settings["site_keyword"])?$this->settings["site_keyword"]:"";
-        $this->data['description'] = isset($this->settings["site_description"])?$this->settings["site_description"]:"";
-        $this->data['author'] = isset($this->settings["site_author"])?$this->settings["site_author"]:"";
-        echo $this->viewRenderString($index_content);
+        $this->data['sub_title'] = $this->settings["site_title"];
+        $this->data['keyword'] = $this->settings["site_keyword"];
+        $this->data['description'] = $this->settings["site_description"];
+        $this->data['author'] = $this->settings["site_author"];
+        return $this->viewRenderString($index_content);
     }
 
     /**
