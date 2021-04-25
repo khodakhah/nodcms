@@ -37,11 +37,6 @@ class View extends \CodeIgniter\View\View
     public $request;
 
     /**
-     * @var self
-     */
-    private $_common_view;
-
-    /**
      * All add-ons css files in header tag
      *
      * @var array
@@ -203,18 +198,6 @@ class View extends \CodeIgniter\View\View
 
         if(!in_array($path . $file_type, $variable))
             array_push($variable, $path . $file_type);
-    }
-
-    /**
-     * The common view uses layout view files
-     *
-     * @return self
-     */
-    public function common()
-    {
-        if(empty($this->_common_view))
-            $this->_common_view = new self();
-        return $this->_common_view;
     }
 
     /**

@@ -27,6 +27,34 @@ use Config\Services;
 class Layout extends View
 {
     /**
+     * Contains the self object but with default settings
+     *
+     * @var self
+     */
+    private $_common_view;
+
+    /**
+     * Contains the loaded site settings
+     *
+     * @var array
+     */
+    public $settings;
+
+    /**
+     * Contains the current loaded language
+     *
+     * @var array
+     */
+    public $language;
+
+    /**
+     * Contains teh current loaded language two char code.
+     *
+     * @var string
+     */
+    public $lang;
+
+    /**
      * Attach form assets on the layout
      */
     public function fetchAllCSS()
@@ -54,6 +82,35 @@ class Layout extends View
     }
 
     /**
+     * The common view uses layout view files
+     *
+     * @return self
+     */
+    public function common()
+    {
+        if(empty($this->_common_view)) {
+            $this->_common_view = new self();
+        }
+        return $this->_common_view;
+    }
+
+    /**
+     * Add most common variable before any render
+     *
+     * @param string $view
+     * @param array|null $options
+     * @param bool|null $saveData
+     * @return string
+     */
+    public function render(string $view, array $options = null, bool $saveData = null): string
+    {
+        $this->language = Services::layout()->language;
+        $this->lang = Services::layout()->lang;
+        $this->settings = Services::layout()->settings;
+        return parent::render($view, $options, $saveData);
+    }
+
+    /**
      * Render the frame
      *
      * @param array|null $options
@@ -77,6 +134,11 @@ class Layout extends View
         return Services::sidebar()->render($view_file);
     }
 
+    /**
+     * Check if layout has some links to display in sidebar
+     *
+     * @return bool
+     */
     public function hasSidebar(): bool
     {
         return Services::sidebar()->hasLinks();
