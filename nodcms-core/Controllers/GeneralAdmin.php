@@ -58,21 +58,9 @@ class GeneralAdmin extends Backend
             }
             return $this->successMessage("The packages has been successfully sorted.", ADMIN_URL);
         }
-        $this->modules->resort();
-        $packages = Services::model()->packagesDashboard()->getAll(null, null, 1, array('package_sort', 'ASC'));
-        $this->data['dashboards'] = array();
-        foreach ($packages as $item){
-            if(Services::model()->packages()->getCount(array('package_name'=>$item['package_name'])) == 0)
-                continue;
-            $name = strtolower($item['package_name']);
-            $curl =  $this->curlJSON(base_url("admin-$name/dashboard"), null, 0, SSL_PROTOCOL, true);
-            if($curl['status']!="success" || $curl['content'] == ""){
-                continue;
-            }
-            $item['content'] = $curl['content'];
-            $this->data['dashboards'][] = $item;
-        }
-
+        // Update package list
+        Services::modules()->resort();
+        $this->data['dashboards'] = Services::modules()->getDashboards();
 
         $emailNotification = Services::emailNotification();
         $missed = $emailNotification->getEmptyMessages();

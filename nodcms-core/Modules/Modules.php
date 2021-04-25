@@ -243,27 +243,29 @@ class Modules
     }
 
     /**
-     * Update package in database
+     * Update package in database from the installed package list
      */
     public function resort()
     {
-        $model = Services::model();
+        $dashboard_modules = [];
+        $modules = Models::packagesDashboard()->getAll(null, null, 1, ['package_sort', 'ASC']);
         $max = 0;
         // Remove not exists packages
-        foreach ($this->dbModules as $item){
-            if(!key_exists($item['package_name'], $this->modulesDirs)){
-                $model->packagesDashboard()->remove($item['package_id']);
+        foreach ($modules as $item){
+            if(!key_exists($item['package_name'], $this->installedModules)){
+                Models::packagesDashboard()->remove($item['package_id']);
                 continue;
             }
             if($item['package_sort']>$max){
                 $max = $item['package_sort'];
             }
+            $dashboard_modules[] = $item['package_name'];
         }
+
         // Add the packages that not exists in database
-        foreach($this->modulesDirs as $item){
-            $count = $model->packagesDashboard()->getCount(array('package_name'=>$item));
-            if($count == 0){
-                $model->packagesDashboard()->add(array('package_name'=>$item, 'package_sort'=>$max));
+        foreach($this->installedModules as $key=>$item){
+            if(!in_array($key, $dashboard_modules)){
+                Models::packagesDashboard()->add(array('package_name'=>$key, 'package_sort'=>$max));
                 $max++;
             }
         }
@@ -278,6 +280,36 @@ class Modules
             if(method_exists($module, 'backend'))
                 $module->backend();
         }
+    }
+
+    /**
+     * Returns dashboard content of all active modules.
+     *
+     * @return array
+     */
+    public function getDashboards(): array
+    {
+        $modules = Models::packagesDashboard()->getAll(null, null, 1, ['package_sort', 'ASC']);
+        $result = [];
+        foreach($modules as $item) {
+            $class = "\\".$this->getNameSpace($item['package_name'])."\Bootstrap";
+            if(!class_exists($class))
+                continue;
+
+            $key = strtolower($item['package_name']);
+
+            // Create a class
+            $module = new $class();
+
+            if($module->hasDashboard())
+                $result[$key] = [
+                    'package_id' => $item['package_id'],
+                    'package_name' => $item['package_name'],
+                    'active' => $item['active'],
+                    'content' => $module->getDashboard(),
+                ];
+        }
+        return $result;
     }
 
     /**

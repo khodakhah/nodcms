@@ -49,6 +49,13 @@ interface I_Bootstrap
     public function hasDashboard(): bool;
 
     /**
+     * Return the admin dashboard content
+     *
+     * @return string
+     */
+    public function getDashboard(): string;
+
+    /**
      * True means, this module has something to display in home
      *
      * @return bool
