@@ -318,8 +318,9 @@ class ArticlesAdmin extends Backend {
             'visibility_url'=>ARTICLES_ADMIN_URL."articleVisibility/$item[article_id]",
             'btn_urls'=>array(
                 array(
-                    'url'=>base_url().$this->language['code']."/article/$item[article_uri]",
-                    'label'=>_l("Display", $this)
+                    'target'=>"_blank",
+                    'url'=>base_url($this->language['code']."/article/$item[article_uri]"),
+                    'label'=>"<i class='fa fa-link'></i>"
                 ),
             ),
             'sub_items'=>join("\n", $sub_item),
