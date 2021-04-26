@@ -1,5 +1,5 @@
 <div class="container">
-    <?php $this->load->view($this->mainTemplate."/".$content_type); ?>
+    <?php $this->render($content_type); ?>
 </div>
 <div class="margin-top-10 margin-bottom-10">
     <div class="container">

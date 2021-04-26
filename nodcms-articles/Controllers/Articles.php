@@ -59,18 +59,19 @@ class Articles extends Frontend
     /**
      * Article page
      *
-     * @param $id
+     * @param int $id
      */
-    public function article(int $id)
+    public function article(int $id = 0, string $uri = "")
     {
-        if(!is_numeric($id)){
-            $article_url = base_url("article/@article_uri@");
-            $data = Models::articles()->getOneTrans(null, array('article_uri'=>$id,'public'=>1));
-        }else{
-            $article_url = base_url("pa-@article_id@");
+        if(!empty($uri)){
+            $article_url = base_url("{$this->lang}/article/@article_uri@");
+            $data = Models::articles()->getOneTrans(null, array('article_uri'=>$uri,'public'=>1));
+        }
+        else{
+            $article_url = base_url("{$this->lang}/pa-@article_id@");
             $data = Models::articles()->getOneTrans($id, array('public'=>1));
         }
-        if($data== null || count($data)==0){
+        if(empty($data)){
             return $this->showError();
         }
 
@@ -78,14 +79,14 @@ class Articles extends Frontend
             $other_articles_not_in = array($data['article_id']);
             $next_article = Models::articles()->getOne(null, array('public'=>1, 'parent'=>$data['parent'], 'order'=>$data['order']+1));
             if($next_article!=null && count($next_article)!=0){
-                $next_article['article_url'] = base_url("article/$next_article[article_uri]");
+                $next_article['article_url'] = base_url("{$this->lang}/article/$next_article[article_uri]");
                 $next_article['link_title'] = str_replace("{data}", $next_article['name'], _l("Next: {data}", $this));
                 $this->data['next_article'] = $next_article;
                 $other_articles_not_in[] = $next_article['article_id'];
             }
             $prev_article = Models::articles()->getOne(null, array('public'=>1, 'parent'=>$data['parent'], 'order'=>$data['order']-1));
             if($prev_article!=null && count($prev_article)!=0){
-                $prev_article['article_url'] = base_url("article/$prev_article[article_uri]");
+                $prev_article['article_url'] = base_url("{$this->lang}/article/$prev_article[article_uri]");
                 $prev_article['link_title'] = str_replace("{data}", $prev_article['name'], _l("Prev: {data}", $this));
                 $this->data['prev_article'] = $prev_article;
                 $other_articles_not_in[] = $prev_article['article_id'];
@@ -93,12 +94,12 @@ class Articles extends Frontend
             $conditions = array('public'=>1, 'parent'=>$data['parent'],'article_id NOT IN'=>$other_articles_not_in);
             $this->data['relevant_articles'] = Models::articles()->getAll($conditions,null,1,array("order", "ASC"));
             foreach($this->data['relevant_articles'] as $key=>$item){
-                $this->data['relevant_articles'][$key]['article_url'] = base_url("article/$item[article_uri]");
+                $this->data['relevant_articles'][$key]['article_url'] = base_url("{$this->lang}/article/$item[article_uri]");
             }
 
             $parent_data = Models::articles()->getOneTrans($data['parent'], array('public'=>1));
             $this->data['breadcrumb'] = array(
-                array('title'=>$parent_data['name'], 'url' => base_url("article/{$parent_data['article_uri']}")),
+                array('title'=>$parent_data['name'], 'url' => base_url("{$this->lang}/article/{$parent_data['article_uri']}")),
                 array('title'=>$data['name']),
             );
         }
@@ -114,11 +115,11 @@ class Articles extends Frontend
         );
         $other_articles = Models::articles()->getAll($conditions,5,1,array("order", "ASC"));
         foreach($other_articles as $key=>$item){
-            $other_articles[$key]['article_url'] = base_url("article/$item[article_uri]");
+            $other_articles[$key]['article_url'] = base_url("{$this->lang}/article/$item[article_uri]");
         }
         $this->data['other_articles'] = $other_articles;
         $this->data['data'] = $data;
-        $sub_articles = Models::articles()->getAllTrans(array('parent'=>$id));
+        $sub_articles = Models::articles()->getAllTrans(array('parent'=>$data['article_id']));
         foreach($sub_articles as &$item){
             $item['article_url'] = str_replace(array("@article_id@","@article_uri@"),array($item['article_id'],$item['article_uri']), $article_url);
         }
@@ -185,9 +186,9 @@ class Articles extends Frontend
      */
     function rss()
     {
-        $this->data["feeds_url"] = base_url("a-feeds");
-        $this->data["pre_link"] = base_url("pa-");
-        $this->data["page_url"] = base_url("a-map");
+        $this->data["feeds_url"] = base_url("{$this->lang}/a-feeds");
+        $this->data["pre_link"] = base_url("{$this->lang}/pa-");
+        $this->data["page_url"] = base_url("{$this->lang}/a-map");
         $this->data['sub_title'] = $this->settings["site_title"];
         $this->data['description'] = $this->settings["options"]['site_description'];
         $this->data["items"] =  Models::articles()->getArticleFeeds();

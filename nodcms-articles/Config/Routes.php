@@ -23,6 +23,6 @@ if(!isset($routes)) throw new \Exception('$routes not defined.');
 
 $routes->match(['post', 'get'], 'admin-articles/(.+)', "\NodCMS\Articles\Controllers\ArticlesAdmin::$1", ['filter'=>"identityVerification"]);
 
-$routes->get('([a-z]{2})/article/([A-Za-z0-9\-\_]+)', '\NodCMS\Articles\Controllers\Articles::article/$1/$2', ['filter'=>"urlLocale"]);
-$routes->get('([a-z][a-z])/pa-([0-9]+)', '\NodCMS\Articles\Controllers\Articles::article/$1/$2', ['filter'=>"urlLocale"]);
+$routes->get('{locale}/article/([A-Za-z0-9\-\_]+)', '\NodCMS\Articles\Controllers\Articles::article/0/$1', ['filter'=>"urlLocale"]);
+$routes->get('{locale}/pa-([0-9]+)', '\NodCMS\Articles\Controllers\Articles::article/$1', ['filter'=>"urlLocale"]);
 //$routes->get('([a-z][a-z])/articles', 'NodCMS\Articles\Controllers\Articles::articles/$1');
