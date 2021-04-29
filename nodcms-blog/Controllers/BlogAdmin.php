@@ -30,9 +30,11 @@ use NodCMS\Core\Libraries\Form;
 
 class BlogAdmin extends Backend
 {
-    function __construct()
+    /**
+     * Set module local view files
+     */
+    private function localViewConfig()
     {
-        parent::__construct();
         Services::layout()->setConfig(new ViewBackend());
     }
 
@@ -566,6 +568,7 @@ class BlogAdmin extends Backend
             array('title'=> _l("Edit", $this), 'url'=>BLOG_ADMIN_URL."postSubmit/$data[post_id]", 'active'=>0)
         );
         $this->data['page'] = "blog_post_submit";
+        $this->localViewConfig();
         return $this->viewRender('blog_posts_comments');
     }
 
@@ -756,6 +759,7 @@ class BlogAdmin extends Backend
             array('title'=>$this->data['title'], 'url'=>$back_url),
             array('title'=>str_replace("{data}", $data['comment_name'], _l("{data}'s comment", $this))));
         $this->data['page'] = "blog_category_submit";
+        $this->localViewConfig();
         return $this->viewRender('blog_comment');
     }
 
