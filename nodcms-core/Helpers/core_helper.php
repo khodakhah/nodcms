@@ -20,7 +20,7 @@
  */
 
 if ( ! function_exists('_l')){
-    function _l($label, $obj)
+    function _l($label, $obj = null)
     {
         $label = str_replace('"','&quot;',$label);
         return lang($label);
@@ -56,7 +56,7 @@ if ( ! function_exists('my_int_date')){
 if ( ! function_exists('my_int_fullDate')){
     function my_int_fullDate($time){
         if($time==0) return "";
-        return date_translate(date("j F Y | ".$_SESSION["settings"]["time_format"],$time));
+        return date_translate(date("j F Y | ".\Config\Services::settings()->get()["time_format"],$time));
     }
 }
 
@@ -70,65 +70,61 @@ if ( ! function_exists('my_int_justDate')){
 if ( ! function_exists('my_int_justTime')){
     function my_int_justTime($time){
         if($time==0) return "";
-        return date_translate(date($_SESSION["settings"]["time_format"], $time));
+        return date_translate(date(\Config\Services::settings()->get()["time_format"], $time));
     }
 }
 
 if( !function_exists('date_translate')){
     function date_translate($text){
-        $CI =& get_instance();
-        $language = $_SESSION['language'];
-        $CI->lang->load('nodcms_lang', $language['language_name']);
-
         $translation = array(
-            "January" => $CI->lang->line("January"),
-            "February" => $CI->lang->line("February"),
-            "March" => $CI->lang->line("March"),
-            "April" => $CI->lang->line("April"),
-            "May" => $CI->lang->line("May"),
-            "June" => $CI->lang->line("June"),
-            "July" => $CI->lang->line("July"),
-            "August" => $CI->lang->line("August"),
-            "September" => $CI->lang->line("September"),
-            "October" => $CI->lang->line("October"),
-            "November" => $CI->lang->line("November"),
-            "December" => $CI->lang->line("December"),
-            "Jan" => $CI->lang->line("Jan"),
-            "Feb" => $CI->lang->line("Feb"),
-            "Mar" => $CI->lang->line("Mar"),
-            "Apr" => $CI->lang->line("Apr"),
-            "Jun" => $CI->lang->line("Jun"),
-            "Jul" => $CI->lang->line("Jul"),
-            "Aug" => $CI->lang->line("Aug"),
-            "Sep" => $CI->lang->line("Sep"),
-            "Oct" => $CI->lang->line("Oct"),
-            "Nov" => $CI->lang->line("Nov"),
-            "Dec" => $CI->lang->line("Dec"),
-            "Sunday" => $CI->lang->line("Sunday"),
-            "Monday" => $CI->lang->line("Monday"),
-            "Tuesday" => $CI->lang->line("Tuesday"),
-            "Wednesday" => $CI->lang->line("Wednesday"),
-            "Thursday" => $CI->lang->line("Thursday"),
-            "Friday" => $CI->lang->line("Friday"),
-            "Saturday" => $CI->lang->line("Saturday"),
-            "Sun" => $CI->lang->line("Sun"),
-            "Mon" => $CI->lang->line("Mon"),
-            "Tue" => $CI->lang->line("Tue"),
-            "Wed" => $CI->lang->line("Wed"),
-            "Thu" => $CI->lang->line("Thu"),
-            "Fri" => $CI->lang->line("Fri"),
-            "Sat" => $CI->lang->line("Sat"),
-            "Su" => $CI->lang->line("Su"),
-            "Mo" => $CI->lang->line("Mo"),
-            "Tu" => $CI->lang->line("Tu"),
-            "We" => $CI->lang->line("We"),
-            "Th" => $CI->lang->line("Th"),
-            "Fr" => $CI->lang->line("Fr"),
-            "Sa" => $CI->lang->line("Sa"),
-            "AM" => $CI->lang->line("AM"),
-            "am" => $CI->lang->line("am"),
-            "PM" => $CI->lang->line("PM"),
-            "pm" => $CI->lang->line("pm"),
+            "January" => _l("January"),
+            "February" => _l("February"),
+            "March" => _l("March"),
+            "April" => _l("April"),
+            "May" => _l("May"),
+            "June" => _l("June"),
+            "July" => _l("July"),
+            "August" => _l("August"),
+            "September" => _l("September"),
+            "October" => _l("October"),
+            "November" => _l("November"),
+            "December" => _l("December"),
+            "Jan" => _l("Jan"),
+            "Feb" => _l("Feb"),
+            "Mar" => _l("Mar"),
+            "Apr" => _l("Apr"),
+            "Jun" => _l("Jun"),
+            "Jul" => _l("Jul"),
+            "Aug" => _l("Aug"),
+            "Sep" => _l("Sep"),
+            "Oct" => _l("Oct"),
+            "Nov" => _l("Nov"),
+            "Dec" => _l("Dec"),
+            "Sunday" => _l("Sunday"),
+            "Monday" => _l("Monday"),
+            "Tuesday" => _l("Tuesday"),
+            "Wednesday" => _l("Wednesday"),
+            "Thursday" => _l("Thursday"),
+            "Friday" => _l("Friday"),
+            "Saturday" => _l("Saturday"),
+            "Sun" => _l("Sun"),
+            "Mon" => _l("Mon"),
+            "Tue" => _l("Tue"),
+            "Wed" => _l("Wed"),
+            "Thu" => _l("Thu"),
+            "Fri" => _l("Fri"),
+            "Sat" => _l("Sat"),
+            "Su" => _l("Su"),
+            "Mo" => _l("Mo"),
+            "Tu" => _l("Tu"),
+            "We" => _l("We"),
+            "Th" => _l("Th"),
+            "Fr" => _l("Fr"),
+            "Sa" => _l("Sa"),
+            "AM" => _l("AM"),
+            "am" => _l("am"),
+            "PM" => _l("PM"),
+            "pm" => _l("pm"),
         );
         $search = array_keys($translation);
         $replace = array_values($translation);
