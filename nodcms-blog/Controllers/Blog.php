@@ -155,24 +155,21 @@ class Blog extends Frontend
         $this->display_page_title = false;
         $data = Models::blogPost()->getOneTrans($id);
         if(!is_array($data) || count($data)==0){
-            $this->errorMessage("Blog post not found.", base_url("{$this->lang}/blog"));
-            return;
+            return $this->errorMessage("Blog post not found.", base_url("{$this->lang}/blog"));
         }
 
         $back_url .= "-post-$id";
         if($reply_to!=null){
             $_reply_to = Models::blogComments()->getOne($reply_to);
             if(!is_array($_reply_to) || count($_reply_to)==0){
-                $this->errorMessage("Blog comment not found.", $back_url);
-                return;
+                return $this->errorMessage("Blog comment not found.", $back_url);
             }
             $self_url .= "-$reply_to";
         }
 
         $allow_comments = !$this->settings['blog_comments_private'] || $this->userdata !=null;
         if($data['comment_status']==0 && $allow_comments){
-            $this->errorMessage("Send comments is not available on this post.", $back_url);
-            return;
+            return $this->errorMessage("Send comments is not available on this post.", $back_url);
         }
         if($this->userdata !=null){
             $config = array(

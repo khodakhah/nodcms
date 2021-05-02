@@ -25,7 +25,7 @@ $routes->match(['post', 'get'], 'admin-blog/(.+)', "\NodCMS\Blog\Controllers\Blo
 $routes->get('{locale}/blog', '\NodCMS\Blog\Controllers\Blog::posts', ['filter'=>"urlLocale"]);
 $routes->get('{locale}/blog/([0-9]+)', '\NodCMS\Blog\Controllers\Blog::posts/$1', ['filter'=>"urlLocale"]);
 $routes->get('{locale}/blog-post-([0-9]+)', '\NodCMS\Blog\Controllers\Blog::post/$1', ['filter'=>"urlLocale"]);
-$routes->get('{locale}/blog-comment-([0-9]+)', '\NodCMS\Blog\Controllers\Blog::comment/$1', ['filter'=>"urlLocale"]);
-$routes->get('{locale}/blog-comment-([0-9]+)-([0-9]+)', '\NodCMS\Blog\Controllers\Blog::comment/$1/$2', ['filter'=>"urlLocale"]);
+$routes->match(['post', 'get'], '{locale}/blog-comment-([0-9]+)', '\NodCMS\Blog\Controllers\Blog::comment/$1', ['filter'=>"urlLocale"]);
+$routes->match(['post', 'get'], '{locale}/blog-comment-([0-9]+)-([0-9]+)', '\NodCMS\Blog\Controllers\Blog::comment/$1/$2', ['filter'=>"urlLocale"]);
 $routes->get('{locale}/blog-cat-([0-9]+)', '\NodCMS\Blog\Controllers\Blog::posts/1/$1', ['filter'=>"urlLocale"]);
 $routes->get('{locale}/blog-cat-([0-9]+)/([0-9]+)', '\NodCMS\Blog\Controllers\Blog::posts/$1/$3', ['filter'=>"urlLocale"]);
