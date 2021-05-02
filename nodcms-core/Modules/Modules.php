@@ -178,7 +178,7 @@ class Modules
     {
         $result = [];
         foreach($this->modulesDirs as $name=>$item) {
-            $className = "NodCMS\\".ucfirst($name)."\Config\Settings";
+            $className = $this->getNameSpace($name)."\Config\Settings";
             if(class_exists($className)) {
                 $class = new $className();
                 if(!property_exists($class, $entity))
