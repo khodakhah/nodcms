@@ -113,7 +113,7 @@ class GalleryAdmin extends Backend
                 'rules' => 'required|validURI|is_unique[gallery.gallery_uri'.(isset($current_data)?",gallery_id,$current_data[gallery_id]":"").']',
                 'type' => "text",
                 'default'=>isset($current_data)?$current_data["gallery_uri"]:'',
-                'input_prefix'=>base_url().$this->language['code']."/gallery/",
+                'input_prefix'=>base_url($this->language['code']."/gallery/"),
             ),
             array(
                 'field' => 'gallery_name',

@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div>
-                        <img src="<?php echo base_url().$data['gallery_image']; ?>" alt="<?php echo $data['title']; ?>" title="<?php echo $data['title']; ?>" class="img-fluid">
+                        <img src="<?php echo base_url($data['gallery_image']); ?>" alt="<?php echo $data['title']; ?>" title="<?php echo $data['title']; ?>" class="img-fluid">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -26,9 +26,9 @@
             <div data-role="gallery-images" class="cbp cbp-l-grid-mosaic">
                 <?php foreach($data_list as $item){ ?>
                     <div class="cbp-item">
-                        <a href="<?php echo base_url().$item['image_url']; ?>" class="cbp-caption cbp-lightbox" data-title="<?php echo $item['title']; ?>">
+                        <a href="<?php echo base_url($data['image_url']); ?>" class="cbp-caption cbp-lightbox" data-title="<?php echo $item['title']; ?>">
                             <div class="cbp-caption-defaultWrap">
-                                <img src="<?php echo base_url().image($item['image_url'],"",400,400); ?>" alt="<?php echo $item['title']; ?>" title="<?php echo $item['title']; ?>"> </div>
+                                <img src="<?php echo base_url(image($item['image_url'],"",400,400)); ?>" alt="<?php echo $item['title']; ?>" title="<?php echo $item['title']; ?>"> </div>
                             <div class="cbp-caption-activeWrap">
                                 <div class="cbp-l-caption-alignCenter">
                                     <div class="cbp-l-caption-body">

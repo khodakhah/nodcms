@@ -16,7 +16,7 @@
         <?php $i=0; foreach($data_list as $data){ $i++; ?>
             <div class="card margin-top-10 mb-3" id="row<?php echo $data['image_id']; ?>" >
                 <div class="row no-gutters">
-                    <div class="col-4"><img class="card-img" src="<?php echo base_url().$data["image_url"]; ?>"></div>
+                    <div class="col-4"><img class="card-img" src="<?php echo base_url($data["image_url"]); ?>"></div>
                     <div class="col-8">
                         <div class="card-body">
                             <div data-role="auto-load" data-url="<?php echo GALLERY_ADMIN_URL."imageSubmit/$data[image_id]"; ?>"></div>

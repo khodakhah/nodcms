@@ -94,7 +94,7 @@ class Gallery extends Frontend
         );
         $this->data['description'] = $setting['gallery_page_descriptions'];
         $this->data['keyword'] = $setting['gallery_page_keywords'];
-        $this->data['title_bg'] = $setting['gallery_page_title_bg']!=""?base_url().$setting['gallery_page_title_bg']:'';
+        $this->data['title_bg'] = $setting['gallery_page_title_bg']!=""?base_url($setting['gallery_page_title_bg']):'';
         $this->viewRender("gallery_list");
     }
 }
