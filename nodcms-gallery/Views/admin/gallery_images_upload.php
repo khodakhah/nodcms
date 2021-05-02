@@ -28,11 +28,11 @@
     <?php } ?>
 </div>
 
-<?php $this->load->addJsFile("assets/mini-upload-image/js/jquery.knob"); ?>
-<?php $this->load->addJsFile("assets/mini-upload-image/js/jquery.ui.widget"); ?>
-<?php $this->load->addJsFile("assets/mini-upload-image/js/jquery.iframe-transport"); ?>
-<?php $this->load->addJsFile("assets/mini-upload-image/js/jquery.fileupload"); ?>
-<?php $this->load->addCssFile("assets/mini-upload-image/css/style"); ?>
+<?php $this->addJsFile("assets/mini-upload-image/js/jquery.knob"); ?>
+<?php $this->addJsFile("assets/mini-upload-image/js/jquery.ui.widget"); ?>
+<?php $this->addJsFile("assets/mini-upload-image/js/jquery.iframe-transport"); ?>
+<?php $this->addJsFile("assets/mini-upload-image/js/jquery.fileupload"); ?>
+<?php $this->addCssFile("assets/mini-upload-image/css/style"); ?>
 <script>
     $(function () {
         $('.upload_form .drop a').click(function(){

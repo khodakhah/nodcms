@@ -1,7 +1,7 @@
 <?php if(isset($data_list) && count($data_list)!=0){ ?>
-    <?php $this->load->addCSSFile("assets/plugins/cubeportfolio/css/cubeportfolio"); ?>
-    <?php $this->load->addJsFile("assets/plugins/cubeportfolio/js/jquery.cubeportfolio.min"); ?>
-    <?php $this->load->addJsFile("assets/nodcms/Packages/Gallery/gallery-list.min"); ?>
+    <?php $this->addCSSFile("assets/plugins/cubeportfolio/css/cubeportfolio"); ?>
+    <?php $this->addJsFile("assets/plugins/cubeportfolio/js/jquery.cubeportfolio.min"); ?>
+    <?php $this->addJsFile("assets/nodcms/Packages/Gallery/gallery-list.min"); ?>
     <div class="container-fluid">
         <div data-role="gallery" class="cbp margin-top-20 margin-bottom-20">
             <?php foreach($data_list as $item){ ?>

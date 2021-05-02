@@ -1,9 +1,9 @@
 <?php if(isset($data_list) && count($data_list)!=0){ ?>
-    <?php $this->load->addCSSFile("assets/plugins/cubeportfolio/css/cubeportfolio"); ?>
-    <?php $this->load->addJsFile("assets/plugins/cubeportfolio/js/jquery.cubeportfolio.min"); ?>
-    <?php $this->load->addJsFile("assets/nodcms/Packages/Gallery/gallery-list.min"); ?>
-    <?php $this->load->fetchAllCSS(); ?>
-    <?php $this->load->fetchAllJS(); ?>
+    <?php $this->addCSSFile("assets/plugins/cubeportfolio/css/cubeportfolio"); ?>
+    <?php $this->addJsFile("assets/plugins/cubeportfolio/js/jquery.cubeportfolio.min"); ?>
+    <?php $this->addJsFile("assets/nodcms/Packages/Gallery/gallery-list.min"); ?>
+    <?php $this->fetchAllCSS(); ?>
+    <?php $this->fetchAllJS(); ?>
     <div class="padding-top-40 padding-bottom-40">
         <div class="container">
             <div class="text-center margin-bottom-20">
