@@ -4,6 +4,7 @@ use CodeIgniter\Config\Services as CoreServices;
 use NodCMS\Core\Libraries\Identity;
 use NodCMS\Core\Libraries\Language;
 use NodCMS\Core\Libraries\Settings as SettingsLibrary;
+use NodCMS\Core\Libraries\Upload;
 use NodCMS\Core\Notification\EmailNotification;
 use NodCMS\Core\Notification\Notification;
 use NodCMS\Core\Response\QuickResponse;
@@ -247,5 +248,15 @@ class Services extends CoreServices
         }
 
         return new TopMenu();
+    }
+
+    /**
+     * NodCMS upload file library
+     *
+     * @return Upload
+     */
+    public static function upload(): Upload
+    {
+        return new Upload();
     }
 }
