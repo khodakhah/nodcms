@@ -23,6 +23,7 @@ namespace NodCMS\Blog;
 
 use Config\Services;
 use NodCMS\Blog\Config\Models;
+use NodCMS\Blog\Controllers\Blog;
 use NodCMS\Core\Types\MenuLink;
 
 class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
@@ -57,6 +58,11 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
     public function hasHomePreview(): bool
     {
         return true;
+    }
+
+    public function getHomePreview(): string
+    {
+        return Blog::home();
     }
 
     /**

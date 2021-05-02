@@ -37,18 +37,19 @@ class Blog extends Frontend
     }
 
     /**
-     * @param General $CI
      * @return mixed
      */
-    static function home($CI)
+    static function home()
     {
+        $lang = Services::language()->getLocale();
         $data_list = Models::blogPost()->getAllTrans(null, 6, 1, array('created_date', 'DESC'));
         foreach($data_list as &$item){
-            $item['post_url'] = base_url("{$CI->lang}/blog-post-{$item['post_id']}");
+            $item['post_url'] = base_url("{$lang}/blog-post-{$item['post_id']}");
         }
-        $CI->data['data_list'] = $data_list;
-        $CI->data['title'] = Services::settings()->get()['blog_page_title'];
-        return Services::layout()->setData($CI->data)->render("blog_home");
+        $data = [];
+        $data['data_list'] = $data_list;
+        $data['title'] = Services::settings()->get()['blog_page_title'];
+        return Services::layout(new ViewFrontend(), false)->setData($data)->render("blog_home");
     }
 
     /**
