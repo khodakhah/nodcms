@@ -776,7 +776,7 @@ class BlogAdmin extends Backend
     function commentSubmit(int $post_id = 0, int $id = 0)
     {
         $back_url = BLOG_ADMIN_URL."comments";
-        $self_url = BLOG_ADMIN_URL."commentSubmit/$id";
+        $self_url = BLOG_ADMIN_URL."commentSubmit/$post_id/$id";
 
         if($post_id != 0){
             $post = Models::blogPost()->getOne($post_id);

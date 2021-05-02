@@ -1,5 +1,5 @@
 <div class="text-center margin-bottom-20">
-    <a href="<?php echo BLOG_ADMIN_URL."postComments/$item[comment_id]#comment$item[comment_id]"; ?>"><?php echo str_replace("{data}", "<strong>$post[post_name]</strong>", _l("Display all comments on {data}", $this)); ?></a>
+    <a href="<?php echo BLOG_ADMIN_URL."postComments/$item[post_id]#comment$item[comment_id]"; ?>"><?php echo str_replace("{data}", "<strong>$post[post_name]</strong>", _l("Display all comments on {data}", $this)); ?></a>
 </div>
 <div class="clearfix">
     <div id="comment<?php echo $item['comment_id']; ?>" class="card w-75 margin-bottom-10 <?php echo $item['admin_side']==1?"float-right":"float-left";?>">
