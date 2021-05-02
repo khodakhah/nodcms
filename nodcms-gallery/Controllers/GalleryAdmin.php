@@ -29,16 +29,15 @@ use NodCMS\Gallery\Config\ViewBackend;
 
 class GalleryAdmin extends Backend
 {
-    public function __construct()
+    private function localViewConfig()
     {
-        parent::__construct();
         Services::layout()->setConfig(new ViewBackend());
     }
 
     /**
      * Sortable list of galleries
      */
-    function galleries()
+    function galleries(): string
     {
         $this->data['title'] = _l("Galleries",$this);
         $this->data['breadcrumb']=array(
@@ -50,7 +49,7 @@ class GalleryAdmin extends Backend
 
         $list_items = array();
         $data_list = Models::gallery()->getAll(null,null,1,array('sort_order','asc'));
-        foreach ($data_list as &$item){
+        foreach ($data_list as $item){
             $data = array(
                 'id'=>$item['gallery_id'],
                 'element_id'=>"galleries-item".$item['gallery_id'],
@@ -80,17 +79,18 @@ class GalleryAdmin extends Backend
     /**
      * Add/Edit submit form of a gallery
      *
-     * @param null|int $id
+     * @param int|null $id
+     * @throws \Exception
      */
-    function gallerySubmit($id = null)
+    function gallerySubmit(int $id = 0)
     {
         $self_url = GALLERY_ADMIN_URL."gallerySubmit";
         $back_url = GALLERY_ADMIN_URL."galleries";
         $this->data['title'] = _l("Galleries",$this);
-        if($id!=null)
+        if($id!=0)
         {
             $current_data = Models::gallery()->getOne($id);
-            if($current_data==null || count($current_data)==0){
+            if(empty($current_data)){
                 return $this->errorMessage("Gallery not found.", $back_url);
             }
             $form_attr = array();
@@ -110,7 +110,7 @@ class GalleryAdmin extends Backend
             array(
                 'field' => 'gallery_uri',
                 'label' => _l("Service URI", $this),
-                'rules' => 'required|callback_validURI|callback_isUnique[gallery,gallery_uri'.(isset($current_data)?",gallery_id,$current_data[gallery_id]":"").']',
+                'rules' => 'required|validURI|is_unique[gallery.gallery_uri'.(isset($current_data)?",gallery_id,$current_data[gallery_id]":"").']',
                 'type' => "text",
                 'default'=>isset($current_data)?$current_data["gallery_uri"]:'',
                 'input_prefix'=>base_url().$this->language['code']."/gallery/",
@@ -202,7 +202,7 @@ class GalleryAdmin extends Backend
                 unset($post_data['translate']);
             }
 
-            if($id!=null){
+            if($id!=0){
                 Models::gallery()->edit($id, $post_data);
                 if(isset($translates)){
                     Models::gallery()->updateTranslations($id,$translates,$languages);
@@ -216,7 +216,6 @@ class GalleryAdmin extends Backend
                 }
                 return $this->successMessage("Gallery has been sent successfully.", $back_url);
             }
-            return;
         }
 
         $this->data['breadcrumb'] = array(
@@ -225,22 +224,21 @@ class GalleryAdmin extends Backend
         );
 
         $this->data['page'] = "gallery_submit_form";
-        $this->data['content']=$myform->fetch('', $form_attr);
-        $this->load->view($this->frameTemplate,$this->data);
+        return $this->viewRenderString($myform->fetch('', $form_attr));
     }
 
     /**
      * Save new sort
+     * @throws \Exception
      */
     function sortSubmit()
     {
         $back_url = GALLERY_ADMIN_URL."galleries";
         if(!Services::identity()->isAdmin(true))
             return Services::identity()->getResponse();
-        $post_data = $this->input->post("data");
+        $post_data = Services::request()->getPost("data");
         if($post_data == null) {
             return $this->errorMessage("Sort data shouldn't be empty.", $back_url);
-            return;
         }
         $post_data = json_decode($post_data);
         foreach($post_data as $i=>$item){
@@ -257,8 +255,10 @@ class GalleryAdmin extends Backend
      *
      * @param $id
      * @param int $confirm
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
-    function galleryDelete($id, $confirm = 0)
+    function galleryDelete(int $id, int $confirm = 0)
     {
         if(!Services::identity()->isAdmin(true))
             return Services::identity()->getResponse();
@@ -268,11 +268,10 @@ class GalleryAdmin extends Backend
         $data = Models::gallery()->getOne($id);
         if(count($data)==0){
             return $this->errorMessage("The gallery couldn't find.", $back_url);
-            return;
         }
 
         if($confirm!=1){
-            echo json_encode(array(
+            return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">'._l("This action will delete the gallery and its all images from database.", $this).
                     '<br>'._l("After this, you will not to able to restore it.", $this).'</p>'.
@@ -283,7 +282,6 @@ class GalleryAdmin extends Backend
                 'confirmUrl'=>"$self_url/1",
                 'redirect'=>1,
             ));
-            return;
         }
 
         $childes = Models::galleryImages()->getAll(array('gallery_id'=>$id));
@@ -305,9 +303,7 @@ class GalleryAdmin extends Backend
         $current_data = Models::gallery()->getOne($gallery_id);
         if(!is_array($current_data) || count($current_data)==0){
             return $this->errorMessage("Gallery not found.", $back_url);
-            return;
         }
-        $self_url = GALLERY_ADMIN_URL."images";
         $this->data['data_list'] = Models::galleryImages()->getAll(array('gallery_id'=>$gallery_id), null, 1, array('image_id','DESC'));
         $this->data["upload_url"] = GALLERY_ADMIN_URL."uploadImage/$gallery_id";
         $this->data['title'] = str_replace("{data}", $current_data['gallery_name'], _l("Gallery {data}", $this));
@@ -321,8 +317,8 @@ class GalleryAdmin extends Backend
             array('title'=>_l("Edit", $this),'url'=>GALLERY_ADMIN_URL."gallerySubmit/$gallery_id"),
         );
         $this->data['page'] = "gallery_images_upload";
-        $this->data['content'] = $this->load->view($this->mainTemplate."/gallery_images_upload", $this->data, true);
-        $this->load->view($this->frameTemplate,$this->data);
+        $this->localViewConfig();
+        return $this->viewRender("gallery_images_upload");
     }
 
     /**
@@ -336,6 +332,7 @@ class GalleryAdmin extends Backend
     {
         if (!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
+
         $back_url = GALLERY_ADMIN_URL."galleries";
         $current_data = Models::gallery()->getOne($gallery_id);
         if(!is_array($current_data) || count($current_data)==0){
@@ -344,65 +341,50 @@ class GalleryAdmin extends Backend
 
         $type_dir = "gallery-$current_data[gallery_id]";
         $dir = FCPATH."upload_file/$type_dir/";
-        // Make directory
-        if(!file_exists($dir)){
-            mkdir($dir);
-        }
-        // Create index file
-        $file = $dir.'index.php';
-        if(!file_exists($file)){
-            $myfile = fopen($file, "w") or die("Unable to open file!");
-            $txt = "<?php\n http_response_code(404); ";
-            fwrite($myfile, $txt);
-            fclose($myfile);
+
+        $upload = Services::upload()->filterTypes("images")->setBackUrl($back_url);
+        if(!$upload->save("file", $dir)) {
+            return $upload->getErrorResponse();
         }
 
-        $current_file_name = basename($_FILES["file"]["name"]);
-        $config = array(
-            'upload_path'=>"upload_file/$type_dir/",
-            'allowed_types'=>"gif|jpg|png",
-            'encrypt_name'=> true,
-        );
-        $this->load->library('upload', $config);
-        if ( ! $this->upload->do_upload("file"))
-        {
-            return  json_encode(array("status"=>"error","errors"=>$this->upload->display_errors('<p>', '</p>')));
-        }
+        $image = Services::image()->withFile(SELF_PATH.$upload->getResult()->fullPath);
 
-        $data = $this->upload->data();
         $data_image = array(
-            "image_url"=>$config['upload_path'].$data["file_name"],
-            "image_name"=>$current_file_name,
+            "image_url"=>$upload->getResult()->fullPath,
+            "image_name"=>$upload->getResult()->clientName,
             "gallery_id"=>$gallery_id,
         );
+
         $image_id = Models::galleryImages()->add($data_image);
+
         if($image_id!=0) {
             return json_encode(array(
                 "status" => "success",
-                "file_patch" => $config['upload_path'] . $data["file_name"],
-                "file_url" => base_url() . $config['upload_path'] . $data["file_name"],
-                "width" => $data["image_width"],
-                "height" => $data["image_height"],
+                "file_patch" => $upload->getResult()->fullPath,
+                "file_url" => base_url($upload->getResult()->fullPath),
+                "width" => $image->getWidth(),
+                "height" => $image->getHeight(),
                 "image_id" => $image_id,
-                "image_name" => $current_file_name,
+                "image_name" => $upload->getResult()->clientName,
                 "submit_url" => GALLERY_ADMIN_URL."imageSubmit/$image_id",
-                "size" => $data["file_size"]));
+                "size" => $upload->getResult()->fileSize
+            ));
         }
-        unlink(FCPATH.$data_image["image"]);
-        echo json_encode(array("status"=>"error","errors"=>_l("Could not save images data in database.",$this)));
+        return json_encode(array("status"=>"error","errors"=>_l("Could not save images data in database.", $this)));
     }
 
     /**
      * Add/Edit form of an image
      *
-     * @param null $id
+     * @param int $id
+     * @throws \Exception
      */
-    function imageSubmit($id = null)
+    function imageSubmit(int $id = 0)
     {
         $back_url = GALLERY_ADMIN_URL."galleries";
         $self_url = GALLERY_ADMIN_URL."imageSubmit/$id";
 
-        if($id!=null){
+        if($id!=0){
             $data = Models::galleryImages()->getOne($id);
             if(count($data)==0){
                 return $this->errorMessage("Couldn't find the image.", $back_url);
@@ -455,7 +437,7 @@ class GalleryAdmin extends Backend
                 unset($post_data['translate']);
             }
 
-            if($id!=null){
+            if($id!=0){
 //                Models::self::galleryImages()->edit($id, $post_data);
                 if(isset($translates)){
                     Models::galleryImages()->updateTranslations($id,$translates,$languages);
@@ -475,10 +457,9 @@ class GalleryAdmin extends Backend
         $myform->setStyle("bootstrap-inline");
         $myform->setFormTheme("form_only");
 
-        if($this->input->is_ajax_request()){
+        if(Services::request()->isAJAX()){
 //            $myform->data['title'] = $this->data['title'];
-            echo $myform->fetch(null, $form_attr);
-            return;
+            return $myform->fetch(null, $form_attr);
         }
         $this->data['title'] = _l("Gallery's image",$this);
         $this->data['breadcrumb'] = array(
