@@ -75,6 +75,8 @@ abstract class App extends Base
         $pagination->setSegment($config['uri_segment']);
         if($pagination->getPageCount() > 1)
             $this->data['pagination'] = $pagination->makeLinks($pagination->getCurrentPage(), $config['per_page'], $config['total_rows']);
+        else
+            $this->data['pagination'] = "";
     }
 
     /**
