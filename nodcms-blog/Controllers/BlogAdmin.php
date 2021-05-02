@@ -109,16 +109,16 @@ class BlogAdmin extends Backend
     /**
      * Blog post edit/add form
      *
-     * @param null $id
+     * @param int $id
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function postSubmit($id = null)
+    function postSubmit(int $id = 0)
     {
         $back_url = BLOG_ADMIN_URL."posts";
         $self_url = BLOG_ADMIN_URL."postSubmit/$id";
 
-        if($id!=null){
+        if($id!=0){
             $data = Models::blogPost()->getOne($id);
             if(count($data)==0){
                 return $this->errorMessage("Couldn't find the post.", $back_url);
@@ -129,7 +129,8 @@ class BlogAdmin extends Backend
             if(is_array($saved_categories) && count($saved_categories)!=0){
                 $default_categories = array_column($saved_categories, 'category_id');
             }
-        }else{
+        }
+        else{
             $this->data['sub_title'] = _l("Add", $this);
             $form_attr = array('data-reset'=>1,'data-redirect'=>1);
         }
@@ -182,7 +183,7 @@ class BlogAdmin extends Backend
                 'options' => $categories,
                 'option_name' => "category_name",
                 'option_value' => "category_id",
-                'rules' => 'Models::self::blogCategory(),idExists]',
+                'rules' => 'in_list['.join(',', array_column($categories, 'category_id')).']',
                 'default'=>isset($default_categories)?$default_categories:"",
             );
         }
@@ -245,7 +246,7 @@ class BlogAdmin extends Backend
                 unset($post_data['post_categories']);
             }
 
-            if($id!=null){
+            if($id!=0){
                 Models::blogPost()->edit($id, $post_data);
                 if(isset($translates)){
                     Models::blogPost()->updateTranslations($id,$translates,$languages);
@@ -341,6 +342,7 @@ class BlogAdmin extends Backend
 //                    'function'=>function($the_row){
 //                        return Models::self::blogPost()->getCount(array('category_id'=>$the_row['category_id']));
 //                    },
+//                    },
 //                ),
                 array(
                     'content'=>"category_id",
@@ -391,16 +393,16 @@ class BlogAdmin extends Backend
     /**
      * Add/Edit form of a blog category
      *
-     * @param null $id
+     * @param int $id
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function categorySubmit($id = null)
+    function categorySubmit(int $id = 0)
     {
         $back_url = BLOG_ADMIN_URL."categories";
         $self_url = BLOG_ADMIN_URL."categorySubmit/$id";
 
-        if($id!=null){
+        if($id!=0){
             $data = Models::blogCategory()->getOne($id);
             if(count($data)==0){
                 return $this->errorMessage("Couldn't find the category.", $back_url);
@@ -463,7 +465,7 @@ class BlogAdmin extends Backend
                 unset($post_data['translate']);
             }
 
-            if($id!=null){
+            if($id!=0){
                 Models::blogCategory()->edit($id, $post_data);
                 if(isset($translates)){
                     Models::blogCategory()->updateTranslations($id,$translates,$languages);
@@ -647,7 +649,7 @@ class BlogAdmin extends Backend
                         if(!is_array($_data) || count($_data)==0){
                             return "-";
                         }
-                        $url = base_url().$_data['image'];
+                        $url = base_url($_data['image']);
                         return "<img src='$url' style='height:20px;' title='{$_data['language_title']}' alt='{$_data['code']}'>";
                     },
                 )
@@ -767,23 +769,23 @@ class BlogAdmin extends Backend
      * Add/Edit a comment
      *
      * @param int $post_id
-     * @param null|int $id
+     * @param int $id
      * @return \CodeIgniter\HTTP\RedirectResponse|false|mixed|string
      * @throws \Exception
      */
-    function commentSubmit($post_id = null, $id = null)
+    function commentSubmit(int $post_id = 0, int $id = 0)
     {
         $back_url = BLOG_ADMIN_URL."comments";
         $self_url = BLOG_ADMIN_URL."commentSubmit/$id";
 
-        if($post_id != null){
+        if($post_id != 0){
             $post = Models::blogPost()->getOne($post_id);
             if(!is_array($post) || count($post)==0){
                 return $this->errorMessage("Couldn't find the post.", $back_url);
             }
         }
 
-        if($id!=null){
+        if($id!=0){
             $data = Models::blogComments()->getOne($id);
             if(count($data)==0){
                 return $this->errorMessage("Couldn't find the comment.", $back_url);
@@ -845,7 +847,7 @@ class BlogAdmin extends Backend
             }
         }
 
-        if($post_id == null) {
+        if($post_id == 0) {
             $posts = Models::blogPost()->getAll();
             array_unshift($config,
                 array(
@@ -871,12 +873,12 @@ class BlogAdmin extends Backend
                 return $myform->getResponse();
             }
 
-            if($id!=null){
+            if($id!=0){
                 Models::blogComments()->edit($id, $post_data);
                 return $this->successMessage("The comment has been edited successfully.", $back_url);
             }
             else{
-                if($post_id != null)
+                if($post_id != 0)
                     $post_data['post_id'] = $post_id;
                 $post_data['user_id'] = $this->userdata['user_id'];
                 $post_data['admin_side'] = 1;
