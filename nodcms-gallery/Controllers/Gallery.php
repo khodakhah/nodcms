@@ -34,7 +34,12 @@ class Gallery extends Frontend
         Services::layout()->setConfig( new ViewFrontend());
     }
 
-    static function home($CI)
+    /**
+     * Home preview
+     *
+     * @return string
+     */
+    static function home(): string
     {
         $data = [];
         $data_list = Models::gallery()->getAllTrans();
@@ -42,14 +47,14 @@ class Gallery extends Frontend
 
         $data['title'] = Services::settings()->get()['gallery_page_title'];
         $data['description'] = Services::settings()->get()['gallery_page_descriptions'];
-        return Services::layout()->setData($data)->render("gallery_homepage");
+        return Services::layout(new ViewFrontend(), false)->setData($data)->render("gallery_homepage");
     }
 
     /**
      * @param int $id
      * @return string
      */
-    function album(int $id)
+    function album(int $id): string
     {
         $data = Models::gallery()->getOneTrans($id);
         $this->data['data'] = $data;

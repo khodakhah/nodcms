@@ -23,6 +23,7 @@ namespace NodCMS\Gallery;
 
 use Config\Services;
 use NodCMS\Core\Types\MenuLink;
+use NodCMS\Gallery\Controllers\Gallery;
 
 class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
 {
@@ -56,6 +57,15 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
     public function hasHomePreview(): bool
     {
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     * @return string
+     */
+    public function getHomePreview(): string
+    {
+        return Gallery::home();
     }
 
     /**
