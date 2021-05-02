@@ -21,6 +21,6 @@
 
 if(!isset($routes)) throw new \Exception('$routes not defined.');
 
-$route['admin-gallery/(.+)'] = "NodCMS\Gallery/GalleryAdmin::$1";
-$route['([a-z]{2})/album-([0-9a-z\-\.]+)'] = "NodCMS\Gallery/Gallery::album/$1/$2";
-$route['([a-z]{2})/gallery'] = "NodCMS\Gallery/Gallery::gallery/$1";
+$routes->match(['post', 'get'], 'admin-gallery/(.+)', "\NodCMS\Gallery\Controllers\GalleryAdmin::$1", ['filter'=>"identityVerification"]);
+$routes->get('([a-z]{2})/album-([0-9a-z\-\.]+)', "\NodCMS\Gallery\Controllers\Gallery::album/$1/$2", ['filter'=>"urlLocale"]);
+$routes->get('([a-z]{2})/gallery', "\NodCMS\Gallery\Controllers\Gallery::gallery/$1", ['filter'=>"urlLocale"]);
