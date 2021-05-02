@@ -279,7 +279,7 @@ class BlogAdmin extends Backend
             array('title'=>$this->data['sub_title']));
         if(isset($data)){
             $this->data['breadcrumb_options'] = array(
-                array('title'=>$this->data['sub_title'], 'url'=>BLOG_ADMIN_URL."postComments/$data[post_id]", 'active'=>0),
+                array('title'=>_l("Comments", $this), 'url'=>BLOG_ADMIN_URL."postComments/$data[post_id]", 'active'=>0),
                 array('title'=> _l("Edit", $this), 'url'=>$self_url, 'active'=>1)
             );
         }
