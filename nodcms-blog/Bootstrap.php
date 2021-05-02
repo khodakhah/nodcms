@@ -60,6 +60,10 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
         return true;
     }
 
+    /**
+     * @inheritDoc
+     * @return string
+     */
     public function getHomePreview(): string
     {
         return Blog::home();
