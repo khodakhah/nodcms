@@ -22,9 +22,9 @@
 namespace NodCMS\Gallery\Config;
 
 
-class Settigns
+class Settings
 {
-    public $default_settings = [
+    public $settings_default = [
         'gallery_page_title'=> "Gallery",
         'gallery_page_title_bg'=>"",
         'gallery_page_descriptions'=>"",
