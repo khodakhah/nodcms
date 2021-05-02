@@ -21,7 +21,7 @@
                         <div class="clearfix col-12 margin-top-10 margin-bottom-10"></div>
                     <?php } ?>
                     <div class="col-md-3">
-                        <?php echo $this->load->view($this->mainTemplate."/blog_item", array('item'=>$item), true); ?>
+                        <?php echo $this->setData(array('item'=>$item))->render("blog_item"); ?>
                     </div>
                 <?php } ?>
             </div>

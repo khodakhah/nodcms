@@ -108,7 +108,7 @@
             <h3 class="margin-bottom-20"><?php echo _l("Related posts", $this); ?></h3>
             <div class="card-columns justify-content-md-center">
                 <?php foreach($related_posts as $item){ ?>
-                    <?php echo $this->load->view($this->mainTemplate."/blog_item", array('item'=>$item), true); ?>
+                    <?php echo $this->setData(array('item'=>$item))->render("blog_item"); ?>
                 <?php } ?>
             </div>
         </div>
