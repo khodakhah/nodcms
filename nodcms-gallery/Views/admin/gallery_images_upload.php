@@ -19,6 +19,7 @@
                     <div class="col-4"><img class="card-img" src="<?php echo base_url($data["image_url"]); ?>"></div>
                     <div class="col-8">
                         <div class="card-body">
+                            <div class="mb-3 text-right"><button class="btn btn-danger btn-sm" onclick="$.loadConfirmModal('<?php echo GALLERY_ADMIN_URL."imageDelete/{$data['image_id']}"; ?>')"><?php echo _l("Delete", $this); ?></button></div>
                             <div data-role="auto-load" data-url="<?php echo GALLERY_ADMIN_URL."imageSubmit/$data[image_id]"; ?>"></div>
                         </div>
                     </div>

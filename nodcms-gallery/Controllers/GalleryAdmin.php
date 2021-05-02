@@ -340,7 +340,7 @@ class GalleryAdmin extends Backend
         }
 
         $type_dir = "gallery-$current_data[gallery_id]";
-        $dir = FCPATH."upload_file/$type_dir/";
+        $dir = "upload_file/$type_dir/";
 
         $upload = Services::upload()->filterTypes("images")->setBackUrl($back_url);
         if(!$upload->save("file", $dir)) {

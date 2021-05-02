@@ -26,7 +26,7 @@
             <div data-role="gallery-images" class="cbp cbp-l-grid-mosaic">
                 <?php foreach($data_list as $item){ ?>
                     <div class="cbp-item">
-                        <a href="<?php echo base_url($data['image_url']); ?>" class="cbp-caption cbp-lightbox" data-title="<?php echo $item['title']; ?>">
+                        <a href="<?php echo base_url($item['image_url']); ?>" class="cbp-caption cbp-lightbox" data-title="<?php echo $item['title']; ?>">
                             <div class="cbp-caption-defaultWrap">
                                 <img src="<?php echo base_url(image($item['image_url'],"",400,400)); ?>" alt="<?php echo $item['title']; ?>" title="<?php echo $item['title']; ?>"> </div>
                             <div class="cbp-caption-activeWrap">
