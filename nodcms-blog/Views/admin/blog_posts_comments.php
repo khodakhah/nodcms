@@ -7,7 +7,7 @@
                         <div class="d-inline font-weight-bold"><?php echo $item['comment_name']; ?></div>
                         <small class="float-right font-grey-mint margin-left-20"><?php echo my_int_fullDate($item['created_date']); ?></small>
                         <small class="float-right font-grey-mint margin-left-20">
-                            <img src="<?php echo base_url().$item['language']['image']; ?>" style="height:18px;margin-top:-3px;">
+                            <img src="<?php echo base_url($item['language']['image']); ?>" style="height:18px;margin-top:-3px;">
                             <?php echo $item['language']['language_title']; ?>
                         </small>
                         <small class="float-right margin-left-20">
@@ -36,7 +36,7 @@
                                             <div class="d-inline font-weight-bold"><?php echo $sub_item['comment_name']; ?></div>
                                             <small class="float-right font-grey-mint margin-left-20"><?php echo my_int_fullDate($sub_item['created_date']); ?></small>
                                             <small class="float-right font-grey-mint margin-left-20">
-                                                <img src="<?php echo base_url().$item['language']['image']; ?>" style="height:18px;margin-top:-3px;">
+                                                <img src="<?php echo base_url($item['language']['image']); ?>" style="height:18px;margin-top:-3px;">
                                                 <?php echo $sub_item['language']['language_title']; ?></small>
                                             <small class="float-right">
                                                 <a href="javascript:;" onclick="$.loadInModal('<?php echo $sub_item['edit_url']; ?>');">

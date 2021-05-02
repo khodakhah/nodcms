@@ -1,7 +1,7 @@
 <div class="card">
     <?php if($item['post_image']!=""){ ?>
         <a href="<?php echo $item['post_url']; ?>">
-            <img alt="<?php echo $item['title']; ?>" title="<?php echo $item['title']; ?>" class="card-img-top" src="<?php echo base_url().$item['post_image']; ?>">
+            <img alt="<?php echo $item['title']; ?>" title="<?php echo $item['title']; ?>" class="card-img-top" src="<?php echo base_url($item['post_image']); ?>">
         </a>
     <?php } ?>
     <div class="card-body">

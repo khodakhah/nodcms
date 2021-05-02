@@ -3,7 +3,7 @@
         <div class="row">
             <?php if($data['post_image']!=""){ ?>
                 <div class="col-md">
-                    <img alt="<?php echo $data['title']; ?>" title="<?php echo $data['title']; ?>" class="img-fluid" src="<?php echo base_url().$data['post_image']; ?>">
+                    <img alt="<?php echo $data['title']; ?>" title="<?php echo $data['title']; ?>" class="img-fluid" src="<?php echo base_url($data['post_image']); ?>">
                 </div>
             <?php } ?>
             <div class="col-md order-md-1">
