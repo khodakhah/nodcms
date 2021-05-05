@@ -142,7 +142,7 @@ class PortfolioAdmin extends Backend
                 'field' => 'portfolio_date',
                 'label' => _l("Date", $this),
                 'type' => "date",
-                'rules' => 'callback_validDate',
+                'rules' => 'validDate',
                 'datepicker' => array(
                     'todayHighlight'=>true,
                     'dateFormat'=>$this->settings['datepicker_date_format']
