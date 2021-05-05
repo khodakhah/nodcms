@@ -22,6 +22,7 @@
 namespace NodCMS\Portfolio;
 
 use Config\Services;
+use NodCMS\Portfolio\Controllers\Portfolio;
 
 class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
 {
@@ -55,6 +56,15 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
     public function hasHomePreview(): bool
     {
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     * @return string
+     */
+    public function getHomePreview(): string
+    {
+        return Portfolio::home();
     }
 
     /**

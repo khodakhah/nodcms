@@ -37,10 +37,12 @@ class Portfolio extends Frontend
     /**
      * Home preview
      *
-     * @param $CI
      * @return string
      */
-    static function home($CI){
+    static function home(): string
+    {
+        // TODO: Remove the $CI after change the language translation keys reader
+        $CI = 0;
         $data = [];
         $data['title'] = _l("Portfolio", $CI);
         $data_list = Models::portfolio()->getAllTrans(array('portfolio_public'=>1), null, 1, array('portfolio_date', 'DESC'));
