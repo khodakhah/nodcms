@@ -39,6 +39,7 @@ class Settings
     {
         $config = new \Config\Settings();
         $this->data = $config->settings_default;
+        $this->data['datepicker_date_format'] = str_replace(array('d', 'm', 'y', 'Y'), array('dd', 'mm', 'y', 'yy'), $this->data['date_format']);
     }
 
     /**
