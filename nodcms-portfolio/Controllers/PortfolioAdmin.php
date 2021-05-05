@@ -30,19 +30,13 @@ use NodCMS\Portfolio\Config\ViewBackend;
 
 class PortfolioAdmin extends Backend
 {
-    function __construct()
-    {
-        parent::__construct();
-        Services::layout()->setConfig(new ViewBackend());
-    }
-
     /**
      * Portfolio post list
      *
      * @param int $page
      * @return false|string
      */
-    function posts($page = 1)
+    function posts(int $page = 1)
     {
         $self_url = PORTFOLIO_ADMIN_URL."posts";
         $config = array(
@@ -107,15 +101,16 @@ class PortfolioAdmin extends Backend
     /**
      * Portfolio post edit/add form
      *
-     * @param null $id
+     * @param int $id
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
-    function postSubmit($id = null)
+    function postSubmit(int $id = 0)
     {
         $back_url = PORTFOLIO_ADMIN_URL."posts";
         $self_url = PORTFOLIO_ADMIN_URL."postSubmit/$id";
 
-        if($id!=null){
+        if($id!=0){
             $data = Models::portfolio()->getOne($id);
             if(count($data)==0){
                 return $this->errorMessage("The post couldn't find.", $back_url);
@@ -207,7 +202,7 @@ class PortfolioAdmin extends Backend
                 unset($post_data['translate']);
             }
 
-            if($id!=null){
+            if($id!=0){
                 Models::portfolio()->edit($id, $post_data);
                 if(isset($translates)){
                     Models::portfolio()->updateTranslations($id,$translates,$languages);
@@ -234,12 +229,12 @@ class PortfolioAdmin extends Backend
     /**
      * Portfolio post remove
      *
-     * @param $id
+     * @param int $id
      * @param int $confirm
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function postDelete($id, $confirm = 0)
+    function postDelete(int $id, int $confirm = 0)
     {
         if(!Services::identity()->isAdmin(true))
             return Services::identity()->getResponse();
