@@ -12,9 +12,9 @@
                 <div data-role="portfolio" class="cbp">
                     <?php foreach($data_list as $item){ ?>
                         <div class="cbp-item print motion">
-                            <a href="<?php echo base_url().$this->language['code']."/portfolio-$item[portfolio_id]"; ?>" class="cbp-caption cbp-singlePageInline" data-title="<?php echo $item['title']; ?>" rel="nofollow">
+                            <a href="<?php echo base_url($this->language['code']."/portfolio-$item[portfolio_id]"); ?>" class="cbp-caption cbp-singlePageInline" data-title="<?php echo $item['title']; ?>" rel="nofollow">
                                 <div class="cbp-caption-defaultWrap">
-                                    <img src="<?php echo base_url().image($item['portfolio_image'],"",400,300); ?>" class="img-responsive" alt="<?php echo $item['title']; ?>" title="<?php echo $item['title']; ?>">
+                                    <img src="<?php echo base_url(image($item['portfolio_image'],"",400,300)); ?>" class="img-responsive" alt="<?php echo $item['title']; ?>" title="<?php echo $item['title']; ?>">
                                 </div>
                                 <div class="cbp-caption-activeWrap">
                                     <div class="cbp-l-caption-alignLeft">
