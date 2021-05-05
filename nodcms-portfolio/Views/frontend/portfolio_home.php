@@ -1,9 +1,7 @@
 <?php if(isset($data_list) && count($data_list)!=0){ ?>
-    <?php $this->load->addCSSFile("assets/plugins/cubeportfolio/css/cubeportfolio"); ?>
-    <?php $this->load->addJsFile("assets/plugins/cubeportfolio/js/jquery.cubeportfolio.min"); ?>
-    <?php $this->load->addJsFile("assets/nodcms/Packages/Portfolio/portfolio-list.min"); ?>
-    <?php $this->load->fetchAllCSS(); ?>
-    <?php $this->load->fetchAllJS(); ?>
+    <?php \Config\Services::layout()->addCSSFile("assets/plugins/cubeportfolio/css/cubeportfolio"); ?>
+    <?php \Config\Services::layout()->addJsFile("assets/plugins/cubeportfolio/js/jquery.cubeportfolio.min"); ?>
+    <?php \Config\Services::layout()->addJsFile("assets/nodcms/Packages/Portfolio/portfolio-list.min"); ?>
     <div class="padding-top-20 padding-bottom-20">
         <div class="container-fluid">
             <h2 class="text-center margin-bottom-20"><?php echo $title; ?></h2>

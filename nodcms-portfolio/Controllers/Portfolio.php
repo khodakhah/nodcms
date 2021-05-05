@@ -49,7 +49,7 @@ class Portfolio extends Frontend
         if(is_array($data_list)){
             $data['data_list'] = $data_list;
         }
-        return Services::layout()->setData($data)->render("portfolio_home");
+        return Services::layout(new ViewFrontend(), false)->setData($data)->render("portfolio_home");
     }
 
     /**
