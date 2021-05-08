@@ -134,7 +134,7 @@ class ServicesAdmin extends Backend
                 'field' => 'service_price',
                 'label' => _l("Price", $this),
                 'type' => "currency",
-                'rules' => 'callback_validCurrency',
+                'rules' => 'validCurrency',
                 'divider' => '.',
                 'after_sign' => $this->settings['currency_code'],
                 'default'=>isset($current_data)?Services::currency()->formatFloat($current_data['service_price']):"",
@@ -145,7 +145,7 @@ class ServicesAdmin extends Backend
             $config[] = array(
                 'field' => 'service_uri',
                 'label' => _l("Service URI", $this),
-                'rules' => 'required|callback_validURI|callback_isUnique[services,service_uri'.(isset($current_data)?",service_id,$current_data[service_id]":"").']',
+                'rules' => 'required|validURI|is_unique[services.service_uri'.(isset($current_data)?",service_id,$current_data[service_id]":"").']',
                 'type' => "text",
                 'default'=>isset($current_data)?$current_data["service_uri"]:'',
                 'input_prefix'=>base_url($this->language['code']."/service/"),
