@@ -63,7 +63,7 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
      */
     function backend()
     {
-        define('PRICING_TABLE_ADMIN_URL',base_url().'admin-pricing-table/');
+        define('PRICING_TABLE_ADMIN_URL',base_url('admin-pricing-table').'/');
 
         if(Services::identity()->isAdmin(true)) {
             Services::sidebar()->addLink(

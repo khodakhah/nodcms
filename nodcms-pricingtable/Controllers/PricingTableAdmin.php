@@ -88,7 +88,7 @@ class PricingTableAdmin extends Backend
             array('label'=>_l("New Table", $this), 'url'=>PRICING_TABLE_ADMIN_URL."tableSubmit"),
             array('label'=>_l("New Record", $this), 'url'=>PRICING_TABLE_ADMIN_URL."recordSubmit"),
         );
-        $this->data['save_sort_url'] = PRICING_TABLE_ADMIN_URL."sortSubmit/";
+        $this->data['save_sort_url'] = PRICING_TABLE_ADMIN_URL."sortSubmit";
         $this->data['page'] = "pricing_tables";
 
         return $this->viewRender("list_sort");
