@@ -41,10 +41,10 @@ class ArticlesAdmin extends Backend {
         $this->data['sub_title'] = _l("Sort",$this);
 
         $list_items = array();
-        $data_list = Models::articles()->getAll(array('parent'=>0));
+        $data_list = Models::articles()->getAll(array('parent'=>0), null, 1, ['order', 'ASC']);
         foreach($data_list as $item) {
             $sub_data = array();
-            $sub_data_list = Models::articles()->getAll(array('parent'=>$item['article_id']));
+            $sub_data_list = Models::articles()->getAll(array('parent'=>$item['article_id']), null, 1, ['order', 'ASC']);
             foreach($sub_data_list as $_item) {
                 $sub_data[] = $this->setSortRow($_item);
             }
