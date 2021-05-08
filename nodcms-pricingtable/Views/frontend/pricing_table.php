@@ -9,7 +9,7 @@
                             <div class="card-body text-center">
                                 <h4><?php echo $item['title']; ?></h4>
                                 <div class="font-weight-bold font-theme margin-bottom-20">
-                                    <?php echo $this->currency->format($item['table_price']); ?>
+                                    <?php echo \Config\Services::currency()->format($item['table_price']); ?>
                                 </div>
                                 <?php if(isset($item['records']) && count($item['records'])!=0){ ?>
                                     <?php foreach($item['records'] as $j=>$record){ ?>
