@@ -33,7 +33,7 @@ class ServicesAdmin extends Backend
      *
      * @return string
      */
-    function services()
+    function services(): string
     {
         $this->data['title'] = _l("Services",$this);
         $this->data['breadcrumb']=array(
@@ -69,19 +69,19 @@ class ServicesAdmin extends Backend
     /**
      * Add/Edit submit form
      *
-     * @param null|int $id
+     * @param int $id
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string|void
      * @throws \Exception
      */
-    function serviceSubmit($id = null)
+    function serviceSubmit(int $id = 0)
     {
         $self_url = SERVICES_ADMIN_URL."serviceSubmit";
         $back_url = SERVICES_ADMIN_URL."services";
         $this->data['title'] = _l("Services",$this);
-        if($id!=null)
+        if($id!=0)
         {
             $current_data = Models::services()->getOne($id);
-            if($current_data==null || count($current_data)==0){
+            if(empty($current_data)){
                 return $this->errorMessage("Service not found.", $back_url);
             }
             $form_attr = array();
@@ -137,7 +137,7 @@ class ServicesAdmin extends Backend
                 'rules' => 'callback_validCurrency',
                 'divider' => '.',
                 'after_sign' => $this->settings['currency_code'],
-                'default'=>isset($current_data)?$this->currency->formatFloat($current_data['service_price']):"",
+                'default'=>isset($current_data)?Services::currency()->formatFloat($current_data['service_price']):"",
             );
         }
 
@@ -219,7 +219,7 @@ class ServicesAdmin extends Backend
                 unset($post_data['translate']);
             }
 
-            if($id!=null){
+            if($id!=0){
                 Models::services()->edit($id, $post_data);
                 if(isset($translates)){
                     Models::services()->updateTranslations($id,$translates,$languages);
@@ -252,7 +252,7 @@ class ServicesAdmin extends Backend
         $back_url = SERVICES_ADMIN_URL."services";
         if(!Services::identity()->isAdmin(true))
             return Services::identity()->getResponse();
-        $post_data = $this->input->post("data");
+        $post_data = Services::request()->getPost("data");
         if($post_data == null) {
             return $this->errorMessage("Sort data shouldn't be empty.", $back_url);
         }

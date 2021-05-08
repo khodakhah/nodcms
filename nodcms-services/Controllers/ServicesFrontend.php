@@ -37,10 +37,9 @@ class ServicesFrontend extends Frontend
     /**
      * Home preview
      *
-     * @param $CI
      * @return string
      */
-    static function home($CI){
+    static function home(){
         $data = [];
         $data_list = Models::services()->getAllTrans(array('service_public'=>1), null, 1, array('sort_order', 'ASK'));
         if(is_array($data_list)){
