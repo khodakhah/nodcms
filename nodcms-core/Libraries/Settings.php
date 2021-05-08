@@ -66,6 +66,9 @@ class Settings
 
         // Merge not translated and translated settings from database
         $this->data = array_merge($this->data, Services::model()->settings()->getSettings(), Services::model()->settings()->getSettings($languageId));
+
+        // Currency setup
+        Services::currency()->setup();
     }
 
     /**

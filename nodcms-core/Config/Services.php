@@ -1,6 +1,7 @@
 <?php namespace Config;
 
 use CodeIgniter\Config\Services as CoreServices;
+use NodCMS\Core\Libraries\Currency;
 use NodCMS\Core\Libraries\Identity;
 use NodCMS\Core\Libraries\Language;
 use NodCMS\Core\Libraries\Settings as SettingsLibrary;
@@ -147,6 +148,20 @@ class Services extends CoreServices
         }
 
         return new SettingsLibrary();
+    }
+
+    /**
+     * @param bool $getShared
+     * @return Currency
+     */
+    public static function currency(bool $getShared = true): Currency
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('currency');
+        }
+
+        return new Currency();
     }
 
     /**
