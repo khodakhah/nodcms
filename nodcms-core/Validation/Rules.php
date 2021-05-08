@@ -33,7 +33,8 @@ class Rules
     /**
      * Phone number format function
      *
-     * @param $text
+     * @param string $text
+     * @param string|null $error
      * @return bool
      */
     public function validPhone(string $text, string &$error = null): bool
@@ -49,7 +50,8 @@ class Rules
     /**
      * Validation time format function
      *
-     * @param $text
+     * @param string $text
+     * @param string|null $error
      * @return bool
      */
     public function regexMatch24Hours(string $text, string &$error = null): bool
@@ -65,7 +67,8 @@ class Rules
     /**
      * Validation multi time format function
      *
-     * @param $text
+     * @param string $text
+     * @param string|null $error
      * @return bool
      */
     public function formRulesMultiTime(string $text, string &$error = null): bool
@@ -81,7 +84,8 @@ class Rules
     /**
      * Validation multi date format function
      *
-     * @param $text
+     * @param string $text
+     * @param string|null $error
      * @return bool
      */
     public function formRulesMultiDate(string $text, string &$error = null): bool
@@ -97,7 +101,8 @@ class Rules
     /**
      * Validation multi date&time format function
      *
-     * @param $text
+     * @param string $text
+     * @param string|null $error
      * @return bool
      */
     public function formRulesMultiDateTime(string $text, string &$error = null): bool
@@ -115,7 +120,8 @@ class Rules
     /**
      * Validation time format function
      *
-     * @param $text
+     * @param string $text
+     * @param string|null $error
      * @return bool
      */
     public function formRulesTimeRange(string $text, string &$error = null): bool
@@ -131,7 +137,8 @@ class Rules
     /**
      * Validation password format function
      *
-     * @param $value
+     * @param string $value
+     * @param string|null $error
      * @return bool
      */
     public function formRulesPassword(string $value, string &$error = null): bool
@@ -147,7 +154,8 @@ class Rules
     /**
      * Validation date format function
      *
-     * @param $value
+     * @param string $value
+     * @param string|null $error
      * @return bool
      */
     public function validDate(string $value, string &$error = null): bool
@@ -174,7 +182,8 @@ class Rules
     /**
      * Validation name format function
      *
-     * @param $value
+     * @param string $value
+     * @param string|null $error
      * @return bool
      */
     public function formRulesName(string $value, string &$error = null): bool
@@ -190,7 +199,8 @@ class Rules
     /**
      * Validation username type function
      *
-     * @param $value
+     * @param string $value
+     * @param string|null $error
      * @return bool
      */
     public function validateUsernameType(string $value, string &$error = null): bool
@@ -211,6 +221,7 @@ class Rules
      *
      * @param $value
      * @param int $except_user_id
+     * @param string|null $error
      * @return bool
      */
     public function validateUsername($value, $except_user_id = 0, string &$error = null): bool
@@ -236,6 +247,7 @@ class Rules
      *
      * @param $value
      * @param int $except_user_id
+     * @param string|null $error
      * @return bool
      */
     public function emailUnique($value, $except_user_id = 0, string &$error = null): bool
@@ -251,7 +263,8 @@ class Rules
     /**
      * Validation email unique function
      *
-     * @param $value
+     * @param string $value
+     * @param string|null $error
      * @return bool
      */
     public function validCaptcha(string $value, string &$error = null): bool
@@ -271,7 +284,8 @@ class Rules
      * Validation field an a table unique function
      *
      * @param $value
-     * @param $args
+     * @param string $args
+     * @param string|null $error
      * @return bool
      */
     public function isUnique($value,string $args, string &$error = null): bool
@@ -316,7 +330,8 @@ class Rules
      *  - Input mask
      *
      * @param $value
-     * @param $mask
+     * @param string $mask
+     * @param string|null $error
      * @return bool
      */
     public function validMask($value, string $mask, string &$error = null): bool
@@ -357,7 +372,8 @@ class Rules
     /**
      * Validate a value with multi line email addresses
      *
-     * @param $value
+     * @param string $value
+     * @param string|null $error
      * @return bool
      */
     public function validEmails(string $value, string &$error = null): bool
@@ -374,7 +390,8 @@ class Rules
     /**
      * Form validation of currency format (float with the 2 fix)
      *
-     * @param $value
+     * @param string $value
+     * @param string|null $error
      * @return bool
      */
     public function validCurrency(string $value, string &$error = null): bool
@@ -392,7 +409,8 @@ class Rules
      * Form validations of range of number
      *
      * @param $value
-     * @param $args
+     * @param string $args
+     * @param string|null $error
      * @return bool
      */
     public function validRange($value,string $args, string &$error = null): bool
@@ -434,7 +452,8 @@ class Rules
     /**
      * Form validation of a range date
      *
-     * @param $value
+     * @param string $value
+     * @param string|null $error
      * @return bool
      */
     public function validRangeDate(string $value, string &$error = null): bool
@@ -453,7 +472,8 @@ class Rules
     /**
      * Form validations of a valid currency 3-digit code
      *
-     * @param $value
+     * @param string $value
+     * @param string|null $error
      * @return bool
      */
     public function validCurrencyCode(string $value, string &$error = null): bool
@@ -472,7 +492,8 @@ class Rules
     /**
      * Form validation of a list of numbers
      *
-     * @param $value
+     * @param string $value
+     * @param string|null $error
      * @return bool
      */
     public function validNumberList(string $value, string &$error = null): bool
@@ -491,7 +512,8 @@ class Rules
     /**
      * Form validation of google map iframe
      *
-     * @param $value
+     * @param string $value
+     * @param string|null $error
      * @return bool
      */
     public function validGoogleMapIframe(string $value, string &$error = null): bool
@@ -516,7 +538,8 @@ class Rules
      *          just like $value but as an array
      *
      * @param $value
-     * @param $args
+     * @param string $args
+     * @param string|null $error
      * @return bool
      */
     public function validNumberListExists($value, string $args, string &$error = null): bool
@@ -553,7 +576,8 @@ class Rules
     /**
      * Form validation of the Terms & Conditions accept
      *
-     * @param $value
+     * @param string $value
+     * @param string|null $error
      * @return bool
      */
     public function acceptTermsAndConditions(string $value, string &$error = null): bool
@@ -570,7 +594,8 @@ class Rules
      * Form validation of making required field if other field is filled
      *
      * @param $value
-     * @param $args
+     * @param string $args
+     * @param string|null $error
      * @return bool
      */
     public function validateRequiredIf($value, string $args, string &$error = null): bool
@@ -595,7 +620,8 @@ class Rules
     /**
      * Form validations of google invisible reCaptcha
      *
-     * @param $value
+     * @param string $value
+     * @param string|null $error
      * @return bool
      */
     public function validGoogleInvisibleReCaptcha(string $value, string &$error = null): bool
@@ -603,13 +629,13 @@ class Rules
         if($value=="")
             return true;
 
-        if(!isset($this->settings["google_captcha_secret_key"]) || $this->settings["google_captcha_secret_key"]==""){
+        if(!isset(Services::settings()->get()["google_captcha_secret_key"]) || Services::settings()->get()["google_captcha_secret_key"]==""){
             $error = _l("Google captcha secret key has not set.", $this);
             return false;
         }
         $url = "https://www.google.com/recaptcha/api/siteverify";
         $post_data = array(
-            'secret'=>$this->settings["google_captcha_secret_key"],
+            'secret'=>Services::settings()->get()["google_captcha_secret_key"],
             'response'=>$value,
         );
 
@@ -657,7 +683,8 @@ class Rules
      * Form validation not equal to the value or list
      *
      * @param $value
-     * @param $param
+     * @param string $param
+     * @param string|null $error
      * @return bool
      */
     public function validateNotEqual($value, string $param, string &$error = null): bool
@@ -674,6 +701,7 @@ class Rules
      *
      * @param $value
      * @param string $param
+     * @param string|null $error
      * @return bool
      */
     public function validateFileExists($value, $param = "string ", string &$error = null): bool
@@ -714,7 +742,8 @@ class Rules
     /**
      * Form validation: validate a database name
      *
-     * @param $value
+     * @param string $value
+     * @param string|null $error
      * @return bool
      */
     public function validDatabaseName(string $value, string &$error = null): bool
@@ -739,6 +768,7 @@ class Rules
      * Validation exists email for user return password
      *
      * @param $value
+     * @param string|null $error
      * @return bool
      */
     public function existsEmail($value, string &$error = null): bool
