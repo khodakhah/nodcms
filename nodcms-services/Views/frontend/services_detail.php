@@ -17,7 +17,7 @@
                     <div>
                         <?php echo _l("Price", $this); ?>:
                         <span class="<?php echo $data['service_price']!=0?"font-red":"font-green"; ?> font-weight-bold">
-                        <?php echo $data['service_price']!=0?$this->currency->format($data['service_price']):_l("Free", $this); ?>
+                        <?php echo $data['service_price']!=0?\Config\Services::currency()->format($data['service_price']):_l("Free", $this); ?>
                         </span>
                     </div>
                 <?php } ?>
@@ -46,7 +46,7 @@
                                 <div class="card-text text-center"><?php echo $item['description']; ?></div>
                                 <?php if($services_has_price){ ?>
                                     <div class="<?php echo $item['service_price']!=0?"font-red":"font-green"; ?> font-weight-bold text-center">
-                                        <?php echo $item['service_price']!=0?$this->currency->format($item['service_price']):_l("Free", $this); ?>
+                                        <?php echo $item['service_price']!=0?\Config\Services::currency()->format($item['service_price']):_l("Free", $this); ?>
                                     </div>
                                 <?php } ?>
                             </div>

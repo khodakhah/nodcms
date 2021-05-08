@@ -52,16 +52,16 @@ class ServicesFrontend extends Frontend
             $data['data_list'] = $data_list;
         }
         $data['title'] = Services::settings()->get()['services_page_title'];
-        return Services::layout()->setData($data)->render("services_home");
+        return Services::layout(new ViewFrontend(), false)->setData($data)->render("services_home");
     }
 
     /**
      * Display page of a service
      *
-     * @param int $uri
+     * @param string $uri
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      */
-    function service(int $uri)
+    function service(string $uri)
     {
         $data = Models::services()->getOneTrans(null, array('service_uri'=>$uri,'service_public'=>1));
         if(!is_array($data) || count($data)==0){
