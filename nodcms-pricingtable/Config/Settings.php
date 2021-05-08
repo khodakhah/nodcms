@@ -24,7 +24,7 @@ namespace NodCMS\Pricingtable\Config;
 
 class Settings
 {
-    public $default_setting = [
+    public $settings_default = [
         'pricing_table_page_title'=> "Prices",
         'pricing_table_page_description'=>"",
         'pricing_table_page_keywords'=>"",
