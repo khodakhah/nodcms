@@ -24,7 +24,7 @@ namespace NodCMS\Services\Config;
 
 class Settings
 {
-    public $default_settings = [
+    public $settings_default = [
         'services_display_mode'=>"image", // Or "icon"
         'services_display_price'=>0,
         'services_page'=>0,
