@@ -77,7 +77,7 @@ class ServicesFrontend extends Frontend
         if(is_array($data_list)){
             if($this->data['services_has_content'])
                 foreach ($data_list as &$item){
-                    $item['service_url'] = base_url().$this->language['code']."/service-$item[service_uri]";
+                    $item['service_url'] = base_url($this->language['code']."/service-$item[service_uri]");
                 }
             $this->data['data_list'] = $data_list;
         }

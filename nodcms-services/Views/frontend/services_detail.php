@@ -3,7 +3,7 @@
         <div class="col-4 bg-grey-steel">
             <div class="margin-20 text-center">
                 <?php if($this->settings['services_display_mode'] == "image"){ ?>
-                    <img src="<?php echo base_url().$data['service_image']; ?>" class="img-fluid rounded-circle">
+                    <img src="<?php echo base_url($data['service_image']); ?>" class="img-fluid rounded-circle">
                 <?php }elseif($this->settings['services_display_mode'] == "icon"){ ?>
                     <i class="<?php echo $data['service_icon']; ?> fa-5x font-theme"></i>
                 <?php } ?>
@@ -37,7 +37,7 @@
                             <div class="card-body">
                                 <div class="margin-20 text-center">
                                     <?php if($this->settings['services_display_mode'] == "image"){ ?>
-                                    <img src="<?php echo base_url().$item['service_image']; ?>" class="img-fluid rounded-circle">
+                                    <img src="<?php echo base_url($item['service_image']); ?>" class="img-fluid rounded-circle">
                                     <?php }elseif($this->settings['services_display_mode'] == "icon"){ ?>
                                         <i class="<?php echo $item['service_icon']; ?> fa-5x font-theme"></i>
                                     <?php } ?>

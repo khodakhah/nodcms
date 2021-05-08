@@ -148,7 +148,7 @@ class ServicesAdmin extends Backend
                 'rules' => 'required|callback_validURI|callback_isUnique[services,service_uri'.(isset($current_data)?",service_id,$current_data[service_id]":"").']',
                 'type' => "text",
                 'default'=>isset($current_data)?$current_data["service_uri"]:'',
-                'input_prefix'=>base_url().$this->language['code']."/service/",
+                'input_prefix'=>base_url($this->language['code']."/service/"),
             );
         }
 
