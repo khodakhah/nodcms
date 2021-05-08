@@ -37,10 +37,10 @@ class PricingTable extends Frontend
     /**
      * Home preview
      *
-     * @param $CI
      * @return string
      */
-    static function home($CI){
+    static function home(): string
+    {
         $data = [];
         $data['title'] = Services::settings()->get()['pricing_table_page_title'];
         $data_list = Models::pricingTable()->getAllTrans(array('table_public'=>1), null, 1, array('sort_order', 'ASC'));
@@ -53,13 +53,14 @@ class PricingTable extends Frontend
             }
             $data['data_list'] = $data_list;
         }
-        return Services::layout()->setData($data)->render('pricing_table_home');
+        return Services::layout(new ViewFrontend(), false)->setData($data)->render('pricing_table_home');
     }
 
     /**
      * @return string
      */
-    function prices(){
+    function prices(): string
+    {
         $data_list = Models::pricingTable()->getAllTrans(array('table_public'=>1), null, 1, array('sort_order', 'ASC'));
         if(is_array($data_list)){
             foreach($data_list as &$item){

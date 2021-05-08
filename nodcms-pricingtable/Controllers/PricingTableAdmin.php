@@ -36,7 +36,7 @@ class PricingTableAdmin extends Backend
     /**
      * Table post list
      */
-    function tables()
+    function tables(): string
     {
         $this->data['title'] = _l("Pricing Tables",$this);
         $this->data['breadcrumb']=array(
@@ -129,16 +129,16 @@ class PricingTableAdmin extends Backend
     /**
      * Table post edit/add form
      *
-     * @param null $id
+     * @param int $id
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function tableSubmit($id = null)
+    function tableSubmit(int $id = 0)
     {
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
         $self_url = PRICING_TABLE_ADMIN_URL."tableSubmit/$id";
 
-        if($id!=null){
+        if($id!=0){
             $data = Models::pricingTable()->getOne($id);
             if(count($data)==0){
                 return $this->errorMessage("The table couldn't find.", $back_url);
@@ -163,7 +163,7 @@ class PricingTableAdmin extends Backend
                 'field' => 'table_price',
                 'label' => _l("Price", $this),
                 'type' => "currency",
-                'rules' => 'callback_validCurrency',
+                'rules' => 'validCurrency',
                 'default_formatted' => $this->settings['currency_format'],
                 'divider' => $this->settings['currency_code'] == "1.234,56"?',':'.',
                 'after_sign' => $this->settings['currency_code'],
@@ -291,12 +291,12 @@ class PricingTableAdmin extends Backend
     /**
      * Table post remove
      *
-     * @param $id
+     * @param int $id
      * @param int $confirm
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function deleteTable($id, $confirm = 0)
+    function deleteTable(int $id, int $confirm = 0)
     {
         if(!Services::identity()->isAdmin(true))
             return Services::identity()->getResponse();
@@ -333,16 +333,16 @@ class PricingTableAdmin extends Backend
     /**
      * Table post edit/add form
      *
-     * @param null $id
+     * @param int $id
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function recordSubmit($id = null)
+    function recordSubmit(int$id = 0)
     {
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
         $self_url = PRICING_TABLE_ADMIN_URL."recordSubmit/$id";
 
-        if($id!=null){
+        if($id!=0){
             $data = Models::pricingTableRecord()->getOne($id);
             if(count($data)==0){
                 return $this->errorMessage("The record couldn't find.", $back_url);
@@ -355,11 +355,11 @@ class PricingTableAdmin extends Backend
         }
 
         $tables = Models::pricingTable()->getAll();
-        if($tables==null || count($tables)==0){
+        if(empty($tables)){
             return $this->errorMessage("Before add a record you need to have a table.", $back_url);
         }
 
-        if($id ==  null){
+        if($id == 0){
             array_unshift($tables, array(
                 'table_name'=>_l("All tables", $this),
                 'table_id'=>0,
@@ -434,7 +434,7 @@ class PricingTableAdmin extends Backend
                 return $this->successMessage("A new record has been on all tables added successfully.", $back_url);
             }
 
-            if($id!=null){
+            if($id!=0){
                 Models::pricingTableRecord()->edit($id, $post_data);
                 if(isset($translates)){
                     Models::pricingTableRecord()->updateTranslations($id,$translates,$languages);
@@ -484,12 +484,12 @@ class PricingTableAdmin extends Backend
     /**
      * Table post remove
      *
-     * @param $id
+     * @param int $id
      * @param int $confirm
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function deleteRecord($id, $confirm = 0)
+    function deleteRecord(int $id, $confirm = 0)
     {
         if(!Services::identity()->isAdmin(true))
             return Services::identity()->getResponse();
