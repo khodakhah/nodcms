@@ -22,6 +22,7 @@
 namespace NodCMS\Pricingtable;
 
 use Config\Services;
+use NodCMS\Pricingtable\Controllers\PricingTable;
 
 class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
 {
@@ -55,6 +56,15 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
     public function hasHomePreview(): bool
     {
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     * @return string
+     */
+    public function getHomePreview(): string
+    {
+        return PricingTable::home();
     }
 
     /**
