@@ -43,6 +43,29 @@ class Services extends CoreServices
 	//    }
 
     /**
+     * Load the CI customized Validation class from NodCMS core
+     *
+     * @param Validation|null $config
+     * @param bool $getShared
+     * @return \CodeIgniter\Validation\Validation|mixed|\NodCMS\Core\Validation\Validation
+     */
+    public static function validation(Validation $config = null, bool $getShared = true)
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('validation', $config);
+        }
+
+        if (is_null($config))
+        {
+            $config = config('Validation');
+        }
+
+        return new \NodCMS\Core\Validation\Validation($config, static::renderer());
+    }
+
+
+    /**
      * Returns the NodCMS View class
      *
      * @param null $config
