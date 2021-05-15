@@ -669,7 +669,7 @@ class GeneralAdmin extends Backend
 
         $this->data['menu_types']=array(
             array('title'=>_l('Top menu',$this), 'key'=>"top_menu"),
-            array('title'=>_l('Footer menu',$this), 'description'=>_l("This menu will display in the pre footer.", $this), 'key'=>"footer_menu"),
+//            array('title'=>_l('Footer menu',$this), 'description'=>_l("This menu will display in the pre footer.", $this), 'key'=>"footer_menu"),
         );
         foreach($this->data['menu_types'] as &$val){
             $val['data_list'] = Services::model()->menu()->getAll(array('menu_key'=>$val['key'], 'sub_menu'=>0));

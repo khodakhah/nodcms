@@ -1,7 +1,7 @@
 <div class="row">
     <?php if(isset($menu_types) && count($menu_types)!=0){ ?>
         <?php foreach($menu_types as $menu_type){ ?>
-            <div class="col-md-6">
+            <div class="<?php echo count($menu_types) > 1 ? "col-md-6" : "col-md-12" ?>">
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
