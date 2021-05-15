@@ -60,9 +60,10 @@
                 <?php foreach($actions_buttons as $key=>$item){ ?>
                     <?php if($key == 'add'){ ?>
                         <a class="btn blue" href="<?php echo $item; ?>"><i class="fas fa-plus"></i> <?php echo _l("Add", $this); ?></a>
-                    <?php } ?>
-                    <?php if($key == 'ajax_add'){ ?>
+                    <?php }elseif($key == 'ajax_add'){ ?>
                         <button type="button" class="btn blue" onclick="$.loadInModal('<?php echo $item; ?>', 'modal-lg');"><i class="fas fa-plus"></i> <?php echo _l("Add", $this); ?></button>
+                    <?php }elseif($key == 'all-uninstall'){ ?>
+                        <button type="button" class="btn red" onclick="$.loadConfirmModal('<?php echo $item; ?>');"><?php echo _l("Uninstall all", $this); ?></button>
                     <?php } ?>
                 <?php } ?>
             </div>

@@ -2561,6 +2561,13 @@ class GeneralAdmin extends Backend
             'total_rows'=>count($packages),
             'page'=>$page,
         );
+
+        if(count(Services::modules()->getAllInstalled()) > 0) {
+            $this->data['actions_buttons'] = [
+                'all-uninstall'=>ADMIN_URL."moduleUninstallAll",
+            ];
+        }
+
         $conditions = null;
         $theList->setOptions($config);
         $this->data['title'] = _l("Social Links", $this);
@@ -2706,8 +2713,55 @@ class GeneralAdmin extends Backend
             ));
         }
 
-        Services::model()->packages()->remove($current_data['package_id']);
+        // Remove all records with the current name!
+        Services::model()->packages()->clean(array('package_name'=>$name));
 
+        return $this->successMessage("The module has been successfully uninstalled.", $back_url);
+    }
+
+    /**
+     * Uninstall all modules/packages
+     *
+     * @param int $confirm
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
+     */
+    public function moduleUninstallAll(int $confirm = 0) {
+        if(!Services::identity()->isAdmin())
+            return Services::identity()->getResponse();
+
+        $back_url = ADMIN_URL."modules";
+        $self_url = ADMIN_URL."moduleUninstallAll";
+        $installedModules = Services::modules()->getAllInstalled();
+        $tables = [];
+        foreach($installedModules as $name=>$item) {
+            $tables = array_merge($tables, Services::modules()->getTablesInfo($name));
+        }
+
+        if($confirm!=1){
+            return json_encode(array(
+                'status'=>'success',
+                'content'=>'<p class="text-left">' .
+                    _l("This action only make all modules de-active.", $this) .
+                    ' '._l("Database tables of these modules wouldn't remove.", $this).
+                    ' '._l("If you want to remove them, you should remove the bellow tables manually from your database.", $this).
+                    '</p>'.
+                    '<ul class="text-left">'.
+                    '<li>'.join('</li><li>', array_column($tables, 'table')).'</li>'.
+                    '</ul>'.
+                    '<p class="text-center font-weight-bold alert alert-warning">' .
+                    _l("Are you sure to uninstall all modules?", $this) .
+                    '</p>',
+                'title'=>_l("Uninstall confirmation", $this),
+                'noBtnLabel'=>_l("Cancel", $this),
+                'yesBtnLabel'=>_l("Yes, uninstall ALL", $this),
+                'confirmUrl'=>$self_url."/1",
+                'redirect'=>1,
+            ));
+        }
+
+        // De-Active all modules
+        Services::model()->packages()->clean();
         return $this->successMessage("The module has been successfully uninstalled.", $back_url);
     }
 
