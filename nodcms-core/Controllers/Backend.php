@@ -50,12 +50,23 @@ abstract class Backend extends App
         Services::settings()->load($this->language['language_id']);
         $this->settings = Services::settings()->get();
 
+        // Add top menu
+        Services::topMenu()->addLink(
+            'view_site',
+            _l("View Site", $this),
+            "/{$this->language['code']}"
+        );
+
         Services::sidebar()->addLink(
             'dashboard',
             _l("Control Panel",$this),
             ADMIN_URL,
             'fas fa-th-large'
         );
+
+        // Call backend of startup of all modules
+        Services::modules()->executeBackend();
+
         Services::sidebar()->addLink(
             'users',
             _l("Members",$this),
@@ -146,15 +157,5 @@ abstract class Backend extends App
             _l("Social Links", $this),
             ADMIN_URL.'socialLinks'
         );
-
-        // Add top menu
-        Services::topMenu()->addLink(
-            'view_site',
-            _l("View Site", $this),
-            "/{$this->language['code']}"
-        );
-
-        // Call backend of startup of all modules
-        Services::modules()->executeBackend();
     }
 }
