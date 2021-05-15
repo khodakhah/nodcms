@@ -24,6 +24,7 @@ namespace NodCMS\Core\Modules;
 use Config\Autoload;
 use Config\Services;
 use Config\Models;
+use NodCMS\Core\Types\MenuLink;
 
 class Modules
 {
@@ -280,6 +281,21 @@ class Modules
             if(method_exists($module, 'backend'))
                 $module->backend();
         }
+    }
+
+    /**
+     *
+     *
+     * @return MenuLink[]
+     */
+    public function getMenuList(): array
+    {
+        $list = [];
+        foreach($this->installedModules as $item) {
+            $list = array_merge($list, (array) $item->menuList());
+        }
+
+        return $list;
     }
 
     /**

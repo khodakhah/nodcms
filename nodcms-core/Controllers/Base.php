@@ -28,8 +28,6 @@ use NodCMS\Core\View\Layout;
 
 abstract class Base extends Controller
 {
-    public $system_urls;
-
     // use for system settings
     public $settings;
     // current language

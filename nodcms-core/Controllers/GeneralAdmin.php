@@ -729,12 +729,28 @@ class GeneralAdmin extends Backend
             );
         }
 
+        // General URLs
+        $menu_list = [
+            ['title'=>_l("Home", $this), 'url'=>""],
+            ['title'=>_l("Contact Us", $this), 'url'=>"contact"],
+            ['title'=>_l("Terms & Conditions", $this), 'url'=>"terms-and-conditions"],
+            ['title'=>_l("Privacy-Policy", $this), 'url'=>"privacy-policy"],
+        ];
+        // URLs of the modules
+        $menuList = Services::modules()->getMenuList();
+        foreach ($menuList as $menu) {
+            $menu_list[] = [
+                'title'=>$menu->title,
+                'url'=>$menu->uri,
+            ];
+        }
+
         $config[] = array(
             'field'=>"menu_url",
-            'label'=>_l("System URL", $this),
+            'label'=>_l("URL", $this),
             'rules'=>"",
             'type'=>"select-text",
-            'options'=>$this->system_urls,
+            'options'=>$menu_list,
             'option_name'=>"title",
             'option_value'=>"url",
             'default'=>isset($current_data)?$current_data['menu_url']:'',
