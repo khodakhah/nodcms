@@ -136,10 +136,13 @@ class Model extends CoreModel
      *
      * @param $conditions
      */
-    function clean($conditions)
+    function clean($conditions = null)
     {
         $all = $this->getAll($conditions);
-        $this->getBuilder()->delete($conditions);
+        if($conditions == null)
+            $this->getBuilder()->emptyTable();
+        else
+            $this->getBuilder()->delete($conditions);
 
         // Delete Foreign Tables
         if($this->foreign_tables != null && is_array($this->foreign_tables) && count($this->foreign_tables)!=0){
