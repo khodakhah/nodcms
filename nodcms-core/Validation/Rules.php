@@ -220,12 +220,14 @@ class Rules
      * Validation username function (check unique with DB)
      *
      * @param $value
-     * @param int $except_user_id
+     * @param string $param
+     * @param array $data
      * @param string|null $error
      * @return bool
      */
-    public function validateUsername($value, $except_user_id = 0, string &$error = null): bool
+    public function validateUsername($value, string $param, array $data, string &$error = null): bool
     {
+        $except_user_id = !empty($param) ? $param : 0;
         if (preg_match('/^[A-Za-z0-9_]*$/', $value) == FALSE) {
             $error = _l("The {field} field must contain just English letters and underline only.", $this);
             return FALSE;
@@ -246,12 +248,14 @@ class Rules
      *  - unique email
      *
      * @param $value
-     * @param int $except_user_id
+     * @param string $param
+     * @param array $data
      * @param string|null $error
      * @return bool
      */
-    public function emailUnique($value, $except_user_id = 0, string &$error = null): bool
+    public function emailUnique($value, string $param, array $data, string &$error = null): bool
     {
+        $except_user_id = !empty($param) ? $param : 0;
         if(Services::model()->users()->getCount(['email' => $value, 'user_id <>' => $except_user_id]) > 0){
             $error = _l("The {field} field must be unique in the system.", $this);
             return false;
