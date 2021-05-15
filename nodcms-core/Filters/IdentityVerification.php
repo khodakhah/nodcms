@@ -34,7 +34,6 @@ class IdentityVerification implements \CodeIgniter\Filters\FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        $identity = Services::identity();
         $response = Services::quickResponse();
 
         if(!Services::identity()->isValid()){
@@ -43,7 +42,8 @@ class IdentityVerification implements \CodeIgniter\Filters\FilterInterface
 
         if(!Services::identity()->isActive()) {
             if($request->uri !== "account-locked") {
-                return redirect("/account-locked");
+                $lang = Services::language()->getLocale();
+                return $response->getError(lang("Access denied!"), "/$lang/account-locked");
             }
         }
 
