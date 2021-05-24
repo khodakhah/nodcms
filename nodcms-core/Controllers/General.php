@@ -262,7 +262,7 @@ class General extends Frontend
                 $config[] = array(
                     'field'=>"terms_and_conditions",
                     'type'=>"accept-terms",
-                    'rules'=>"callback_acceptTermsAndConditions",
+                    'rules'=>"acceptTermsAndConditions",
                     'label'=>_l("Terms & Conditions", $this),
                 );
             }
@@ -279,7 +279,7 @@ class General extends Frontend
             if($myForm->ispost()){
                 $data = $myForm->getPost();
                 if(!is_array($data) || count($data)==0){
-                    return;
+                    return $myForm->getResponse();
                 }
                 if($this->userdata!=null){
                     $data['username'] = $this->userdata['username'];
@@ -293,24 +293,21 @@ class General extends Frontend
                 // Send Notification Emial
                 send_notification_email("contact_form", $this->settings['email'], $data, $this->language['language_id'],$data['email']);
 
-                $this->successMessage("The message has been successfully sent.", $self_url);
-                return;
+                return $this->successMessage("The message has been successfully sent.", $self_url);
             }
             $myForm->setFormTheme('form_only');
             $myForm->setStyle('bootstrap-vertical');
 
             $form_attr = array('data-reset'=>1,'data-message'=>1);
             if($this->request->isAJAX()){
-                echo $myForm->fetch('',$form_attr, false);
-                return;
+                return $myForm->fetch('',$form_attr, false);
             }
             $this->data['contact_form'] = $myForm->fetch('',$form_attr, false);
         }
 
         $this->data['title'] = _l("Contact us", $this);
         if($home!=null){
-            echo $this->viewCommon("contact_home", $this->data);
-            return;
+            return $this->viewCommon("contact_home", $this->data);
         }
 
         $this->data['breadcrumb'] = array(
@@ -318,7 +315,7 @@ class General extends Frontend
         );
         $this->data['description'] = isset($this->settings["site_description"])?$this->settings["site_description"]:"";
         $this->data['keyword'] = isset($this->settings["site_keyword"])?$this->settings["site_keyword"]:"";
-        echo $this->viewRender("contact");
+        return $this->viewRender("contact");
     }
 
     function resetCaptcha()
