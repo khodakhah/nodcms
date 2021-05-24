@@ -53,16 +53,9 @@ class General extends Frontend
         }
 
         $this->data['packages'] = Services::modules()->getHomePreviews();
-        // Custom home view file
-        if($this->settings['homepage_type'] == "custom_view" && file_exists(SELF_PATH . "custom_views/{$this->settings['custom_view_path_home']}.php")){
-            // TODO: Solve this!
-            $index_content = $this->load->externalView(SELF_PATH, "custom_views/".$this->settings['custom_view_path_home'], $this->data, true);
-        }
-        // * System homepage default
-        else {
-            // Static home contents
-            $index_content = $this->viewCommon("home", $this->data);
-        }
+
+        // System homepage default
+        $index_content = $this->viewCommon("home", $this->data);
 
         // Contact page
 //        $data = $this->curlWebPage(base_url("$lang/contact-home"));

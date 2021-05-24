@@ -2194,14 +2194,6 @@ class GeneralAdmin extends Backend
                 ),
             ),
             array(
-                'title'=>_l("Local custom view", $this),
-                'key'=>"custom_view",
-                'attr'=>array(
-                    'data-role'=>"toggle-hidden",
-                    'data-target'=>".inputs_custom_view"
-                ),
-            ),
-            array(
                 'title'=>_l("Redirect to", $this),
                 'key'=>"redirect",
                 'attr'=>array(
@@ -2248,16 +2240,6 @@ class GeneralAdmin extends Backend
                 'option_name'=>"title",
                 'option_value'=>"key",
                 'default'=>$this->settings['homepage_type'],
-            ),
-            array(
-                'field'=>"custom_view_path_home",
-                'label'=>_l("Custom view file path", $this),
-                'rules'=>"validateRequiredIf[homepage_type,custom_view]|validateFileExists[".SELF_PATH."custom_views".DIRECTORY_SEPARATOR.",.php]",
-                'type'=>"text",
-                'input_prefix'=>SELF_PATH."custom_views".DIRECTORY_SEPARATOR,
-                'input_postfix'=>".php",
-                'default'=>$this->settings['custom_view_path_home'],
-                'group_class'=>"inputs_custom_view ".($this->settings['homepage_type']!="custom_view"?"hidden":""),
             ),
             array(
                 'field'=>"home_page_title_box",
