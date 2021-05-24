@@ -109,6 +109,16 @@ class Model extends CoreModel
     }
 
     /**
+     * Update a table in database with primary key
+     * @param array $data
+     * @param int $id
+     */
+    public function updateOne(array $data, int $id)
+    {
+        $this->update($data, [$this->primaryKey()=>$id]);
+    }
+
+    /**
      * Delete form a database
      *
      * @param $id
