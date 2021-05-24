@@ -600,10 +600,11 @@ class Rules
      *
      * @param $value
      * @param string $args
+     * @param array $data
      * @param string|null $error
      * @return bool
      */
-    public function validateRequiredIf($value, string $args, string &$error = null): bool
+    public function validateRequiredIf($value, string $args, array $data, string &$error = null): bool
     {
         $args = explode(',', $args);
         $args_count = count($args);
@@ -615,7 +616,7 @@ class Rules
         $field = $args[0];
         $field_value = $args[1];
 
-        if(!isset($_POST[$field]) || $_POST[$field] != $field_value || $value!="" || $value!=NULL){
+        if(!isset($data[$field]) || $data[$field] != $field_value || $value!="" || $value!=NULL){
             return true;
         }
         $error = _l("The {field} is required.", $this);
@@ -689,10 +690,11 @@ class Rules
      *
      * @param $value
      * @param string $param
+     * @param array $data
      * @param string|null $error
      * @return bool
      */
-    public function validateNotEqual($value, string $param, string &$error = null): bool
+    public function validateNotEqual($value, string $param, array $data, string &$error = null): bool
     {
         if($value=="" || !in_array($value, explode(',', $param)))
             return true;
@@ -706,10 +708,11 @@ class Rules
      *
      * @param $value
      * @param string $param
+     * @param array $data
      * @param string|null $error
      * @return bool
      */
-    public function validateFileExists($value, $param = "string ", string &$error = null): bool
+    public function validateFileExists($value, string $param = "string ", array $data, string &$error = null): bool
     {
         if($value=="")
             return true;

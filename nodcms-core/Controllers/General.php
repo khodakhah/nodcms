@@ -35,7 +35,8 @@ class General extends Frontend
     {
         // Redirect to a URL
         if($this->settings['homepage_type'] == "redirect"){
-            return redirect($this->settings['homepage_redirect']);
+            header("location: ".$this->settings['homepage_redirect']);
+            return "";
         }
 
         // Open and return a file content
