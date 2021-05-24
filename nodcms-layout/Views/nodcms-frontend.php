@@ -139,6 +139,13 @@
         <i class="icon-arrow-up"></i>
     </div>
     <div class="container">
+        <?php if(isset($socialMediaLinks)) { ?>
+            <div class="text-center pt-3">
+                <?php foreach($socialMediaLinks as $item) { ?>
+                    <a href="<?php echo $item['url']; ?>" target="_blank"><i class="fab fa-<?php echo $item['class']; ?>"></i></a>
+                <?php } ?>
+            </div>
+        <?php } ?>
         <div class="page-footer-inner text-center">
             <?php echo $this->render("copyright"); ?>
         </div>

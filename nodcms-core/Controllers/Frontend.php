@@ -53,6 +53,8 @@ abstract class Frontend extends App
             $this->userdata = null;
         }
 
+        $this->data['socialMediaLinks'] = Models::socialLinks()->getAll();
+
         $this->setMenus();
     }
 
