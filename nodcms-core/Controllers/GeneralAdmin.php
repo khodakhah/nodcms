@@ -516,7 +516,7 @@ class GeneralAdmin extends Backend
             if(isset($data['google_captcha_secret_key']) && $data['google_captcha_secret_key']==""){
                 unset($data['google_captcha_secret_key']);
             }
-            if(isset($data['google_map'])){
+            if(!empty($data['google_map'])){
                 $matches = array();
                 preg_match('/(.+)src="([^\s]+)"(.+)/i', $data['google_map'], $matches);
                 $data['google_map_url'] = $matches[2];

@@ -524,8 +524,9 @@ class Rules
     {
         if($value=="")
             return true;
+
         // Format validation
-        if(!preg_match('/^\<iframe\s([\w]+\=\"[^\s]+\"[\s])*src\=\"[^\s]+\"([\s][\w]+\=\"[^\s]+\")*([\s][\w]+)*\>\<\/iframe\>$/', $value)){
+        if(!preg_match('/^\<iframe[\s]([\w]+\=\"[\w\d\;\:\s]*\"[\s])*src\=\"https:\/\/([\w\d\:\!\.\=\%\?\/]+)+\"([\s][\w]+\=\"[\w\d\;\:\s]*\")*\>\<\/iframe\>$/', $value)){
             $error = _l("The {field} has not contain valid values.", $this);
             return false;
         }
