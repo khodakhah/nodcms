@@ -29,12 +29,23 @@ abstract class Bootstrap implements I_Bootstrap
      * @var array
      */
     private $_data;
+
     /**
-     * Set empty dashboard content as default
+     * Set empty admin dashboard content as default
      *
      * @return string
      */
     public function getDashboard(): string
+    {
+        return "";
+    }
+
+    /**
+     * Set empty member dashboard content as default
+     *
+     * @return string
+     */
+    public function getMemberDashboard(): string
     {
         return "";
     }

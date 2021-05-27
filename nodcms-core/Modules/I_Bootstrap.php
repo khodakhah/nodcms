@@ -42,7 +42,7 @@ interface I_Bootstrap
     public function description(): string;
 
     /**
-     * True means, this module has a dashboard
+     * True means, this module has an admin dashboard
      *
      * @return bool
      */
@@ -54,6 +54,20 @@ interface I_Bootstrap
      * @return string
      */
     public function getDashboard(): string;
+
+    /**
+     * True means, this module has a member dashboard
+     *
+     * @return bool
+     */
+    public function hasMemberDashboard(): bool;
+
+    /**
+     * Return the member dashboard content
+     *
+     * @return string
+     */
+    public function getMemberDashboard(): string;
 
     /**
      * True means, this module has something to display in home

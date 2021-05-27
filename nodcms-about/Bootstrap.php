@@ -64,6 +64,14 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
 
     /**
      * @inheritDoc
+     */
+    public function hasMemberDashboard(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
      *
      * @return bool
      */

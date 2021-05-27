@@ -284,6 +284,17 @@ class Modules
     }
 
     /**
+     * Execute backend bootstrap for all modules
+     */
+    public function executeMembership()
+    {
+        foreach($this->installedModules as $module) {
+            if(method_exists($module, 'membership'))
+                $module->membership();
+        }
+    }
+
+    /**
      *
      *
      * @return MenuLink[]
