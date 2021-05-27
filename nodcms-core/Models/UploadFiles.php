@@ -53,4 +53,15 @@ class UploadFiles extends Model
         $translation_fields = null;
         parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
+
+    /**
+     * Specific update; set using file
+     *
+     * @param int $id
+     * @param bool $file_using
+     */
+    public function updateFileUsing(int $id, bool $file_using = true)
+    {
+        $this->update(['file_using'=>intval($file_using)], [$this->primaryKey()=>$id]);
+    }
 }
