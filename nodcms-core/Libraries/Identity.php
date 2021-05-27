@@ -92,11 +92,19 @@ class Identity
     }
 
     /**
+     * Check the logged user is an admin
+     *
      * @param bool $isDemoAdmin
      * @return bool
      * @throws \Exception
      */
     public function isAdmin(bool $isDemoAdmin = false): bool{
+        // Demo user welcomes
+        if($isDemoAdmin && (int) Services::session()->get('group') !== 100) {
+            return true;
+        }
+
+        // Not an admin user not welcomes
         if((int) Services::session()->get('group') !== 1) {
             $reponse = new QuickResponse();
             $reponse->setMessage(_l("Unfortunately you do not have permission to this part of system.", $this));
@@ -108,6 +116,38 @@ class Identity
         return true;
     }
 
+    /**
+     * Check if the user is a valid member
+     *  * A valid member is a user that has access to the membership panel.
+     *
+     * @param bool $isDemoAdmin
+     * @return bool
+     * @throws \Exception
+     */
+    public function isValidMember(bool $isDemoAdmin = false): bool
+    {
+        // Demo user welcomes
+        if($isDemoAdmin && (int) Services::session()->get('group') !== 100) {
+            return true;
+        }
+
+        // Not a valid member
+        if(!in_array((int) Services::session()->get('group'), [1, 20])) {
+            $reponse = new QuickResponse();
+            $reponse->setMessage(_l("Unfortunately you do not have permission to this part of system.", $this));
+            $reponse->setUrl( "/");
+            $this->response = $reponse->getError();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if the logged user is active
+     *
+     * @return bool
+     */
     public function isActive(): bool
     {
         $userdata = $this->getUserData();
