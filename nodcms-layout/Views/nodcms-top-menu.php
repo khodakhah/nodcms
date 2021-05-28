@@ -33,7 +33,7 @@
                                     <span class="hidden-xs"> <?php echo $this->userdata['username']; ?> </span>
                                 </a>
                                 <div class="dropdown-menu">
-                                    <?php if($this->userdata['has_dashboard']){ ?>
+                                    <?php if(\Config\Services::modules()->hasMemberDashboard()){ ?>
                                         <a class="dropdown-item" href="<?php echo base_url("user/dashboard"); ?>"><i class="icon-speedometer"></i><?php echo _l('Dashboard',$this);?></a>
                                     <?php } ?>
                                     <?php if(in_array($this->userdata['group_id'],array(1,100))){ ?>

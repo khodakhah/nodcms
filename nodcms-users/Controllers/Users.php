@@ -350,7 +350,6 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
                 'avatar'   => $user['avatar'],
                 'email'   => $user['email'],
                 'logged_in_status'   => true,
-                'has_dashboard'   => false// \Config\Services::modules($this)->hasDashboard(),
 
             );
             Services::session()->set($login_data);

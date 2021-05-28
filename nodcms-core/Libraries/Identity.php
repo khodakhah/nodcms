@@ -67,7 +67,6 @@ class Identity
 //                return;
 //            }
             if(!empty($user)) {
-                $user['has_dashboard'] = Services::session()->has("has_dashboard") ? Services::session()->get("has_dashboard") : false;
                 return $user;
             }
         }

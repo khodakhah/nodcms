@@ -231,19 +231,6 @@ class Modules
     }
 
     /**
-     * @return bool
-     */
-    public function hasDashboard(): bool
-    {
-        foreach($this->activeModules as $module) {
-            if(method_exists($module, 'hasDashboard') && $module->hasDashboard())
-                return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Update package in database from the installed package list
      */
     public function resort()
@@ -310,31 +297,67 @@ class Modules
     }
 
     /**
+     * Check if there is any dashboard panel from any modules
+     *
+     * @return bool
+     */
+    public function hasDashboard(): bool
+    {
+        foreach($this->activeModules as $module) {
+            if(method_exists($module, 'hasDashboard') && $module->hasDashboard())
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns dashboard content of all active modules.
      *
      * @return array
      */
     public function getDashboards(): array
     {
-        $modules = Models::packagesDashboard()->getAll(null, null, 1, ['package_sort', 'ASC']);
         $result = [];
-        foreach($modules as $item) {
-            $class = "\\".$this->getNameSpace($item['package_name'])."\Bootstrap";
-            if(!class_exists($class))
-                continue;
-
-            $key = strtolower($item['package_name']);
-
-            // Create a class
-            $module = new $class();
-
+        foreach($this->activeModules as $key=>$module) {
             if($module->hasDashboard())
                 $result[$key] = [
-                    'package_id' => $item['package_id'],
-                    'package_name' => $item['package_name'],
-                    'active' => $item['active'],
+                    'package_id' => $module->getData()['package_id'],
+                    'package_name' => $module->getData()['package_name'],
+                    'active' => $module->getData()['active'],
                     'content' => $module->getDashboard(),
                 ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Check if there is any dashboard for member panel
+     *
+     * @return bool
+     */
+    public function hasMemberDashboard(): bool
+    {
+        foreach($this->activeModules as $module) {
+            if(method_exists($module, 'hasMemberDashboard') && $module->hasMemberDashboard())
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns dashboards ajax url of all modules.
+     *
+     * @return array
+     */
+    public function getMemberDashboards(): array
+    {
+        $result = [];
+        foreach($this->activeModules as $key=>$module) {
+            if($module->hasMemberDashboard())
+                $result[$key] = $module->getMemberDashboard();
         }
         return $result;
     }

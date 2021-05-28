@@ -45,7 +45,7 @@
 <div class="clearfix"></div>
 <!-- BEGIN CONTAINER -->
 <div class="row no-gutters">
-    <?php if($this->userdata['has_dashboard'] && count($this->page_sidebar_items)!=0){ ?>
+    <?php if(\Config\Services::modules()->hasMemberDashboard() && count($this->page_sidebar_items)!=0){ ?>
         <div class="sidebar-col d-print-none">
             <ul class="nav flex-column nodcms-sidebar">
                 <li class="nav-item sidebar-minimizer">
@@ -63,11 +63,11 @@
     <div class="col">
         <div class="container-fluid margin-top-10 margin-bottom-10">
             <!-- BEGIN DASHBOARD STATS -->
-            <?php if($this->session->flashdata('static_error')){ ?>
+            <?php if($this->flashdata('static_error')){ ?>
                 <div class="alert alert-block alert-danger fade in">
                     <button data-dismiss="alert" class="close" type="button"></button>
                     <h4 class="alert-heading"><?php echo _l('Error',$this); ?>!</h4>
-                    <?php echo $this->session->flashdata('static_error'); ?>
+                    <?php echo $this->flashdata('static_error'); ?>
                 </div>
             <?php } ?>
             <?php echo isset($content)?$content:''; ?>
@@ -111,14 +111,14 @@
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         };
-        <?php if($this->session->flashdata('success')){ ?>
-        toastr['success']("<?php echo $this->session->flashdata('success'); ?>", "<?php echo _l("Success",$this); ?>");
+        <?php if($this->flashdata('success')){ ?>
+        toastr['success']("<?php echo $this->flashdata('success'); ?>", "<?php echo _l("Success",$this); ?>");
         <?php } ?>
-        <?php if($this->session->flashdata('error')){ ?>
-        toastr['error']("<?php echo $this->session->flashdata('error'); ?>", "<?php echo _l("Error",$this); ?>");
+        <?php if($this->flashdata('error')){ ?>
+        toastr['error']("<?php echo $this->flashdata('error'); ?>", "<?php echo _l("Error",$this); ?>");
         <?php } ?>
-        <?php if($this->session->flashdata('message')){ ?>
-        toastr['info']("<?php echo $this->session->flashdata('message'); ?>", "<?php echo _l("Info",$this); ?>");
+        <?php if($this->flashdata('message')){ ?>
+        toastr['info']("<?php echo $this->flashdata('message'); ?>", "<?php echo _l("Info",$this); ?>");
         <?php } ?>
     });
 </script>
