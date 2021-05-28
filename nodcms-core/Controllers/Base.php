@@ -90,6 +90,7 @@ abstract class Base extends Controller
         $this->session = Services::session();
         $this->model = Services::model();
         helper("NodCMS\Core\core");
+        helper('cookie');
     }
 
     /*
