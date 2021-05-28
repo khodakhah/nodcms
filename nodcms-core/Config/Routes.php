@@ -60,15 +60,15 @@ $routes->get('admin-provider/(.+)', "Providers_admin::$1");
 
 $routes->get('get-new-captcha', "General::resetCaptcha");
 
-$routes->get('user/dashboard', "GeneralMembers::dashboard");
-$routes->get('user/account', "GeneralMembers::account");
-$routes->match(['post', 'get'],'user/account/personal-info', "GeneralMembers::accountPersonalInfo");
-$routes->match(['post', 'get'],'user/account/change-password', "GeneralMembers::accountChangePassword");
+$routes->get('user/dashboard', "GeneralMembers::dashboard", ['filter'=>"identityVerification"]);
+$routes->get('user/account', "GeneralMembers::account", ['filter'=>"identityVerification"]);
+$routes->match(['post', 'get'],'user/account/personal-info', "GeneralMembers::accountPersonalInfo", ['filter'=>"identityVerification"]);
+$routes->match(['post', 'get'],'user/account/change-password', "GeneralMembers::accountChangePassword", ['filter'=>"identityVerification"]);
 $routes->match(['post', 'get'],'user/account/remove-avatar', "GeneralMembers::accountRemoveAvatar");
-$routes->match(['post', 'get'],'user/account/remove-avatar-confirmed', "GeneralMembers::accountRemoveAvatar/1");
+$routes->match(['post', 'get'],'user/account/remove-avatar-confirmed', "GeneralMembers::accountRemoveAvatar/1", ['filter'=>"identityVerification"]);
 
-$routes->match(['post', 'get'],'user/account-avatar-change', "GeneralMembers::accountAvatarChange");
-$routes->match(['post', 'get'],'user/account-avatar-upload', "GeneralMembers::accountAvatarUpload");
+$routes->match(['post', 'get'],'user/account-avatar-change', "GeneralMembers::accountAvatarChange", ['filter'=>"identityVerification"]);
+$routes->match(['post', 'get'],'user/account-avatar-upload', "GeneralMembers::accountAvatarUpload", ['filter'=>"identityVerification"]);
 //$routes->get('user-([A-Za-z\_]+)/dashboard', '$1/dashboard');
 //General URLs
 $routes->get('{locale}/(file|image)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::$1/$2/$3', ['filter'=>"urlLocale"]);
