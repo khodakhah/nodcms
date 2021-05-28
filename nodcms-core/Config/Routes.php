@@ -64,6 +64,7 @@ $routes->get('user/dashboard', "GeneralMembers::dashboard", ['filter'=>"identity
 $routes->get('user/account', "GeneralMembers::account", ['filter'=>"identityVerification"]);
 $routes->match(['post', 'get'],'user/account/personal-info', "GeneralMembers::accountPersonalInfo", ['filter'=>"identityVerification"]);
 $routes->match(['post', 'get'],'user/account/change-password', "GeneralMembers::accountChangePassword", ['filter'=>"identityVerification"]);
+$routes->match(['post', 'get'],'user/account/change-avatar', "GeneralMembers::accountChangeAvatar");
 $routes->match(['post', 'get'],'user/account/remove-avatar', "GeneralMembers::accountRemoveAvatar");
 $routes->match(['post', 'get'],'user/account/remove-avatar-confirmed', "GeneralMembers::accountRemoveAvatar/1", ['filter'=>"identityVerification"]);
 
