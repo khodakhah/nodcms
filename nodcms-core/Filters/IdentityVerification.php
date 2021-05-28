@@ -37,7 +37,7 @@ class IdentityVerification implements \CodeIgniter\Filters\FilterInterface
         $response = Services::quickResponse();
 
         if(!Services::identity()->isValid()){
-            return $response->getError(lang("Please login to access to access."), "/admin-sign");
+            return $response->getError(lang("Please login to access this page."), "/admin-sign");
         }
 
         if(!Services::identity()->isActive()) {
