@@ -143,6 +143,16 @@ class Identity
     }
 
     /**
+     * Check if the logged user is a DEMO account
+     *
+     * @return bool
+     */
+    public function isDemo(): bool
+    {
+        return (int) Services::session()->get('group') === 100;
+    }
+
+    /**
      * Check if the logged user is active
      *
      * @return bool
