@@ -1,7 +1,7 @@
-<?php $this->load->addCssFile("assets/dropzone/dropzone"); ?>
-<?php $this->load->addCssFile("assets/dropzone/basic"); ?>
-<?php $this->load->addJsFile("assets/dropzone/dropzone"); ?>
-<?php $this->load->addJsFile("assets/nodcms/form-handler/files"); ?>
+<?php \Config\Services::layout()->addCssFile("assets/dropzone/dropzone"); ?>
+<?php \Config\Services::layout()->addCssFile("assets/dropzone/basic"); ?>
+<?php \Config\Services::layout()->addJsFile("assets/dropzone/dropzone"); ?>
+<?php \Config\Services::layout()->addJsFile("assets/nodcms/form-handler/files"); ?>
 <div class="card margin-top-10">
     <div class="card-body">
         <?php if(isset($tabs) && count($tabs)!=0){ ?>
