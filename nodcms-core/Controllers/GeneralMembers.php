@@ -165,7 +165,7 @@ class GeneralMembers extends Membership {
                 'language_id'=>$post_data['language_id']
             );
 
-            Models::users()->updateOne($data, $this->userdata['user_id']);
+            Models::users()->edit($this->userdata['user_id'], $data);
             $row = Models::users()->getOne($this->userdata['user_id']);
             Services::session()->set('firstname', $row['firstname']);
             Services::session()->set('lastname', $row['lastname']);
@@ -231,7 +231,7 @@ class GeneralMembers extends Membership {
 
             $data = array('password'=>$post_data['new_password'],);
 
-            Models::users()->updateOne($data,$this->userdata['user_id']);
+            Models::users()->edit($this->userdata['user_id'], $data);
 
             return $this->successMessage("Your password has been updated successfully.", $self_url);
         }
@@ -253,8 +253,8 @@ class GeneralMembers extends Membership {
         $self_url = base_url("user/account/change-avatar");
         $myform = new Form($this);
         $uploaded_files = $myform->getLastUploadedFiles($this->avatar_file_key);
-        $config = array(
-            array(
+        $config = [
+            [
                 'field'=>"avatar",
                 'label'=>_l('New Avatar',$this),
                 'help'=>_l('Best size: 200x200px',$this),
@@ -269,14 +269,17 @@ class GeneralMembers extends Membership {
                     'in_list'=>_l("There is an unavailable file.", $this)
                 ),
                 'default'=>"from-cookies",
-            ),
-            array(
+            ]
+        ];
+
+        if($this->userdata['avatar'] != null) {
+            $config[] = [
                 'type'=>"div",
                 'label'=>'<button type="button" class="btn red-soft btn-ask" onclick="$.loadConfirmModal(\''.base_url("user/account/remove-avatar").'\')">'
                     ._l("Remove my Avatar", $this).'</button>',
                 'class'=>"margin-bottom-20"
-            ),
-        );
+            ];
+        }
         $myform->config($config, $self_url, 'post', 'ajax');
         $myform->setStyle("bootstrap-vertical");
         // * Submit form
@@ -295,7 +298,7 @@ class GeneralMembers extends Membership {
             $data = array('avatar'=>$avatar['file_thumbnail'],);
 
             $this->userAvatarRemove();
-            Models::users()->updateOne($data,$this->userdata['user_id']);
+            Models::users()->edit($this->userdata['user_id'], $data);
             Models::uploadFiles()->updateFileUsing($post_data['avatar']);
 
             $row = Models::users()->getOne($this->userdata['user_id']);
@@ -350,7 +353,7 @@ class GeneralMembers extends Membership {
 
         $data = array('avatar'=>"",);
         $this->userAvatarRemove();
-        Models::users()->updateOne($data,$this->userdata['user_id']);
+        Models::users()->edit($this->userdata['user_id'], $data);
 
         $row = Models::users()->getOne($this->userdata['user_id']);
         $success_data = array(
@@ -376,6 +379,7 @@ class GeneralMembers extends Membership {
 
     /**
      * Upload the user avatar image
+     * @throws \Exception
      */
     function accountAvatarUpload()
     {
@@ -384,10 +388,9 @@ class GeneralMembers extends Membership {
         if(count($uploaded_files)>1){
             return $this->errorMessage("You can't upload file any more.", base_url());
         }
-        $file_types = "jpg|png|gif";
         // To keep storage clean
         $myform->removeUselessFiles(strtotime("last week"));
-        return $myform->uploadFile("upload_file/users/user-".$this->userdata['user_id']."/".date("Y-m"), $this->avatar_file_key, $file_types, true,1);
+        return $myform->uploadFile("upload_file/users/user-".$this->userdata['user_id']."/".date("Y-m"), $this->avatar_file_key, 'image', true,1);
     }
 
 
@@ -489,7 +492,7 @@ class GeneralMembers extends Membership {
                 'language_id'=>$post_data['language_id']
             );
             if($post_data['password']!='') $data['password'] = md5($post_data['password']);
-            Models::users()->updateOne($data,$this->userdata['user_id']);
+            Models::users()->edit($this->userdata['user_id'], $data);
 
             $row = Models::users()->getOne($this->userdata['user_id']);
             Services::session()->set('firstname', $row['firstname']);
@@ -532,7 +535,7 @@ class GeneralMembers extends Membership {
             $setData = array(
                 "avatar"=>$upload->getResult()->path,
             );
-            Models::users()->updateOne($setData, $this->userdata['user_id']);
+            Models::users()->edit($this->userdata['user_id'], $setData);
             if(isset($this->userdata["avatar"])&&$this->userdata["avatar"]!=null&&$this->userdata["avatar"]!=""&&file_exists(SELF_PATH.$this->userdata["avatar"]))
                 unlink($dir."/".$this->userdata["avatar"]);
             return $this->successMessage("Your avatar has updated successfully.", base_url("{$this->language['code']}/account-setting"));
@@ -541,7 +544,7 @@ class GeneralMembers extends Membership {
         $setData = array(
             "avatar"=>"",
         );
-        Models::users()->updateOne($setData, $this->userdata['user_id']);
+        Models::users()->edit($this->userdata['user_id'], $setData);
         if(isset($this->userdata["avatar"])&&$this->userdata["avatar"]!=null&&$this->userdata["avatar"]!=""&&file_exists(SELF_PATH.$this->userdata["avatar"]))
             unlink(SELF_PATH.$this->userdata["avatar"]);
 

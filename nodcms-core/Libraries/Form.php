@@ -1249,16 +1249,16 @@ class Form
     /**
      * #Upload file: Upload a file with saving in database table "upload_files"
      *
-     * @param $path
-     * @param $save_key
-     * @param $allowed_types
+     * @param string $path
+     * @param string $save_key
+     * @param string|array $allowed_types
      * @param bool $encrypt_name
      * @param int $file_public
      * @param string $validation
      * @return string
      * @throws \Exception
      */
-    function uploadFile(string $path, string $save_key, array $allowed_types, bool $encrypt_name = true, int $file_public = 0,string $validation = ""): string
+    function uploadFile(string $path, string $save_key, $allowed_types, bool $encrypt_name = true, int $file_public = 0,string $validation = ""): string
     {
         /* TODO: set size limit from settings */
         /* TODO: set external upload file from settings */
@@ -1275,7 +1275,7 @@ class Form
             $unique_cookie = $new_unique_cookie;
         }
 
-        set_cookie($this->upload_cookie_name, $unique_cookie);
+        setcookie($this->upload_cookie_name, $unique_cookie, time()+86400, "/");
 
         $back_url = base_url("user/account");
         $upload = Services::upload()->filterTypes($allowed_types)->setBackUrl($back_url);
@@ -1283,12 +1283,13 @@ class Form
             return $upload->getErrorResponse();
         }
 
-        $file_type = $upload->getResult()->fileType;
-        if($file_type == "image"){
+        if($upload->getResult()->isImage()){
             $file_thumbnail = $upload->getResult()->fullPath;
+            $file_type = "image";
         }
         else{
             $file_thumbnail = "upload_file/images/file.png";
+            $file_type = $upload->getResult()->fileType;
         }
         $data_insert = array(
             "user_id"=>$this->CI->userdata!=NULL?$this->CI->userdata['user_id']:0,
@@ -1451,12 +1452,10 @@ class Form
      */
     private function convertKeysToFields(array $errors): array
     {
-        log_message('alert', print_r($errors, true));
         $result = [];
         foreach($errors as $key=>$item) {
             $result[preg_replace('/\.([\w\d\-_]+)/', "[$1]", $key)] = $item;
         }
-        log_message('alert', print_r($errors, true));
 
         return $result;
     }

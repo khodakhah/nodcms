@@ -72,7 +72,7 @@
                             }
                             var fileThum = $(file.previewElement).find('img');
                             if(typeof fileThum.attr('src')=='undefined'){
-                                myDropzone.emit("thumbnail", file, $('body').data("base-url") + result.file_thumbnail);
+                                myDropzone.emit("thumbnail", file, '/' + result.file_thumbnail);
                                 if(fileThum.width() >  fileThum.height()){
                                     fileThum.height('100%');
                                 }else{
@@ -93,7 +93,7 @@
                         // Create the mock file:
                         var mockFile = { name: val.name, size: val.size};
                         myDropzone.emit("addedfile", mockFile);
-                        myDropzone.emit("thumbnail", mockFile, $('body').data("base-url") + val.file_thumbnail);
+                        myDropzone.emit("thumbnail", mockFile, '/'+ val.file_thumbnail);
                         $.addRemoveButtonToDropzone(mockFile,val);
                         myDropzone.emit("complete", mockFile);
                         var mockThum = $(mockFile.previewElement).find('img');

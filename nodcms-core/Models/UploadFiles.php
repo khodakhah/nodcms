@@ -55,6 +55,19 @@ class UploadFiles extends Model
     }
 
     /**
+     * Add session id automatically on each insert
+     *
+     * @param array $data
+     * @return int
+     */
+    public function add(array $data): int
+    {
+        if(!key_exists("session_id", $data))
+            $data['session_id'] = session_id();
+        return parent::add($data);
+    }
+
+    /**
      * Specific update; set using file
      *
      * @param int $id

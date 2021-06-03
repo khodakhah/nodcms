@@ -22,6 +22,7 @@
 namespace NodCMS\Core\Controllers;
 
 use Config\Autoload;
+use Config\Models;
 use Config\Services;
 use NodCMS\Core\Libraries;
 
@@ -83,6 +84,7 @@ class General extends Frontend
      *
      * @param $id
      * @param $key
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string|void
      */
     function removeMyFile($id, $key)
     {
@@ -90,12 +92,9 @@ class General extends Frontend
             'file_id'=>$id,
             'remove_key'=>$key,
         );
-        $this->db->select("*")->from("upload_files")->where($conditions);
-        $query = $this->db->get();
-        $row = $query->row_array();
+        $row = Models::uploadFiles()->getOne(null, $conditions);
         if(count($row)==0){
-            $this->errorMessage("The file couldn't find.", base_url());
-            return;
+            return $this->errorMessage("The file couldn't find.", base_url());
         }
         $file = $row['file_path'];
         if(preg_match('/^[ftp|http|https]\:\/\/(.*\.[\a])$/',$row['file_path'])!=1) {
@@ -104,14 +103,13 @@ class General extends Frontend
         $myForm = new Libraries\Form($this);
         $unique_cookie = $myForm->getFileUniqueCookie();
         if($row['unique_cookie']!=$unique_cookie){
-            $this->errorMessage("You don't have access to remove this file.", base_url());
-            return;
+            return $this->errorMessage("You don't have access to remove this file.", base_url());
         }
         if (file_exists($file)) {
             unlink($file);
         }
-        $this->db->delete("upload_files" ,array('file_id'=>$id));
-        $this->successMessage("The file has been removed successfully.", base_url());
+        Models::uploadFiles()->remove($id);
+        return $this->successMessage("The file has been removed successfully.", base_url());
     }
 
     /**

@@ -109,16 +109,6 @@ class Model extends CoreModel
     }
 
     /**
-     * Update a table in database with primary key
-     * @param array $data
-     * @param int $id
-     */
-    public function updateOne(array $data, int $id)
-    {
-        $this->update($data, [$this->primaryKey()=>$id]);
-    }
-
-    /**
      * Delete form a database
      *
      * @param $id
@@ -274,10 +264,10 @@ class Model extends CoreModel
     /**
      * Decode search data
      *
-     * @param array $conditions
+     * @param array|string $conditions
      * @param BaseBuilder $builder
      */
-    function searchDecode(array $conditions, BaseBuilder $builder)
+    function searchDecode($conditions, BaseBuilder $builder)
     {
         if(!is_array($conditions)){
             $builder->where($conditions);

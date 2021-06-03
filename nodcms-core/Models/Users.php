@@ -115,11 +115,9 @@ class Users extends Model
      */
     public function edit($id, $data)
     {
-
         if(key_exists('password', $data)) {
             $data['password'] = md5($data['password']);
         }
-
 
         $_data = $this->getOne($id);
         if(!empty($_data)) {

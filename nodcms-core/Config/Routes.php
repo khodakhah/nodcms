@@ -75,7 +75,7 @@ $routes->match(['post', 'get'],'user/account-avatar-upload', "GeneralMembers::ac
 $routes->get('{locale}/(file|image)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::$1/$2/$3', ['filter'=>"urlLocale"]);
 $routes->get('{locale}/noimage-([0-9]+)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::noimage/$1/$2/$3', ['filter'=>"urlLocale"]);
 $routes->get('{locale}/noimage-([0-9]+)-([0-9]+)', 'General::noimage/$1/$2', ['filter'=>"urlLocale"]);
-$routes->match(['post', 'get'],'remove-my-file/([0-9]+)-([A-Za-z0-9\_]+)', 'General::removeMyFile/$1/$2');
+$routes->match(['post', 'get'],'{locale}/remove-my-file/([0-9]+)-([A-Za-z0-9\_]+)', 'General::removeMyFile/$1/$2', ['filter'=>"urlLocale"]);
 
 // General Pages
 $routes->get('{locale}', 'General::index', ['filter'=>"urlLocale"]);
