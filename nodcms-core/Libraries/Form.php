@@ -21,6 +21,7 @@
 
 namespace NodCMS\Core\Libraries;
 
+use Config\Models;
 use \Config\Services;
 
 /**
@@ -1255,51 +1256,36 @@ class Form
      * @param int $file_public
      * @param string $validation
      * @return string
+     * @throws \Exception
      */
-    function uploadFile($path,$save_key,$allowed_types,$encrypt_name = true, $file_public = 0, $validation = "")
+    function uploadFile(string $path, string $save_key, array $allowed_types, bool $encrypt_name = true, int $file_public = 0,string $validation = ""): string
     {
         /* TODO: set size limit from settings */
         /* TODO: set external upload file from settings */
         /* TODO: set file deadline from settings */
         // * Make directory if doesn't exists
-        if(!file_exists(FCPATH.$path)){
-            $dirs = explode("/",$path);
-            $dir = FCPATH;
-            foreach ($dirs as $item){
-                $dir .= "$item/";
-                if(!file_exists($dir))
-                    mkdir($dir);
-            }
-        }
-        $config['upload_path'] = $path;
 
         $unique_cookie = get_cookie($this->upload_cookie_name);
         if($unique_cookie == null){
             $file_count = 1;
             while ($file_count != 0){
                 $new_unique_cookie = substr(md5(rand(1000,9999)+time()-rand(1000,9999)),rand(0,10),10);
-                $this->CI->db->select("count(*)")->from("upload_files")->where(array('unique_cookie'=>$new_unique_cookie));
-                $query = $this->CI->db->get();
-                $row = $query->row_array();
-                $file_count = count($row)!=0?$row['count(*)']:0;
+                $file_count = Models::uploadFiles()->getCount(['unique_cookie'=>$new_unique_cookie]);
             }
             $unique_cookie = $new_unique_cookie;
         }
 
         set_cookie($this->upload_cookie_name, $unique_cookie);
 
-        $config['allowed_types'] = $allowed_types;
-        $config['encrypt_name'] = $encrypt_name;
-        $this->CI->load->library('upload');
-        $this->CI->upload->initialize($config);
-        if (!$this->CI->upload->do_upload("file")){
-            return json_encode(array("status"=>"error","error"=>$this->CI->upload->display_errors()));
+        $back_url = base_url("user/account");
+        $upload = Services::upload()->filterTypes($allowed_types)->setBackUrl($back_url);
+        if(!$upload->save("file", $path)) {
+            return $upload->getErrorResponse();
         }
-        $data = $this->CI->upload->data();
-        $explode_type = explode('/',$_FILES["file"]['type']);
-        $file_type = count($explode_type)!=0?$explode_type[0]:"";
+
+        $file_type = $upload->getResult()->fileType;
         if($file_type == "image"){
-            $file_thumbnail = $config['upload_path'].'/'.$data["file_name"];
+            $file_thumbnail = $upload->getResult()->fullPath;
         }
         else{
             $file_thumbnail = "upload_file/images/file.png";
@@ -1308,20 +1294,19 @@ class Form
             "user_id"=>$this->CI->userdata!=NULL?$this->CI->userdata['user_id']:0,
             "unique_cookie"=>$unique_cookie,
             "host"=>"localhost",
-            "file_type"=>$_FILES["file"]['type'],
-            "file_path"=>$config['upload_path'].'/'.$data["file_name"],
+            "file_type"=>$file_type,
+            "file_path"=>$upload->getResult()->fullPath,
             "file_thumbnail"=>$file_thumbnail,
             "file_key"=>$file_public!=0?md5(rand(1000,9999)):"public",
             "upload_key"=>$save_key,
             "remove_key"=>md5($save_key),
-            "name"=>$_FILES["file"]['name'],
-            "size"=>$data["file_size"],
+            "name"=>$upload->getResult()->clientName,
+            "size"=>$upload->getResult()->fileSize,
             "created_date"=>time(),
             "deadline"=>0,
             "download_validation"=>$validation,
         );
-        $this->CI->db->insert("upload_files", $data_insert);
-        $inserted_id = $this->CI->db->insert_id();
+        $inserted_id = Models::uploadFiles()->add($data_insert);
         if($inserted_id==0){
             return json_encode(array("status"=>"error","errors"=>_l("Unfortunately, the file could not be successfully saved.",$this->CI)));
         }
@@ -1349,13 +1334,22 @@ class Form
             return array();
         }
         $conditions = array('unique_cookie'=>$unique_cookie, 'upload_key'=>$upload_key, 'file_using'=>0);
-        $query = $this->CI->db->select("file_id,file_type,name,size,file_key,remove_key,file_thumbnail")->from("upload_files")
-            ->where($conditions)->get();
-        $result = $query->result_array();
-        foreach($result as &$item){
+        $files = Models::uploadFiles()->getAll($conditions);
+        $result = [];
+        foreach($files as $item) {
+            $_item = [
+                'file_id' => $item['file_id'],
+                'file_type' => $item['file_type'],
+                'name' => $item['name'],
+                'size' => $item['size'],
+                'file_key' => $item['file_key'],
+                'remove_key' => $item['remove_key'],
+                'file_thumbnail' => $item['file_thumbnail']
+            ];
             $url_prefix = substr($item['file_type'],0,5)=="image"?"image":"file";
-            $item['file_url'] = base_url("$url_prefix-$item[file_id]-$item[file_key]");
-            $item['name'] = $upload_key." - $item[name]";
+            $_item['file_url'] = base_url("$url_prefix-$item[file_id]-$item[file_key]");
+            $_item['name'] = $upload_key." - $item[name]";
+            $result[] = $_item;
         }
         return $result;
     }
@@ -1374,13 +1368,22 @@ class Form
         }
 
         $conditions = "file_id IN ($file_ids)";
-        $query = $this->CI->db->select("file_id,file_type,name,size,file_key,remove_key,file_thumbnail")->from("upload_files")
-            ->where($conditions)->get();
-        $result = $query->result_array();
-        foreach($result as &$item){
+        $files = Models::uploadFiles()->getAll($conditions);
+        $result = [];
+        foreach($files as $item) {
+            $_item = [
+                'file_id' => $item['file_id'],
+                'file_type' => $item['file_type'],
+                'name' => $item['name'],
+                'size' => $item['size'],
+                'file_key' => $item['file_key'],
+                'remove_key' => $item['remove_key'],
+                'file_thumbnail' => $item['file_thumbnail']
+            ];
             $url_prefix = substr($item['file_type'],0,5)=="image"?"image":"file";
-            $item['file_url'] = base_url("$url_prefix-$item[file_id]-$item[file_key]");
-            $item['name'] = "$item[name]";
+            $_item['file_url'] = base_url("$url_prefix-$item[file_id]-$item[file_key]");
+            $_item['name'] = "$item[name]";
+            $result[] = $_item;
         }
         return $result;
     }
@@ -1393,14 +1396,12 @@ class Form
     function removeUselessFiles($time)
     {
         $conditions = array('file_using'=>0, 'created_date <'=>$time);
-        $query = $this->CI->db->select("*")->from("upload_files")
-            ->where($conditions)->get();
-        $result = $query->result_array();
-        foreach($result as $item){
+        $files = Models::uploadFiles()->getAll($conditions);
+        foreach($files as $item){
             $file_path = FCPATH.$item['file_path'];
             if(file_exists($file_path))
                 unlink($file_path);
-            $this->CI->db->delete("upload_files", array('file_id'=>$item['file_id']));
+            Models::uploadFiles()->remove($item['file_id']);
         }
     }
 
@@ -1412,16 +1413,13 @@ class Form
     function removeFiles($files_id)
     {
         $conditions = "file_id IN ($files_id)";
-        $query = $this->CI->db->select("*")->from("upload_files")
-            ->where($conditions)->get();
-        $result = $query->result_array();
-        foreach($result as $item){
+        $files = Models::uploadFiles()->getAll($conditions);
+        foreach($files as $item){
             $file_path = FCPATH.$item['file_path'];
             if(file_exists($file_path))
                 unlink($file_path);
         }
-        $this->CI->db->delete("upload_files", $conditions);
-
+        Models::uploadFiles()->clean($conditions);
     }
 
     /**
