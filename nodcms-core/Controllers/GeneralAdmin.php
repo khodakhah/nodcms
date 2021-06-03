@@ -1718,8 +1718,7 @@ class GeneralAdmin extends Backend
         $theList->setOptions($config);
         if(Services::request()->getPost('record_result')==1){
             $data = Services::model()->uploadFiles()->getAll($conditions, $config['per_page'], $config['page']);
-            echo $theList->ajaxData($data);
-            return;
+            return $theList->ajaxData($data);
         }
 
         if(Services::request()->isAJAX()){
