@@ -17,9 +17,7 @@
     <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/v4-shims.css">
-    <link href="<?php echo base_url("assets/metronic/global/plugins/simple-line-icons/simple-line-icons.min.css"); ?>" rel="stylesheet" type="text/css"/>
 
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url("assets/metronic/global/plugins/bootstrap-select/css/bootstrap-select.min.css"); ?>"/>
     <!-- END GLOBAL MANDATORY STYLES -->
     <?php if($this->language["rtl"]!=1){ ?>
         <link href="<?php echo base_url("assets/nodcms/bootstrap-4.1.3/css/bootstrap.min.css"); ?>" rel="stylesheet" type="text/css"/>
@@ -29,10 +27,9 @@
         <link href="<?php echo base_url("assets/nodcms/bootstrap-4.1.3/css/bootstrap-rtl.min.css"); ?>" rel="stylesheet" type="text/css"/>
         <link href="<?php echo base_url("assets/nodcms/bootstrap-4.1.3/css/nodcms-membership-rtl.min.css"); ?>" rel="stylesheet" type="text/css"/>
     <?php } ?>
-    <link href="<?php echo base_url("assets/metronic/global/css/custom.css"); ?>" rel="stylesheet" type="text/css"/>
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url("assets/metronic/global/plugins/bootstrap-toastr/toastr.min.css"); ?>"/>
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url("assets/plugins/bootstrap-toastr/toastr.min.css"); ?>"/>
     <!-- BEGIN PAGE LEVEL PLUGIN STYLES -->
-    <link rel="stylesheet" href="<?php echo base_url("assets/metronic/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css"); ?>">
+    <link rel="stylesheet" href="<?php echo base_url("assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css"); ?>">
     <!-- END PAGE LEVEL PLUGIN STYLES -->
     <?php $this->fetchAllCSS(); ?>
     <script src="<?php echo base_url("assets/jquery-3.4.0.min.js"); ?>" type="text/javascript"></script>
