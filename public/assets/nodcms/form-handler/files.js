@@ -88,7 +88,7 @@
                             }
                         });
 
-                    var storedFiles = $.parseJSON($_this.find(".dropzone-default").val());
+                    var storedFiles = $_this.find(".dropzone-default").length === 0 ? {} : $.parseJSON($_this.find(".dropzone-default").val());
                     $.each(storedFiles, function (key,val) {
                         // Create the mock file:
                         var mockFile = { name: val.name, size: val.size};
@@ -110,8 +110,22 @@
             if($_this.data('accept-files')!="*"){
                 dropzone_option.acceptedFiles = $_this.data('accept-files');
             }
-            $_this.dropzone(dropzone_option);
-            allDropzoneJquery[$_this.attr('id')] = $_this;
+
+            /**
+             * Use dropzone function only after it is loaded.
+             *
+             * @private
+             */
+            function _load() {
+                if(typeof $.fn.dropzone === "function") {
+                    $_this.dropzone(dropzone_option);
+                    allDropzoneJquery[$_this.attr('id')] = $_this;
+                    return;
+                }
+                setTimeout(_load, 100);
+            }
+
+            _load();
         });
     };
 }(jQuery));
