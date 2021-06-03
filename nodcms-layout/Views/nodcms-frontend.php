@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <?php $this->addCssFile("assets/nodcms/bootstrap-4.1.3/css/bootstrap.min"); ?>
-<?php $this->addCssFile("assets/metronic/global/plugins/simple-line-icons/simple-line-icons.min"); ?>
 
 <?php $this->addCssFile("assets/nodcms/Packages/Support/icon-collection/css/nodcms-support.min"); ?>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="<?php echo $this->language["code"]; ?>" <?php echo $this->language["rtl"]!=1?'':'dir="rtl"'; ?>>
