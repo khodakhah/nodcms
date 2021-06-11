@@ -153,34 +153,9 @@
 
 <script src="<?php echo base_url("assets/nodcms/js/common.min.js"); ?>"></script>
 <script src="<?php echo base_url("assets/nodcms/bootstrap-4.1.3/js/bootstrap.min.js"); ?>"></script>
-<script src="<?php echo base_url("assets/toastr/toastr.min.js"); ?>"></script>
-<script>
-    $(function(){
-        toastr.options = {
-            "closeButton": true,
-            "debug": false,
-            "positionClass": "toast-top-right",
-            "onclick": null,
-            "showDuration": "1000",
-            "hideDuration": "1000",
-            "timeOut": "5000",
-            "extendedTimeOut": "1000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-        };
-        <?php if($this->flashdata('success')){ ?>
-        toastr['success']("<?php echo $this->flashdata('success'); ?>", "<?php echo _l("Success",$this); ?>");
-        <?php } ?>
-        <?php if($this->flashdata('error')){ ?>
-        toastr['error']("<?php echo $this->flashdata('error'); ?>", "<?php echo _l("Error",$this); ?>");
-        <?php } ?>
-        <?php if($this->flashdata('message')){ ?>
-        toastr['info']("<?php echo $this->flashdata('message'); ?>", "<?php echo _l("Info",$this); ?>");
-        <?php } ?>
-    });
-</script>
+<?php echo \Config\Services::layout()->render("common/bootstrap-toastr"); ?>
+<?php echo \Config\Services::layout()->render("common/bootstrap-confirmation"); ?>
+
 <script src="<?php echo base_url("assets/plugins/popper/popper.min.js"); ?>"></script>
 <script src="<?php echo base_url("assets/plugins/bootstrap-confirmation/bootstrap-confirmation.min.js"); ?>"></script>
 <script>
