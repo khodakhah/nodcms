@@ -104,7 +104,7 @@ class Layout extends View
      */
     public function render(string $view, array $options = null, bool $saveData = null): string
     {
-        $this->language = Services::language()->get();
+        $this->language = Services::language()->hasBeenSet() ? Services::language()->get() : [];
         $this->lang = Services::language()->getLocale();
         $this->settings = Services::settings()->get();
         return parent::render($view, $options, $saveData);

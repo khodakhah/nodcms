@@ -189,7 +189,7 @@ class View extends \CodeIgniter\View\View
     private function addAsset(&$variable, string $file_type, string $path, string $ltr_path = null)
     {
         if($ltr_path != null) {
-            if(\Config\Services::language()->get()["rtl"]){
+            if(\Config\Services::language()->hasBeenSet() && \Config\Services::language()->get()["rtl"]){
                 if(!in_array($ltr_path . $file_type, $variable))
                     array_push($variable, $ltr_path . $file_type);
                 return;

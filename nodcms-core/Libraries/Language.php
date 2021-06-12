@@ -78,6 +78,16 @@ class Language extends CI_Language
     }
 
     /**
+     * Returns true if language from database has been set/loaded.
+     *
+     * @return bool
+     */
+    public function hasBeenSet(): bool
+    {
+        return !empty($this->DBlanguage);
+    }
+
+    /**
      * Fetch NodCMS old school translation file and line
      *
      * @param string $line
