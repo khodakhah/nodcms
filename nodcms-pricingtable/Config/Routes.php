@@ -21,5 +21,5 @@
 
 if(!isset($routes)) throw new \Exception('$routes not defined.');
 
-$routes->match(['post', 'get'], 'admin-pricing-table/(.+)', "\NodCMS\Pricingtable\Controllers\PricingTableAdmin::$1", ['filter'=>"identityVerification"]);
-$routes->get('{locale}/prices', "\NodCMS\Pricingtable\Controllers\PricingTable::prices/$1", ['filter'=>"urlLocale"]);
+$routes->match(['post', 'get'], 'admin-pricing-table/(.+)', "\NodCMS\Pricingtable\Controllers\PricingTableAdmin::$1");
+$routes->get('{locale}/prices', "\NodCMS\Pricingtable\Controllers\PricingTable::prices/$1");

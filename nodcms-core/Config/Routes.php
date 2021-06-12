@@ -37,7 +37,7 @@ if (file_exists(SYSTEMPATH . 'Config/Routes.php'))
  * --------------------------------------------------------------------
  */
 $routes->setDefaultNamespace('NodCMS\Core\Controllers');
-$routes->setDefaultController('Dispatcher');
+$routes->setDefaultController('General');
 $routes->setDefaultMethod('index');
 $routes->setTranslateURIDashes(false);
 $routes->set404Override();
@@ -53,36 +53,36 @@ $routes->setAutoRoute(true);
 // route since we don't have to scan directories.
 
 // Admin URLs
-$routes->get('admin', "GeneralAdmin::dashboard", ['filter'=>"identityVerification"]);
-$routes->match(['post', 'get'],'admin/(.+)', "GeneralAdmin::$1", ['filter'=>"identityVerification"]);
+$routes->get('admin', "GeneralAdmin::dashboard");
+$routes->match(['post', 'get'],'admin/(.+)', "GeneralAdmin::$1");
 $routes->get('admin-provider', "Providers_admin::index");
 $routes->get('admin-provider/(.+)', "Providers_admin::$1");
 
 $routes->get('get-new-captcha', "General::resetCaptcha");
 
-$routes->get('user/dashboard', "GeneralMembers::dashboard", ['filter'=>"identityVerification"]);
-$routes->get('user/account', "GeneralMembers::account", ['filter'=>"identityVerification"]);
-$routes->match(['post', 'get'],'user/account/personal-info', "GeneralMembers::accountPersonalInfo", ['filter'=>"identityVerification"]);
-$routes->match(['post', 'get'],'user/account/change-password', "GeneralMembers::accountChangePassword", ['filter'=>"identityVerification"]);
+$routes->get('user/dashboard', "GeneralMembers::dashboard");
+$routes->get('user/account', "GeneralMembers::account");
+$routes->match(['post', 'get'],'user/account/personal-info', "GeneralMembers::accountPersonalInfo");
+$routes->match(['post', 'get'],'user/account/change-password', "GeneralMembers::accountChangePassword");
 $routes->match(['post', 'get'],'user/account/change-avatar', "GeneralMembers::accountChangeAvatar");
 $routes->match(['post', 'get'],'user/account/remove-avatar', "GeneralMembers::accountRemoveAvatar");
-$routes->match(['post', 'get'],'user/account/remove-avatar-confirmed', "GeneralMembers::accountRemoveAvatar/1", ['filter'=>"identityVerification"]);
+$routes->match(['post', 'get'],'user/account/remove-avatar-confirmed', "GeneralMembers::accountRemoveAvatar/1");
 
-$routes->match(['post', 'get'],'user/account-avatar-change', "GeneralMembers::accountAvatarChange", ['filter'=>"identityVerification"]);
-$routes->match(['post', 'get'],'user/account-avatar-upload', "GeneralMembers::accountAvatarUpload", ['filter'=>"identityVerification"]);
+$routes->match(['post', 'get'],'user/account-avatar-change', "GeneralMembers::accountAvatarChange");
+$routes->match(['post', 'get'],'user/account-avatar-upload', "GeneralMembers::accountAvatarUpload");
 //$routes->get('user-([A-Za-z\_]+)/dashboard', '$1/dashboard');
 //General URLs
-$routes->get('{locale}/(file|image)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::$1/$2/$3', ['filter'=>"urlLocale"]);
-$routes->get('{locale}/noimage-([0-9]+)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::noimage/$1/$2/$3', ['filter'=>"urlLocale"]);
-$routes->get('{locale}/noimage-([0-9]+)-([0-9]+)', 'General::noimage/$1/$2', ['filter'=>"urlLocale"]);
-$routes->match(['post', 'get'],'{locale}/remove-my-file/([0-9]+)-([A-Za-z0-9\_]+)', 'General::removeMyFile/$1/$2', ['filter'=>"urlLocale"]);
+$routes->get('{locale}/(file|image)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::$1/$2/$3');
+$routes->get('{locale}/noimage-([0-9]+)-([0-9]+)-([A-Za-z0-9\_]+)', 'General::noimage/$1/$2/$3');
+$routes->get('{locale}/noimage-([0-9]+)-([0-9]+)', 'General::noimage/$1/$2');
+$routes->match(['post', 'get'],'{locale}/remove-my-file/([0-9]+)-([A-Za-z0-9\_]+)', 'General::removeMyFile/$1/$2');
 
 // General Pages
-$routes->get('{locale}', 'General::index', ['filter'=>"urlLocale"]);
-$routes->get('{locale}/([A-Za-z\_]+)-index', '$1::index', ['filter'=>"urlLocale"]);
-$routes->match(['post', 'get'],'{locale}/contact', 'General::contact', ['filter'=>"urlLocale"]);
-$routes->get('{locale}/contact-home', 'General::contact/home', ['filter'=>"urlLocale"]);
-$routes->get('{locale}/(terms-and-conditions|privacy-policy)', "General::staticSettingsPages/$1", ['filter'=>"urlLocale"]);
+$routes->get('[a-z]{2}', 'General::index');
+$routes->get('{locale}/([A-Za-z\_]+)-index', '$1::index');
+$routes->match(['post', 'get'],'{locale}/contact', 'General::contact');
+$routes->get('{locale}/contact-home', 'General::contact/home');
+$routes->get('{locale}/(terms-and-conditions|privacy-policy)', "General::staticSettingsPages/$1");
 
 /**
  * --------------------------------------------------------------------

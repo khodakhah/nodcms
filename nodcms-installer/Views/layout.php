@@ -11,7 +11,7 @@ $this->addJsFile("assets/plugins/popper/popper.min");
 $this->addJsFile("assets/plugins/bootstrap-confirmation/bootstrap-confirmation.min");
 ?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="<?php echo $this->language["code"]; ?>">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
