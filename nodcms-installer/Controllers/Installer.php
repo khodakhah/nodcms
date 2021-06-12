@@ -41,9 +41,13 @@
 
 namespace NodCMS\Installer\Controllers;
 
-use CodeIgniter\Database\Database;
+use Config\Autoload;
+use Config\Database;
 use NodCMS\Core\Controllers\Base;
 use NodCMS\Core\Libraries\Form;
+use NodCMS\Core\Models\Settings;
+use NodCMS\Core\Models\Users;
+use NodCMS\Installer\Config\View;
 
 class Installer extends Base
 {
@@ -57,6 +61,8 @@ class Installer extends Base
     public $next_url;
     public $self_url;
 
+    private $_response;
+
     /**
      * @var \CodeIgniter\Database\BaseConnection
      */
@@ -66,7 +72,7 @@ class Installer extends Base
     {
         parent::__construct();
 
-        $this->view->setConfig(new \NodCMS\Installer\Config\View());
+        $this->view->setConfig(new View());
 
         $this->language = array(
             'code' => "en",
@@ -151,7 +157,7 @@ class Installer extends Base
     public function eula()
     {
         if(!$this->hasAccess())
-            return;
+            return $this->_response;
         $this->data['sub_title'] = "EULA";
         $config = array(
             array(
@@ -173,15 +179,14 @@ class Installer extends Base
             $data = $myform->getPost();
             // Stop Page
             if($data === false){
-                return;
+                return $myform->getResponse();
             }
 
-            $this->successMessage(null, $this->next_url);
-            return;
+            return $this->successMessage(null, $this->next_url);
         }
         $content = "<p>Please read the following license agreement before go to the next step.</p>";
         $content .= $myform->fetch('login-form', array('data-redirect'=>1,));
-        echo $this->viewRenderString($content);
+        return $this->viewRenderString($content);
     }
 
     /**
@@ -190,7 +195,7 @@ class Installer extends Base
     public function authorization()
     {
         if(!$this->hasAccess())
-            return;
+            return $this->_response;
         $this->data['title'] = "{$this->product_name} Installer";
         $this->data['sub_title'] = "Authorization";
 
@@ -232,20 +237,19 @@ class Installer extends Base
             $data = $myform->getPost();
             // Stop Page
             if($data === false){
-                return;
+                return $myform->getResponse();
             }
 
             if (!$this->hasDatabase($data)) {
-                return;
+                return $this->_response;
             }
             $_SESSION['database_connect'] = $data;
 
 
-            $this->successMessage("Your entered data was correct.", $this->next_url);
-            return;
+            return $this->successMessage("Your entered data was correct.", $this->next_url);
         }
         $this->data['the_form'] = $myform->fetch('login-form', array('data-redirect'=>1));
-        echo $this->viewRender("authorization");
+        return $this->viewRender("authorization");
     }
 
     /**
@@ -254,12 +258,12 @@ class Installer extends Base
     public function database()
     {
         if(!$this->hasAccess() || !$this->hasDatabase())
-            return;
+            return $this->_response;
 
         $coreTables = $this->getTables(get_all_php_files(COREPATH . 'Models'.DIRECTORY_SEPARATOR));
         $modulesTables = array();
 
-        $modulesDirs = \Config\Autoload::modulesPaths();
+        $modulesDirs = Autoload::modulesPaths();
         foreach ($modulesDirs as $dir) {
             if(!$moduleModels = get_all_php_files($dir . DIRECTORY_SEPARATOR . 'models'.DIRECTORY_SEPARATOR))
                 continue;
@@ -303,13 +307,12 @@ class Installer extends Base
             $data = $myform->getPost();
             // Stop Page
             if($data === false){
-                return;
+                return $myform->getResponse();
             }
 
             $model_name = basename($data['path'],".php");
             if(in_array($model_name, ["Model", "CoreModel"])) {
-                $this->errorMessage("Wrong table name!", $this->self_url);
-                return;
+                return $this->errorMessage("Wrong table name!", $this->self_url);
             }
 
             $model_name = "\NodCMS\Core\Models\\".$model_name;
@@ -319,8 +322,7 @@ class Installer extends Base
                 $theModel->dropTable();
             }
             if(!$theModel->installTable()) {
-                $this->errorMessage("Table couldn't install.", $this->self_url);
-                return;
+                return $this->errorMessage("Table couldn't install.", $this->self_url);
             }
 
             // Insert first default data
@@ -328,11 +330,10 @@ class Installer extends Base
                 $theModel->defaultData();
             }
 
-            $this->successMessage("Database has been created successfully.", $this->next_url);
-            return;
+            return $this->successMessage("Database has been created successfully.", $this->next_url);
         }
 
-        echo $this->viewRender("database");
+        return $this->viewRender("database");
     }
 
     /**
@@ -341,7 +342,7 @@ class Installer extends Base
     public function settings()
     {
         if(!$this->hasAccess() || !$this->hasDatabase())
-            return;
+            return $this->_response;
 
         $this->data['title'] = "{$this->product_name} Installer";
         $this->data['sub_title'] = "Prepare settings";
@@ -425,11 +426,11 @@ class Installer extends Base
             $data = $myform->getPost();
             // Stop Page
             if($data === false){
-                return;
+                return $myform->getResponse();
             }
 
-            $Settings = new \NodCMS\Core\Models\Settings($this->db);
-            $Users = new \NodCMS\Core\Models\Users($this->db);
+            $Settings = new Settings($this->db);
+            $Users = new Users($this->db);
 
             $update_data = $data;
             unset($update_data['password']);
@@ -459,10 +460,9 @@ class Installer extends Base
                 );
                 $Users->edit($user['user_id'], $_data);
             }
-            $this->successMessage("Settings has been saved successfully.", $this->next_url);
-            return;
+            return $this->successMessage("Settings has been saved successfully.", $this->next_url);
         }
-        echo $this->viewRenderString($myform->fetch('',array('data-redirect'=>1)));
+        return $this->viewRenderString($myform->fetch('',array('data-redirect'=>1)));
     }
 
     /**
@@ -471,12 +471,12 @@ class Installer extends Base
     public function complete()
     {
         if(!$this->hasAccess() || !$this->hasDatabase())
-            return;
+            return $this->_response;
 
         $this->data['sub_title'] = "Complete";
 
-        $Settings = new \NodCMS\Core\Models\Settings($this->db);
-        $Users = new \NodCMS\Core\Models\Users($this->db);
+        $Settings = new Settings($this->db);
+        $Users = new Users($this->db);
 
         $admin_user = $Users->getOne(1);
         $prepare_settings = $Settings->getCount() > 0;
@@ -544,38 +544,33 @@ class Installer extends Base
             $data = $myform->getPost();
             // Stop Page
             if($data === false){
-                return;
+                return $myform->getResponse();
             }
 
             if(!$prepare_settings) {
-                $this->errorMessage("Prepared settings is not set.", $this->back_url);
-                return;
+                return $this->errorMessage("Prepared settings is not set.", $this->back_url);
             }
 
             if(!is_array($admin_user) || count($admin_user) == 0) {
-                $this->errorMessage("Administration account not found.", $this->back_url);
-                return;
+                return $this->errorMessage("Administration account not found.", $this->back_url);
             }
 
             $myfile = fopen(DB_CONFIG_PATH, "w");
             if(!$myfile) {
                 $errors = error_get_last();
                 if(count($errors) > 1) {
-                    $this->errorMessage($errors['message'], $this->self_url);
-                    return;
+                    return $this->errorMessage($errors['message'], $this->self_url);
                 }
-                $this->errorMessage("Unable to open db config file.", $this->self_url);
-                return;
+                return $this->errorMessage("Unable to open db config file.", $this->self_url);
             }
 
             $sample_content = file_get_contents(COREPATH."Config/database_sample.php");
             if(!$sample_content) {
-                $this->errorMessage("Unable to open database_manual.php file.", $this->self_url);
-                return;
+                return $this->errorMessage("Unable to open database_manual.php file.", $this->self_url);
             }
 
             $replace = array(
-                "<?php" => "\<?php namespace Config;"
+                '<?php' => '<?php namespace Config;'
             );
             foreach($_SESSION['database_connect'] as $key=>$item) {
                 $replace["@$key@"] = $item;
@@ -586,12 +581,11 @@ class Installer extends Base
 
             session_destroy();
 
-            $this->successMessage("Installation has been done.", $this->next_url);
-            return;
+            return $this->successMessage("Installation has been done.", $this->next_url);
         }
 
         $this->data['the_form'] = $myform->fetch('',array('data-redirect'=>1));
-        echo $this->viewRender("complete");
+        return $this->viewRender("complete");
     }
 
     /**
@@ -632,7 +626,7 @@ class Installer extends Base
     private function hasAccess(): bool
     {
         if(!$this->required_extensions || !$this->required_php_version) {
-            $this->errorMessage("Required services not found.", $this->back_url);
+            $this->_response = $this->errorMessage("Required services not found.", $this->back_url);
             return false;
         }
         return true;
@@ -648,13 +642,13 @@ class Installer extends Base
     {
         if($data == null) {
             if(!isset($_SESSION['database_connect'])) {
-                $this->errorMessage("Database connection data not found.", $this->back_url);
+                $this->_response = $this->errorMessage("Database connection data not found.", $this->back_url);
                 return false;
             }
             $data = $_SESSION['database_connect'];
         }
         if(!isset($data['database'])) {
-            $this->errorMessage("Database not found.", $this->back_url);
+            $this->_response = $this->errorMessage("Database not found.", $this->back_url);
             return false;
         }
 
@@ -679,13 +673,13 @@ class Installer extends Base
             'failover' => [],
             'port'     => 3306,
         ];
-        $db = \Config\Database::connect($custom);
+        $db = Database::connect($custom);
         try {
             $db->connID = $db->connect();
         }
         catch (\Throwable $e)
         {
-            $this->errorMessage($e->getMessage(), $this->self_url);
+            $this->_response = $this->errorMessage($e->getMessage(), $this->self_url);
             return false;
         }
 
