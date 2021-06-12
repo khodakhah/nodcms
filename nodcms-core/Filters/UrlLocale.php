@@ -41,19 +41,18 @@ class UrlLocale implements \CodeIgniter\Filters\FilterInterface
     public function before(RequestInterface $request, $arguments = null)
     {
         $localePrefix = $request->uri->getSegment(1);
-        $languageModel = \Config\Services::model()::languages();
 
         // No prefix has been set
         if(empty($localePrefix)) {
-            $language = $languageModel->getDefaultRecord();
+            $language = Models::languages()->getDefaultRecord();
         }
         // Set system language from URL language code (Language prefix)
         else{
-            $language = $languageModel->getByCode($localePrefix);
+            $language = Models::languages()->getByCode($localePrefix);
         }
 
         if(empty($language)){
-            $language = $languageModel->getOne(null);
+            $language = Models::languages()->getOne(null);
         }
 
         if(empty($language)){
