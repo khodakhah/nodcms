@@ -10,18 +10,20 @@ class Filters extends BaseConfig
 		'csrf'     => \CodeIgniter\Filters\CSRF::class,
 		'toolbar'  => \CodeIgniter\Filters\DebugToolbar::class,
 		'honeypot' => \CodeIgniter\Filters\Honeypot::class,
-		'urlLocale' => \NodCMS\Core\Filters\UrlLocale::class,
+        'installedVerification' => \NodCMS\Core\Filters\InstalledVerification::class,
+        'urlLocale' => \NodCMS\Core\Filters\UrlLocale::class,
 		'identityVerification' => \NodCMS\Core\Filters\IdentityVerification::class,
 	];
 
 	// Always applied before every request
 	public $globals = [
 		'before' => [
+            'installedVerification',
 			//'honeypot'
 			// 'csrf',
 		],
 		'after'  => [
-			'toolbar',
+//			'toolbar',
 			//'honeypot'
 		],
 	];

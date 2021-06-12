@@ -21,18 +21,12 @@
 
 namespace NodCMS\Core\Filters;
 
+
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
-use Config\Models;
 use Config\Services;
 
-/**
- * Class UrlLocale
- * Check the language prefix, and handle redirect if there is no language prefix has been set.
- *
- * @package NodCMS\Core\Filters
- */
-class UrlLocale implements \CodeIgniter\Filters\FilterInterface
+class InstalledVerification implements \CodeIgniter\Filters\FilterInterface
 {
 
     /**
@@ -40,37 +34,32 @@ class UrlLocale implements \CodeIgniter\Filters\FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        $localePrefix = $request->uri->getSegment(1);
-
-        // No prefix has been set
-        if(empty($localePrefix)) {
-            $language = Models::languages()->getDefaultRecord();
-        }
-        // Set system language from URL language code (Language prefix)
-        else{
-            $language = Models::languages()->getByCode($localePrefix);
+        $inInstallerPage = false;
+        if(Services::uri()->getSegment(1) == "installer") {
+            $inInstallerPage = true;
         }
 
-        if(empty($language)){
-            $language = Models::languages()->getOne(null);
+        // Database config file exists
+        if(file_exists(DB_CONFIG_PATH)) {
+            $db = \Config\Database::connect();
+            // Database connection works fine
+            if (!empty($db->getDatabase())) {
+                // If database exists and connection works fine, user shouldn't be in installer page.
+                if($inInstallerPage)
+                    return redirect()->to('/xx');
+
+                // Database is fine and user is not in installer page
+                return false;
+            }
         }
 
-        if(empty($language)){
-            throw new \Exception("Language \"{$localePrefix}\" not found in database.");
+        if($inInstallerPage) {
+            // Database file or connection is NOT OK and user is on installer wizard.
+            return false;
         }
 
-        if($language['code'] != $localePrefix) {
-            $request->uri->setSegment(1, $language['code']);
-            return redirect()->to($request->uri->getPath());
-        }
-
-        // Set language from database
-        Services::language()->set($language);
-
-        // Load settings from database
-        Services::settings()->load($language['language_id']);
-
-        return false;
+        // Redirect to the install wizard page.
+        return redirect()->to('/installer');
     }
 
     /**
