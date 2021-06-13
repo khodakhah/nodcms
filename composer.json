@@ -1,5 +1,6 @@
 {
-	"name": "nodcms/nodcms3",
+	"name": "nodcms/nodcms",
+	"version": "3.0",
 	"type": "project",
 	"description": "Opensource PHP CMS based on the CodeIgniter framework v4",
 	"homepage": "https://nodcms.com",
