@@ -9,7 +9,7 @@ if (phpversion() < $minPHPVersion)
 unset($minPHPVersion);
 
 // Acceptable values: development, testing, production
-define('ENVIRONMENT', 'development');
+define('ENVIRONMENT', 'production');
 
 // Allow run installer if the database connection has been failed
 define("ALLOW_INSTALLER", true);
