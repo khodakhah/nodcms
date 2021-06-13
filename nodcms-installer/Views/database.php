@@ -1,8 +1,8 @@
-<?php $this->addJsFile("assets/nodcms/js/installer-database.min"); ?>
-<p>In this step database will create.</p>
-<p><strong>NOTE:</strong> Currently NodCMS and NodCMS installation wizard supports only <strong>MySQL database</strong>.</p>
-<p class="alert alert-warning"><strong class="font-red">NOTE:</strong> With submit installation the exists table would be dropped and create again. You may lose your data on these tables.</p>
-<h2>General tables</h2>
+<?php $this->load->addJsFile("assets/nodcms/js/installer-database.min"); ?>
+<p>In this step, database will be created.</p>
+<p><strong>NOTE:</strong> Currently NodCMS and NodCMS installation wizard support only <strong>MySQL database</strong>.</p>
+<p class="alert alert-warning"><strong class="font-red">NOTE:</strong> This stage will re-create and overwrite all your existing tables. You may lose your data on these tables.</p>
+<h2>General Tables</h2>
 <div class="border-1 p-3 bg-grey-200">
     <div class="row">
         <?php foreach($tables[0] as $item){ ?>
@@ -14,7 +14,7 @@
                             <div><i class="fa font-grey-mint <?php echo $item['exists'] ? "fa-check" : "fa-times"; ?>"></i></div>
                         </div>
                         <?php if($item['exists']){ ?>
-                            <div class="text-warning">Table already exist.</div>
+                            <div class="text-warning">Table already exists.</div>
                         <?php } ?>
                         <input name="path" type="hidden" value="<?php echo $item['path']; ?>">
                     </form>
@@ -24,7 +24,7 @@
     </div>
 </div>
 <?php foreach($tables[1] as $model=>$_tables){ ?>
-    <h2 class="mt-3">Module <?php echo $model; ?></h2>
+    <h2 class="mt-3"><?php echo $model; ?> Module</h2>
     <div class="border-1 p-3 bg-grey-200">
         <div class="row">
             <?php foreach($_tables as $item){ ?>
