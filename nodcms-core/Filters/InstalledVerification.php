@@ -44,8 +44,13 @@ class InstalledVerification implements \CodeIgniter\Filters\FilterInterface
             $db = \Config\Database::connect();
             // Database connection works fine
             if (!empty($db->getDatabase())) {
+
                 // If database exists and connection works fine, user shouldn't be in installer page.
                 if($inInstallerPage)
+                    return redirect()->to('/xx');
+
+                // If requested URL point to root.
+                if(empty(Services::uri()->getSegment(1)))
                     return redirect()->to('/xx');
 
                 // Database is fine and user is not in installer page
