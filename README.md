@@ -1,4 +1,4 @@
-#[NodCMS](http://nodcms.com) 
+# [NodCMS](http://nodcms.com) 
 NodCMS is a <strong>free</strong>, Multilingual, simple and powerful CMS powered by [CodeIgniter4]((https://codeigniter.com/)).
 
 More information can be found at [nodcms.com](http://nodcms.com/).
@@ -9,7 +9,7 @@ More information can be found at [nodcms.com](http://nodcms.com/).
 > 
 > Password: **demo**
 
-##NodCMS v3.0
+## NodCMS v3.0
 
 1. Codeigniter 4
 2. New NodCMS core & structure
