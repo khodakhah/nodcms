@@ -881,8 +881,10 @@ class GeneralAdmin extends Backend
      * Remove a menu item
      *
      * @param int $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
-    function menuDelete($id=0)
+    function menuDelete(int $id=0)
     {
         if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
@@ -1103,6 +1105,7 @@ class GeneralAdmin extends Backend
      *
      * @param $id
      * @param $file_name
+     * @return \CodeIgniter\HTTP\RedirectResponse|string
      */
     function languageEditFile($id,$file_name)
     {
@@ -1281,6 +1284,8 @@ class GeneralAdmin extends Backend
      * Social links add and edit form
      *
      * @param int $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function socialLinksForm($id = 0)
     {
@@ -1393,6 +1398,8 @@ class GeneralAdmin extends Backend
      *
      * @param int $id
      * @param int $confirm
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function socialLinksDelete($id, $confirm = 0)
     {if(!Services::identity()->isAdmin())
@@ -1432,10 +1439,10 @@ class GeneralAdmin extends Backend
      * Site members list
      *
      * @param int $page
-     * @return string
+     * @return \CodeIgniter\HTTP\RedirectResponse|string
      * @throws \Exception
      */
-    function user($page = 1): string
+    function user(int $page = 1)
     {
         $this->data['title'] = _l("Users",$this);
         $this->data['sub_title'] = _l("User's list",$this);
@@ -1460,6 +1467,8 @@ class GeneralAdmin extends Backend
      * A user profile
      *
      * @param $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function userProfile($id)
     {
@@ -1526,6 +1535,8 @@ class GeneralAdmin extends Backend
      *
      * @param $id
      * @param int $page
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function userUploadedFiles($id, $page = 1)
     {
@@ -1611,6 +1622,8 @@ class GeneralAdmin extends Backend
      * Display details of an uploaded file
      *
      * @param $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function uploadedFile($id)
     {
@@ -1643,6 +1656,8 @@ class GeneralAdmin extends Backend
      *
      * @param $id
      * @param int $confirm
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string|void
+     * @throws \Exception
      */
     function uploadedFileDelete($id, $confirm = 0)
     {
@@ -1685,6 +1700,8 @@ class GeneralAdmin extends Backend
      *
      * @param $id
      * @param int $confirm
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function userDelete($id, $confirm = 0)
     {
@@ -1727,6 +1744,7 @@ class GeneralAdmin extends Backend
      * Add or edit a user
      *
      * @param int $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
     function userEdit(int $id = 0)
@@ -1977,6 +1995,7 @@ class GeneralAdmin extends Backend
      *
      * @param null|string $type
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function uploadImage(string $type=null)
     {
@@ -2309,6 +2328,8 @@ class GeneralAdmin extends Backend
      * Toggle active status of a package for dashboard
      *
      * @param $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
     function packageToggleActive($id)
     {
