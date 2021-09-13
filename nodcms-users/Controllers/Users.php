@@ -330,8 +330,8 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
         if($myform->ispost()){
             $data = $myform->getPost();
             // Stop Page
-            if(!is_array($data)){
-                return $data;
+            if($data === false){
+                return $myform->getResponse();
             }
 
             $username = $data['username'];

@@ -42,20 +42,13 @@
 namespace NodCMS\Core\Libraries;
 
 
-use CodeIgniter\Config\Services;
+use Config\Services;
 use NodCMS\Core\Response\QuickResponse;
 
 class Identity
 {
 
-    private $controller;
-    private $session;
     private $response;
-
-    public function __constructor($controller)
-    {
-        $this->controller = $controller;
-    }
 
     public function getUserData()
     {
@@ -97,7 +90,8 @@ class Identity
      * @return bool
      * @throws \Exception
      */
-    public function isAdmin(bool $isDemoAdmin = false): bool{
+    public function isAdmin(bool $isDemoAdmin = false): bool
+    {
         // Demo user welcomes
         if($isDemoAdmin && (int) Services::session()->get('group') !== 100) {
             return true;
@@ -105,6 +99,7 @@ class Identity
 
         // Not an admin user not welcomes
         if((int) Services::session()->get('group') !== 1) {
+            helper("core_helper");
             $reponse = new QuickResponse();
             $reponse->setMessage(_l("Unfortunately you do not have permission to this part of system.", $this));
             $reponse->setUrl( "/");
@@ -132,6 +127,7 @@ class Identity
 
         // Not a valid member
         if(!in_array((int) Services::session()->get('group'), [1, 20])) {
+            helper("core_helper");
             $reponse = new QuickResponse();
             $reponse->setMessage(_l("Unfortunately you do not have permission to this part of system.", $this));
             $reponse->setUrl( "/");
