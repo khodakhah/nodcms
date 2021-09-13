@@ -81,8 +81,10 @@ class GeneralAdmin extends Backend
      * System basic settings
      *
      * @param string $sub_page
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
      */
-    function settings($sub_page='general')
+    function settings(string $sub_page='general')
     {
         $forms = array(
             'general'=>array(
