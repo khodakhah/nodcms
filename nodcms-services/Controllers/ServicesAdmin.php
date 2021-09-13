@@ -205,7 +205,7 @@ class ServicesAdmin extends Backend
         $myform->config($config, $self_url, 'post', 'ajax');
 
         if($myform->ispost()){
-            if(!Services::identity()->isAdmin(true)){
+            if(!Services::identity()->isAdmin()){
                 return Services::identity()->getResponse();
             }
             $post_data = $myform->getPost();
@@ -250,7 +250,7 @@ class ServicesAdmin extends Backend
     function sortSubmit()
     {
         $back_url = SERVICES_ADMIN_URL."services";
-        if(!Services::identity()->isAdmin(true))
+        if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
         $post_data = Services::request()->getPost("data");
         if($post_data == null) {
@@ -276,7 +276,7 @@ class ServicesAdmin extends Backend
      */
     function deleteService($id, $confirm = 0)
     {
-        if(!Services::identity()->isAdmin(true))
+        if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
         $back_url = SERVICES_ADMIN_URL."services";
@@ -367,7 +367,7 @@ class ServicesAdmin extends Backend
         $myform->config($config, $self_url, 'post', 'ajax');
 
         if($myform->ispost()){
-            if(!Services::identity()->isAdmin(true))
+            if(!Services::identity()->isAdmin())
                 return Services::identity()->getResponse();
             $data = $myform->getPost();
             // Stop Page

@@ -185,7 +185,7 @@ class PortfolioAdmin extends Backend
 
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()){
-            if(!Services::identity()->isAdmin(true))
+            if(!Services::identity()->isAdmin())
                 return Services::identity()->getResponse();
             $post_data = $myform->getPost();
             // Stop Page
@@ -236,7 +236,7 @@ class PortfolioAdmin extends Backend
      */
     function postDelete(int $id, int $confirm = 0)
     {
-        if(!Services::identity()->isAdmin(true))
+        if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
         $back_url = PORTFOLIO_ADMIN_URL."posts";

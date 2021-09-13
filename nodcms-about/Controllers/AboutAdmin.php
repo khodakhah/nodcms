@@ -168,7 +168,7 @@ class AboutAdmin extends Backend
         $myform->config($config, ABOUT_ADMIN_URL."profileForm/$id", 'post', 'ajax');
 
         if($myform->ispost()){
-            if(!Services::identity()->isAdmin(true)){
+            if(!Services::identity()->isAdmin()){
                 return Services::identity()->getResponse();
             }
             $post_data = $myform->getPost();
@@ -182,8 +182,6 @@ class AboutAdmin extends Backend
                 unset($post_data['translate']);
             }
 
-            if(!Services::identity()->isAdmin(true))
-                return Services::identity()->getResponse();
             if(!empty($id)){
                 Models::about()->edit($id, $post_data);
                 if(isset($translates)){
@@ -220,7 +218,7 @@ class AboutAdmin extends Backend
      */
     function profileRemove($id, $confirm = 0)
     {
-        if(!Services::identity()->isAdmin(true))
+        if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
         $back_url = ABOUT_ADMIN_URL."profiles";
@@ -281,7 +279,7 @@ class AboutAdmin extends Backend
      */
     function profileSort()
     {
-        if(!Services::identity()->isAdmin(true)){
+        if(!Services::identity()->isAdmin()){
             return Services::identity()->getResponse();
         }
         $i = 0;

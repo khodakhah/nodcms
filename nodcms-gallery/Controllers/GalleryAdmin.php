@@ -188,7 +188,7 @@ class GalleryAdmin extends Backend
         $myform->config($config, $self_url, 'post', 'ajax');
 
         if($myform->ispost()){
-            if(!Services::identity()->isAdmin(true)){
+            if(!Services::identity()->isAdmin()){
                 return Services::identity()->getResponse();
             }
             $post_data = $myform->getPost();
@@ -234,7 +234,7 @@ class GalleryAdmin extends Backend
     function sortSubmit()
     {
         $back_url = GALLERY_ADMIN_URL."galleries";
-        if(!Services::identity()->isAdmin(true))
+        if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
         $post_data = Services::request()->getPost("data");
         if($post_data == null) {
@@ -260,7 +260,7 @@ class GalleryAdmin extends Backend
      */
     function galleryDelete(int $id, int $confirm = 0)
     {
-        if(!Services::identity()->isAdmin(true))
+        if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
         $back_url = GALLERY_ADMIN_URL."galleries";
@@ -424,7 +424,7 @@ class GalleryAdmin extends Backend
         $myform = new Form($this);
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()){
-            if(!Services::identity()->isAdmin(true))
+            if(!Services::identity()->isAdmin())
                 return Services::identity()->getResponse();
             $post_data = $myform->getPost();
             // Stop Page
@@ -477,7 +477,7 @@ class GalleryAdmin extends Backend
      */
     function imageDelete($id, $confirm = 0)
     {
-        if(!Services::identity()->isAdmin(true))
+        if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
         $back_url = GALLERY_ADMIN_URL."galleries";

@@ -228,7 +228,7 @@ class BlogAdmin extends Backend
 
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()){
-            if(!Services::identity()->isAdmin(true))
+            if(!Services::identity()->isAdmin())
                 return Services::identity()->getResponse();
             $post_data = $myform->getPost();
             // Stop Page
@@ -297,7 +297,7 @@ class BlogAdmin extends Backend
      */
     function postDelete($id, $confirm = 0)
     {
-        if(!Services::identity()->isAdmin(true))
+        if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
         $back_url = BLOG_ADMIN_URL."posts";
@@ -452,7 +452,7 @@ class BlogAdmin extends Backend
         $myform = new Form($this);
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()){
-            if(!Services::identity()->isAdmin(true))
+            if(!Services::identity()->isAdmin())
                 return Services::identity()->getResponse();
             $post_data = $myform->getPost();
             // Stop Page
@@ -499,7 +499,7 @@ class BlogAdmin extends Backend
      */
     function categoryDelete($id, $confirm = 0)
     {
-        if(!Services::identity()->isAdmin(true))
+        if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
         $back_url = BLOG_ADMIN_URL."categories";
@@ -865,7 +865,7 @@ class BlogAdmin extends Backend
 
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()){
-            if(!Services::identity()->isAdmin(true))
+            if(!Services::identity()->isAdmin())
                 return Services::identity()->getResponse();
             $post_data = $myform->getPost();
             // Stop Page
@@ -938,7 +938,7 @@ class BlogAdmin extends Backend
 
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()){
-            if(!Services::identity()->isAdmin(true))
+            if(!Services::identity()->isAdmin())
                 return Services::identity()->getResponse();
             $post_data = $myform->getPost();
             // Stop Page
@@ -976,7 +976,7 @@ class BlogAdmin extends Backend
      */
     function commentDelete($id, $confirm = 0)
     {
-        if(!Services::identity()->isAdmin(true))
+        if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
         $back_url = BLOG_ADMIN_URL."comments";
@@ -1056,7 +1056,7 @@ class BlogAdmin extends Backend
         $myform->config($config, $self_url, 'post', 'ajax');
 
         if($myform->ispost()){
-            if(!Services::identity()->isAdmin(true))
+            if(!Services::identity()->isAdmin())
                 return Services::identity()->getResponse();
             $data = $myform->getPost();
             // Stop Page

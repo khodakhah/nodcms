@@ -101,7 +101,7 @@ class PricingTableAdmin extends Backend
     function sortSubmit()
     {
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
-        if(!Services::identity()->isAdmin(true))
+        if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
         $post_data = Services::request()->getPost("data");
         if($post_data == null) {
@@ -219,7 +219,7 @@ class PricingTableAdmin extends Backend
 
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()){
-            if(!Services::identity()->isAdmin(true))
+            if(!Services::identity()->isAdmin())
                 return Services::identity()->getResponse();
             $post_data = $myform->getPost();
             // Stop Page
@@ -265,7 +265,7 @@ class PricingTableAdmin extends Backend
      */
     function tableVisibility($id)
     {
-        if(!Services::identity()->isAdmin(true)){
+        if(!Services::identity()->isAdmin()){
             return Services::identity()->getResponse();
         }
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
@@ -298,7 +298,7 @@ class PricingTableAdmin extends Backend
      */
     function deleteTable(int $id, int $confirm = 0)
     {
-        if(!Services::identity()->isAdmin(true))
+        if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
@@ -407,7 +407,7 @@ class PricingTableAdmin extends Backend
 
         $myform->config($config, $self_url, 'post', 'ajax');
         if($myform->ispost()){
-            if(!Services::identity()->isAdmin(true))
+            if(!Services::identity()->isAdmin())
                 return Services::identity()->getResponse();
             $post_data = $myform->getPost();
             // Stop Page
@@ -465,7 +465,7 @@ class PricingTableAdmin extends Backend
     function recordSortSubmit()
     {
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
-        if(!Services::identity()->isAdmin(true))
+        if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
         $post_data = Services::request()->getPost("data");
         if($post_data == null) {
@@ -491,7 +491,7 @@ class PricingTableAdmin extends Backend
      */
     function deleteRecord(int $id, $confirm = 0)
     {
-        if(!Services::identity()->isAdmin(true))
+        if(!Services::identity()->isAdmin())
             return Services::identity()->getResponse();
 
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
