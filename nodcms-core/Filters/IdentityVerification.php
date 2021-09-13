@@ -24,6 +24,7 @@ namespace NodCMS\Core\Filters;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\Services;
+use function PHPUnit\Framework\throwException;
 
 class IdentityVerification implements \CodeIgniter\Filters\FilterInterface
 {
@@ -42,13 +43,12 @@ class IdentityVerification implements \CodeIgniter\Filters\FilterInterface
 
         if(!Services::identity()->isActive()) {
             if($request->uri !== "account-locked") {
-                $lang = Services::language()->getLocale();
-                return $response->getError(lang("Access denied!"), "/$lang/account-locked");
+                return Services::identity()->getResponse();
             }
         }
 
         if(!Services::identity()->isAdmin(true)) {
-            return $response->getError(lang("Access denied!"), base_url());
+            return Services::identity()->getResponse();
         }
 
         return true;

@@ -93,7 +93,7 @@ class Identity
     public function isAdmin(bool $isDemoAdmin = false): bool
     {
         // Demo user welcomes
-        if($isDemoAdmin && (int) Services::session()->get('group') !== 100) {
+        if($isDemoAdmin && (int) Services::session()->get('group') === 100) {
             return true;
         }
 
@@ -156,6 +156,15 @@ class Identity
     public function isActive(): bool
     {
         $userdata = $this->getUserData();
+        if(!boolval($userdata['active'])) {
+            helper("core_helper");
+            $reponse = new QuickResponse();
+            $reponse->setMessage(_l("Your account has been suspended!", $this));
+            $lang = Services::language()->getLocale();
+            $reponse->setUrl( "/{$lang}/account-locked");
+            $this->response = $reponse->getError();
+            return false;
+        }
         return boolval($userdata['active']);
     }
 
