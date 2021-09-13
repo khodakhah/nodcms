@@ -86,14 +86,14 @@ class Identity
     /**
      * Check the logged user is an admin
      *
-     * @param bool $isDemoAdmin
+     * @param bool $allowDemo
      * @return bool
      * @throws \Exception
      */
-    public function isAdmin(bool $isDemoAdmin = false): bool
+    public function isAdmin(bool $allowDemo = false): bool
     {
         // Demo user welcomes
-        if($isDemoAdmin && (int) Services::session()->get('group') === 100) {
+        if($allowDemo && (int) Services::session()->get('group') === 100) {
             return true;
         }
 
