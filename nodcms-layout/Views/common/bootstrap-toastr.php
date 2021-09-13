@@ -16,5 +16,11 @@
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         };
+
+        <?php if(session()->has('error')){ ?>
+            toastr.error("<?php echo session()->getFlashdata('error'); ?>", '<?php echo _l("Error", $this)?>');
+        <?php }elseif(session()->has('success')){ ?>
+            toastr.success("<?php echo session()->getFlashdata('success'); ?>", '<?php echo _l("Success", $this)?>');
+        <?php } ?>
     });
 </script>

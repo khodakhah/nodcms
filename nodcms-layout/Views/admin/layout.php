@@ -136,7 +136,7 @@
             <?php } ?>
 
             <?php if($this->flashdata('static_error')){ ?>
-                <div class="alert alert-block alert-danger fade in">
+                <div class="alert alert-block alert-danger">
                     <button data-dismiss="alert" class="close" type="button"></button>
                     <h4 class="alert-heading"><?php echo _l('Error',$this); ?>!</h4>
                     <?php echo $this->flashdata('static_error'); ?>
