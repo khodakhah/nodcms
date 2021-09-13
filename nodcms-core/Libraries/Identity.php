@@ -48,6 +48,9 @@ use NodCMS\Core\Response\QuickResponse;
 class Identity
 {
 
+    /**
+     * @var \CodeIgniter\HTTP\RedirectResponse|string
+     */
     private $response;
 
     public function getUserData()
@@ -101,8 +104,14 @@ class Identity
         if((int) Services::session()->get('group') !== 1) {
             helper("core_helper");
             $reponse = new QuickResponse();
-            $reponse->setMessage(_l("Unfortunately you do not have permission to this part of system.", $this));
-            $reponse->setUrl( "/");
+            if((int) Services::session()->get('group') === 100) {
+                $reponse->setMessage(_l("DEMO account does not have access to this action.", $this));
+                $reponse->setUrl( "/admin");
+            }
+            else {
+                $reponse->setMessage(_l("Unfortunately you do not have permission to this part of system.", $this));
+                $reponse->setUrl( "/");
+            }
             $this->response = $reponse->getError();
             return false;
         }
@@ -152,6 +161,7 @@ class Identity
      * Check if the logged user is active
      *
      * @return bool
+     * @throws \Exception
      */
     public function isActive(): bool
     {
@@ -168,6 +178,11 @@ class Identity
         return boolval($userdata['active']);
     }
 
+    /**
+     * Returns the error response
+     *
+     * @return \CodeIgniter\HTTP\RedirectResponse|string
+     */
     public function getResponse()
     {
         return $this->response;
