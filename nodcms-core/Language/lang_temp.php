@@ -1,10 +1,24 @@
 <?php
-/**
- * Made automatically by NodCMS
- * Date: 2021.04.18
- * Time: 08:40
- * Find from 608 Files
-*/
+/*
+ * NodCMS
+ *
+ * Copyright (c) 2015-2021.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ *  @author     Mojtaba Khodakhah
+ *  @copyright  2015-2021 Mojtaba Khodakhah
+ *  @license    https://opensource.org/licenses/MIT	MIT License
+ *  @link       https://nodcms.com
+ *  @since      Version 3.0.0
+ *  @filesource
+ *
+ */
+
 $lang_temp = array(
     "January",
     "February",
@@ -81,7 +95,6 @@ $lang_temp = array(
     "Password",
     "Account setting",
     "As demo account you aren't able to change any thing.",
-    "There was a problem to update the user data.",
     "Your profile has been updated successfully.",
     "Your avatar has updated successfully.",
     "Your avatar has removed successfully.!",
@@ -161,7 +174,6 @@ $lang_temp = array(
     "Edit",
     "Add",
     "Title",
-    "System URL",
     "Public",
     "Menu type",
     "Flag",
@@ -213,12 +225,10 @@ $lang_temp = array(
     "The {data} upload type is undefined.",
     "Could not save images data in database.",
     "System default",
-    "Local custom view",
     "Redirect to",
     "Display file",
     "Display a web page",
     "One homepage",
-    "Custom view file path",
     "Homepage title box",
     "Homepage logo",
     "Homepage background",
@@ -613,5 +623,17 @@ $lang_temp = array(
     "Your registration was successful. We sent the confirmation link to your email.",
     "Your account has been activated successfully. Now you can sign in with your account.",
     "Your password has been reset successfully.",
-    "Password or username is incorrect."
+    "Password or username is incorrect.",
+    "Your current password is wrong.",
+    "Your password has been updated successfully.",
+    "There isn't set any Avatar image for you.",
+    "Your Avatar has been deleted successfully.",
+    "You can't upload file any more.",
+    "Contact Us",
+    "Privacy-Policy",
+    "This action only make all modules de-active.",
+    "Database tables of these modules wouldn't remove.",
+    "Are you sure to uninstall all modules?",
+    "Yes, uninstall ALL",
+    "Uninstall all"
 );
