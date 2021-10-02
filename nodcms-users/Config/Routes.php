@@ -23,7 +23,7 @@ if(!isset($routes)) throw new \Exception('$routes not defined.');
 
 $namespace = "\NodCMS\Users\Controllers\\";
 
-$routes->match(['post', 'get'],'{locale}/(admin-sign|login)', "{$namespace}Users::login");
+$routes->match(['post', 'get'],'{locale}/login', "{$namespace}Users::login");
 $routes->get('account-locked', "{$namespace}Users::accountLocked");
 $routes->get('{locale}/account-locked', "{$namespace}Users::accountLocked");
 $routes->get('logout', "{$namespace}Users::logout");

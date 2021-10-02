@@ -38,6 +38,6 @@ class Filters extends BaseConfig
 	//    'isLoggedIn' => ['before' => ['account/*', 'profiles/*']],
 	public $filters = [
         'urlLocale' => ['before' => ['[a-z]{2}', '[a-z]{2}/*'], 'after' => []],
-        'identityVerification' => ['before' => ['admin/*', 'user/*'], 'after' => []],
+        'identityVerification' => ['before' => ['admin', 'admin/*', 'admin-*', 'user/*'], 'after' => []],
     ];
 }
