@@ -223,5 +223,6 @@ class Settings extends \CodeIgniter\Config\BaseConfig
         'homepage_redirect'=>"",
         'homepage_display_file'=>"",
         'homepage_display_page'=>"",
+        'reset_password_tries_limit'=>5,
     );
 }

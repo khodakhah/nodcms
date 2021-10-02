@@ -196,10 +196,25 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
                 return $this->errorMessage("User not found!", base_url("{$this->lang}/return-password"));
             }
 
+            $tries = 0;
+            $active_code_expired = strtotime("+24h");
+            if($user['active_code_expired'] > strtotime("now")) {
+                $active_code_expired = $user['active_code_expired'];
+                $tries = $user['reset_password_tries'];
+                if($tries >= Services::settings()->get()['reset_password_tries_limit']) {
+                    return $this->errorMessage("For security reason you are not able to request the a new password any more. " .
+                        "Please try after 24 hours again.", base_url("{$this->lang}/return-password"));
+                }
+                $tries++;
+            }
+
             $rand_str = md5(rand(1000,9999) + time() + rand(1000, 9999) );
 
-            $active_code_expired = strtotime("tomorrow");
-            $update_data = array('active_code'=>$rand_str, 'active_code_expired'=>$active_code_expired);
+            $update_data = [
+                'active_code'=>$rand_str,
+                'active_code_expired'=>$active_code_expired,
+                'reset_password_tries'=>$tries
+            ];
             Services::model()->users()->edit($user['user_id'], $update_data);
 
             $data = array_merge($user, array(
@@ -213,7 +228,7 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
                 'reference_url'=>base_url("/{$this->lang}/set-new-password/$user[user_unique_key]/$active_code_expired"),
             ));
             send_notification_email('reset_password', $email, $data, $this->language['language_id']);
-            return $this->successMessage("Your account has been activated successfully. Now you can sign in with your account.", "/{$this->lang}/login");
+            return $this->successMessage("We sent you an email. Please check your inbox and span box.", "/{$this->lang}/login");
         }
 
         $this->data['the_form'] = $myform->fetch('login_form', array('data-reset'=>1,'data-message'=>1, 'data-redirect'=>1));

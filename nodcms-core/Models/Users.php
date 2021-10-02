@@ -45,6 +45,7 @@ class Users extends Model
             'active'=>"int(1) unsigned NOT NULL DEFAULT '0'",
             'active_code'=>"varchar(255) DEFAULT NULL",
             'active_code_expired'=>"int(10) DEFAULT NULL",
+            'reset_password_tries'=>"int(10) unsigned DEFAULT '0'",
             'user_unique_key'=>"varchar(255) DEFAULT NULL",
             'avatar'=>"varchar(255) DEFAULT NULL",
             'mobile'=>"varchar(20) DEFAULT NULL",
