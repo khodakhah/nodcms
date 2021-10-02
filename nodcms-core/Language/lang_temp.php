@@ -17,7 +17,7 @@
  *  @since      Version 3.0.0
  *  @filesource
  *
- */
+*/
 
 $lang_temp = array(
     "January",
@@ -502,10 +502,7 @@ $lang_temp = array(
     "Login",
     "Register",
     "Send Message",
-    "Administration",
-    "Sign Panel",
     "Sign in",
-    "This is just for Administrators",
     "Save new sort",
     "Site Menu",
     "T&C, PP",
@@ -621,7 +618,6 @@ $lang_temp = array(
     "Your account has been successfully activated.",
     "Account locked",
     "Your registration was successful. We sent the confirmation link to your email.",
-    "Your account has been activated successfully. Now you can sign in with your account.",
     "Your password has been reset successfully.",
     "Password or username is incorrect.",
     "Your current password is wrong.",
@@ -635,5 +631,6 @@ $lang_temp = array(
     "Database tables of these modules wouldn't remove.",
     "Are you sure to uninstall all modules?",
     "Yes, uninstall ALL",
-    "Uninstall all"
+    "Uninstall all",
+    "We sent you an email. Please check your inbox and spam box."
 );
