@@ -124,7 +124,7 @@ class App extends BaseConfig
 	| secure, the user will be redirected to a secure version of the page
 	| and the HTTP Strict Transport Security header will be set.
 	*/
-	public $forceGlobalSecureRequests = false;
+	public $forceGlobalSecureRequests = true;
 
 	/*
 	|--------------------------------------------------------------------------
@@ -182,7 +182,7 @@ class App extends BaseConfig
 	|
 	*/
 	public $sessionDriver            = 'CodeIgniter\Session\Handlers\FileHandler';
-	public $sessionCookieName        = 'ci_session';
+	public $sessionCookieName        = 'sc';
 	public $sessionExpiration        = 7200;
 	public $sessionSavePath          = WRITEPATH . 'session';
 	public $sessionMatchIP           = false;
@@ -204,7 +204,7 @@ class App extends BaseConfig
 	|       'cookie_httponly') will also affect sessions.
 	|
 	*/
-	public $cookiePrefix   = '';
+	public $cookiePrefix   = 'nodcms_';
 	public $cookieDomain   = '';
 	public $cookiePath     = '/';
 	public $cookieSecure   = false;
@@ -243,11 +243,11 @@ class App extends BaseConfig
 	| CSRFRegenerate  = Regenerate token on every submission
 	| CSRFRedirect    = Redirect to previous page with error on failure
 	*/
-	public $CSRFTokenName  = 'csrf_test_name';
+	public $CSRFTokenName  = 'securekey';
 	public $CSRFHeaderName = 'X-CSRF-TOKEN';
-	public $CSRFCookieName = 'csrf_cookie_name';
+	public $CSRFCookieName = 'securetoken';
 	public $CSRFExpire     = 7200;
-	public $CSRFRegenerate = true;
+	public $CSRFRegenerate = false;
 	public $CSRFRedirect   = true;
 
 	/*

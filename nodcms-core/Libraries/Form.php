@@ -129,6 +129,15 @@ class Form
 
     function config($inputs, $action = '', $method = 'post', $type = 'ajax', $notes = array())
     {
+        // Add CSRF token on SSL Protocol requests
+        if(SSL_PROTOCOL) {
+            $inputs[] = [
+                'field'=>csrf_token(),
+                'type'=>"hidden",
+                'default'=>csrf_hash(),
+                'rules'=>"",
+            ];
+        }
         $this->data['inputs'] = $inputs;
         $this->data['action'] = $action;
         $this->data['back_url'] = $action;
@@ -302,6 +311,12 @@ class Form
         if($config != null){
             if($url != null)
                 $this->data['back_url'] = $url;
+
+            if(boolval(SSL_PROTOCOL) != Services::request()->isSecure()) {
+                $response = Services::quickResponse();
+                $this->errorResponse = $response->getError("Data post was not secure!", $this->data['back_url']);
+                return false;
+            }
 
             // Check form validation
             $validation->setRules(array_combine(array_column($config, 'field'), $config));

@@ -20,7 +20,7 @@ class Filters extends BaseConfig
 		'before' => [
             'installedVerification',
 			//'honeypot'
-			// 'csrf',
+			 'csrf',
 		],
 		'after'  => [
 			'toolbar',
