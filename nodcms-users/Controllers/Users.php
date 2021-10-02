@@ -228,7 +228,7 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
                 'reference_url'=>base_url("/{$this->lang}/set-new-password/$user[user_unique_key]/$active_code_expired"),
             ));
             send_notification_email('reset_password', $email, $data, $this->language['language_id']);
-            return $this->successMessage("We sent you an email. Please check your inbox and span box.", "/{$this->lang}/login");
+            return $this->successMessage("We sent you an email. Please check your inbox and spam box.", "/{$this->lang}/login");
         }
 
         $this->data['the_form'] = $myform->fetch('login_form', array('data-reset'=>1,'data-message'=>1, 'data-redirect'=>1));
