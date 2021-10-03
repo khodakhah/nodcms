@@ -228,6 +228,38 @@ class GalleryAdmin extends Backend
     }
 
     /**
+     * Change the visibility of a gallery
+     *
+     * @param $id
+     * @return \CodeIgniter\HTTP\RedirectResponse|false|string
+     * @throws \Exception
+     */
+    function galleryVisibility($id)
+    {
+        if(!Services::identity()->isAdmin()){
+            return Services::identity()->getResponse();
+        }
+        $back_url = GALLERY_ADMIN_URL."galleries";
+        $data= Models::gallery()->getOne($id);
+        if($data == null || count($data)==0){
+            return $this->errorMessage("Gallery not found.", $back_url);
+        }
+        $public = Services::request()->getPost('data' );
+        if($public == 1){
+            $public = 0;
+        }elseif($public == 0){
+            $public = 1;
+        }else{
+            return $this->errorMessage("Visibility value isn't correct. Please reload the page to solve this problem.", $back_url);
+        }
+        $update_data = array(
+            'gallery_public'=>$public
+        );
+        Models::gallery()->edit($id, $update_data);
+        return $this->successMessage("Success", GALLERY_ADMIN_URL."galleries");
+    }
+
+    /**
      * Save new sort
      * @throws \Exception
      */

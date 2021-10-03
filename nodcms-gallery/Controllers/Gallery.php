@@ -42,7 +42,7 @@ class Gallery extends Frontend
     static function home(): string
     {
         $data = [];
-        $data_list = Models::gallery()->getAllTrans();
+        $data_list = Models::gallery()->getAllTrans(['gallery_public'=>1]);
         $data['data_list'] = $data_list;
 
         $data['title'] = Services::settings()->get()['gallery_page_title'];
@@ -80,7 +80,7 @@ class Gallery extends Frontend
     function gallery()
     {
         $this->display_page_title = true;
-        $data_list = Models::gallery()->getAllTrans();
+        $data_list = Models::gallery()->getAllTrans(['gallery_public'=>1]);
         $this->data['data_list'] = $data_list;
         $setting = array_merge(array(
             'gallery_page_title'=> _l("Gallery", $this),
