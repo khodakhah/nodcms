@@ -675,7 +675,7 @@ class GeneralAdmin extends Backend
 //            array('title'=>_l('Footer menu',$this), 'description'=>_l("This menu will display in the pre footer.", $this), 'key'=>"footer_menu"),
         );
         foreach($this->data['menu_types'] as &$val){
-            $val['data_list'] = Services::model()->menu()->getAll(array('menu_key'=>$val['key'], 'sub_menu'=>0));
+            $val['data_list'] = Services::model()->menu()->getAll(array('menu_key'=>$val['key'], 'sub_menu'=>0), null, 1, ["menu_order", "ASC"]);
             foreach($val['data_list'] as &$item){
                 $item['sub_menu_data'] = Services::model()->menu()->getAll(array('menu_key'=>$val['key'], 'sub_menu'=>$item['menu_id']));
             }
@@ -855,7 +855,7 @@ class GeneralAdmin extends Backend
         $i = 0;
         $index = 0;
         $sub_menu = array(0);
-        $children = array(Services::request()->getPost('data',TRUE));
+        $children = array(Services::request()->getPost('data'));
         $children[$index] = (object) json_decode($children[$index]);
         do{
             $data = $children[$index];
