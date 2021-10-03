@@ -18,6 +18,7 @@ $this->addJsFile("assets/nodcms/js/common");
     <meta charset="utf-8"/>
     <title><?php echo $title; ?></title>
 
+    <?php echo csrf_meta("csrf_meta"); ?>
     <?php echo $this->settings['add_on_header']; ?>
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

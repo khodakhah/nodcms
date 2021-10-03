@@ -129,15 +129,6 @@ class Form
 
     function config($inputs, $action = '', $method = 'post', $type = 'ajax', $notes = array())
     {
-        // Add CSRF token on SSL Protocol requests
-        if(SSL_PROTOCOL) {
-            $inputs[] = [
-                'field'=>csrf_token(),
-                'type'=>"hidden",
-                'default'=>csrf_hash(),
-                'rules'=>"",
-            ];
-        }
         $this->data['inputs'] = $inputs;
         $this->data['action'] = $action;
         $this->data['back_url'] = $action;

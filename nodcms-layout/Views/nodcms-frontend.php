@@ -13,6 +13,7 @@
     <link rel="shortcut icon" href="<?php echo base_url($settings["fav_icon"]); ?>">
     <?php } ?>
     <title><?php echo $title; ?> <?php echo isset($sub_title)?$sub_title:""; ?></title>
+    <?php echo csrf_meta("csrf_meta"); ?>
     <?php echo $this->settings['add_on_header']; ?>
     <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">

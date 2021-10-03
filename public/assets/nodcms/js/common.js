@@ -16,6 +16,36 @@ function translate(value){
 }
 
 (function ($) {
+
+    // Save the origin jquery ajax
+    let $originAjax = $.ajax;
+
+    // Reset jquery ajax function to add csrf token generally
+    $.ajax = function (url, options) {
+
+        // If url is an object, simulate pre-1.5 signature
+        if ( typeof url === "object" ) {
+            options = url;
+            url = undefined;
+        }
+
+        // Force options to be an object
+        options = options || {};
+
+        if((options.hasOwnProperty('method') && options.method !== null && options.method.toLowerCase() === "post") ||
+            (options.hasOwnProperty('type') && options.type !== null && options.type.toLowerCase() === "post")) {
+            let m = document.getElementById('csrf_meta');
+            if(m !== null) {
+                if(!options.hasOwnProperty('headers'))  options['headers'] = {};
+                if(!options.headers.hasOwnProperty(m.getAttribute('name'))) {
+                    options.headers[m.getAttribute('name')] = m.getAttribute('content');
+                }
+            }
+        }
+
+        return $originAjax(url, options);
+    };
+
     $.dataListSearch = function () {
         var query_string = "?";
         $('.data-list-search-input').each(function () {
