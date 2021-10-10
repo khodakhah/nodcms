@@ -17,7 +17,7 @@
                                 </a>
                                 <div class="dropdown-menu">
                                     <?php foreach($languages as $item) {?>
-                                        <?php if($item["language_id"]!=$_SESSION["language"]["language_id"]){ ?>
+                                        <?php if($item["language_id"]!=\Config\Services::language()->get()["language_id"]){ ?>
                                             <a class="dropdown-item" href="<?php echo isset($item["lang_url"])?$item["lang_url"]:"javascript:;"; ?>">
                                                 <?php echo $item['language_title']; ?>
                                             </a>

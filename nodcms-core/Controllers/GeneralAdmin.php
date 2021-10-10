@@ -933,7 +933,7 @@ class GeneralAdmin extends Backend
             $this->data['sub_title'] = _l("Add",$this);
         }
 
-        $language_codes = new Locales();
+        $language_codes = (new Locales())->list;
         $language_codes['?'] = array('code'=>'?', 'rtl'=>0, 'name'=>'', 'title' => 'Other');
         $config = array(
             array(
@@ -1014,6 +1014,10 @@ class GeneralAdmin extends Backend
             // Make directory
             if(!file_exists($dir)){
                 mkdir($dir);
+            }
+            // Create the translation file.
+            if(!file_exists($dir."app.php")) {
+                copy(COREPATH . "Language/en/app.php", $dir . "app.php");
             }
 
             if($id != 0){
