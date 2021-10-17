@@ -1,39 +1,12 @@
 <?php
+
 /**
- * CodeIgniter
+ * This file is part of CodeIgniter 4 framework.
  *
- * An open source application development framework for PHP
+ * (c) CodeIgniter Foundation <admin@codeigniter.com>
  *
- * This content is released under the MIT License (MIT)
- *
- * Copyright (c) 2014-2019 British Columbia Institute of Technology
- * Copyright (c) 2019-2020 CodeIgniter Foundation
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * @package    CodeIgniter
- * @author     CodeIgniter Dev Team
- * @copyright  2019-2020 CodeIgniter Foundation
- * @license    https://opensource.org/licenses/MIT	MIT License
- * @link       https://codeigniter.com
- * @since      Version 4.0.0
- * @filesource
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
  */
 
 namespace CodeIgniter\View;
@@ -41,6 +14,7 @@ namespace CodeIgniter\View;
 use CodeIgniter\Cache\CacheInterface;
 use CodeIgniter\View\Exceptions\ViewException;
 use Config\Services;
+use ReflectionException;
 use ReflectionMethod;
 
 /**
@@ -67,217 +41,173 @@ use ReflectionMethod;
  *         class Class {
  *             function method(array $params=null)
  *         }
- *
- * @package CodeIgniter\View
  */
 class Cell
 {
+    /**
+     * Instance of the current Cache Instance
+     *
+     * @var CacheInterface
+     */
+    protected $cache;
 
-	/**
-	 * Instance of the current Cache Instance
-	 *
-	 * @var CacheInterface
-	 */
-	protected $cache;
+    /**
+     * Cell constructor.
+     */
+    public function __construct(CacheInterface $cache)
+    {
+        $this->cache = $cache;
+    }
 
-	//--------------------------------------------------------------------
+    /**
+     * Render a cell, returning its body as a string.
+     *
+     * @param null $params
+     *
+     * @throws ReflectionException
+     */
+    public function render(string $library, $params = null, int $ttl = 0, ?string $cacheName = null): string
+    {
+        [$class, $method] = $this->determineClass($library);
 
-	/**
-	 * Cell constructor.
-	 *
-	 * @param \CodeIgniter\Cache\CacheInterface $cache
-	 */
-	public function __construct(CacheInterface $cache)
-	{
-		$this->cache = $cache;
-	}
+        // Is it cached?
+        $cacheName = ! empty($cacheName)
+            ? $cacheName
+            : str_replace(['\\', '/'], '', $class) . $method . md5(serialize($params));
 
-	//--------------------------------------------------------------------
+        if (! empty($this->cache) && $output = $this->cache->get($cacheName)) {
+            return $output;
+        }
 
-	/**
-	 * Render a cell, returning its body as a string.
-	 *
-	 * @param string      $library
-	 * @param null        $params
-	 * @param integer     $ttl
-	 * @param string|null $cacheName
-	 *
-	 * @return string
-	 * @throws \ReflectionException
-	 */
-	public function render(string $library, $params = null, int $ttl = 0, string $cacheName = null): string
-	{
-		list($class, $method) = $this->determineClass($library);
+        // Not cached - so grab it...
+        $instance = new $class();
 
-		// Is it cached?
-		$cacheName = ! empty($cacheName)
-			? $cacheName
-			: str_replace(['\\', '/'], '', $class) . $method . md5(serialize($params));
+        if (method_exists($instance, 'initController')) {
+            $instance->initController(Services::request(), Services::response(), Services::logger());
+        }
 
-		if (! empty($this->cache) && $output = $this->cache->get($cacheName))
-		{
-			return $output;
-		}
+        if (! method_exists($instance, $method)) {
+            throw ViewException::forInvalidCellMethod($class, $method);
+        }
 
-		// Not cached - so grab it...
-		$instance = new $class();
+        // Try to match up the parameter list we were provided
+        // with the parameter name in the callback method.
+        $paramArray = $this->prepareParams($params);
+        $refMethod  = new ReflectionMethod($instance, $method);
+        $paramCount = $refMethod->getNumberOfParameters();
+        $refParams  = $refMethod->getParameters();
 
-		if (method_exists($instance, 'initController'))
-		{
-			$instance->initController(Services::request(), Services::response(), Services::logger());
-		}
+        if ($paramCount === 0) {
+            if (! empty($paramArray)) {
+                throw ViewException::forMissingCellParameters($class, $method);
+            }
 
-		if (! method_exists($instance, $method))
-		{
-			throw ViewException::forInvalidCellMethod($class, $method);
-		}
+            $output = $instance->{$method}();
+        } elseif (($paramCount === 1)
+            && ((! array_key_exists($refParams[0]->name, $paramArray))
+            || (array_key_exists($refParams[0]->name, $paramArray)
+            && count($paramArray) !== 1))
+        ) {
+            $output = $instance->{$method}($paramArray);
+        } else {
+            $fireArgs     = [];
+            $methodParams = [];
 
-		// Try to match up the parameter list we were provided
-		// with the parameter name in the callback method.
-		$paramArray = $this->prepareParams($params);
-		$refMethod  = new ReflectionMethod($instance, $method);
-		$paramCount = $refMethod->getNumberOfParameters();
-		$refParams  = $refMethod->getParameters();
+            foreach ($refParams as $arg) {
+                $methodParams[$arg->name] = true;
+                if (array_key_exists($arg->name, $paramArray)) {
+                    $fireArgs[$arg->name] = $paramArray[$arg->name];
+                }
+            }
 
-		if ($paramCount === 0)
-		{
-			if (! empty($paramArray))
-			{
-				throw ViewException::forMissingCellParameters($class, $method);
-			}
+            foreach (array_keys($paramArray) as $key) {
+                if (! isset($methodParams[$key])) {
+                    throw ViewException::forInvalidCellParameter($key);
+                }
+            }
 
-			$output = $instance->{$method}();
-		}
-		elseif (($paramCount === 1) && (
-				( ! array_key_exists($refParams[0]->name, $paramArray)) ||
-				(array_key_exists($refParams[0]->name, $paramArray) && count($paramArray) !== 1) )
-		)
-		{
-			$output = $instance->{$method}($paramArray);
-		}
-		else
-		{
-			$fireArgs      = [];
-			$method_params = [];
+            $output = $instance->{$method}(...array_values($fireArgs));
+        }
+        // Can we cache it?
+        if (! empty($this->cache) && $ttl !== 0) {
+            $this->cache->save($cacheName, $output, $ttl);
+        }
 
-			foreach ($refParams as $arg)
-			{
-				$method_params[$arg->name] = true;
-				if (array_key_exists($arg->name, $paramArray))
-				{
-					$fireArgs[$arg->name] = $paramArray[$arg->name];
-				}
-			}
+        return $output;
+    }
 
-			foreach ($paramArray as $key => $val)
-			{
-				if (! isset($method_params[$key]))
-				{
-					throw ViewException::forInvalidCellParameter($key);
-				}
-			}
+    /**
+     * Parses the params attribute. If an array, returns untouched.
+     * If a string, it should be in the format "key1=value key2=value".
+     * It will be split and returned as an array.
+     *
+     * @param mixed $params
+     *
+     * @return array|null
+     */
+    public function prepareParams($params)
+    {
+        if (empty($params) || (! is_string($params) && ! is_array($params))) {
+            return [];
+        }
 
-			$output = $instance->$method(...array_values($fireArgs));
-		}
-		// Can we cache it?
-		if (! empty($this->cache) && $ttl !== 0)
-		{
-			$this->cache->save($cacheName, $output, $ttl);
-		}
-		return $output;
-	}
+        if (is_string($params)) {
+            $newParams = [];
+            $separator = ' ';
 
-	//--------------------------------------------------------------------
+            if (strpos($params, ',') !== false) {
+                $separator = ',';
+            }
 
-	/**
-	 * Parses the params attribute. If an array, returns untouched.
-	 * If a string, it should be in the format "key1=value key2=value".
-	 * It will be split and returned as an array.
-	 *
-	 * @param $params
-	 *
-	 * @return array|null
-	 */
-	public function prepareParams($params)
-	{
-		if (empty($params) || ( ! is_string($params) && ! is_array($params)))
-		{
-			return [];
-		}
+            $params = explode($separator, $params);
+            unset($separator);
 
-		if (is_string($params))
-		{
-			$new_params = [];
-			$separator  = ' ';
+            foreach ($params as $p) {
+                if (! empty($p)) {
+                    [$key, $val] = explode('=', $p);
 
-			if (strpos($params, ',') !== false)
-			{
-				$separator = ',';
-			}
+                    $newParams[trim($key)] = trim($val, ', ');
+                }
+            }
 
-			$params = explode($separator, $params);
-			unset($separator);
+            $params = $newParams;
+            unset($newParams);
+        }
 
-			foreach ($params as $p)
-			{
-				if (! empty($p))
-				{
-					list($key, $val)        = explode('=', $p);
-					$new_params[trim($key)] = trim($val, ', ');
-				}
-			}
+        if (is_array($params) && empty($params)) {
+            return [];
+        }
 
-			$params = $new_params;
+        return $params;
+    }
 
-			unset($new_params);
-		}
+    /**
+     * Given the library string, attempts to determine the class and method
+     * to call.
+     */
+    protected function determineClass(string $library): array
+    {
+        // We don't want to actually call static methods
+        // by default, so convert any double colons.
+        $library = str_replace('::', ':', $library);
 
-		if (is_array($params) && empty($params))
-		{
-			return [];
-		}
+        [$class, $method] = explode(':', $library);
 
-		return $params;
-	}
+        if (empty($class)) {
+            throw ViewException::forNoCellClass();
+        }
 
-	//--------------------------------------------------------------------
+        if (! class_exists($class, true)) {
+            throw ViewException::forInvalidCellClass($class);
+        }
 
-	/**
-	 * Given the library string, attempts to determine the class and method
-	 * to call.
-	 *
-	 * @param string $library
-	 *
-	 * @return array
-	 */
-	protected function determineClass(string $library): array
-	{
-		// We don't want to actually call static methods
-		// by default, so convert any double colons.
-		$library = str_replace('::', ':', $library);
+        if (empty($method)) {
+            $method = 'index';
+        }
 
-		list($class, $method) = explode(':', $library);
-
-		if (empty($class))
-		{
-			throw ViewException::forNoCellClass();
-		}
-
-		if (! class_exists($class, true))
-		{
-			throw ViewException::forInvalidCellClass($class);
-		}
-
-		if (empty($method))
-		{
-			$method = 'index';
-		}
-
-		return [
-			$class,
-			$method,
-		];
-	}
-
-	//--------------------------------------------------------------------
+        return [
+            $class,
+            $method,
+        ];
+    }
 }

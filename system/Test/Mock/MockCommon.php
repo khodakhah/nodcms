@@ -1,37 +1,32 @@
 <?php
 
 /**
- * Common Functions for testing
+ * This file is part of CodeIgniter 4 framework.
  *
- * Several application-wide utility methods.
+ * (c) CodeIgniter Foundation <admin@codeigniter.com>
  *
- * @package  CodeIgniter
- * @category Common Functions
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
  */
 
-if (! function_exists('is_cli'))
-{
-	/**
-	 * Is CLI?
-	 *
-	 * Test to see if a request was made from the command line.
-	 * You can set the return value for testing.
-	 *
-	 * @param  boolean $new_return return value to set
-	 * @return boolean
-	 */
-	function is_cli(bool $new_return = null): bool
-	{
-		// PHPUnit always runs via CLI.
-		static $return_value = true;
+if (! function_exists('is_cli')) {
+    /**
+     * Is CLI?
+     *
+     * Test to see if a request was made from the command line.
+     * You can set the return value for testing.
+     *
+     * @param bool $newReturn return value to set
+     */
+    function is_cli(?bool $newReturn = null): bool
+    {
+        // PHPUnit always runs via CLI.
+        static $returnValue = true;
 
-		if ($new_return !== null)
-		{
-			$return_value = $new_return;
-		}
+        if ($newReturn !== null) {
+            $returnValue = $newReturn;
+        }
 
-		return $return_value;
-	}
+        return $returnValue;
+    }
 }
-
-//--------------------------------------------------------------------
