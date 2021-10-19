@@ -53,7 +53,7 @@ class Installer extends Base
 {
     public $product_name = "NodCMS";
     public $product_version = "3.0";
-    private $required_php_version = '7.0.0';
+    private $required_php_version = '7.3.0';
     private $required_extensions = array('mysqli');
     public $php_version_valid;
     public $extensions_valid;
@@ -94,7 +94,7 @@ class Installer extends Base
 
         $steps = array(
             'start',
-            'eula',
+            'license',
             'authorization',
             'database',
             'settings',
@@ -154,18 +154,18 @@ class Installer extends Base
     /**
      * End User License Agreement page
      */
-    public function eula()
+    public function license()
     {
         if(!$this->hasAccess())
             return $this->_response;
-        $this->data['sub_title'] = "EULA";
+        $this->data['sub_title'] = "License Agreement";
         $config = array(
             array(
-                'field'=>"eula",
+                'field'=>"license",
                 'type'=>"textarea",
                 'rules'=>"required",
-                'label'=>"End User License Agreement",
-                'default'=> include ROOTPATH."nodcms-installer/Views/eula.php",
+                'label'=>"License Agreement",
+                'default'=> include ROOTPATH."nodcms-installer/Views/license.php",
                 'attr'=>array('readonly'=>"readonly", 'rows'=>10),
             ),
         );
@@ -173,7 +173,7 @@ class Installer extends Base
         $myform->config($config, $this->self_url, 'post', 'ajax');
         $myform->setFormTheme("form_only");
 
-        $myform->data['submit_label'] = "Accept EULA and continue <i class=\"far fa-arrow-alt-circle-right\"></i>";
+        $myform->data['submit_label'] = "Accept and continue <i class=\"far fa-arrow-alt-circle-right\"></i>";
         $myform->data['submit_class']="btn-success";
         if($myform->ispost()){
             $data = $myform->getPost();
