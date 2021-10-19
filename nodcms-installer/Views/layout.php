@@ -28,6 +28,7 @@ $this->addJsFile("assets/plugins/bootstrap-confirmation/bootstrap-confirmation.m
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/v4-shims.css">
     <?php $this->fetchAllCSS(); ?>
     <?php $this->fetchAllHeaderJS(); ?>
+    <?php echo csrf_meta("csrf_meta"); ?>
 </head>
 <body data-base-url="<?php echo base_url(); ?>" class="page-container-bg-solid page-sidebar-closed-hide-logo <?php echo (count($this->page_sidebar_items)==0 || $this->page_sidebar_closed == true)?' page-full-width page-sidebar-closed':''; ?>">
 <div class="container">

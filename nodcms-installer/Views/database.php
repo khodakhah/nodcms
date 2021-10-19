@@ -1,4 +1,4 @@
-<?php $this->load->addJsFile("assets/nodcms/js/installer-database.min"); ?>
+<?php \Config\Services::layout()->addJsFile("assets/nodcms/js/installer-database.min"); ?>
 <p>In this step, database will be created.</p>
 <p><strong>NOTE:</strong> Currently NodCMS and NodCMS installation wizard support only <strong>MySQL database</strong>.</p>
 <p class="alert alert-warning"><strong class="font-red">NOTE:</strong> This stage will re-create and overwrite all your existing tables. You may lose your data on these tables.</p>

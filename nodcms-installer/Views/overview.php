@@ -20,5 +20,5 @@
     </div>
 </div>
 <div class="">
-    <a class="btn btn-success" href="<?php echo base_url("installer/eula"); ?>">Start installer <i class="far fa-arrow-alt-circle-right"></i></a>
+    <a class="btn btn-success" href="<?php echo base_url("installer/license"); ?>">Start installer <i class="far fa-arrow-alt-circle-right"></i></a>
 </div>
