@@ -253,4 +253,32 @@ class Models extends BaseService
         }
         return new Users();
     }
+
+    /**
+     * Overwrite the method of the parent class "BaseService"
+     *
+     * $key must be a name matching a method of this class.
+     *
+     * @param mixed ...$params
+     *
+     * @return mixed
+     */
+    protected static function getSharedInstance(string $key, ...$params)
+    {
+        $key = strtolower($key);
+
+        // Returns mock if exists
+        if (isset(static::$mocks[$key])) {
+            return static::$mocks[$key];
+        }
+
+        if (! isset(static::$instances[$key])) {
+            // Make sure $getShared is false
+            $params[] = false;
+
+            static::$instances[$key] = self::$key(...$params);
+        }
+
+        return static::$instances[$key];
+    }
 }
