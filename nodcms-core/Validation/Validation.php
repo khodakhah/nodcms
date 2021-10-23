@@ -56,7 +56,7 @@ class Validation extends \CodeIgniter\Validation\Validation
      * @param array $data
      * @return bool
      */
-    protected function processRules(string $field, string $label = null, $value, $rules = null, array $data): bool
+    protected function processRules(string $field, string $label = null, $value, $rules = null, ?array $data = null): bool
     {
         // clean the latest error message up
         $this->latestErrorMessage = null;
