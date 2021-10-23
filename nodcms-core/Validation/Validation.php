@@ -14,7 +14,7 @@
  *  @copyright  2015-2021 Mojtaba Khodakhah
  *  @license    https://opensource.org/licenses/MIT	MIT License
  *  @link       https://nodcms.com
- *  @since      Version 3.0.0
+ *  @since      Version 3.2.0
  *  @filesource
  *
  */
@@ -56,7 +56,7 @@ class Validation extends \CodeIgniter\Validation\Validation
      * @param array $data
      * @return bool
      */
-    protected function processRules(string $field, string $label = null, $value, $rules = null, array $data): bool
+    protected function processRules(string $field, string $label = null, $value, $rules = null, ?array $data = null): bool
     {
         // clean the latest error message up
         $this->latestErrorMessage = null;

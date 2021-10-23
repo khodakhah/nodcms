@@ -1,248 +1,156 @@
 <?php
 
 /**
- * CodeIgniter
+ * This file is part of CodeIgniter 4 framework.
  *
- * An open source application development framework for PHP
+ * (c) CodeIgniter Foundation <admin@codeigniter.com>
  *
- * This content is released under the MIT License (MIT)
- *
- * Copyright (c) 2014-2019 British Columbia Institute of Technology
- * Copyright (c) 2019-2020 CodeIgniter Foundation
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * @package    CodeIgniter
- * @author     CodeIgniter Dev Team
- * @copyright  2019-2020 CodeIgniter Foundation
- * @license    https://opensource.org/licenses/MIT	MIT License
- * @link       https://codeigniter.com
- * @since      Version 4.0.0
- * @filesource
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
  */
 
 namespace CodeIgniter;
 
-use ReflectionClass;
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
 
 /**
- * ComposerScripts
- *
- * These scripts are used by Composer during installs and updates
+ * This class is used by Composer during installs and updates
  * to move files to locations within the system folder so that end-users
  * do not need to use Composer to install a package, but can simply
- * download
+ * download.
  *
  * @codeCoverageIgnore
- * @package            CodeIgniter
+ *
+ * @internal
  */
-class ComposerScripts
+final class ComposerScripts
 {
-	/**
-	 * Base path to use.
-	 *
-	 * @var type
-	 */
-	protected static $basePath = 'ThirdParty/';
+    /**
+     * Path to the ThirdParty directory.
+     *
+     * @var string
+     */
+    private static $path = __DIR__ . '/ThirdParty/';
 
-	/**
-	 * After composer install/update, this is called to move
-	 * the bare-minimum required files for our dependencies
-	 * to appropriate locations.
-	 *
-	 * @throws \ReflectionException
-	 */
-	public static function postUpdate()
-	{
-		static::moveEscaper();
-		static::moveKint();
-	}
+    /**
+     * Direct dependencies of CodeIgniter to copy
+     * contents to `system/ThirdParty/`.
+     *
+     * @var array<string, array<string, string>>
+     */
+    private static $dependencies = [
+        'kint-src' => [
+            'from' => __DIR__ . '/../vendor/kint-php/kint/src/',
+            'to'   => __DIR__ . '/ThirdParty/Kint/',
+        ],
+        'kint-resources' => [
+            'from' => __DIR__ . '/../vendor/kint-php/kint/resources/',
+            'to'   => __DIR__ . '/ThirdParty/Kint/resources/',
+        ],
+        'escaper' => [
+            'from' => __DIR__ . '/../vendor/laminas/laminas-escaper/src/',
+            'to'   => __DIR__ . '/ThirdParty/Escaper/',
+        ],
+        'psr-log' => [
+            'from' => __DIR__ . '/../vendor/psr/log/Psr/Log/',
+            'to'   => __DIR__ . '/ThirdParty/PSR/Log/',
+        ],
+    ];
 
-	//--------------------------------------------------------------------
+    /**
+     * This static method is called by Composer after every update event,
+     * i.e., `composer install`, `composer update`, `composer remove`.
+     */
+    public static function postUpdate()
+    {
+        self::recursiveDelete(self::$path);
 
-	/**
-	 * Move a file.
-	 *
-	 * @param string $source
-	 * @param string $destination
-	 *
-	 * @return boolean
-	 */
-	protected static function moveFile(string $source, string $destination): bool
-	{
-		$source = realpath($source);
+        foreach (self::$dependencies as $dependency) {
+            self::recursiveMirror($dependency['from'], $dependency['to']);
+        }
 
-		if (empty($source))
-		{
-			// @codeCoverageIgnoreStart
-			die('Cannot move file. Source path invalid.');
-			// @codeCoverageIgnoreEnd
-		}
+        self::copyKintInitFiles();
+        self::recursiveDelete(self::$dependencies['psr-log']['to'] . 'Test/');
+    }
 
-		if (! is_file($source))
-		{
-			return false;
-		}
+    /**
+     * Recursively remove the contents of the previous `system/ThirdParty`.
+     */
+    private static function recursiveDelete(string $directory): void
+    {
+        if (! is_dir($directory)) {
+            echo sprintf('Cannot recursively delete "%s" as it does not exist.', $directory);
+        }
 
-		return copy($source, $destination);
-	}
+        /** @var SplFileInfo $file */
+        foreach (new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(rtrim($directory, '\\/'), FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
+        ) as $file) {
+            $path = $file->getPathname();
 
-	//--------------------------------------------------------------------
+            if ($file->isDir()) {
+                @rmdir($path);
+            } else {
+                @unlink($path);
+            }
+        }
+    }
 
-	/**
-	 * Determine file path of a class.
-	 *
-	 * @param string $class
-	 *
-	 * @return string
-	 * @throws \ReflectionException
-	 */
-	protected static function getClassFilePath(string $class)
-	{
-		$reflector = new ReflectionClass($class);
+    /**
+     * Recursively copy the files and directories of the origin directory
+     * into the target directory, i.e. "mirror" its contents.
+     */
+    private static function recursiveMirror(string $originDir, string $targetDir): void
+    {
+        $originDir = rtrim($originDir, '\\/');
+        $targetDir = rtrim($targetDir, '\\/');
 
-		return $reflector->getFileName();
-	}
+        if (! is_dir($originDir)) {
+            echo sprintf('The origin directory "%s" was not found.', $originDir);
 
-	//--------------------------------------------------------------------
+            exit(1);
+        }
 
-	/**
-	 * A recursive remove directory method.
-	 *
-	 * @param $dir
-	 */
-	protected static function removeDir($dir)
-	{
-		if (is_dir($dir))
-		{
-			$objects = scandir($dir);
-			foreach ($objects as $object)
-			{
-				if ($object !== '.' && $object !== '..')
-				{
-					if (filetype($dir . '/' . $object) === 'dir')
-					{
-						static::removeDir($dir . '/' . $object);
-					}
-					else
-					{
-						unlink($dir . '/' . $object);
-					}
-				}
-			}
-			reset($objects);
-			rmdir($dir);
-		}
-	}
+        if (is_dir($targetDir)) {
+            echo sprintf('The target directory "%s" is existing. Run %s::recursiveDelete(\'%s\') first.', $targetDir, self::class, $targetDir);
 
-	protected static function copyDir($source, $dest)
-	{
-		$dir = opendir($source);
-		@mkdir($dest);
+            exit(1);
+        }
 
-		while (false !== ( $file = readdir($dir)))
-		{
-			if (( $file !== '.' ) && ( $file !== '..' ))
-			{
-				if (is_dir($source . '/' . $file))
-				{
-					static::copyDir($source . '/' . $file, $dest . '/' . $file);
-				}
-				else
-				{
-					copy($source . '/' . $file, $dest . '/' . $file);
-				}
-			}
-		}
+        @mkdir($targetDir, 0755, true);
 
-		closedir($dir);
-	}
+        $dirLen = strlen($originDir);
 
-	/**
-	 * Moves the Laminas Escaper files into our base repo so that it's
-	 * available for packaged releases where the users don't user Composer.
-	 *
-	 * @throws \ReflectionException
-	 */
-	public static function moveEscaper()
-	{
-		if (class_exists('\\Laminas\\Escaper\\Escaper') && is_file(static::getClassFilePath('\\Laminas\\Escaper\\Escaper')))
-		{
-			$base = basename(__DIR__) . '/' . static::$basePath . 'Escaper';
+        /** @var SplFileInfo $file */
+        foreach (new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($originDir, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST
+        ) as $file) {
+            $origin = $file->getPathname();
+            $target = $targetDir . substr($origin, $dirLen);
 
-			foreach ([$base, $base . '/Exception'] as $path)
-			{
-				if (! is_dir($path))
-				{
-					mkdir($path, 0755);
-				}
-			}
+            if ($file->isDir()) {
+                @mkdir($target, 0755);
+            } else {
+                @copy($origin, $target);
+            }
+        }
+    }
 
-			$files = [
-				static::getClassFilePath('\\Laminas\\Escaper\\Exception\\ExceptionInterface')       => $base . '/Exception/ExceptionInterface.php',
-				static::getClassFilePath('\\Laminas\\Escaper\\Exception\\InvalidArgumentException') => $base . '/Exception/InvalidArgumentException.php',
-				static::getClassFilePath('\\Laminas\\Escaper\\Exception\\RuntimeException')         => $base . '/Exception/RuntimeException.php',
-				static::getClassFilePath('\\Laminas\\Escaper\\Escaper')                             => $base . '/Escaper.php',
-			];
+    /**
+     * Copy Kint's init files into `system/ThirdParty/Kint/`
+     */
+    private static function copyKintInitFiles(): void
+    {
+        $originDir = self::$dependencies['kint-src']['from'] . '../';
+        $targetDir = self::$dependencies['kint-src']['to'];
 
-			foreach ($files as $source => $dest)
-			{
-				if (! static::moveFile($source, $dest))
-				{
-					// @codeCoverageIgnoreStart
-					die('Error moving: ' . $source);
-					// @codeCoverageIgnoreEnd
-				}
-			}
-		}
-	}
-
-	//--------------------------------------------------------------------
-
-	/**
-	 * Moves the Kint file into our base repo so that it's
-	 * available for packaged releases where the users don't user Composer.
-	 */
-	public static function moveKint()
-	{
-		$dir = 'vendor/kint-php/kint/src';
-
-		if (is_dir($dir))
-		{
-			$base = basename(__DIR__) . '/' . static::$basePath . 'Kint';
-
-			// Remove the contents of the previous Kint folder, if any.
-			if (is_dir($base))
-			{
-				static::removeDir($base);
-			}
-
-			// Create Kint if it doesn't exist already
-			if (! is_dir($base))
-			{
-				mkdir($base, 0755);
-			}
-
-			static::copyDir($dir, $base);
-			static::copyDir($dir . '/../resources', $base . '/resources');
-			copy($dir . '/../init.php', $base . '/init.php');
-			copy($dir . '/../init_helpers.php', $base . '/init_helpers.php');
-		}
-	}
+        foreach (['init.php', 'init_helpers.php'] as $kintInit) {
+            @copy($originDir . $kintInit, $targetDir . $kintInit);
+        }
+    }
 }

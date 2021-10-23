@@ -1,297 +1,235 @@
-<?php namespace CodeIgniter\Test\Mock;
+<?php
+
+/**
+ * This file is part of CodeIgniter 4 framework.
+ *
+ * (c) CodeIgniter Foundation <admin@codeigniter.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
+namespace CodeIgniter\Test\Mock;
 
 use CodeIgniter\CodeIgniter;
 use CodeIgniter\Database\BaseConnection;
+use CodeIgniter\Database\BaseResult;
+use CodeIgniter\Database\Query;
 
 class MockConnection extends BaseConnection
 {
-	protected $returnValues = [];
+    protected $returnValues = [];
 
-	public $database;
+    public $database;
 
-	public $lastQuery;
+    public $lastQuery;
 
-	//--------------------------------------------------------------------
+    public function shouldReturn(string $method, $return)
+    {
+        $this->returnValues[$method] = $return;
 
-	public function shouldReturn(string $method, $return)
-	{
-		$this->returnValues[$method] = $return;
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * Orchestrates a query against the database. Queries must use
+     * Database\Statement objects to store the query and build it.
+     * This method works with the cache.
+     *
+     * Should automatically handle different connections for read/write
+     * queries if needed.
+     *
+     * @param mixed ...$binds
+     *
+     * @return BaseResult|bool|Query
+     *
+     * @todo BC set $queryClass default as null in 4.1
+     */
+    public function query(string $sql, $binds = null, bool $setEscapeFlags = true, string $queryClass = '')
+    {
+        $queryClass = str_replace('Connection', 'Query', static::class);
 
-	//--------------------------------------------------------------------
+        $query = new $queryClass($this);
 
-	/**
-	 * Orchestrates a query against the database. Queries must use
-	 * Database\Statement objects to store the query and build it.
-	 * This method works with the cache.
-	 *
-	 * Should automatically handle different connections for read/write
-	 * queries if needed.
-	 *
-	 * @param string  $sql
-	 * @param mixed   ...$binds
-	 * @param boolean $setEscapeFlags
-	 * @param string  $queryClass
-	 *
-	 * @return \CodeIgniter\Database\BaseResult|\CodeIgniter\Database\Query|false
-	 */
+        $query->setQuery($sql, $binds, $setEscapeFlags);
 
-	public function query(string $sql, $binds = null, bool $setEscapeFlags = true, string $queryClass = 'CodeIgniter\\Database\\Query')
-	{
-		$queryClass = str_replace('Connection', 'Query', get_class($this));
+        if (! empty($this->swapPre) && ! empty($this->DBPrefix)) {
+            $query->swapPrefix($this->DBPrefix, $this->swapPre);
+        }
 
-		$query = new $queryClass($this);
+        $startTime = microtime(true);
 
-		$query->setQuery($sql, $binds, $setEscapeFlags);
+        $this->lastQuery = $query;
 
-		if (! empty($this->swapPre) && ! empty($this->DBPrefix))
-		{
-			$query->swapPrefix($this->DBPrefix, $this->swapPre);
-		}
+        // Run the query
+        if (false === ($this->resultID = $this->simpleQuery($query->getQuery()))) {
+            $query->setDuration($startTime, $startTime);
 
-		$startTime = microtime(true);
+            // @todo deal with errors
 
-		$this->lastQuery = $query;
+            return false;
+        }
 
-		// Run the query
-		if (false === ($this->resultID = $this->simpleQuery($query->getQuery())))
-		{
-			$query->setDuration($startTime, $startTime);
+        $query->setDuration($startTime);
 
-			// @todo deal with errors
+        // resultID is not false, so it must be successful
+        if ($query->isWriteType()) {
+            return true;
+        }
 
-			return false;
-		}
+        // query is not write-type, so it must be read-type query; return QueryResult
+        $resultClass = str_replace('Connection', 'Result', static::class);
 
-		$query->setDuration($startTime);
+        return new $resultClass($this->connID, $this->resultID);
+    }
 
-		$resultClass = str_replace('Connection', 'Result', get_class($this));
+    /**
+     * Connect to the database.
+     *
+     * @return mixed
+     */
+    public function connect(bool $persistent = false)
+    {
+        $return = $this->returnValues['connect'] ?? true;
 
-		return new $resultClass($this->connID, $this->resultID);
-	}
+        if (is_array($return)) {
+            // By removing the top item here, we can
+            // get a different value for, say, testing failover connections.
+            $return = array_shift($this->returnValues['connect']);
+        }
 
-	//--------------------------------------------------------------------
+        return $return;
+    }
 
-	/**
-	 * Connect to the database.
-	 *
-	 * @param boolean $persistent
-	 *
-	 * @return mixed
-	 */
-	public function connect(bool $persistent = false)
-	{
-		$return = $this->returnValues['connect'] ?? true;
+    /**
+     * Keep or establish the connection if no queries have been sent for
+     * a length of time exceeding the server's idle timeout.
+     */
+    public function reconnect(): bool
+    {
+        return true;
+    }
 
-		if (is_array($return))
-		{
-			// By removing the top item here, we can
-			// get a different value for, say, testing failover connections.
-			$return = array_shift($this->returnValues['connect']);
-		}
+    /**
+     * Select a specific database table to use.
+     *
+     * @return mixed
+     */
+    public function setDatabase(string $databaseName)
+    {
+        $this->database = $databaseName;
 
-		return $return;
-	}
+        return $this;
+    }
 
-	//--------------------------------------------------------------------
+    /**
+     * Returns a string containing the version of the database being used.
+     */
+    public function getVersion(): string
+    {
+        return CodeIgniter::CI_VERSION;
+    }
 
-	/**
-	 * Keep or establish the connection if no queries have been sent for
-	 * a length of time exceeding the server's idle timeout.
-	 *
-	 * @return boolean
-	 */
-	public function reconnect(): bool
-	{
-		return true;
-	}
+    /**
+     * Executes the query against the database.
+     *
+     * @return mixed
+     */
+    protected function execute(string $sql)
+    {
+        return $this->returnValues['execute'];
+    }
 
-	//--------------------------------------------------------------------
+    /**
+     * Returns the total number of rows affected by this query.
+     */
+    public function affectedRows(): int
+    {
+        return 1;
+    }
 
-	/**
-	 * Select a specific database table to use.
-	 *
-	 * @param string $databaseName
-	 *
-	 * @return mixed
-	 */
-	public function setDatabase(string $databaseName)
-	{
-		$this->database = $databaseName;
+    /**
+     * Returns the last error code and message.
+     *
+     * Must return an array with keys 'code' and 'message':
+     *
+     *  return ['code' => null, 'message' => null);
+     */
+    public function error(): array
+    {
+        return [
+            'code'    => 0,
+            'message' => '',
+        ];
+    }
 
-		return $this;
-	}
+    /**
+     * Insert ID
+     */
+    public function insertID(): int
+    {
+        return $this->connID->insert_id; // @phpstan-ignore-line
+    }
 
-	//--------------------------------------------------------------------
+    /**
+     * Generates the SQL for listing tables in a platform-dependent manner.
+     */
+    protected function _listTables(bool $constrainByPrefix = false): string
+    {
+        return '';
+    }
 
-	/**
-	 * Returns a string containing the version of the database being used.
-	 *
-	 * @return string
-	 */
-	public function getVersion(): string
-	{
-		return CodeIgniter::CI_VERSION;
-	}
+    /**
+     * Generates a platform-specific query string so that the column names can be fetched.
+     */
+    protected function _listColumns(string $table = ''): string
+    {
+        return '';
+    }
 
-	//--------------------------------------------------------------------
+    protected function _fieldData(string $table): array
+    {
+        return [];
+    }
 
-	/**
-	 * Executes the query against the database.
-	 *
-	 * @param string $sql
-	 *
-	 * @return mixed
-	 */
-	protected function execute(string $sql)
-	{
-		return $this->returnValues['execute'];
-	}
+    protected function _indexData(string $table): array
+    {
+        return [];
+    }
 
-	//--------------------------------------------------------------------
+    protected function _foreignKeyData(string $table): array
+    {
+        return [];
+    }
 
-	/**
-	 * Returns the total number of rows affected by this query.
-	 *
-	 * @return integer
-	 */
-	public function affectedRows(): int
-	{
-		return 1;
-	}
+    /**
+     * Close the connection.
+     */
+    protected function _close()
+    {
+    }
 
-	//--------------------------------------------------------------------
+    /**
+     * Begin Transaction
+     */
+    protected function _transBegin(): bool
+    {
+        return true;
+    }
 
-	/**
-	 * Returns the last error code and message.
-	 *
-	 * Must return an array with keys 'code' and 'message':
-	 *
-	 *  return ['code' => null, 'message' => null);
-	 *
-	 * @return array
-	 */
-	public function error(): array
-	{
-		return [
-			'code'    => null,
-			'message' => null,
-		];
-	}
+    /**
+     * Commit Transaction
+     */
+    protected function _transCommit(): bool
+    {
+        return true;
+    }
 
-	//--------------------------------------------------------------------
-
-	/**
-	 * Insert ID
-	 *
-	 * @return integer
-	 */
-	public function insertID(): int
-	{
-		return $this->connID->insert_id;
-	}
-
-	//--------------------------------------------------------------------
-
-	/**
-	 * Generates the SQL for listing tables in a platform-dependent manner.
-	 *
-	 * @param boolean $constrainByPrefix
-	 *
-	 * @return string
-	 */
-	protected function _listTables(bool $constrainByPrefix = false): string
-	{
-		return '';
-	}
-
-	//--------------------------------------------------------------------
-
-	/**
-	 * Generates a platform-specific query string so that the column names can be fetched.
-	 *
-	 * @param string $table
-	 *
-	 * @return string
-	 */
-	protected function _listColumns(string $table = ''): string
-	{
-		return '';
-	}
-
-	/**
-	 * @param  string $table
-	 * @return array
-	 */
-	protected function _fieldData(string $table): array
-	{
-		return [];
-	}
-
-	/**
-	 * @param  string $table
-	 * @return array
-	 */
-	protected function _indexData(string $table): array
-	{
-		return [];
-	}
-
-	/**
-	 * @param  string $table
-	 * @return array
-	 */
-	protected function _foreignKeyData(string $table): array
-	{
-		return [];
-	}
-
-	//--------------------------------------------------------------------
-
-	/**
-	 * Close the connection.
-	 */
-	protected function _close()
-	{
-	}
-
-	//--------------------------------------------------------------------
-
-	/**
-	 * Begin Transaction
-	 *
-	 * @return boolean
-	 */
-	protected function _transBegin(): bool
-	{
-		return true;
-	}
-
-	//--------------------------------------------------------------------
-
-	/**
-	 * Commit Transaction
-	 *
-	 * @return boolean
-	 */
-	protected function _transCommit(): bool
-	{
-		return true;
-	}
-
-	//--------------------------------------------------------------------
-
-	/**
-	 * Rollback Transaction
-	 *
-	 * @return boolean
-	 */
-	protected function _transRollback(): bool
-	{
-		return true;
-	}
-
-	//--------------------------------------------------------------------
+    /**
+     * Rollback Transaction
+     */
+    protected function _transRollback(): bool
+    {
+        return true;
+    }
 }

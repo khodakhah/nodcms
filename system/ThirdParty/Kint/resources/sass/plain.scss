@@ -1,0 +1,23 @@
+.kint-plain {
+  background: rgba(#fff, 0.9);
+  white-space: pre;
+  display: block;
+  font-family: monospace;
+  color: #222;
+
+  i {
+    color: #d00;
+    font-style: normal;
+  }
+
+  u {
+    color: #030;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .kint-microtime-lap {
+    font-weight: bold;
+    text-shadow: 1px 0 #fff, 0 1px #fff, -1px 0 #fff, 0 -1px #fff;
+  }
+}

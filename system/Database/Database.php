@@ -1,138 +1,138 @@
 <?php
 
 /**
- * CodeIgniter
+ * This file is part of CodeIgniter 4 framework.
  *
- * An open source application development framework for PHP
+ * (c) CodeIgniter Foundation <admin@codeigniter.com>
  *
- * This content is released under the MIT License (MIT)
- *
- * Copyright (c) 2014-2019 British Columbia Institute of Technology
- * Copyright (c) 2019-2020 CodeIgniter Foundation
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * @package    CodeIgniter
- * @author     CodeIgniter Dev Team
- * @copyright  2019-2020 CodeIgniter Foundation
- * @license    https://opensource.org/licenses/MIT	MIT License
- * @link       https://codeigniter.com
- * @since      Version 4.0.0
- * @filesource
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
  */
 
 namespace CodeIgniter\Database;
+
+use InvalidArgumentException;
 
 /**
  * Database Connection Factory
  *
  * Creates and returns an instance of the appropriate DatabaseConnection
- *
- * @package CodeIgniter\Database
  */
 class Database
 {
+    /**
+     * Maintains an array of the instances of all connections that have
+     * been created.
+     *
+     * Helps to keep track of all open connections for performance
+     * monitoring, logging, etc.
+     *
+     * @var array
+     */
+    protected $connections = [];
 
-	/**
-	 * Maintains an array of the instances of all connections
-	 * that have been created. Helps to keep track of all open
-	 * connections for performance monitoring, logging, etc.
-	 *
-	 * @var array
-	 */
-	protected $connections = [];
+    /**
+     * Parses the connection binds and returns an instance of the driver
+     * ready to go.
+     *
+     * @throws InvalidArgumentException
+     *
+     * @return mixed
+     */
+    public function load(array $params = [], string $alias = '')
+    {
+        if ($alias === '') {
+            throw new InvalidArgumentException('You must supply the parameter: alias.');
+        }
 
-	//--------------------------------------------------------------------
+        if (! empty($params['DSN']) && strpos($params['DSN'], '://') !== false) {
+            $params = $this->parseDSN($params);
+        }
 
-	/**
-	 * Parses the connection binds and returns an instance of
-	 * the driver ready to go.
-	 *
-	 * @param array  $params
-	 * @param string $alias
-	 *
-	 * @return   mixed
-	 * @internal param bool $useBuilder
-	 */
-	public function load(array $params = [], string $alias)
-	{
-		// No DB specified? Beat them senseless...
-		if (empty($params['DBDriver']))
-		{
-			throw new \InvalidArgumentException('You have not selected a database type to connect to.');
-		}
+        if (empty($params['DBDriver'])) {
+            throw new InvalidArgumentException('You have not selected a database type to connect to.');
+        }
 
-		$className = strpos($params['DBDriver'], '\\') === false
-			? '\CodeIgniter\Database\\' . $params['DBDriver'] . '\\Connection'
-			: $params['DBDriver'] . '\\Connection';
+        $this->connections[$alias] = $this->initDriver($params['DBDriver'], 'Connection', $params);
 
-		$class = new $className($params);
+        return $this->connections[$alias];
+    }
 
-		// Store the connection
-		$this->connections[$alias] = $class;
+    /**
+     * Creates a Forge instance for the current database type.
+     */
+    public function loadForge(ConnectionInterface $db): object
+    {
+        if (! $db->connID) {
+            $db->initialize();
+        }
 
-		return $this->connections[$alias];
-	}
+        return $this->initDriver($db->DBDriver, 'Forge', $db);
+    }
 
-	//--------------------------------------------------------------------
+    /**
+     * Creates a Utils instance for the current database type.
+     */
+    public function loadUtils(ConnectionInterface $db): object
+    {
+        if (! $db->connID) {
+            $db->initialize();
+        }
 
-	/**
-	 * Creates a new Forge instance for the current database type.
-	 *
-	 * @param ConnectionInterface|BaseConnection $db
-	 *
-	 * @return mixed
-	 */
-	public function loadForge(ConnectionInterface $db)
-	{
-		$className = strpos($db->DBDriver, '\\') === false ? '\CodeIgniter\Database\\' . $db->DBDriver . '\\Forge' : $db->DBDriver . '\\Forge';
+        return $this->initDriver($db->DBDriver, 'Utils', $db);
+    }
 
-		// Make sure a connection exists
-		if (! $db->connID)
-		{
-			$db->initialize();
-		}
+    /**
+     * Parse universal DSN string
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function parseDSN(array $params): array
+    {
+        $dsn = parse_url($params['DSN']);
 
-		return new $className($db);
-	}
+        if (! $dsn) {
+            throw new InvalidArgumentException('Your DSN connection string is invalid.');
+        }
 
-	//--------------------------------------------------------------------
+        $dsnParams = [
+            'DSN'      => '',
+            'DBDriver' => $dsn['scheme'],
+            'hostname' => isset($dsn['host']) ? rawurldecode($dsn['host']) : '',
+            'port'     => isset($dsn['port']) ? rawurldecode((string) $dsn['port']) : '',
+            'username' => isset($dsn['user']) ? rawurldecode($dsn['user']) : '',
+            'password' => isset($dsn['pass']) ? rawurldecode($dsn['pass']) : '',
+            'database' => isset($dsn['path']) ? rawurldecode(substr($dsn['path'], 1)) : '',
+        ];
 
-	/**
-	 * Loads the Database Utilities class.
-	 *
-	 * @param ConnectionInterface|BaseConnection $db
-	 *
-	 * @return mixed
-	 */
-	public function loadUtils(ConnectionInterface $db)
-	{
-		$className = strpos($db->DBDriver, '\\') === false ? '\CodeIgniter\Database\\' . $db->DBDriver . '\\Utils' : $db->DBDriver . '\\Utils';
+        if (! empty($dsn['query'])) {
+            parse_str($dsn['query'], $extra);
 
-		// Make sure a connection exists
-		if (! $db->connID)
-		{
-			$db->initialize();
-		}
+            foreach ($extra as $key => $val) {
+                if (is_string($val) && in_array(strtolower($val), ['true', 'false', 'null'], true)) {
+                    $val = $val === 'null' ? null : filter_var($val, FILTER_VALIDATE_BOOLEAN);
+                }
 
-		return new $className($db);
-	}
+                $dsnParams[$key] = $val;
+            }
+        }
 
-	//--------------------------------------------------------------------
+        return array_merge($params, $dsnParams);
+    }
+
+    /**
+     * Initialize database driver.
+     *
+     * @param array|object $argument
+     */
+    protected function initDriver(string $driver, string $class, $argument): object
+    {
+        $class = $driver . '\\' . $class;
+
+        if (strpos($driver, '\\') === false) {
+            $class = "CodeIgniter\\Database\\{$class}";
+        }
+
+        return new $class($argument);
+    }
 }
