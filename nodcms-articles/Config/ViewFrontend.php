@@ -14,7 +14,7 @@
  *  @copyright  2015-2021 Mojtaba Khodakhah
  *  @license    https://opensource.org/licenses/MIT	MIT License
  *  @link       https://nodcms.com
- *  @since      Version 3.1.0
+ *  @since      Version 3.2.0
  *  @filesource
  *
  */
@@ -34,7 +34,7 @@
  *  @copyright  2015-2021 Mojtaba Khodakhah
  *  @license    https://opensource.org/licenses/MIT	MIT License
  *  @link       https://nodcms.com
- *  @since      Version 3.1.0
+ *  @since      Version 3.2.0
  *  @filesource
  *
  */
