@@ -60,6 +60,14 @@ class Models extends BaseService
     static protected $mocks = [];
 
     /**
+     * The method that called/cashed with "getSharedInstance()" will be called from this value as the class name.
+     * <br>This means, on Config\Models childes classes, this variable should be reset.
+     *
+     * @var string
+     */
+    static protected $serviceClass = self::class;
+
+    /**
      * @return EmailMessages
      */
     public static function emailMessages(bool $getShared = true): EmailMessages
@@ -276,7 +284,10 @@ class Models extends BaseService
             // Make sure $getShared is false
             $params[] = false;
 
-            static::$instances[$key] = self::$key(...$params);
+            static::$instances[$key] = static::$serviceClass::$key(...$params);
+
+            // Reset the class name to the default
+            static::$serviceClass = self::class;
         }
 
         return static::$instances[$key];
