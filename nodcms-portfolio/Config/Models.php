@@ -34,6 +34,10 @@ class Models extends \Config\Models
     {
         if ($getShared)
         {
+            // Reset the class name
+            static::$serviceClass = self::class;
+
+            // Call cashed class
             return self::getSharedInstance('portfolio');
         }
 
