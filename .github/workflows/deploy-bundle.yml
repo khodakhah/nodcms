@@ -2,9 +2,9 @@
 # files to each of the generated repos.
 name: Deploy Bundle
 
-on:
-  release:
-    types: [published]
+on: [push, pull_request]
+#  release:
+#    types: [published]
 
 jobs:
   bundle:
