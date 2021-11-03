@@ -1,1 +1,0 @@
-<img style="height:20px;" src="<?php echo base_url($image); ?>" alt="<?php echo $language_name?>" title="<?php echo $language_title; ?>">
