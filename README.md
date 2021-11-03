@@ -1,13 +1,16 @@
 # [NodCMS](http://nodcms.com) 
+> **WARNING**: The project on `master` branch will not work for a while. I'm changing the project structure and implementing an automated workflow.
+> 
+> Therefore I recommended the NodCMS [v3.1](https://github.com/khodakhah/nodcms/tree/v.3.1) instead.
+> 
 NodCMS is a <strong>free</strong>, Multilingual, simple and powerful CMS powered by [CodeIgniter4]((https://codeigniter.com/)).
 
 More information can be found at [nodcms.com](http://nodcms.com/).
 
-> Demo: [demo.nodcms.com](http://demo.nodcms.com/)
->
-> Username: **demo**
-> 
-> Password: **demo**
+## Demo
+[demo.nodcms.com](http://demo.nodcms.com/)
+
+Username: `demo`, Password: `demo`
 
 ## NodCMS v3.x
 > IMPORTANT: **CodeIgniter4 Application Structure**!
