@@ -13,6 +13,11 @@ echo "Merging files from $1 to $2"
 # Prepare the source
 cd ${SOURCE}
 git checkout master
+# Composer validate
+composer validate --strict
+
+# Install dependencies
+composer install --prefer-dist --no-progress
 
 # Prepare the target
 cd ${TARGET}
