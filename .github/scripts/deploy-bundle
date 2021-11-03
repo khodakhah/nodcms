@@ -23,13 +23,25 @@ rm -rf *
 releasable='nodcms-core nodcms-about nodcms-articles nodcms-blog nodcms-gallery nodcms-installer nodcms-layout nodcms-portfolio nodcms-pricingtable nodcms-services nodcms-user public writable LICENSE'
 for fff in $releasable;
 do
-    cp -Rf ${SOURCE}/$fff ./
+  cp -Rf ${SOURCE}/$fff ./
 done
 
 # Copy repo-specific files
 cp -Rf ${SOURCE}/admin/bundle/. ./
 
+DIR=${SOURCE}/vendor/codeigniter4/framework/system
+if [ ! -d ${DIR} ]
+then
+  if [ ! -f ${DIR} ]
+  then
+    echo "Directory or file ${DIR} DOES NOT exists."
+    exit 1
+  fi
+fi
+# Copy system
+cp -Rf ${DIR} ./
+
 # Commit the changes
-git add .
-git commit -m "Release ${RELEASE}"
-git push
+#git add .
+#git commit -m "Release ${RELEASE}"
+#git push
