@@ -34,6 +34,7 @@ done
 # Copy repo-specific files
 cp -Rf ${SOURCE}/admin/bundle/. ./
 
+# Validate the system directory
 DIR=${SOURCE}/vendor/codeigniter4/framework/system
 if [ ! -d ${DIR} ]
 then
@@ -47,6 +48,6 @@ fi
 cp -Rf ${DIR} ./
 
 # Commit the changes
-#git add .
-#git commit -m "Release ${RELEASE}"
-#git push
+git add .
+git commit -m "Release ${RELEASE}"
+git push
