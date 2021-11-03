@@ -1,0 +1,35 @@
+#!/bin/bash
+
+## Deploy khodakhah/nodcms-bundle
+
+# Setup variables
+SOURCE=$1
+TARGET=$2
+RELEASE=$3
+
+echo "Preparing for version $3"
+echo "Merging files from $1 to $2"
+
+# Prepare the source
+cd $SOURCE
+git checkout master
+
+# Prepare the target
+cd $TARGET
+git checkout master
+rm -rf *
+
+# Copy common files
+releasable='nodcms-core nodcms-about nodcms-articles nodcms-blog nodcms-gallery nodcms-installer nodcms-layout nodcms-portfolio nodcms-pricingtable nodcms-services nodcms-user public writable LICENSE'
+for fff in $releasable;
+do
+    cp -Rf ${SOURCE}/$fff ./
+done
+
+# Copy repo-specific files
+cp -Rf ${SOURCE}/admin/bundle/. ./
+
+# Commit the changes
+git add .
+git commit -m "Release ${RELEASE}"
+git push

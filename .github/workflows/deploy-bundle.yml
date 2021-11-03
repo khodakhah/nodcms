@@ -1,0 +1,53 @@
+# When a new Release is created, deploy relevant
+# files to each of the generated repos.
+name: Deploy Bundle
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  bundle:
+    name: Deploy to bundle
+    if: github.repository == 'khodakhah/nodcms'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Identify
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "${GITHUB_ACTOR}"
+
+      - name: Checkout source
+        uses: actions/checkout@v2
+        with:
+          path: source
+
+      - name: Checkout target
+        uses: actions/checkout@v2
+        with:
+          repository: khodakhah/nodcms-bundle
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: nodcms-bundle
+
+      - name: Chmod
+        run: chmod +x ./source/.github/scripts/deploy-bundle
+
+      - name: Deploy
+        run: ./source/.github/scripts/deploy-bundle ${GITHUB_WORKSPACE}/source ${GITHUB_WORKSPACE}/bundle ${GITHUB_REF##*/}
+
+      - name: Release
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{secrets.ACCESS_TOKEN}}
+          script: |
+            const release = await github.repos.getLatestRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            })
+            github.repos.createRelease({
+              owner: context.repo.owner,
+              repo: 'nodcms-bundle',
+              tag_name: release.data.tag_name,
+              name: release.data.name,
+              body: release.data.body
+            })
