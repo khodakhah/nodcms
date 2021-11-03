@@ -16,12 +16,6 @@
 			"CodeIgniter\\": "system/"
 		}
 	},
-	"scripts": {
-		"post-update-cmd": [
-			"NodCMS\\Core\\ComposerScripts::postUpdate",
-			"CodeIgniter\\ComposerScripts::postUpdate"
-		]
-	},
 	"support": {
 		"forum": "https://nodecms.com/",
 		"source": "https://github.com/khodakhah/nodcms"
