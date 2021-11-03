@@ -1,0 +1,1 @@
+<img src="<?php echo $content!=""?((substr($content,0,4)!="http"?base_url($content):$content)):""; ?>" alt="<?php echo $content; ?>" style="max-height: 40px;max-width: 40px;">

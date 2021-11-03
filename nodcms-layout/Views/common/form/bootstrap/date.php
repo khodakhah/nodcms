@@ -1,0 +1,2 @@
+<input name="<?php echo $name; ?>" id="<?php echo $field_id; ?>" class="form-control input-small input-datepicker <?php echo $class; ?>" value="<?php echo $default; ?>" type="text" <?php foreach ($attr as $key=>$value){ echo $key.'="'.$value.'" '; } ?> <?php foreach ($datepicker as $key=>$value){ echo "data-".strtolower(preg_replace('/([A-Z]+)/', "-$1", $key))." = \"$value\""; } ?>>
+<div class="hidden" id="calendarfilter_<?php echo $field_id; ?>"><?php echo $calendarfilter; ?></div>

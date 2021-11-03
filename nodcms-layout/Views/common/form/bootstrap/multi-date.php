@@ -1,0 +1,3 @@
+<input name="<?php echo $name; ?>" id="<?php echo $field_id; ?>_microtime" value="<?php echo $default_microtime; ?>" type="hidden"/>
+<input type="text" id="<?php echo $field_id; ?>" data-id="<?php echo $field_id; ?>" value="<?php echo $default; ?>" class="form-control multidatepicker input-datepicker" <?php foreach ($attr as $key=>$value){ echo $key.' = "'.$value.'"'; } ?> <?php foreach ($datepicker as $key=>$value){ echo "data-".strtolower(preg_replace('/([A-Z]+)/', "-$1", $key))." = \"$value\""; } ?>/>
+<div class="hidden" id="calendarfilter_<?php echo $field_id; ?>"><?php echo $calendarfilter; ?></div>

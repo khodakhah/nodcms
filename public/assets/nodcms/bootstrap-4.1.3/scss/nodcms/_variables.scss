@@ -1,0 +1,219 @@
+//@import url("//fonts.googleapis.com/css?family=Lato:100,300,400&&subset=all");
+// Main settings
+$theme-name:                                                    		"nodcms";
+$brand-font-family: 'Dosis', sans-serif;
+$brand-header-font-family: "";
+$brand-font-awesome: "Font Awesome 5 Free";
+$brand-main-color: #0069b7 !default;
+$brand-main-font-color: #ebeef7 !default;
+$brand-main-border-color: #f3f6ff !default;
+$brand-light-color: #44b4ff !default;
+$brand-light-font-color: #4d5254 !default;
+$brand-btn-color: $brand-main-color;
+$brand-btn-color-hover: darken($brand-btn-color, 15%);
+$shopping-cart-background-color: $brand-light-color;
+$shopping-cart-background-hover-color: $brand-main-color;
+$shopping-cart-border-color: $brand-main-color;
+$shopping-cart-icon-color: $brand-main-color;
+$shopping-cart-icon-hover-color: $shopping-cart-background-color;
+$shopping-cart-badge-color: #ff4d37 !default;
+
+//Navbar
+$header-top-height: 60px;
+$header-navbar-height: 56px;
+$navbar-main-bg: #ffffff !default;
+$navbar-main-bg-hover: darken($navbar-main-bg, 4%) !default;
+$navbar-main-font-color: $brand-main-color !default;
+$navbar-main-font-color-hover: lighten($brand-main-color, 5%) !default;
+$navbar-main-border-color: $brand-light-color;
+$navbar-main-mobile-bg: lighten($brand-main-color, 3%);
+$navbar-main-mobile-link-bg-hover: lighten($brand-main-color, 5%);
+$navbar-main-mobile-border-color: darken($brand-main-color, 3%);
+$navbar-main-mobile-submenu-bg: lighten($navbar-main-mobile-bg, 3%);
+$navbar-main-mobile-submenu-hover-bg: darken($navbar-main-mobile-bg, 3%);
+$navbar-top-bg: #ffffff !default;
+$navbar-top-dropdown-bg: darken($navbar-main-bg,10%);
+$navbar-top-dropdown-hover-bg: darken($navbar-main-bg, 5%);
+// Body and header
+$bg-color: #ffffff !default;
+$header-bg-color:                                                  		$navbar-main-bg;
+$header-top-shadow:                                                     0px 1px 10px 0px rgba(50, 50, 50, 0.2);
+$header-mobile-menu-border:                                             lighten($header-bg-color, 3%);
+
+// Header search
+$header-search-bg-color:                                        		$header-bg-color !default;
+$header-search-font-color:                                      		lighten($header-bg-color, 25%) !default;
+$header-search-placeholder-font-color:                          		darken($header-search-font-color, 1%) !default;
+
+//Sidebar toggler
+$header-toggler-img:                                                   'sidebar-toggle-light.png';
+
+// Top menu
+$header-top-menu-bg-hover-color:                                		lighten($header-bg-color, 2%) !default;
+$header-top-menu-bg-hover-color-on-dropdown-open:               		lighten($header-bg-color, 2%) !default;
+$header-top-menu-badge-bg-color:                                		$brand-main-color;
+$header-top-menu-badge-font-color:                              		lighten($header-bg-color, 15%) !default;
+$header-top-menu-icon-font-color:                               		lighten($header-bg-color, 25%) !default;
+
+// Top menu user bar
+$header-top-menu-user-font-color:                                       darken($header-bg-color, 45%) !default;
+$header-top-menu-user-bg-color:                                 		none !default;
+
+//begin: Top Menu Extended Dropdowns
+$header-top-menu-extended-separator-bg-color: 							darken(#f8f9fa, 5%);
+$header-top-menu-extended-dropdown-item-bg-color-on-hover:              #f8f9fa;
+$header-top-menu-extended-dropdown-item-border-color:                   #EFF2F6;
+$header-top-menu-extended-dropdown-item-font-color:						#888888;
+
+$header-top-menu-extended-dropdown-header-bg-color:						darken($bg-color, 2%);
+$header-top-menu-extended-dropdown-border-color:                        darken($header-top-menu-extended-dropdown-header-bg-color, 2%);
+$header-top-menu-extended-dropdown-header-font-color:					darken(#6f949c, 5%);
+
+$header-top-menu-inbox-dropdown-from-font-color:						#5b9bd1;
+
+$header-top-menu-task-dropdown-progress-bg-color:						#dfe2e9;
+
+$header-top-menu-notification-time-bg-color:							darken(#eee, 1%);
+
+// Top Menu Notifications
+$header-hor-menu-bg-color:                                              darken($header-bg-color, 3%);
+$header-top-menu-dropdown-dark-bg-color: 								darken($header-hor-menu-bg-color, 10%);
+$header-top-menu-dropdown-dark-header-bg-color:							darken($header-hor-menu-bg-color, 2%);
+$header-top-menu-dropdown-dark-header-font-color:						darken($header-top-menu-dropdown-dark-header-bg-color, 50%);
+
+$header-top-menu-dropdown-dark-item-font-color:							darken($header-top-menu-dropdown-dark-header-bg-color, 55%);
+$header-top-menu-dropdown-dark-item-border-color:						darken($header-top-menu-dropdown-dark-bg-color, 6%);
+$header-top-menu-dropdown-dark-item-icon-color:							darken($header-top-menu-dropdown-dark-header-bg-color, 45%);
+$header-top-menu-dropdown-dark-item-bg-color-on-hover:					darken($header-top-menu-dropdown-dark-bg-color, 4%);
+
+$header-top-menu-dropdown-dark-default-menu-divider:					$header-top-menu-dropdown-dark-item-border-color;
+$header-top-menu-dropdown-dark-notification-time-bg-color:				darken($header-top-menu-dropdown-dark-bg-color, 5%);
+//end: Top Menu Extended Dropdowns
+
+// Top menu dropdown
+$header-top-menu-dropdown-head-bg-color:                                darken(#3D4A53, 35%);
+$header-top-menu-dropdown-head-font-color:                              darken(#3D4A53, 95%);
+$header-top-menu-dropdown-border-color:                                 darken(#3D4A53, 60%);
+
+// Sidebar menu
+$sidebar-bg-color:                                                      #f7f7f7 !default;
+$sidebar-width:250px;
+$sidebar-minimized-width:50px;
+
+$sidebar-menu-heading-font-color:                                       darken($sidebar-bg-color, 30%) !default;
+
+$sidebar-menu-link-font-color:                                  		darken($sidebar-bg-color, 55%) !default;
+$sidebar-menu-link-font-color-on-hover:                         		darken($sidebar-bg-color, 40%) !default;
+$sidebar-menu-link-font-color-on-active:                        		#ffffff !default;
+
+$sidebar-menu-link-icon-font-color:                             		darken(#b7c9d6, 5%) !default;
+$sidebar-menu-link-icon-font-color-on-active:                   		$sidebar-menu-link-font-color-on-hover !default;
+$sidebar-menu-link-icon-font-color-on-hover:                            $sidebar-menu-link-font-color-on-active !default;
+
+$sidebar-menu-link-bg-color-on-hover:                           		darken($sidebar-bg-color,5%) !default;
+$sidebar-menu-link-bg-color-on-active:                          		darken($sidebar-bg-color,25%) !default;
+
+$sidebar-menu-arrow-color:                                      		lighten($sidebar-menu-link-icon-font-color, 3%) !default;
+$sidebar-menu-arrow-color-on-active:                            		lighten($sidebar-menu-link-icon-font-color-on-active, 3%) !default;
+$sidebar-menu-arrow-color-on-hover:                                     lighten($sidebar-menu-link-icon-font-color-on-hover, 3%) !default;
+
+$sidebar-menu-sub-menu-link-font-color:                         		$sidebar-menu-link-font-color !default;
+$sidebar-menu-sub-menu-link-icon-font-color:                    		$sidebar-menu-link-icon-font-color !default;
+
+$sidebar-menu-sub-menu-link-bg-color-on-hover:                  		darken($sidebar-menu-link-bg-color-on-hover,3%) !default;
+$sidebar-menu-sub-menu-link-bg-color-on-active:                  		darken($sidebar-menu-link-bg-color-on-hover,8%) !default;
+$sidebar-menu-sub-menu-link-font-color-on-hover:                  		$sidebar-menu-sub-menu-link-bg-color-on-hover !default;
+$sidebar-menu-sub-menu-link-icon-font-color-on-hover:                   $sidebar-menu-link-icon-font-color-on-hover !default;
+
+$sidebar-menu-sub-menu-box-shadow-color:                                darken($sidebar-menu-link-bg-color-on-hover, 30%) !default;
+$sidebar-menu-hover-sub-menu-bg-color:									#FFFFFF !default;
+
+// Sidebar for mobile
+$mobile-sidebar-menu-bg-color:                           				darken($bg-color, 7%) !default;
+$mobile-sidebar-menu-link-bg-color-on-hover:             				darken($bg-color, 4%) !default;
+
+// Footer
+$footer-bg-color:                                                       $brand-light-color;
+$footer-fluid-font-color:                                               $brand-light-font-color;
+$footer-default-font-color:                                     		$brand-light-font-color;
+$footer-default-go-top-bg-color:                                		darken(#94A0B2, 10%) !default;
+$footer-default-go-top-icon-font-color:                          		lighten(#94A0B2, 40%) !default;
+$footer-fixed-bg-color: 												$bg-color !default;
+$footer-link-color:                                                     $brand-light-color;
+$footer-link-hover-color:                                               #F0ECF1 !default;
+
+$spaces:(
+        5,10,20,30,40,50
+);
+
+$box-size:(
+        34,100,200,300,400,500,600,700
+);
+
+$borders:(
+        1,2,3,4,5,6,7,8,9,10
+);
+
+$component-colors: (
+        "white":	(base:#ffffff, font: #666),
+        "white-fade":	(base:rgba(255, 255, 255, 0.5), font: #666),
+        "default":	(base:#e1e5ec, font: #666),
+        "dark":	(base:#2f353b, font: #FFFFFF),
+        "dark-fade":	(base:rgba(47, 53, 59, 0.5), font: #FFFFFF),
+        "blue":	(base:#3598dc, font: #FFFFFF),
+        "blue-madison":	(base:#578ebe, font: #FFFFFF),
+        "blue-chambray":	(base:#2C3E50, font: #FFFFFF),
+        "blue-ebonyclay":	(base:#22313F, font: #FFFFFF),
+        "blue-hoki":	(base:#67809F, font: #FFFFFF),
+        "blue-steel":	(base:#4B77BE, font: #FFFFFF),
+        "blue-soft":	(base:#4c87b9, font: #FFFFFF),
+        "blue-dark":	(base:#5e738b, font: #FFFFFF),
+        "blue-sharp":	(base:#5C9BD1, font: #FFFFFF),
+        "blue-oleo":	(base:#94A0B2, font: #FFFFFF),
+        "green":	(base:#32c5d2, font: #FFFFFF),
+        "green-meadow":	(base:#1BBC9B, font: #FFFFFF),
+        "green-seagreen":	(base:#1BA39C, font: #FFFFFF),
+        "green-turquoise":	(base:#36D7B7, font: #FFFFFF),
+        "green-haze":	(base:#44b6ae, font: #FFFFFF),
+        "green-jungle":	(base:#26C281, font: #FFFFFF),
+        "green-soft":	(base:#3faba4, font: #FFFFFF),
+        "green-dark":	(base:#4DB3A2, font: #FFFFFF),
+        "green-sharp":	(base:#2ab4c0, font: #FFFFFF),
+        "green-steel":	(base:#29b4b6, font: #FFFFFF),
+        "grey":	(base:#E5E5E5, font: #333333),
+        "grey-steel":	(base:#e9edef, font: #80898e),
+        "grey-cararra":	(base:#fafafa, font: #333333),
+        "grey-gallery":	(base:#555555, font: #ffffff),
+        "grey-cascade":	(base:#95A5A6, font: #FFFFFF),
+        "grey-silver":	(base:#BFBFBF, font: #FAFCFB),
+        "grey-salsa":	(base:#ACB5C3, font: #FAFCFB),
+        "grey-salt":	(base:#bfcad1, font: #FAFCFB),
+        "grey-mint":	(base:#525e64, font: #FFFFFF),
+        "red":	(base:#e7505a, font: #ffffff),
+        "red-pink":	(base:#E08283, font: #ffffff),
+        "red-sunglo":	(base:#E26A6A, font: #ffffff),
+        "red-intense":	(base:#e35b5a, font: #ffffff),
+        "red-thunderbird":	(base:#D91E18, font: #ffffff),
+        "red-flamingo":	(base:#EF4836, font: #ffffff),
+        "red-soft":	(base:#d05454, font: #ffffff),
+        "red-haze":	(base:#f36a5a, font: #ffffff),
+        "red-mint":	(base:#e43a45, font: #ffffff),
+        "yellow":	(base:#c49f47, font: #ffffff),
+        "yellow-gold":	(base:#E87E04, font: #ffffff),
+        "yellow-casablanca":	(base:#f2784b, font: #ffffff),
+        "yellow-crusta":	(base:#f3c200, font: #ffffff),
+        "yellow-lemon":	(base:#F7CA18, font: #ffffff),
+        "yellow-saffron":	(base:#F4D03F, font: #ffffff),
+        "yellow-soft":	(base:#c8d046, font: #ffffff),
+        "yellow-haze":	(base:#c5bf66, font: #ffffff),
+        "yellow-mint":	(base:#c5b96b, font: #ffffff),
+        "purple":	(base:#8E44AD, font: #ffffff),
+        "purple-plum":	(base:#8775a7, font: #ffffff),
+        "purple-medium":	(base:#BF55EC, font: #ffffff),
+        "purple-studio":	(base:#8E44AD, font: #ffffff),
+        "purple-wisteria":	(base:#9B59B6, font: #ffffff),
+        "purple-seance":	(base:#9A12B3, font: #ffffff),
+        "purple-intense":	(base:#8775a7, font: #ffffff),
+        "purple-sharp":	(base:#796799, font: #ffffff),
+        "purple-soft":	(base:#8877a9, font: #ffffff),
+);

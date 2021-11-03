@@ -1,0 +1,59 @@
+.page-container{
+  display: flex;
+}
+.page-content-wrapper{
+  width:80%;
+}
+.page-sidebar-wrapper{
+  width:20%;
+  .page-sidebar{
+    margin:10px;
+    border:1px solid darken($bg-color, 10%);
+    background:lighten($bg-color, 20%);
+    padding:10px;
+    text-align:center;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+
+    ul{
+      list-style: none;
+      padding:0;
+      margin:0;
+
+      li{
+        padding:3px;
+
+        &.user-details{
+          .user-avatar{
+            margin:auto;
+            overflow: hidden;
+            width:150px;
+            height:150px;
+
+            img{
+              width:100%;
+            }
+          }
+          .username{
+            font-size:1.2em;
+          }
+        }
+
+        a{
+          display:block;
+          padding:5px 3px;
+          -webkit-border-radius: 5px;
+          -moz-border-radius: 5px;
+          border-radius: 5px;
+          color:$brand-main-color;
+
+          &:hover,&:focus,&.active{
+            background: darken($bg-color, 3%);
+            color:lighten($brand-main-color, 10%);
+          }
+        }
+      }
+    }
+  }
+}

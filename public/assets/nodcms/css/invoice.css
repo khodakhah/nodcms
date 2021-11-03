@@ -1,0 +1,17 @@
+.invoice-head{
+}
+.company-address{
+    font-size: 16px;
+}
+.invoice-title{
+    font-size: 16px;
+}
+.invoice-head h1{
+    font-size: 80px;
+}
+.invoice-table tr.info-cells th, .invoice-table tr.info-cells td{
+    border:0;
+}
+.invoice-dec{
+    font-size: 14px;
+}

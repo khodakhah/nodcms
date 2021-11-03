@@ -1,0 +1,1 @@
+<button type="button" onclick="$.loadInModal('<?php echo str_replace('$content', $content, $config['url']); ?>','modal-lg')" class="btn btn-sm dark"><?php echo $config['btn_label']; ?></button>

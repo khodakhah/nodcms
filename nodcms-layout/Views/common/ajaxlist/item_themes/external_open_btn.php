@@ -1,0 +1,1 @@
+<a target="_blank" href="<?php echo str_replace('$content', $content, $config['url']); ?>" class="btn btn-sm blue"><i class="fas fa-external-link-alt"></i> <?php echo _l("Open", $this); ?></a>
