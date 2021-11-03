@@ -1,1 +1,0 @@
-<<?php echo $tag; ?> id="<?php echo $field_id; ?>" class="form-control-static <?php echo $class; ?>" <?php foreach ($attr as $key=>$value){ echo $key.' = "'.$value.'"'; } ?>><?php echo "$value"; ?></<?php echo $tag; ?>>
