@@ -12,7 +12,7 @@ echo "Merging files from $1 to $2"
 
 # Prepare the source
 cd $SOURCE
-git checkout composer_config_dev
+git checkout master
 
 # Prepare the target
 cd $TARGET
