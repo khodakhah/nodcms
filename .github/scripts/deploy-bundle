@@ -11,11 +11,11 @@ echo "Preparing for version $3"
 echo "Merging files from $1 to $2"
 
 # Prepare the source
-cd $SOURCE
+cd ${SOURCE}
 git checkout master
 
 # Prepare the target
-cd $TARGET
+cd ${TARGET}
 git checkout master
 rm -rf *
 

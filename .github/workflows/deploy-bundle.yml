@@ -33,21 +33,21 @@ jobs:
         run: chmod +x ./source/.github/scripts/deploy-bundle
 
       - name: Deploy
-        run: ./source/.github/scripts/deploy-bundle ${GITHUB_WORKSPACE}/source ${GITHUB_WORKSPACE}/bundle ${GITHUB_REF##*/}
+        run: ./source/.github/scripts/deploy-bundle ${GITHUB_WORKSPACE}/source ${GITHUB_WORKSPACE}/nodcms-bundle ${GITHUB_REF##*/}
 
-      - name: Release
-        uses: actions/github-script@v5
-        with:
-          github-token: ${{secrets.ACCESS_TOKEN}}
-          script: |
-            const release = await github.repos.getLatestRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo
-            })
-            github.repos.createRelease({
-              owner: context.repo.owner,
-              repo: 'nodcms-bundle',
-              tag_name: release.data.tag_name,
-              name: release.data.name,
-              body: release.data.body
-            })
+#      - name: Release
+#        uses: actions/github-script@v5
+#        with:
+#          github-token: ${{secrets.ACCESS_TOKEN}}
+#          script: |
+#            const release = await github.repos.getLatestRelease({
+#              owner: context.repo.owner,
+#              repo: context.repo.repo
+#            })
+#            github.repos.createRelease({
+#              owner: context.repo.owner,
+#              repo: 'nodcms-bundle',
+#              tag_name: release.data.tag_name,
+#              name: release.data.name,
+#              body: release.data.body
+#            })
