@@ -17,7 +17,7 @@ define('FCPATH', __DIR__ . DIRECTORY_SEPARATOR);
 // Root directory
 define("ROOTPATH", dirname(FCPATH).DIRECTORY_SEPARATOR);
 // CodeIgniter core path
-define("SYSTEMPATH", ROOTPATH."vendoer\\codeigniter4\\framework\\system".DIRECTORY_SEPARATOR);
+define("SYSTEMPATH", ROOTPATH."vendor/codeigniter4/framework/system".DIRECTORY_SEPARATOR);
 // NodCMS core path
 define("COREPATH", ROOTPATH."nodcms-core".DIRECTORY_SEPARATOR);
 // NodCMS public path

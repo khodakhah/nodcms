@@ -13,7 +13,7 @@
 	"autoload": {
 		"psr-4": {
 			"NodCMS\\Core\\": "nodcms-core/",
-			"CodeIgniter\\": "system/"
+			"CodeIgniter\\": "vendor/codeigniter4/framework/system/"
 		}
 	},
 	"support": {
