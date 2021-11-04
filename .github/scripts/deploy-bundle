@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## Deploy khodakhah/nodcms-bundle
+## Deploy to repo:khodakhah/nodcms-bundle
 
 # Setup variables
 SOURCE=$1
@@ -13,11 +13,15 @@ echo "Merging files from $1 to $2"
 # Prepare the source
 cd ${SOURCE}
 git checkout master
+
 # Composer validate
 composer validate --strict
 
 # Install dependencies
 composer install --prefer-dist --no-progress
+
+# Move necessary files form vendor to root
+composer run-script movefiles
 
 # Prepare the target
 cd ${TARGET}
@@ -25,27 +29,27 @@ git checkout master
 rm -rf *
 
 # Copy common files
-releasable='nodcms-core nodcms-about nodcms-articles nodcms-blog nodcms-gallery nodcms-installer nodcms-layout nodcms-portfolio nodcms-pricingtable nodcms-services nodcms-user public writable LICENSE'
+releasable='nodcms-core nodcms-about nodcms-articles nodcms-blog nodcms-gallery nodcms-installer nodcms-layout nodcms-portfolio nodcms-pricingtable nodcms-services nodcms-user public writable system SECURITY.md LICENSE'
 for fff in $releasable;
 do
-  cp -Rf ${SOURCE}/$fff ./
+
+  # Check directory exists
+  DIR=${SOURCE}/$fff
+  if [ ! -d ${DIR} ]
+  then
+    if [ ! -f ${DIR} ]
+    then
+      echo "Directory or file ${DIR} DOES NOT exists."
+      exit 1
+    fi
+  fi
+
+  # Copy
+  cp -Rf ${DIR} ./
 done
 
 # Copy repo-specific files
 cp -Rf ${SOURCE}/admin/bundle/. ./
-
-# Validate the system directory
-DIR=${SOURCE}/vendor/codeigniter4/framework/system
-if [ ! -d ${DIR} ]
-then
-  if [ ! -f ${DIR} ]
-  then
-    echo "Directory or file ${DIR} DOES NOT exists."
-    exit 1
-  fi
-fi
-# Copy system
-cp -Rf ${DIR} ./
 
 # Commit the changes
 git add .
