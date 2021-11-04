@@ -29,7 +29,7 @@ git checkout master
 rm -rf *
 
 # Copy common files
-releasable='nodcms-core nodcms-about nodcms-articles nodcms-blog nodcms-gallery nodcms-installer nodcms-layout nodcms-portfolio nodcms-pricingtable nodcms-services nodcms-user public writable system SECURITY.md LICENSE'
+releasable='nodcms-core nodcms-about nodcms-articles nodcms-blog nodcms-gallery nodcms-installer nodcms-layout nodcms-portfolio nodcms-pricingtable nodcms-services nodcms-users public writable system SECURITY.md LICENSE'
 for fff in $releasable;
 do
 
