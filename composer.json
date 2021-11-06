@@ -29,6 +29,7 @@
 		"phpunit/phpunit": "^9.5"
 	},
 	"require": {
-		"codeigniter4/framework": "^4.1"
+		"codeigniter4/framework": "^4.1",
+		"codeigniter4/translations": "^4.1"
 	}
 }

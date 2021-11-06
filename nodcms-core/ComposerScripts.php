@@ -69,6 +69,11 @@ final class ComposerScripts
             'from' => __DIR__ . '/../vendor/psr/log/Psr/Log/',
             'to'   => __DIR__ . '/../system/ThirdParty/PSR/Log/',
         ],
+        'translations' => [
+            'from' => __DIR__ . '/../vendor/codeigniter4/translations/Language/',
+            'to'   => __DIR__ . '/../system/Language/',
+            'pattern' => "/^[a-z]{2}(\-[A-Z]{2})?$/",
+        ],
     ];
 
     /**
@@ -84,7 +89,14 @@ final class ComposerScripts
         }
 
         foreach (self::$dependencies as $dependency) {
-            self::recursiveMirror($dependency['from'], $dependency['to']);
+            if(!key_exists("pattern",$dependency)) {
+                self::recursiveMirror($dependency['from'], $dependency['to']);
+                continue;
+            }
+            foreach(scandir($dependency['from']) as $content) {
+                if(preg_match($dependency['pattern'], $content))
+                    self::recursiveMirror($dependency['from']."$content/", $dependency['to']."$content/");
+            }
         }
 
         self::copyKintInitFiles();
