@@ -13,13 +13,12 @@
 	"autoload": {
 		"psr-4": {
 			"NodCMS\\Core\\": "nodcms-core/",
-			"CodeIgniter\\": "system/"
+			"CodeIgniter\\": "vendor/codeigniter4/framework/system/"
 		}
 	},
 	"scripts": {
-		"post-update-cmd": [
-			"NodCMS\\Core\\ComposerScripts::postUpdate",
-			"CodeIgniter\\ComposerScripts::postUpdate"
+		"movefiles": [
+			"NodCMS\\Core\\ComposerScripts::postUpdate"
 		]
 	},
 	"support": {
