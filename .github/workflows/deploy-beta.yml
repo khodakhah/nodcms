@@ -32,7 +32,7 @@ jobs:
         run: chmod +x ./source/.github/scripts/deploy-beta
 
       - name: Move composer dependencies
-        run: ./.github/scripts/deploy-beta ${GITHUB_WORKSPACE}/source ${GITHUB_WORKSPACE}/target
+        run: ./source/.github/scripts/deploy-beta ${GITHUB_WORKSPACE}/source ${GITHUB_WORKSPACE}/target
 
       - name: Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
