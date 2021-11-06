@@ -23,7 +23,7 @@ use NodCMS\Installer\Config\View;
 class Installer extends Base
 {
     public $product_name = "NodCMS";
-    public $product_version = "3.2.0";
+    public $product_version = "3.2.1";
     private $required_php_version = '7.3.0';
     private $required_extensions = array('mysqli');
     public $php_version_valid;
