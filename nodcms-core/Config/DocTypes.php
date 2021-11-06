@@ -31,3 +31,15 @@ class DocTypes
 		'xhtml-rdfa-2'      => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.1//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-2.dtd">',
 	];
 }
+/*
+ *  This file is part of NodCMS.
+ *
+ *  (c) Mojtaba Khodakhah <info@nodcms.com>
+ *  https://nodcms.com
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ *
+ */
+
+
