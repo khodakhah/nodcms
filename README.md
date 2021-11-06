@@ -1,11 +1,9 @@
 # [NodCMS](http://nodcms.com) 
-> **WARNING**: The project on `master` branch will not work for a while. I'm changing the project structure and implementing an automated workflow.
-> 
-> Therefore I recommended the NodCMS [v3.1](https://github.com/khodakhah/nodcms/tree/v.3.1) instead.
-> 
-NodCMS is a <strong>free</strong>, Multilingual, simple and powerful CMS powered by [CodeIgniter4]((https://codeigniter.com/)).
+NodCMS is a <strong>free</strong>, Multilingual, simple and powerful CMS based on [CodeIgniter4]((https://codeigniter.com/)).
 
 More information can be found at [nodcms.com](http://nodcms.com/).
+
+This repository holds a source, composer dependencies, and latest released versions of the NodCMS.
 
 ## Demo
 [demo.nodcms.com](http://demo.nodcms.com/)
@@ -25,22 +23,40 @@ The following points are the most important changes on NodCMS since v3.x
 3. Better modular structure
 4. Some quick debugs
 
-## Branches ##
-`master` branch includes the production version. Other branches are only for development. 
-
 ## Download ##
-You can download the master branch as a ZIP file: [GitHub Download](https://github.com/khodakhah/nodcms/archive/master.zip)!
+You can download the latest released version as a ZIP file from [nodcms-bundle](https://github.com/khodakhah/nodcms-bundle). 
 
-## Installation ##
-> At this time there is no composer installation, but it has been planned!
+[Download ZIP File](https://github.com/khodakhah/nodcms-bundle/archive/master.zip)
+
+## Composer Installation
+### Create a NodCMS Project
+
+This installation technique would suit a developer who wishes to start a new NodCMS based project.
+
+```
+composer create-project khodakhah/nodcms
+```
+#### Upgrading
+```
+composer update
+```
+
+### Adding NodCMS to an Existing Project
+```
+composer require khodakhah/nodcms
+```
+Copy the `public`, `writable`, and all folders with the prefix `nodcms-` from `vendor/khodakhah/nodcms` to your project root
+
+## Database structure
+NodCMS database structure will be created automatically from models throw a wizard CMS installation.
 
 So you can only need to follow the below steps right now.
 
-1. Download the project at first.
-2. Extract the zip file on your host.
-3. Create a new database on your host for NodCMS.
-4. Open the project on the browser.
-5. You will see installer wizard to build your database.
+1. Create a new database on your host for NodCMS.
+2. Open the project on the browser.
+3. You will see installer wizard to build your database.
+
+> In the further versions, the database structure will be provided as an SQL file or/and throw CLI.
 
 [Learn more](https://nodcms.com/user-guide/)
 
