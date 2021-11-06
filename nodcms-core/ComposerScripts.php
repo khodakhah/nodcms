@@ -36,6 +36,13 @@ use SplFileInfo;
 final class ComposerScripts
 {
     /**
+     * CodeIgniter core directory
+     *
+     * @var string
+     */
+    private static $basePath = __DIR__ . '/../system/';
+
+    /**
      * Direct dependencies of CodeIgniter to copy
      * contents to `/system/`.
      *
@@ -46,6 +53,22 @@ final class ComposerScripts
             'from' => __DIR__ . '/../vendor/codeigniter4/framework/system/',
             'to'   => __DIR__ . '/../system/',
         ],
+        'kint-src' => [
+            'from' => __DIR__ . '/../vendor/kint-php/kint/src/',
+            'to'   => __DIR__ . '/../system/ThirdParty/Kint/',
+        ],
+        'kint-resources' => [
+            'from' => __DIR__ . '/../vendor/kint-php/kint/resources/',
+            'to'   => __DIR__ . '/../system/ThirdParty/Kint/resources/',
+        ],
+        'escaper' => [
+            'from' => __DIR__ . '/../vendor/laminas/laminas-escaper/src/',
+            'to'   => __DIR__ . '/../system/ThirdParty/Escaper/',
+        ],
+        'psr-log' => [
+            'from' => __DIR__ . '/../vendor/psr/log/Psr/Log/',
+            'to'   => __DIR__ . '/../system/ThirdParty/PSR/Log/',
+        ],
     ];
 
     /**
@@ -54,12 +77,18 @@ final class ComposerScripts
      */
     public static function postUpdate()
     {
-        echo __DIR__;
+        // Remove directory if it's exists
+        if(is_dir(self::$basePath)) {
+            self::recursiveDelete(self::$basePath);
+            rmdir(self::$basePath);
+        }
+
         foreach (self::$dependencies as $dependency) {
-            self::recursiveDelete($dependency['to']);
-            rmdir($dependency['to']);
             self::recursiveMirror($dependency['from'], $dependency['to']);
         }
+
+        self::copyKintInitFiles();
+        self::recursiveDelete(self::$dependencies['psr-log']['to'] . 'Test/');
     }
 
     /**
@@ -124,6 +153,19 @@ final class ComposerScripts
             } else {
                 @copy($origin, $target);
             }
+        }
+    }
+
+    /**
+     * Copy Kint's init files into `system/ThirdParty/Kint/`
+     */
+    private static function copyKintInitFiles(): void
+    {
+        $originDir = self::$dependencies['kint-src']['from'] . '../';
+        $targetDir = self::$dependencies['kint-src']['to'];
+
+        foreach (['init.php', 'init_helpers.php'] as $kintInit) {
+            @copy($originDir . $kintInit, $targetDir . $kintInit);
         }
     }
 }

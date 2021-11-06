@@ -18,8 +18,7 @@
 	},
 	"scripts": {
 		"movefiles": [
-			"NodCMS\\Core\\ComposerScripts::postUpdate",
-			"CodeIgniter\\ComposerScripts::postUpdate"
+			"NodCMS\\Core\\ComposerScripts::postUpdate"
 		]
 	},
 	"support": {
