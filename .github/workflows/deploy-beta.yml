@@ -29,10 +29,10 @@ jobs:
             ${{ runner.os }}-php-
 
       - name: Chmod
-        run: chmod +x ./.github/scripts/deploy-bundle
+        run: chmod +x ./source/.github/scripts/deploy-beta
 
       - name: Move composer dependencies
-        run: ./.github/scripts/deploy-bundle ${GITHUB_WORKSPACE}/source ${GITHUB_WORKSPACE}/target
+        run: ./.github/scripts/deploy-beta ${GITHUB_WORKSPACE}/source ${GITHUB_WORKSPACE}/target
 
       - name: Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
