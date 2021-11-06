@@ -1,0 +1,47 @@
+# Deploy NodCMS on beta-demo.nodcms.com as staging mode
+name: Deploy NodCMS staging
+
+on: [push, pull_request]
+
+jobs:
+  web-deploy:
+    name: Web Deploy
+    if: github.repository == 'khodakhah/nodcms'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Identify
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "${GITHUB_ACTOR}"
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: source
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: Chmod
+        run: chmod +x ./.github/scripts/deploy-bundle
+
+      - name: Move composer dependencies
+        run: ./.github/scripts/deploy-bundle ${GITHUB_WORKSPACE}/source ${GITHUB_WORKSPACE}/target
+
+      - name: Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        with:
+          server: ${{ secrets.FTP_DEMO_SERVER }}
+          username: ${{ secrets.FTP_DEMO_USER }}
+          password: ${{ secrets.FTP_DEMO_PASS }}
+          exclude:
+            - public/upload_file/**
+            - nodcms-core/Config/Database.php
+          load-dir: ${GITHUB_WORKSPACE}/target
+          server-dir: "beta-demo/"
