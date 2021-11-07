@@ -41,5 +41,5 @@ jobs:
           username: ${{ secrets.FTP_DEMO_USER }}
           password: ${{ secrets.FTP_DEMO_PASS }}
           exclude: "[public/upload_file/**, nodcms-core/Config/Database.php]"
-          load-dir: ${GITHUB_WORKSPACE}/target
+          local-dir: ${GITHUB_WORKSPACE}/target
           server-dir: "beta-demo/"
