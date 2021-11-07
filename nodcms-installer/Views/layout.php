@@ -1,4 +1,15 @@
 <?php
+/*
+ *  This file is part of NodCMS.
+ *
+ *  (c) Mojtaba Khodakhah <info@nodcms.com>
+ *  https://nodcms.com
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ *
+ */
+
 $this->addCssFile("assets/nodcms/bootstrap-4.1.3/css/bootstrap.min");
 $this->addCssFile("assets/toastr/toastr.min");
 

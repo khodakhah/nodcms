@@ -12,7 +12,18 @@
         <div class="portlet">
             <div class="portlet-body">
                 <?php
-                mk_hpostform_multipart(base_url("user/account-avatar-change"));
+/*
+ *  This file is part of NodCMS.
+ *
+ *  (c) Mojtaba Khodakhah <info@nodcms.com>
+ *  https://nodcms.com
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ *
+ */
+
+mk_hpostform_multipart(base_url("user/account-avatar-change"));
                 mk_hidden("image","1");
                 ?>
                 <div class="fileinput fileinput-new" data-provides="fileinput">

@@ -1,10 +1,10 @@
 # When a new Release is created, deploy relevant
 # files to each of the generated repos.
-name: Deploy NodCMS
+name: Deploy NodCMS-Bundle
 
-on: [push, pull_request]
-#  release:
-#    types: [published]
+on:
+  release:
+    types: [published]
 
 jobs:
   bundle:
@@ -44,19 +44,29 @@ jobs:
       - name: Deploy
         run: ./source/.github/scripts/deploy-bundle ${GITHUB_WORKSPACE}/source ${GITHUB_WORKSPACE}/nodcms-bundle ${GITHUB_REF##*/}
 
-#      - name: Release
-#        uses: actions/github-script@v5
-#        with:
-#          github-token: ${{secrets.ACCESS_TOKEN}}
-#          script: |
-#            const release = await github.repos.getLatestRelease({
-#              owner: context.repo.owner,
-#              repo: context.repo.repo
-#            })
-#            github.repos.createRelease({
-#              owner: context.repo.owner,
-#              repo: 'nodcms-bundle',
-#              tag_name: release.data.tag_name,
-#              name: release.data.name,
-#              body: release.data.body
-#            })
+      - name: Release
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{secrets.ACCESS_TOKEN}}
+          script: |
+            const release = await github.repos.getLatestRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            })
+            github.repos.createRelease({
+              owner: context.repo.owner,
+              repo: 'nodcms-bundle',
+              tag_name: release.data.tag_name,
+              name: release.data.name,
+              body: release.data.body
+            })
+
+      - name: Sync files on DEMO
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        with:
+          server: ${{ secrets.FTP_DEMO_SERVER }}
+          username: ${{ secrets.FTP_DEMO_USER }}
+          password: ${{ secrets.FTP_DEMO_PASS }}
+          exclude: "[public/upload_file/**, nodcms-core/Config/Database.php]"
+          local-dir: ./nodcms-bundle/
+          server-dir: "demo/"

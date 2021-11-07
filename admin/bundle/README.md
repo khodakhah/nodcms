@@ -13,16 +13,14 @@ Merge requests would not be accepted on this repository. So please do merge requ
 ## Demo
 [demo.nodcms.com](http://demo.nodcms.com/)
 
-Username: **demo**
-
-Password: **demo**
+Username: `demo`, Password: `demo`
 
 ## NodCMS v3.x
-IMPORTANT: **CodeIgniter4 Application Structure**!
- 
-Since NodCMS v3.0 (based on Codeigniter4) your domain should point to the public folder.
-
-`public/` is your website root directory. [Learn More](https://codeigniter.com/user_guide/concepts/structure.html#public)
+> IMPORTANT: **CodeIgniter4 Application Structure**!
+>
+> Since NodCMS v3.0 (based on Codeigniter4) your domain should point to the public folder.
+>
+> `public/` is your website root directory. [Learn More](https://codeigniter.com/user_guide/concepts/structure.html#public)
 
 The following points are the most important changes on NodCMS since v3.x
 1. Codeigniter 4
@@ -31,18 +29,18 @@ The following points are the most important changes on NodCMS since v3.x
 4. Some quick debugs
 
 ## Download ##
-You can download the master branch as a ZIP file: [GitHub Download](https://github.com/khodakhah/nodcms-bundle/archive/master.zip)!
+You can download the latest released version as a ZIP file from [nodcms-bundle](https://github.com/khodakhah/nodcms-bundle).
 
-## Installation ##
-> At this time there is no composer installation, but it has been planned!
+[Download ZIP File](https://github.com/khodakhah/nodcms-bundle/archive/master.zip)
+
+## Database structure
+NodCMS database structure will be created automatically from models throw a wizard CMS installation.
 
 So you can only need to follow the below steps right now.
 
-1. Download the project at first.
-2. Extract the zip file on your host.
-3. Create a new database on your host for NodCMS.
-4. Open the project on the browser.
-5. You will see installer wizard to build your database.
+1. Create a new database on your host for NodCMS.
+2. Open the project on the browser.
+3. You will see installer wizard to build your database.
 
 [Learn more](https://nodcms.com/user-guide/)
 

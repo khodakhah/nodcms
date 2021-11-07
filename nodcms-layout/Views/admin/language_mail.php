@@ -5,7 +5,18 @@
             <div class="portlet-body">
                 <div class=" form">
                     <?php
-                    mk_hpostform();
+/*
+ *  This file is part of NodCMS.
+ *
+ *  (c) Mojtaba Khodakhah <info@nodcms.com>
+ *  https://nodcms.com
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ *
+ */
+
+mk_hpostform();
                     ?>
                     <?php
                     if(isset($auto_emails) && count($auto_emails)!=0){
