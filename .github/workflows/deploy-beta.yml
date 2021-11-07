@@ -1,8 +1,13 @@
 # Deploy NodCMS on beta-demo.nodcms.com as staging mode
 name: Deploy NodCMS staging
 
-on: [push, pull_request]
-
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 jobs:
   web-deploy:
     name: Web Deploy
