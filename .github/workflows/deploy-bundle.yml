@@ -39,7 +39,7 @@ jobs:
           path: nodcms-bundle
 
       - name: Chmod
-        run: chmod +x ./source/.github/scripts/deploy-bundle
+        run: chmod +x ${GITHUB_WORKSPACE}/source/.github/scripts/deploy-bundle
 
       - name: Deploy
         run: ./source/.github/scripts/deploy-bundle ${GITHUB_WORKSPACE}/source ${GITHUB_WORKSPACE}/nodcms-bundle ${GITHUB_REF##*/}
