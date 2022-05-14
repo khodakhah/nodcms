@@ -273,11 +273,11 @@ class Model extends CoreModel
                     if($value=='')
                         continue;
                     $values = explode(' ',$value);
-                    $builder->group_start();
+                    $builder->groupStart();
                     foreach ($values as $item){
                         $builder->$parameters[3]($parameters[1],$item);
                     }
-                    $builder->group_end();
+                    $builder->groupEnd();
                     continue;
                 }
                 $builder->where($key,$value);
@@ -293,7 +293,7 @@ class Model extends CoreModel
                     if($value=='')
                         continue;
                     $values = explode(' ',$value);
-                    $builder->group_start();
+                    $builder->groupStart();
                     $connector = array(
                         'like'=>" AND translated_text ",
                         'not_like'=>" AND translated_text NOT ",
@@ -311,7 +311,7 @@ class Model extends CoreModel
                     }
                     $where = $where!=""?"($where) AND":"";
                     $builder->where($this->primary_key." IN (SELECT table_id FROM translations WHERE $where field_name = '$parameters[1]' AND table_name = '".$this->table_name."' AND language_id = ".Services::language()->get()['language_id'].")");
-                    $builder->group_end();
+                    $builder->groupEnd();
                     continue;
                 }
                 $builder->where($this->primary_key." IN (SELECT table_id FROM translations WHERE field_name = '$key' AND translated_text = '$value' AND table_name = '".$this->table_name."' AND language_id = ".Services::language()->get()['language_id'].")");
