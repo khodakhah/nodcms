@@ -19,7 +19,8 @@
 	"scripts": {
 		"movefiles": [
 			"NodCMS\\Core\\ComposerScripts::postUpdate"
-		]
+		],
+		"start": "php -S localhost:8000 -t public"
 	},
 	"support": {
 		"forum": "https://nodecms.com/",
