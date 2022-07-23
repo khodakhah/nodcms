@@ -14,9 +14,9 @@
 # ENVIRONMENT
 #--------------------------------------------------------------------
 
-CI_ENVIRONMENT=production
+CI_ENVIRONMENT=development
 
-ENVIRONMENT=production
+ENVIRONMENT=development
 #--------------------------------------------------------------------
 # APP
 #--------------------------------------------------------------------
