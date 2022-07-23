@@ -45,7 +45,7 @@ composer update
 1. Run ```git clone https://github.com/khodakhah/nodcms.git```
 2. Open the project folder  e.g. on Linux and Mac```cd nodcms```
 3. Run ```composer install```
-4. Rename the env file to .env
+4. Rename the env file in root folder to .env
 5. Run ```composer start```
 6. Open http://localhost:8000 in the browser.
 
