@@ -49,6 +49,10 @@ composer update
 5. Run ```composer start```
 6. Open http://localhost:8000 in the browser.
 
+### Server requirement
+
+Please check this link https://codeigniter.com/user_guide/intro/requirements.html
+
 ### Adding NodCMS to an Existing Project
 ```
 composer require khodakhah/nodcms
