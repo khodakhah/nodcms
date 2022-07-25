@@ -1,6 +1,6 @@
 {
 	"name": "khodakhah/nodcms",
-	"version": "3.2.1",
+	"version": "3.3.0",
 	"type": "project",
 	"description": "Opensource PHP CMS based on the CodeIgniter framework v4",
 	"homepage": "https://nodcms.com",
@@ -19,7 +19,8 @@
 	"scripts": {
 		"movefiles": [
 			"NodCMS\\Core\\ComposerScripts::postUpdate"
-		]
+		],
+		"start": "php -S localhost:8000 -t public"
 	},
 	"support": {
 		"forum": "https://nodecms.com/",
@@ -29,7 +30,7 @@
 		"phpunit/phpunit": "^9.5"
 	},
 	"require": {
-		"codeigniter4/framework": "^4.1",
-		"codeigniter4/translations": "^4.1"
+		"codeigniter4/framework": "^4.2",
+		"codeigniter4/translations": "^4.2"
 	}
 }

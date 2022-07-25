@@ -41,6 +41,18 @@ composer create-project khodakhah/nodcms
 composer update
 ```
 
+### Local installation
+1. Run ```git clone https://github.com/khodakhah/nodcms.git```
+2. Open the project folder  e.g. on Linux and Mac```cd nodcms```
+3. Run ```composer install```
+4. Rename the env file in root folder to .env
+5. Run ```composer start```
+6. Open http://localhost:8000 in the browser.
+
+### Server requirement
+
+Please check this link https://codeigniter.com/user_guide/intro/requirements.html
+
 ### Adding NodCMS to an Existing Project
 ```
 composer require khodakhah/nodcms

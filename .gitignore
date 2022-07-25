@@ -5,3 +5,5 @@
 */cache/!index.html
 */cache/!.htaccess
 nodcms/config/database.php
+vendor
+.idea
