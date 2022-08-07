@@ -18,9 +18,6 @@ if (phpversion() < $minPHPVersion)
 }
 unset($minPHPVersion);
 
-// Acceptable values: development, testing, production
-define('ENVIRONMENT', 'production');
-
 // Path to the front controller (this file)
 define('FCPATH', __DIR__ . DIRECTORY_SEPARATOR);
 
@@ -39,7 +36,7 @@ define("SSL_PROTOCOL", $protocol_status);
 define("URL_PROTOCOL", $protocol_status ? "https://" : "http://");
 
 // Find the base url
-define("CONFIG_BASE_URL", URL_PROTOCOL.$_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . "/");
+define("CONFIG_BASE_URL", URL_PROTOCOL.$_SERVER['HTTP_HOST'] . rtrim(dirname(str_replace('index.php/', '', $_SERVER['PHP_SELF'])), '/\\') . "/");
 
 define("DB_CONFIG_PATH", COREPATH.'Config/Database.php');
 
@@ -68,7 +65,27 @@ require $pathsPath;
 $paths = new Config\Paths();
 
 // Location of the framework bootstrap file.
-$app = require rtrim($paths->systemDirectory, '/ ') . '/bootstrap.php';
+require rtrim($paths->systemDirectory, '\\/ ') . DIRECTORY_SEPARATOR . 'bootstrap.php';
+
+
+// Load environment settings from .env files into $_SERVER and $_ENV
+require_once SYSTEMPATH . 'Config/DotEnv.php';
+(new CodeIgniter\Config\DotEnv(ROOTPATH))->load();
+
+/*
+ * ---------------------------------------------------------------
+ * GRAB OUR CODEIGNITER INSTANCE
+ * ---------------------------------------------------------------
+ *
+ * The CodeIgniter class contains the core functionality to make
+ * the application run, and does all of the dirty work to get
+ * the pieces all working together.
+ */
+
+$app = Config\Services::codeigniter();
+$app->initialize();
+$context = is_cli() ? 'php-cli' : 'web';
+$app->setContext($context);
 
 /*
  *---------------------------------------------------------------
@@ -77,4 +94,5 @@ $app = require rtrim($paths->systemDirectory, '/ ') . '/bootstrap.php';
  * Now that everything is setup, it's time to actually fire
  * up the engines and make this app do its thang.
  */
+
 $app->run();

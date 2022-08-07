@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.3.1] - 22-08-07
+### Added
+- Composer scripts
+  - ``composer env-production`` to build ``.env`` file from ``.env.production``
+  - ``composer env-development`` to build ``.env`` file from ``.env.development``
+### Changed
+- Environment defination moved from ``/public/index.php`` to ``/.env`` file.
+### Fixed
+- [NodCMS-Bundle](https://github.com/khodakhah/nodcms-bundle) issue [#87](https://github.com/khodakhah/nodcms/issues/87)
+
 ## [3.3.0] - 2022-07-23
 ### Fixed
 - Installation issue
