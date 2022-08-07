@@ -23,13 +23,16 @@ composer install --prefer-dist --no-progress
 # Move necessary files form vendor to root
 composer run-script movefiles
 
+# Set the environment
+composer env-production
+
 # Prepare the target
 cd ${TARGET}
 git checkout master
 rm -rf *
 
 # Copy common files
-releasable='nodcms-core nodcms-about nodcms-articles nodcms-blog nodcms-gallery nodcms-installer nodcms-layout nodcms-portfolio nodcms-pricingtable nodcms-services nodcms-users public writable system SECURITY.md LICENSE'
+releasable='nodcms-core nodcms-about nodcms-articles nodcms-blog nodcms-gallery nodcms-installer nodcms-layout nodcms-portfolio nodcms-pricingtable nodcms-services nodcms-users public writable system .env SECURITY.md LICENSE'
 for fff in $releasable;
 do
 
