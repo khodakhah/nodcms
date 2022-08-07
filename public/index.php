@@ -39,7 +39,7 @@ define("SSL_PROTOCOL", $protocol_status);
 define("URL_PROTOCOL", $protocol_status ? "https://" : "http://");
 
 // Find the base url
-define("CONFIG_BASE_URL", URL_PROTOCOL.$_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . "/");
+define("CONFIG_BASE_URL", URL_PROTOCOL.$_SERVER['HTTP_HOST'] . rtrim(dirname(str_replace('index.php/', '', $_SERVER['PHP_SELF'])), '/\\') . "/");
 
 define("DB_CONFIG_PATH", COREPATH.'Config/Database.php');
 
