@@ -18,9 +18,6 @@ if (phpversion() < $minPHPVersion)
 }
 unset($minPHPVersion);
 
-// Acceptable values: development, testing, production
-define('ENVIRONMENT', 'production');
-
 // Path to the front controller (this file)
 define('FCPATH', __DIR__ . DIRECTORY_SEPARATOR);
 
