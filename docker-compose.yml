@@ -42,7 +42,7 @@ services:
       - ./docker/data/database:/var/lib/mysql
       - ./docker/data/logs/mysql:/var/log/mysql
     ports:
-      - "3307:3306"
+      - "3308:3306"
     networks:
       - nodcms_network
     hostname: nodcmsdb
