@@ -77,7 +77,7 @@ class Installer extends Base
         if($step_key > 0 && $step_key < count($steps)) {
             $this->back_url = base_url("installer/".$steps[$step_key-1]);
             $this->self_url = base_url("installer/".$steps[$step_key]);
-            $this->next_url = base_url((isset($steps[$step_key+1])?"installer/".$steps[$step_key+1]:"login"));
+            $this->next_url = base_url((isset($steps[$step_key+1])?"installer/".$steps[$step_key+1]:"en/login"));
         }
 
         $this->data['steps'] = array();
