@@ -35,6 +35,7 @@ $this->addJsFile("assets/plugins/bootstrap-confirmation/bootstrap-confirmation.m
     <title><?php echo $title; ?> <?php echo isset($sub_title)?$sub_title:""; ?></title>
     <?php echo $this->settings['add_on_header']; ?>
     <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/v4-shims.css">
     <?php $this->fetchAllCSS(); ?>
@@ -212,6 +213,12 @@ $this->addJsFile("assets/plugins/bootstrap-confirmation/bootstrap-confirmation.m
         });
     });
 </script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".select2-element").select2();
+    })
+</script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <?php $this->fetchAllJS(); ?>
 <?php echo $this->settings['add_on_script']; ?>
 </body>
