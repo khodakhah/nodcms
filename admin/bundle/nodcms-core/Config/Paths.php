@@ -35,7 +35,7 @@ class Paths
      *
      * @var string
 	 */
-    public $systemDirectory = __DIR__ . '/../../vendor/codeigniter4/framework/system';
+    public $systemDirectory = __DIR__ . '/../../system';
 
     /**
      * ---------------------------------------------------------------

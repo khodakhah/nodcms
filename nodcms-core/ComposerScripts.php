@@ -12,6 +12,7 @@
 
 namespace NodCMS\Core;
 
+use Composer\Script\Event;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -26,6 +27,12 @@ use SplFileInfo;
  */
 final class ComposerScripts
 {
+    private const CMD_COLOR_ERROR = "\e[0;31;40m";
+    private const CMD_COLOR_SUCCESS = "\e[1;32;40m";
+    private const CMD_COLOR_WARNING = "\e[1;33;40m";
+    private const CMD_COLOR_CODE = "\e[1;37;42m";
+    private const CMD_COLOR_END = "\e[0m";
+
     /**
      * CodeIgniter core directory
      *
@@ -92,6 +99,38 @@ final class ComposerScripts
 
         self::copyKintInitFiles();
         self::recursiveDelete(self::$dependencies['psr-log']['to'] . 'Test/');
+    }
+
+    /**
+     * Builds and saves the production environment
+     *
+     * @param Event $event
+     */
+    public static function setEnv(Event $event)
+    {
+        if(empty($event->getArguments())) {
+            echo self::CMD_COLOR_ERROR . "No Base URL given! " . self::CMD_COLOR_END . "\n" .
+                "Please enter your url like bellow:\n" .
+                self::CMD_COLOR_CODE . "composer env-production YOUR_URL" . self::CMD_COLOR_END . "\n";
+            return;
+        }
+
+        $url = $event->getArguments()[0];
+
+        $source = ".env.production";
+        $destination = ".env";
+
+        $sourceFile = fopen($source, "r") or die(self::CMD_COLOR_ERROR . "Unable to open $source file!" . self::CMD_COLOR_END);
+        $content = fread($sourceFile, filesize($source));
+        fclose($sourceFile);
+
+        $content = str_replace("{{url}}", $url, $content);
+        $destinationFile = fopen($destination, "w") or die(self::CMD_COLOR_ERROR . "Unable to create $destination file!" . self::CMD_COLOR_END);
+        fwrite($destinationFile, $content);
+        fclose($destinationFile);
+
+        echo self::CMD_COLOR_SUCCESS . "Success!" . self::CMD_COLOR_END . "\n" .
+            "Your production environment has been generated.\n";
     }
 
     /**

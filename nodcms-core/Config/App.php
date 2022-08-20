@@ -21,7 +21,7 @@ class App extends BaseConfig
 	| environments.
 	|
 	*/
-	public $baseURL = CONFIG_BASE_URL;
+	public $baseURL = '';
 
 	/*
 	|--------------------------------------------------------------------------

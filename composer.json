@@ -20,7 +20,7 @@
 		"movefiles": [
 			"NodCMS\\Core\\ComposerScripts::postUpdate"
 		],
-		"env-production": "cp .env.production .env",
+		"env-production": "NodCMS\\Core\\ComposerScripts::setEnv",
 		"env-development": "cp .env.development .env",
 		"start": "php -S localhost:8000 -t public"
 	},
@@ -33,6 +33,7 @@
 	},
 	"require": {
 		"codeigniter4/framework": "^4.2",
-		"codeigniter4/translations": "^4.2"
+		"codeigniter4/translations": "^4.2",
+		"composer/composer": "^2.4"
 	}
 }
