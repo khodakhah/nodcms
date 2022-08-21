@@ -32,16 +32,12 @@ require FCPATH . '../nodcms-core/Config/Paths.php';
 
 $paths = new Config\Paths();
 
-// Location of the framework bootstrap file.
-require rtrim($paths->systemDirectory, '\\/ ') . DIRECTORY_SEPARATOR . 'bootstrap.php';
+// Location of the NodCMS bootstrap file.
+require rtrim($paths->appDirectory, '\\/ ') . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
 // Load environment settings from .env files into $_SERVER and $_ENV
 require_once SYSTEMPATH . 'Config/DotEnv.php';
 (new CodeIgniter\Config\DotEnv(ROOTPATH))->load();
-
-// Find the requested protocol
-$protocol_status = intval(isset($_SERVER['HTTPS']));
-define('SSL_PROTOCOL', $protocol_status);
 
 define('DB_CONFIG_PATH', '../'.getenv('app.dbConfigPath'));
 

@@ -10,7 +10,15 @@
  *
  */
 
-// Load the Environment settings
-if(defined('ENVIRONMENT')) {
-    require COREPATH."/Config/Boot/".ENVIRONMENT.".php";
-}
+/**
+ * @var \Config\Paths $paths
+ */
+
+define('COREPATH', $paths->appDirectory . DIRECTORY_SEPARATOR);
+
+// Find the requested protocol
+$protocol_status = intval(isset($_SERVER['HTTPS']));
+define('SSL_PROTOCOL', $protocol_status);
+
+// Location of the framework bootstrap file.
+require rtrim($paths->systemDirectory, '\\/ ') . DIRECTORY_SEPARATOR . 'bootstrap.php';
