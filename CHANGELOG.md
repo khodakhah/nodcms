@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Activate CodeIgniter CLI 'spark'
+- New console command to build tables in database
 
 ## [3.3.1] - 22-08-07
 ### Added
