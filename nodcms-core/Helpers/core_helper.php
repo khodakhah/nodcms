@@ -2426,4 +2426,13 @@ if( ! function_exists("image")) {
 
         return $new_image_path;
     }
+
+    if (!function_exists('setEnv')) {
+        function setEnv(string $key, string $value)
+        {
+            $envFile = ENVIRONMENT === 'development' ? '.env.development' : '.env.production';
+
+            file_put_contents(ROOTPATH . '/' . $envFile, $key . "=" . $value);
+        }
+    }
 }

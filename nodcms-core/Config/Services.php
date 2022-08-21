@@ -2,6 +2,7 @@
 
 use CodeIgniter\Config\Services as CoreServices;
 use NodCMS\Core\Libraries\Currency;
+use NodCMS\Core\Libraries\DatabaseEnvConfig;
 use NodCMS\Core\Libraries\Identity;
 use NodCMS\Core\Libraries\Language;
 use NodCMS\Core\Libraries\Settings as SettingsLibrary;
@@ -296,6 +297,11 @@ class Services extends CoreServices
     public static function upload(): Upload
     {
         return new Upload();
+    }
+
+    public static function databaseEnvConfig(): DatabaseEnvConfig
+    {
+        return new DatabaseEnvConfig();
     }
 }
 /*

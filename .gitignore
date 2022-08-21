@@ -7,3 +7,4 @@
 nodcms/config/database.php
 vendor
 .idea
+.env
