@@ -1,47 +1,112 @@
 <?php
+/*
+ *  This file is part of NodCMS.
+ *
+ *  (c) Mojtaba Khodakhah <info@nodcms.com>
+ *  https://nodcms.com
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ *
+ */
 
 namespace NodCMS\Core\Libraries;
 
+use Exception;
+
 class DatabaseEnvConfig
 {
-    private array $databaseConfig;
+    private $host;
+    private $username;
+    private $password;
+    private $database;
 
-    public function __set(string $name, $value): void
+    /**
+     * @param $host
+     */
+    public function setHost($host): void
     {
-        $this->databaseConfig[$name] = $value;
+        $this->host = $host;
     }
 
-    public function __get(string $name)
+    /**
+     * @param $username
+     */
+    public function setUsername($username): void
     {
-        return $this->databaseConfig[$name];
+        $this->username = $username;
     }
 
-    public function writeToEnv()
+    /**
+     * @param $password
+     */
+    public function setPassword($password): void
     {
-        foreach ($this->databaseConfig as $key => $value) {
-            switch ($key) {
-                case 'host':
-                    $this->saveToEnvFile("database.default.hostname = " . $value);
-                    break;
-                case 'username':
-                    $this->saveToEnvFile("database.default.username = " . $value);
-                    break;
-                case 'password':
-                    $this->saveToEnvFile("database.default.password = " . $value);
-                    break;
-                case 'database':
-                    $this->saveToEnvFile("database.default.database = " . $value);
-                    break;
-            }
-        }
+        $this->password = $password;
+    }
+
+    /**
+     * @param $database
+     */
+    public function setDatabase($database): void
+    {
+        $this->database = $database;
+    }
+
+    /**
+     * Save database parameters to env file.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function writeToEnv(): void
+    {
+        $this->checkRequiredParameters();
+
+        $this->saveToEnvFile("database.default.hostname = " . $this->host);
+
+        $this->saveToEnvFile("database.default.username = " . $this->username);
+
+        $this->saveToEnvFile("database.default.password = " . $this->password);
+
+        $this->saveToEnvFile("database.default.database = " . $this->database);
 
         $this->saveToEnvFile("database.default.DBDriver = MySQLi");
 
         $this->saveToEnvFile("database.default.port = 3306");
     }
 
-    private function saveToEnvFile(string $entry)
+    /**
+     * Save a string to env file.
+     *
+     * @param string $entry
+     * @return void
+     */
+    private function saveToEnvFile(string $entry): void
     {
-        file_put_contents(ROOTPATH . '/.env', PHP_EOL. $entry . PHP_EOL,FILE_APPEND);
+        file_put_contents(ROOTPATH . '/.env', PHP_EOL . $entry . PHP_EOL, FILE_APPEND);
+    }
+
+    /**
+     *  It checks if required parameters have been set.
+     * @throws Exception
+     */
+    private function checkRequiredParameters()
+    {
+        if(is_null($this->host)){
+            throw new Exception('The database host is required.');
+        }
+
+        if(is_null($this->username)){
+            throw new Exception('The database username is required.');
+        }
+
+        if(is_null($this->password)){
+            throw new Exception('The database password is required.');
+        }
+
+        if(is_null($this->database)){
+            throw new Exception('The database name is required.');
+        }
     }
 }

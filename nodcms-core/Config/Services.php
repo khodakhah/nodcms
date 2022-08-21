@@ -299,6 +299,11 @@ class Services extends CoreServices
         return new Upload();
     }
 
+    /**
+     * A class to handle database parameters and save them to env file.
+     *
+     * @return DatabaseEnvConfig
+     */
     public static function databaseEnvConfig(): DatabaseEnvConfig
     {
         return new DatabaseEnvConfig();
