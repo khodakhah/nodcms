@@ -104,7 +104,7 @@ class DatabaseMapping
 
                 if (!$model->installTable()) {
                     $failedReport($model->tableName(), self::BUILD_ACTION_CREATE);
-                    continue;
+                    return false;
                 }
                 $report($model->tableName(), self::BUILD_ACTION_CREATE);
 
