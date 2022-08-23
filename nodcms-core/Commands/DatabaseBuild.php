@@ -8,7 +8,7 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
 use Config\Services;
 use NodCMS\Core\Libraries\DatabaseMapping;
 
-class DatabaseTablesBuild extends BaseCommand
+class DatabaseBuild extends BaseCommand
 {
     /**
      * The Command's Group
