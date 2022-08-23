@@ -14,7 +14,10 @@ namespace NodCMS\Installer\Controllers;
 
 use Config\Autoload;
 use Config\Database;
+use Config\Services;
+use Exception;
 use NodCMS\Core\Controllers\Base;
+use NodCMS\Core\Libraries\DatabaseEnvConfig;
 use NodCMS\Core\Libraries\Form;
 use NodCMS\Core\Models\Settings;
 use NodCMS\Core\Models\Users;
@@ -77,7 +80,7 @@ class Installer extends Base
         if($step_key > 0 && $step_key < count($steps)) {
             $this->back_url = base_url("installer/".$steps[$step_key-1]);
             $this->self_url = base_url("installer/".$steps[$step_key]);
-            $this->next_url = base_url((isset($steps[$step_key+1])?"installer/".$steps[$step_key+1]:"login"));
+            $this->next_url = base_url((isset($steps[$step_key+1])?"installer/".$steps[$step_key+1]:"en/login"));
         }
 
         $this->data['steps'] = array();
@@ -438,6 +441,8 @@ class Installer extends Base
 
     /**
      * Last step. Create database config file
+     *
+     * @throws Exception
      */
     public function complete()
     {
@@ -526,29 +531,24 @@ class Installer extends Base
                 return $this->errorMessage("Administration account not found.", $this->back_url);
             }
 
-            $myfile = fopen(DB_CONFIG_PATH, "w");
-            if(!$myfile) {
-                $errors = error_get_last();
-                if(count($errors) > 1) {
-                    return $this->errorMessage($errors['message'], $this->self_url);
+            foreach ($_SESSION['database_connect'] as $key => $value) {
+                switch ($key) {
+                    case 'host':
+                        Services::databaseEnvConfig()->setHost($value);
+                        break;
+                    case 'username':
+                        Services::databaseEnvConfig()->setUsername($value);
+                        break;
+                    case 'password':
+                        Services::databaseEnvConfig()->setPassword($value);
+                        break;
+                    case 'database':
+                        Services::databaseEnvConfig()->setDatabase($value);
+                        break;
                 }
-                return $this->errorMessage("Unable to open db config file.", $this->self_url);
             }
 
-            $sample_content = file_get_contents(COREPATH."Config/database_sample.php");
-            if(!$sample_content) {
-                return $this->errorMessage("Unable to open database_manual.php file.", $this->self_url);
-            }
-
-            $replace = array(
-                '<?php' => '<?php namespace Config;'
-            );
-            foreach($_SESSION['database_connect'] as $key=>$item) {
-                $replace["@$key@"] = $item;
-            }
-            $content = str_replace(array_keys($replace), array_values($replace), $sample_content);
-            fwrite($myfile, $content);
-            fclose($myfile);
+            Services::databaseEnvConfig()->writeToEnv();
 
             session_destroy();
 

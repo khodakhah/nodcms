@@ -2,6 +2,7 @@
 
 use CodeIgniter\Config\Services as CoreServices;
 use NodCMS\Core\Libraries\Currency;
+use NodCMS\Core\Libraries\DatabaseEnvConfig;
 use NodCMS\Core\Libraries\DatabaseMapping;
 use NodCMS\Core\Libraries\Identity;
 use NodCMS\Core\Libraries\Language;
@@ -312,6 +313,21 @@ class Services extends CoreServices
     public static function upload(): Upload
     {
         return new Upload();
+    }
+
+    /**
+     * A class to handle database parameters and save them to env file.
+     *
+     * @param bool $getShared
+     * @return DatabaseEnvConfig
+     */
+    public static function databaseEnvConfig(bool $getShared = true): DatabaseEnvConfig
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance("databaseEnvConfig");
+        }
+        return new DatabaseEnvConfig();
     }
 }
 /*

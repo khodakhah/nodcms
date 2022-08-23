@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Database parameters will be saved to env file instead of database config class.
+### Added
 - Activate CodeIgniter CLI 'spark'
 - New console command to build tables in database
 
