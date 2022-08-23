@@ -34,7 +34,6 @@ class Installer extends Base
     public $back_url;
     public $next_url;
     public $self_url;
-    private $databaseEnvConfig;
 
     private $_response;
 
@@ -46,8 +45,6 @@ class Installer extends Base
     public function __construct()
     {
         parent::__construct();
-
-        $this->databaseEnvConfig = Services::databaseEnvConfig();
 
         $this->view->setConfig(new View());
 
@@ -537,21 +534,21 @@ class Installer extends Base
             foreach ($_SESSION['database_connect'] as $key => $value) {
                 switch ($key) {
                     case 'host':
-                        $this->databaseEnvConfig->setHost($value);
+                        Services::databaseEnvConfig()->setHost($value);
                         break;
                     case 'username':
-                        $this->databaseEnvConfig->setUsername($value);
+                        Services::databaseEnvConfig()->setUsername($value);
                         break;
                     case 'password':
-                        $this->databaseEnvConfig->setPassword($value);
+                        Services::databaseEnvConfig()->setPassword($value);
                         break;
                     case 'database':
-                        $this->databaseEnvConfig->setDatabase($value);
+                        Services::databaseEnvConfig()->setDatabase($value);
                         break;
                 }
             }
 
-            $this->databaseEnvConfig->writeToEnv();
+            Services::databaseEnvConfig()->writeToEnv();
 
             session_destroy();
 
