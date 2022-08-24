@@ -63,17 +63,17 @@ class DatabaseEnvConfig
     {
         $this->checkRequiredParameters();
 
-        $this->saveToEnvFile("database.default.hostname = " . $this->host);
+        $this->saveToEnvFile("database.default.hostname=" . $this->host);
 
-        $this->saveToEnvFile("database.default.username = " . $this->username);
+        $this->saveToEnvFile("database.default.username=" . $this->username);
 
-        $this->saveToEnvFile("database.default.password = " . $this->password);
+        $this->saveToEnvFile("database.default.password=" . $this->password);
 
-        $this->saveToEnvFile("database.default.database = " . $this->database);
+        $this->saveToEnvFile("database.default.database=" . $this->database);
 
-        $this->saveToEnvFile("database.default.DBDriver = MySQLi");
+        $this->saveToEnvFile("database.default.DBDriver=MySQLi");
 
-        $this->saveToEnvFile("database.default.port = 3306");
+        $this->saveToEnvFile("database.default.port=3306");
     }
 
     /**
@@ -84,7 +84,13 @@ class DatabaseEnvConfig
      */
     private function saveToEnvFile(string $entry): void
     {
-        file_put_contents(ROOTPATH . '/.env', PHP_EOL . $entry . PHP_EOL, FILE_APPEND);
+        $key = explode('=', $entry)[0];
+        if (getenv($key) == null) {
+            file_put_contents(ROOTPATH . '/.env', PHP_EOL . $entry . PHP_EOL, FILE_APPEND);
+        }
+
+        $content = file_get_contents(ROOTPATH . '/.env');
+        preg_replace('/^'.$key.'=.*$/', $entry, $content);
     }
 
     /**
