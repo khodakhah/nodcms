@@ -33,8 +33,8 @@ services:
     restart: always
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: "nodcms"
-      MYSQL_DATABASE: ci4
+      MYSQL_ROOT_PASSWORD: nodcms
+      MYSQL_DATABASE: nodcms
       MYSQL_USER: nodcms
       MYSQL_PASSWORD: nodcms
       MYSQL_TCP_PORT: 3306
@@ -42,7 +42,7 @@ services:
       - ./docker/data/database:/var/lib/mysql
       - ./docker/data/logs/mysql:/var/log/mysql
     ports:
-      - "3308:3306"
+      - "3307:3306"
     networks:
       - nodcms_network
     hostname: nodcmsdb
