@@ -72,5 +72,23 @@ So you can only need to follow the below steps right now.
 
 [Learn more](https://nodcms.com/user-guide/)
 
+## Docker
+Please install docker compose or install docker desktop which will install compose plugin.
+
+[Install docker compose](https://docs.docker.com/compose/install/)
+
+Open the project folder and run ``docker-compose up`` or ``docker-composer up -d``
+
+Then open the http://localhost:8000 in the browser.
+
+Database parameters for docker:
+- HOST: nodcmsdb
+- PASSWORD: nodcms
+- DATABASE: nodcms
+- USER: nodcms
+- PASSWORD: nodcms
+
+To stop the docker please run ``docker-composer stop`` if you run the ``docker-compose -d`` in the previous step.
+
 ## Bugs Reports
 If you find an issue, let me know [here](https://github.com/khodakhah/nodcms/issues/new)!
