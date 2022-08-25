@@ -36,26 +36,23 @@ class DatabaseBuild extends BaseCommand
      *
      * @var string
      */
-    protected $usage = 'database:build [host] [user] [pass] [tableName]';
+    protected $usage = 'database:build [options]';
 
     /**
      * The Command's Arguments
      *
      * @var array
      */
-    protected $arguments = [
-        'host' => 'Database host (for example: localhost)',
-        'user' => 'Database username.',
-        'password' => 'Database password.',
-        'database' => 'Database name. (Database should be created before)',
-    ];
+    protected $arguments = [];
 
     /**
      * The Command's Options
      *
      * @var array
      */
-    protected $options = [];
+    protected $options = [
+        '-overwrite' => 'This option will overwrite exists tables.'
+    ];
 
     /**
      * Actually execute a command.
@@ -65,27 +62,35 @@ class DatabaseBuild extends BaseCommand
      */
     public function run(array $params)
     {
-        if(count($params) != 4) {
-            CLI::write(CLI::color('Params missing!', 'red'));
-            CLI::write('Please make sure to use the command correctly.');
-            $this->showHelp();
+        try {
+            Services::databaseEnvConfig()->checkRequiredParameters();
+        }
+        catch (\Exception $exception) {
+            CLI::write(CLI::color("Database settings doesn't exists!", 'red'));
+            CLI::newLine();
+            CLI::write("1. Make sure that .env file exists.");
+            CLI::write("2. Run: ".CLI::color("php spark database:setup", 'yellow'));
+            CLI::newLine();
             return;
         }
 
-        [$host, $user, $pass, $table] = $params;
+        $host = Services::databaseEnvConfig()->getHost();
+        $username = Services::databaseEnvConfig()->getUsername();
+        $password = Services::databaseEnvConfig()->getPassword();
+        $database = Services::databaseEnvConfig()->getDatabase();
 
         $dataMapping = Services::databaseMapping();
 
         try {
-            $dataMapping->setConnection($host, $user, $pass, $table);
+            $dataMapping->setConnection($host, $username, $password, $database);
         }
         catch (DatabaseException $e) {
             CLI::write(CLI::color("Unable to connect database!", 'red'));
             CLI::newLine();
             CLI::write("Error Code: {$e->getCode()}");
             CLI::write("Error Message: {$e->getMessage()}");
+            CLI::newLine();
             if($e->getCode() == 2002) {
-                CLI::newLine();
                 $dbService = CLI::color('mysql-server', 'blue');
                 CLI::write("Please make sure $dbService is available on your server!");
                 CLI::newLine();

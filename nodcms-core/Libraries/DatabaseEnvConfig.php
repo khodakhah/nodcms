@@ -12,45 +12,97 @@
 
 namespace NodCMS\Core\Libraries;
 
+use CodeIgniter\CLI\CLI;
 use Exception;
 
 class DatabaseEnvConfig
 {
-    private $host;
-    private $username;
-    private $password;
-    private $database;
+    private ?string $host;
+    private ?string $username;
+    private ?string $password;
+    private ?string $database;
+
+    /**
+     * Read and write database connection settings from and into .env file.
+     */
+    public function __construct()
+    {
+        $this->host = env('database.default.hostname');
+        $this->username = env('database.default.username');
+        $this->password = env('database.default.password');
+        $this->database = env('database.default.database');
+    }
+
+    /**
+     * @return string
+     */
+    public function getHost(): string
+    {
+        return $this->host;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsername(): string
+    {
+        return $this->username;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDatabase(): string
+    {
+        return $this->database;
+    }
 
     /**
      * @param $host
+     * @return DatabaseEnvConfig
      */
-    public function setHost($host): void
+    public function setHost($host): self
     {
         $this->host = $host;
+        return $this;
     }
 
     /**
      * @param $username
+     * @return DatabaseEnvConfig
      */
-    public function setUsername($username): void
+    public function setUsername($username): self
     {
         $this->username = $username;
+        return $this;
     }
 
     /**
      * @param $password
+     * @return DatabaseEnvConfig
      */
-    public function setPassword($password): void
+    public function setPassword($password): self
     {
         $this->password = $password;
+        return $this;
     }
 
     /**
      * @param $database
+     * @return DatabaseEnvConfig
      */
-    public function setDatabase($database): void
+    public function setDatabase($database): self
     {
         $this->database = $database;
+        return $this;
     }
 
     /**
@@ -86,18 +138,20 @@ class DatabaseEnvConfig
     {
         $key = explode('=', $entry)[0];
         if (getenv($key) == null) {
-            file_put_contents(ROOTPATH . '/.env', PHP_EOL . $entry . PHP_EOL, FILE_APPEND);
+            file_put_contents(ROOTPATH . '.env', PHP_EOL . $entry . PHP_EOL, FILE_APPEND);
         }
 
         $content = file_get_contents(ROOTPATH . '/.env');
-        preg_replace('/^'.$key.'=.*$/', $entry, $content);
+        $content = preg_replace('/'.$key.'\=.*\n/', $entry."\n", $content);
+        file_put_contents(ROOTPATH . '.env', $content);
     }
 
     /**
      *  It checks if required parameters have been set.
+     *
      * @throws Exception
      */
-    private function checkRequiredParameters()
+    public function checkRequiredParameters()
     {
         if(is_null($this->host)){
             throw new Exception('The database host is required.');
