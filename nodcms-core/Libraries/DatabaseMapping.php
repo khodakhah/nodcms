@@ -19,6 +19,8 @@ use NodCMS\Core\Models\ModelInterface;
 class DatabaseMapping
 {
 
+    public const BUILD_ACTION_IGNORE = 'ignore';
+
     public const BUILD_ACTION_DROP = 'drop';
 
     public const BUILD_ACTION_CREATE = 'create';
@@ -31,6 +33,11 @@ class DatabaseMapping
     private ?BaseConnection $connection = null;
 
     /**
+     * @var bool
+     */
+    private bool $overwriteTables = false;
+
+    /**
      * Connection exists.
      *
      * @return bool
@@ -38,6 +45,16 @@ class DatabaseMapping
     public function hasConnection():bool
     {
         return $this->connection instanceof BaseConnection;
+    }
+
+    /**
+     * @param bool $overwriteTables
+     * @return DatabaseMapping
+     */
+    public function setOverwriteTables(bool $overwriteTables): DatabaseMapping
+    {
+        $this->overwriteTables = $overwriteTables;
+        return $this;
     }
 
     /**
@@ -98,6 +115,10 @@ class DatabaseMapping
             foreach($models as $model) {
 
                 if ($model->tableExists()) {
+                    if(!$this->overwriteTables) {
+                        $report($model->tableName(), self::BUILD_ACTION_IGNORE);
+                        continue;
+                    }
                     $model->dropTable();
                     $report($model->tableName(), self::BUILD_ACTION_DROP);
                 }

@@ -98,10 +98,15 @@ class DatabaseBuild extends BaseCommand
             return;
         }
 
+        $dataMapping->setOverwriteTables(key_exists('overwrite', $params));
+
         $hasBuild = $dataMapping->buildTables(
             function ($table, $action) {
                 $_table = CLI::color($table, 'blue');
-                if($action == DatabaseMapping::BUILD_ACTION_DROP) {
+                if($action == DatabaseMapping::BUILD_ACTION_IGNORE) {
+                    CLI::write("Table \"{$_table}\" already exists. It has been " . CLI::color("ignored", 'yellow') . "!");
+                }
+                else if($action == DatabaseMapping::BUILD_ACTION_DROP) {
                     CLI::write("Table \"{$_table}\" has been " . CLI::color("dropped", 'yellow') . "!");
                 }
                 elseif($action == DatabaseMapping::BUILD_ACTION_CREATE) {
