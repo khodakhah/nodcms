@@ -142,7 +142,7 @@ class DatabaseEnvConfig
         }
 
         $content = file_get_contents(ROOTPATH . '/.env');
-        $content = preg_replace('/'.$key.'\=.*\n/', $entry."\n", $content);
+        $content = preg_replace('/'.$key.'\s?\=.*\n/', $entry."\n", $content);
         file_put_contents(ROOTPATH . '.env', $content);
     }
 
