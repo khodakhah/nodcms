@@ -65,7 +65,7 @@ class DatabaseSetup extends BaseCommand
     public function run(array $params)
     {
         if(count($params) != 4) {
-            CLI::write(CLI::color('Params missing!', 'red'));
+            CLI::error('Params missing!');
             CLI::write('Please make sure to use the command correctly.');
             $this->showHelp();
             return;

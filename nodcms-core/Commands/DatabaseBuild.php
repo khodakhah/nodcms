@@ -85,7 +85,7 @@ class DatabaseBuild extends BaseCommand
             $dataMapping->setConnection($host, $username, $password, $database);
         }
         catch (DatabaseException $e) {
-            CLI::write(CLI::color("Unable to connect database!", 'red'));
+            CLI::error("Unable to connect database!");
             CLI::newLine();
             CLI::write("Error Code: {$e->getCode()}");
             CLI::write("Error Message: {$e->getMessage()}");

@@ -82,7 +82,7 @@ php spark database:setup localhost root db-password table-name
 php spark database:build
 
 # 3. Re/Generate admin user
-php spark settings:admin
+php spark settings:admin [firstname] [lastname] [email] [password]
 ```
 #### Important
 If you already have some tables in your given database, the command `database:build` will not overwrite the existed tables.
@@ -93,7 +93,7 @@ To overwrite exists tables you need to add `-overwrite` option on command.
 php spark database:build -overwrite
 ```
 
-`php spark settings:admin` can be used anytime in the future. It will overwrite the admin user if it exists. 
+`php spark settings:admin [firstname] [lastname] [email] [password]` can be used anytime in the future. It will overwrite the admin user if it exists. 
 _Just in the case that you lose your password, and you want to reset it._
 
 ## Bugs Reports
