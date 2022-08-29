@@ -77,7 +77,7 @@ Please install docker compose or install docker desktop which will install compo
 
 [Install docker compose](https://docs.docker.com/compose/install/)
 
-Open the project folder and run ``docker-compose up`` or ``docker-composer up -d``
+Open the project folder and run ``docker-compose up`` or ``docker-compose up -d``
 
 Then open the http://localhost:8000 in the browser.
 
