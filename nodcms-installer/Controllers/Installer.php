@@ -368,7 +368,7 @@ class Installer extends Base
                 'rules'=>"required|in_list[".join(',', \DateTimeZone::listIdentifiers())."]",
                 'type'=>"select-array",
                 'options'=>\DateTimeZone::listIdentifiers(),
-                'class'=>"select2me select2-element",
+                'class'=>"select2me",
             ),
             array(
                 'field'=>"date_format",
@@ -378,7 +378,7 @@ class Installer extends Base
                 'options'=>$date_formats,
                 'option_name'=>'name',
                 'option_value'=>'format',
-                'class' => 'select2-element'
+                'class' => 'select2me'
             ),
             array(
                 'field'=>"time_format",
