@@ -59,18 +59,42 @@ composer require khodakhah/nodcms
 ```
 Copy the `public`, `writable`, and all folders with the prefix `nodcms-` from `vendor/khodakhah/nodcms` to your project root
 
-## Database structure
-NodCMS database structure will be created automatically from models throw a wizard CMS installation.
+## Database
+NodCMS database structure will be automatically generated form Models.
 
-So you can only need to follow the below steps right now.
+To build database there is two options.
 
-1. Create a new database on your host for NodCMS.
-2. Open the project on the browser.
-3. You will see installer wizard to build your database.
+For both way you need to create your table(an empty table) manually.
 
-> In the further versions, the database structure will be provided as an SQL file or/and throw CLI.
+### 1. User Interface
+NodCMS database structure can be created automatically from models throw a wizard CMS installation.
 
+You need only open the project with a browser and follow the installation steps.
 [Learn more](https://nodcms.com/user-guide/)
+
+### 2. Command Interface
+You need run following commands in shell:
+```shell
+# 1. Save your database connection in .env file
+php spark database:setup localhost root db-password table-name
+
+# 2. Build your database
+php spark database:build
+
+# 3. Re/Generate admin user
+php spark settings:admin [firstname] [lastname] [email] [password]
+```
+#### Important
+If you already have some tables in your given database, the command `database:build` will not overwrite the existed tables.
+
+To overwrite exists tables you need to add `-overwrite` option on command.
+```shell
+# Build database overwrite exists tables
+php spark database:build -overwrite
+```
+
+`php spark settings:admin [firstname] [lastname] [email] [password]` can be used anytime in the future. It will overwrite the admin user if it exists. 
+_Just in the case that you lose your password, and you want to reset it._
 
 ## Bugs Reports
 If you find an issue, let me know [here](https://github.com/khodakhah/nodcms/issues/new)!

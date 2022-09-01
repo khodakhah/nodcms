@@ -26,7 +26,7 @@
 
     <script src="<?php echo base_url("assets/jquery-3.4.0.min.js"); ?>" type="text/javascript"></script>
 </head>
-<body data-base-url="<?php echo CONFIG_BASE_URL; ?>">
+<body data-base-url="<?php echo base_url(); ?>">
 <?php echo $this->render($this->mainTemplate."/top-menu"); ?>
 <!-- END HEADER -->
 <div class="clearfix"></div>

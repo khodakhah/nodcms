@@ -8,25 +8,24 @@
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.
  *
+ | --------------------------------------------------------------------
+ | App Namespace
+ | --------------------------------------------------------------------
+ |
+ | This defines the default Namespace that is used throughout
+ | CodeIgniter to refer to the Application directory. Change
+ | this constant to change the namespace that all application
+ | classes should use.
+ |
+ | NOTE: changing this will require manually modifying the
+ | existing namespaces of App\* namespaced-classes.
  */
-
-//--------------------------------------------------------------------
-// App Namespace
-//--------------------------------------------------------------------
-// This defines the default Namespace that is used throughout
-// CodeIgniter to refer to the Application directory. Change
-// this constant to change the namespace that all application
-// classes should use.
-//
-// NOTE: changing this will require manually modifying the
-// existing namespaces of App\* namespaced-classes.
-//
 defined('APP_NAMESPACE') || define('APP_NAMESPACE', 'NodCMS\Core');
 
 /*
-|--------------------------------------------------------------------------
+ | --------------------------------------------------------------------------
 | Composer Path
-|--------------------------------------------------------------------------
+ | --------------------------------------------------------------------------
 |
 | The path that Composer's autoload file is expected to live. By default,
 | the vendor folder is in the Root directory, but you can customize that here.
@@ -46,14 +45,14 @@ defined('MINUTE') || define('MINUTE', 60);
 defined('HOUR')   || define('HOUR', 3600);
 defined('DAY')    || define('DAY', 86400);
 defined('WEEK')   || define('WEEK', 604800);
-defined('MONTH')  || define('MONTH', 2592000);
-defined('YEAR')   || define('YEAR', 31536000);
-defined('DECADE') || define('DECADE', 315360000);
+defined('MONTH')  || define('MONTH', 2_592_000);
+defined('YEAR')   || define('YEAR', 31_536_000);
+defined('DECADE') || define('DECADE', 315_360_000);
 
 /*
-|--------------------------------------------------------------------------
+ | --------------------------------------------------------------------------
 | Exit Status Codes
-|--------------------------------------------------------------------------
+ | --------------------------------------------------------------------------
 |
 | Used to indicate the conditions under which the script is exit()ing.
 | While there is no universal standard for error codes, there are some
@@ -85,3 +84,18 @@ defined('EXIT_USER_INPUT')     || define('EXIT_USER_INPUT', 7); // invalid user 
 defined('EXIT_DATABASE')       || define('EXIT_DATABASE', 8); // database error
 defined('EXIT__AUTO_MIN')      || define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 defined('EXIT__AUTO_MAX')      || define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
+
+/**
+ * @deprecated Use \CodeIgniter\Events\Events::PRIORITY_LOW instead.
+ */
+define('EVENT_PRIORITY_LOW', 200);
+
+/**
+ * @deprecated Use \CodeIgniter\Events\Events::PRIORITY_NORMAL instead.
+ */
+define('EVENT_PRIORITY_NORMAL', 100);
+
+/**
+ * @deprecated Use \CodeIgniter\Events\Events::PRIORITY_HIGH instead.
+ */
+define('EVENT_PRIORITY_HIGH', 10);
