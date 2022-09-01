@@ -30,7 +30,7 @@ class DatabaseMapping
     /**
      * @var null|BaseConnection
      */
-    private ?BaseConnection $connection = null;
+    private ?BaseConnection $connection;
 
     /**
      * @var bool
