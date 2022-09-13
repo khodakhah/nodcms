@@ -60,13 +60,3 @@ jobs:
               name: release.data.name,
               body: release.data.body
             })
-
-      - name: Sync files on DEMO
-        uses: SamKirkland/FTP-Deploy-Action@4.1.0
-        with:
-          server: ${{ secrets.FTP_DEMO_SERVER }}
-          username: ${{ secrets.FTP_DEMO_USER }}
-          password: ${{ secrets.FTP_DEMO_PASS }}
-          exclude: "[public/upload_file/**, nodcms-core/Config/Database.php]"
-          local-dir: ./nodcms-bundle/
-          server-dir: "demo/"
