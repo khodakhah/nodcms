@@ -40,23 +40,3 @@ jobs:
 
       - name: Chmod
         run: chmod +x ${GITHUB_WORKSPACE}/source/.github/scripts/deploy-bundle
-
-      - name: Deploy
-        run: ./source/.github/scripts/deploy-bundle ${GITHUB_WORKSPACE}/source ${GITHUB_WORKSPACE}/nodcms-bundle ${GITHUB_REF##*/}
-
-      - name: Release
-        uses: actions/github-script@v5
-        with:
-          github-token: ${{secrets.ACCESS_TOKEN}}
-          script: |
-            const release = await github.rest.repos.getLatestRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo
-            })
-            github.rest.repos.createRelease({
-              owner: context.repo.owner,
-              repo: 'nodcms-bundle',
-              tag_name: release.data.tag_name,
-              name: release.data.name,
-              body: release.data.body
-            })

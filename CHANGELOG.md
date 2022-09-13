@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.4.1] 20-09-13
+## Fixed
+- The bundle pipeline
+
 ## [3.4.0] 20-09-13
 ### Added
 - Database parameters will be saved to env file instead of database config class.
