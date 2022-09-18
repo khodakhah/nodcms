@@ -28,6 +28,7 @@ use NodCMS\Core\Models\Translates;
 use NodCMS\Core\Models\Translations;
 use NodCMS\Core\Models\UploadFiles;
 use NodCMS\Core\Models\Users;
+
 /**
  * Class ModelMap
  * @package NodCMS\Core\Models
@@ -41,14 +42,14 @@ class Models extends BaseService
      *
      * @var array
      */
-    static protected $instances = [];
+    protected static $instances = [];
 
     /**
      * Set local variable to separate method names with the normal services
      *
      * @var array
      */
-    static protected $mocks = [];
+    protected static $mocks = [];
 
     /**
      * The method that called/cashed with "getSharedInstance()" will be called from this value as the class name.
@@ -56,16 +57,14 @@ class Models extends BaseService
      *
      * @var string
      */
-    static protected $serviceClass = self::class;
+    protected static $serviceClass = self::class;
 
     /**
      * @return EmailMessages
      */
     public static function emailMessages(bool $getShared = true): EmailMessages
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('emailMessages');
         }
         return new EmailMessages();
@@ -76,9 +75,7 @@ class Models extends BaseService
      */
     public static function groups(bool $getShared = true): Groups
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('groups');
         }
         return new Groups();
@@ -89,9 +86,7 @@ class Models extends BaseService
      */
     public static function images(bool $getShared = true): Images
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('images');
         }
         return new Images();
@@ -102,9 +97,7 @@ class Models extends BaseService
      */
     public static function languages(bool $getShared = true): Languages
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('languages');
         }
         return new Languages();
@@ -115,9 +108,7 @@ class Models extends BaseService
      */
     public static function menu(bool $getShared = true): Menu
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('menu');
         }
         return new Menu();
@@ -128,9 +119,7 @@ class Models extends BaseService
      */
     public static function packagesDashboard(bool $getShared = true): PackagesDashboard
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('packagesDashboard');
         }
         return new PackagesDashboard();
@@ -141,9 +130,7 @@ class Models extends BaseService
      */
     public static function packages(bool $getShared = true): Packages
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('packages');
         }
         return new Packages();
@@ -154,9 +141,7 @@ class Models extends BaseService
      */
     public static function session(bool $getShared = true): Sessions
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('session');
         }
         return new Sessions();
@@ -167,9 +152,7 @@ class Models extends BaseService
      */
     public static function settings(bool $getShared = true): Settings
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('settings');
         }
         return new Settings();
@@ -180,9 +163,7 @@ class Models extends BaseService
      */
     public static function socialLinks(bool $getShared = true): SocialLinks
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('socialLinks');
         }
         return new SocialLinks();
@@ -193,9 +174,7 @@ class Models extends BaseService
      */
     public static function titles(bool $getShared = true): Titles
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('titles');
         }
         return new Titles();
@@ -206,9 +185,7 @@ class Models extends BaseService
      */
     public static function translates(bool $getShared = true): Translates
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('translates');
         }
         return new Translates();
@@ -219,9 +196,7 @@ class Models extends BaseService
      */
     public static function translations(bool $getShared = true): Translations
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('translations');
         }
         return new Translations();
@@ -232,9 +207,7 @@ class Models extends BaseService
      */
     public static function uploadFiles(bool $getShared = true): UploadFiles
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('uploadFiles');
         }
         return new UploadFiles();
@@ -245,9 +218,7 @@ class Models extends BaseService
      */
     public static function users(bool $getShared = true): Users
     {
-
-        if ($getShared)
-        {
+        if ($getShared) {
             return self::getSharedInstance('users');
         }
         return new Users();

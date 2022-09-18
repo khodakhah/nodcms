@@ -35,11 +35,11 @@ abstract class Base extends Controller
     public $page_sidebar = "frontend_sidebar";
     public $page_sidebar_closed = false;
     public $page_sidebar_items = array();
-    public $page_sidebar_close = FALSE;
-    public $page_sidebar_menu_closed = FALSE;
+    public $page_sidebar_close = false;
+    public $page_sidebar_menu_closed = false;
     // Title display status
-    public $display_title = TRUE;
-    public $display_page_title = FALSE;
+    public $display_title = true;
+    public $display_page_title = false;
 
     /**
      * @var \CodeIgniter\Router\Router
@@ -89,14 +89,14 @@ abstract class Base extends Controller
      */
     protected function errorMessage($error, $redirect = "")
     {
-        if($this->request->isAJAX()){
+        if ($this->request->isAJAX()) {
             $data = array(
                 "status"=>"error",
                 "url"=>$redirect,
                 "error"=> $error
             );
             return json_encode($data);
-        }else{
+        } else {
             $this->session->setFlashdata('error', $error);
             return redirect()->to($redirect);
         }
@@ -105,23 +105,26 @@ abstract class Base extends Controller
     /*
      * This method useful for return successful messages
      */
-    protected function successMessage(string $message=null, string $redirect = "" , $add_on_data = null, $translate = false)
+    protected function successMessage(string $message=null, string $redirect = "", $add_on_data = null, $translate = false)
     {
-        if($this->request->isAJAX()){
+        if ($this->request->isAJAX()) {
             $data = array(
                 "status"=>"success",
                 "url"=>$redirect,
             );
-            if($message!=null)
+            if ($message!=null) {
                 $data['msg'] = $message;
+            }
 
-            if($add_on_data!=null)
+            if ($add_on_data!=null) {
                 $data["data"] = $add_on_data;
+            }
 
             return json_encode($data);
-        }else{
-            if($message!=null)
+        } else {
+            if ($message!=null) {
                 $this->session->setFlashdata('success', $message);
+            }
             return redirect()->to($redirect);
         }
     }
@@ -135,33 +138,34 @@ abstract class Base extends Controller
      */
     protected function curlWebPage($url, $internal = false)
     {
-        $ch = curl_init( $url);
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $header = array();
         $header[] = 'Accept: text/xml,application/xml,application/xhtml+xml, text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
         $header[] = 'Content-length: 0';
         $header[] = 'Content-type: html/text';
 
-        if($internal){
+        if ($internal) {
             $_SESSION['my_session_id'] = session_id();
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
             curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            if (isset($_COOKIE[session_name()]))
+            if (isset($_COOKIE[session_name()])) {
                 curl_setopt($ch, CURLOPT_COOKIE, session_name().'='.$_COOKIE[session_name()].'; path=/');
-            curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, SSL_PROTOCOL);
+            }
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, SSL_PROTOCOL);
             session_write_close();
-            $data = curl_exec( $ch );
-            curl_getinfo( $ch,CURLINFO_HTTP_CODE );
-            curl_close( $ch );
+            $data = curl_exec($ch);
+            curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
             session_start();
-        }else{
-            curl_setopt($ch,CURLOPT_USERAGENT,'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17');
-            curl_setopt( $ch, CURLOPT_HTTPHEADER, $header );
-            $data = curl_exec( $ch );
-            curl_getinfo( $ch,CURLINFO_HTTP_CODE );
-            curl_close( $ch );
+        } else {
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            $data = curl_exec($ch);
+            curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
         }
 
         return $data;
@@ -179,49 +183,50 @@ abstract class Base extends Controller
      */
     protected function curlJSON($url, $data = null, $data_post = 0, $ssl = 0, $internal = false)
     {
-        $ch = curl_init( $url);
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $header = array();
         $header[] = 'Content-type: application/json';
 
-        if($data!=null){
-            if($data_post == 1){
+        if ($data!=null) {
+            if ($data_post == 1) {
                 curl_setopt($ch, CURLOPT_POST, true);
             }
             $data_string = json_encode($data);
-            if(is_array($data)){
-                foreach ($data as &$item){
-                    if(is_array($item)){
+            if (is_array($data)) {
+                foreach ($data as &$item) {
+                    if (is_array($item)) {
                         $item = json_encode($item);
                     }
                 }
             }
-            curl_setopt( $ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
             $header[] = 'Content-Length: '. strlen($data_string);
         }
 
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, $ssl);
-        if($internal){
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $ssl);
+        if ($internal) {
             $_SESSION['my_session_id'] = session_id();
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
             curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            if (isset($_COOKIE[session_name()]))
+            if (isset($_COOKIE[session_name()])) {
                 curl_setopt($ch, CURLOPT_COOKIE, session_name().'='.$_COOKIE[session_name()].'; path=/');
+            }
             session_write_close();
-            $return_data = curl_exec( $ch );
-            curl_getinfo( $ch,CURLINFO_HTTP_CODE );
-            curl_close( $ch );
+            $return_data = curl_exec($ch);
+            curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
             session_start();
-        }else{
-            curl_getinfo( $ch,CURLINFO_HTTP_CODE );
-            $return_data = curl_exec( $ch );
-            curl_close( $ch );
+        } else {
+            curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $return_data = curl_exec($ch);
+            curl_close($ch);
         }
 
         $json_data = json_decode($return_data, true);
-        if($json_data==null){
+        if ($json_data==null) {
             return array(
                 'status'=>"error",
                 'error'=>"Data transfer result: $return_data",
@@ -268,7 +273,7 @@ abstract class Base extends Controller
      */
     public function viewCommon(string $view_file, array $data): string
     {
-        foreach($data as $key=>$value) {
+        foreach ($data as $key=>$value) {
             $this->view->common()->setVar($key, $value);
         }
         return $this->view->common()->render($view_file);
@@ -284,7 +289,7 @@ abstract class Base extends Controller
             'page' => "",
         ], $this->data);
         unset($this->data);
-        foreach($data as $key=>$value) {
+        foreach ($data as $key=>$value) {
             $this->view->setVar($key, $value);
         }
         $this->view->loadControllerVars($this);

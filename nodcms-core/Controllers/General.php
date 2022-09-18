@@ -26,21 +26,21 @@ class General extends Frontend
     public function index()
     {
         // Redirect to a URL
-        if($this->settings['homepage_type'] == "redirect"){
+        if ($this->settings['homepage_type'] == "redirect") {
             header("location: ".$this->settings['homepage_redirect']);
             return "";
         }
 
         // Open and return a file content
-        if($this->settings['homepage_type'] == "display_file"){
+        if ($this->settings['homepage_type'] == "display_file") {
             $myfile = fopen(SELF_PATH.$this->settings['homepage_display_file'], "r") or die("Unable to open file!");
-            $result = fread($myfile,filesize($this->settings['homepage_display_file']));
+            $result = fread($myfile, filesize($this->settings['homepage_display_file']));
             fclose($myfile);
             return $result;
         }
 
         // Display/curl a web page
-        if($this->settings['homepage_type'] == "display_page"){
+        if ($this->settings['homepage_type'] == "display_page") {
             return $this->curlWebPage($this->settings['homepage_display_page']);
         }
 
@@ -55,10 +55,10 @@ class General extends Frontend
 //            $index_content .= $data;
 
         $this->display_page_title = $this->settings['home_page_title_box'];
-        if(!empty($this->settings['index_logo'])) {
+        if (!empty($this->settings['index_logo'])) {
             $this->data['title_logo'] = base_url($this->settings['index_logo']);
         }
-        if(isset($this->settings['home_page_title_bg']) && !empty($this->settings['home_page_title_bg'])) {
+        if (isset($this->settings['home_page_title_bg']) && !empty($this->settings['home_page_title_bg'])) {
             $this->data['title_bg'] = base_url($this->settings['home_page_title_bg']);
         }
         $this->data['title_bg_blur'] = $this->settings['home_page_title_bg_blur'];
@@ -77,23 +77,23 @@ class General extends Frontend
      * @param $key
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string|void
      */
-    function removeMyFile($id, $key)
+    public function removeMyFile($id, $key)
     {
         $conditions = array(
             'file_id'=>$id,
             'remove_key'=>$key,
         );
         $row = Models::uploadFiles()->getOne(null, $conditions);
-        if(count($row)==0){
+        if (count($row)==0) {
             return $this->errorMessage("The file couldn't find.", base_url());
         }
         $file = $row['file_path'];
-        if(preg_match('/^[ftp|http|https]\:\/\/(.*\.[\a])$/',$row['file_path'])!=1) {
+        if (preg_match('/^[ftp|http|https]\:\/\/(.*\.[\a])$/', $row['file_path'])!=1) {
             $file = SELF_PATH . $file;
         }
         $myForm = new Libraries\Form($this);
         $unique_cookie = $myForm->getFileUniqueCookie();
-        if($row['unique_cookie']!=$unique_cookie){
+        if ($row['unique_cookie']!=$unique_cookie) {
             return $this->errorMessage("You don't have access to remove this file.", base_url());
         }
         if (file_exists($file)) {
@@ -117,11 +117,11 @@ class General extends Frontend
             'file_key'=>$key,
         );
         $row = $this->model->uploadFiles()->getOne(null, $conditions);
-        if(empty($row)){
+        if (empty($row)) {
             return $this->viewRenderString("The file couldn't find.");
         }
         $file = $row['file_path'];
-        if(preg_match('/^[ftp|http|https]\:\/\/(.*\.[\a])$/',$row['file_path'])!=1) {
+        if (preg_match('/^[ftp|http|https]\:\/\/(.*\.[\a])$/', $row['file_path'])!=1) {
             $file = ROOTPATH . $file;
             if (!file_exists($file)) {
                 throw new \Exception("The file doesn't exists.");
@@ -162,22 +162,22 @@ class General extends Frontend
      * @param $id
      * @param $key
      */
-    function image($id, $key)
+    public function image($id, $key)
     {
         $conditions = array(
             'file_id'=>$id,
             'file_key'=>$key,
         );
         $row = $this->model->uploadFiles()->getOne(null, $conditions);
-        if(empty($row)){
-            $this->noimage(400,400,"The file couldn't find");
+        if (empty($row)) {
+            $this->noimage(400, 400, "The file couldn't find");
             return;
         }
         $file = $row['file_path'];
-        if(preg_match('/^[ftp|http|https]\:\/\/(.*\.[\a])$/',$row['file_path'])!=1) {
+        if (preg_match('/^[ftp|http|https]\:\/\/(.*\.[\a])$/', $row['file_path'])!=1) {
             $file = SELF_PATH . $file;
             if (!file_exists($file)) {
-                $this->noimage(400,400,"The file doesn't exists");
+                $this->noimage(400, 400, "The file doesn't exists");
                 return;
             }
         }
@@ -194,7 +194,7 @@ class General extends Frontend
      *
      * @param $page_name
      */
-    function staticSettingsPages($page_name)
+    public function staticSettingsPages($page_name)
     {
         $page_contents = array(
             'terms-and-conditions'=>array(
@@ -219,7 +219,7 @@ class General extends Frontend
      */
     public function contact($home = null)
     {
-        if($this->settings['contact_form']==1){
+        if ($this->settings['contact_form']==1) {
             $self_url = base_url("{$this->lang}/contact");
             $config = array(
                 array(
@@ -241,7 +241,7 @@ class General extends Frontend
                     'type'=>"textarea"
                 ),
             );
-            if($this->settings['terms_accept_required']==1){
+            if ($this->settings['terms_accept_required']==1) {
                 $config[] = array(
                     'field'=>"terms_and_conditions",
                     'type'=>"accept-terms",
@@ -249,7 +249,7 @@ class General extends Frontend
                     'label'=>_l("Terms & Conditions", $this),
                 );
             }
-            if($this->userdata!=null){
+            if ($this->userdata!=null) {
                 $config[0]['type'] = "static";
                 $config[0]['class'] = "bold";
                 $config[0]['value'] = $this->userdata['email'];
@@ -259,22 +259,22 @@ class General extends Frontend
             }
             $myForm = new Libraries\Form($this);
             $myForm->config($config, $self_url, 'post', 'ajax');
-            if($myForm->ispost()){
+            if ($myForm->ispost()) {
                 $data = $myForm->getPost();
-                if(!is_array($data) || count($data)==0){
+                if (!is_array($data) || count($data)==0) {
                     return $myForm->getResponse();
                 }
-                if($this->userdata!=null){
+                if ($this->userdata!=null) {
                     $data['username'] = $this->userdata['username'];
                     $data['email'] = $this->userdata['email'];
                     $data['name'] = $this->userdata['fullname'];
-                }else{
+                } else {
                     $data['username'] = "";
                 }
                 $data['date'] = my_int_date(time());
 
                 // Send Notification Emial
-                send_notification_email("contact_form", $this->settings['email'], $data, $this->language['language_id'],$data['email']);
+                send_notification_email("contact_form", $this->settings['email'], $data, $this->language['language_id'], $data['email']);
 
                 return $this->successMessage("The message has been successfully sent.", $self_url);
             }
@@ -282,26 +282,26 @@ class General extends Frontend
             $myForm->setStyle('bootstrap-vertical');
 
             $form_attr = array('data-reset'=>1,'data-message'=>1);
-            if($this->request->isAJAX()){
-                return $myForm->fetch('',$form_attr, false);
+            if ($this->request->isAJAX()) {
+                return $myForm->fetch('', $form_attr, false);
             }
-            $this->data['contact_form'] = $myForm->fetch('',$form_attr, false);
+            $this->data['contact_form'] = $myForm->fetch('', $form_attr, false);
         }
 
         $this->data['title'] = _l("Contact us", $this);
-        if($home!=null){
+        if ($home!=null) {
             return $this->viewCommon("contact_home", $this->data);
         }
 
         $this->data['breadcrumb'] = array(
             array('title'=>$this->data['title']),
         );
-        $this->data['description'] = isset($this->settings["site_description"])?$this->settings["site_description"]:"";
-        $this->data['keyword'] = isset($this->settings["site_keyword"])?$this->settings["site_keyword"]:"";
+        $this->data['description'] = isset($this->settings["site_description"]) ? $this->settings["site_description"] : "";
+        $this->data['keyword'] = isset($this->settings["site_keyword"]) ? $this->settings["site_keyword"] : "";
         return $this->viewRender("contact");
     }
 
-    function resetCaptcha()
+    public function resetCaptcha()
     {
         print_captcha();
     }

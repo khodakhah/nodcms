@@ -14,7 +14,7 @@ namespace NodCMS\Core\Models;
 
 class Nodcms_admin_sign_model extends CoreModel
 {
-    function check_login($username,$pass)
+    public function check_login($username, $pass)
     {
         $this->db->where('username', $username);
         $this->db->where('password', $pass);

@@ -12,7 +12,6 @@
 
 namespace NodCMS\Gallery\Config;
 
-
 class Settings
 {
     public $settings_default = [

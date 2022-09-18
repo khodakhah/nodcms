@@ -12,13 +12,11 @@
 
 namespace NodCMS\Core\Libraries;
 
-
 use Config\Services;
 use NodCMS\Core\Response\QuickResponse;
 
 class Identity
 {
-
     /**
      * @var \CodeIgniter\HTTP\RedirectResponse|string
      */
@@ -26,14 +24,14 @@ class Identity
 
     public function getUserData()
     {
-        if(Services::session()->has("user_id")) {
+        if (Services::session()->has("user_id")) {
             $userModel = new \NodCMS\Core\Models\Users();
             $user = $userModel->getOne(Services::session()->get("user_id"));
 //            if($user["active"]!=1 && $this->router->methodName() != "logout"){
 //                $this->accountLock();
 //                return;
 //            }
-            if(!empty($user)) {
+            if (!empty($user)) {
                 return $user;
             }
         }
@@ -48,7 +46,7 @@ class Identity
 
     public function isValid(): bool
     {
-        if(Services::session()->has("user_id")) {
+        if (Services::session()->has("user_id")) {
             $userModel = new \NodCMS\Core\Models\Users();
             $user = $userModel->getOne(Services::session()->get("user_id"));
             return !empty($user);
@@ -67,21 +65,20 @@ class Identity
     public function isAdmin(bool $allowDemo = false): bool
     {
         // Demo user welcomes
-        if($allowDemo && (int) Services::session()->get('group') === 100) {
+        if ($allowDemo && (int) Services::session()->get('group') === 100) {
             return true;
         }
 
         // Not an admin user not welcomes
-        if((int) Services::session()->get('group') !== 1) {
+        if ((int) Services::session()->get('group') !== 1) {
             helper("core_helper");
             $reponse = new QuickResponse();
-            if((int) Services::session()->get('group') === 100) {
+            if ((int) Services::session()->get('group') === 100) {
                 $reponse->setMessage(_l("DEMO account does not have access to this action.", $this));
-                $reponse->setUrl( "/admin");
-            }
-            else {
+                $reponse->setUrl("/admin");
+            } else {
                 $reponse->setMessage(_l("Unfortunately you do not have permission to this part of system.", $this));
-                $reponse->setUrl( "/");
+                $reponse->setUrl("/");
             }
             $this->response = $reponse->getError();
             return false;
@@ -101,16 +98,16 @@ class Identity
     public function isValidMember(bool $isDemoAdmin = false): bool
     {
         // Demo user welcomes
-        if($isDemoAdmin && (int) Services::session()->get('group') !== 100) {
+        if ($isDemoAdmin && (int) Services::session()->get('group') !== 100) {
             return true;
         }
 
         // Not a valid member
-        if(!in_array((int) Services::session()->get('group'), [1, 20])) {
+        if (!in_array((int) Services::session()->get('group'), [1, 20])) {
             helper("core_helper");
             $reponse = new QuickResponse();
             $reponse->setMessage(_l("Unfortunately you do not have permission to this part of system.", $this));
-            $reponse->setUrl( "/");
+            $reponse->setUrl("/");
             $this->response = $reponse->getError();
             return false;
         }
@@ -137,12 +134,12 @@ class Identity
     public function isActive(): bool
     {
         $userdata = $this->getUserData();
-        if(!boolval($userdata['active'])) {
+        if (!boolval($userdata['active'])) {
             helper("core_helper");
             $reponse = new QuickResponse();
             $reponse->setMessage(_l("Your account has been suspended!", $this));
             $lang = Services::language()->getLocale();
-            $reponse->setUrl( "/{$lang}/account-locked");
+            $reponse->setUrl("/{$lang}/account-locked");
             $this->response = $reponse->getError();
             return false;
         }

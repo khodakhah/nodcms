@@ -12,12 +12,11 @@
 
 namespace NodCMS\Core\Libraries;
 
-use \CodeIgniter\Language\Language as CI_Language;
+use CodeIgniter\Language\Language as CI_Language;
 use NodCMS\Core\Models\Languages;
 
 class Language extends CI_Language
 {
-
     private const LANGUAGE_KEYS_PATTERN = '[A-Za-z0-9\s\_\-\.\,\:\;\|\/\!\'\?\&\@\#\€\{\}\(\)\[\]]+';
 
     /**
@@ -89,7 +88,7 @@ class Language extends CI_Language
 
         // * Find removed labels
         $removed_keys = array();
-        foreach ($in_my_temp as $keys){
+        foreach ($in_my_temp as $keys) {
             if (!in_array($keys, $unique_array)) {
                 array_push($removed_keys, $keys);
             }
@@ -103,9 +102,9 @@ class Language extends CI_Language
         }
 
         // * Update temp_lang.php
-        if($overwrite){
+        if ($overwrite) {
             $languages = array_filter(glob(COREPATH.'Language/*'), 'is_dir');
-            foreach ($languages as $language_dir){
+            foreach ($languages as $language_dir) {
                 preg_match('/.*\/([A-Za-z]{2})/', $language_dir, $my_match);
 
                 $locale = $my_match[1];
@@ -115,15 +114,14 @@ class Language extends CI_Language
                 foreach ($unique_array as $key) {
                     if (!isset($lines[$key])) {
                         $_lines[$key] = $key;
-                    }
-                    else {
+                    } else {
                         $_lines[$key] = $lines[$key];
                     }
                 }
                 $this->saveTranslations($_lines, $locale);
             }
 
-            if($remove){
+            if ($remove) {
                 $in_my_temp = array_diff($in_my_temp, $removed_keys);
             }
             $in_my_temp = array_merge($in_my_temp, $unique_array);
@@ -142,7 +140,7 @@ class Language extends CI_Language
      * @param null $language_name
      * @throws \Exception
      */
-    public function resetLanguageTempFile($language_name = NULL)
+    public function resetLanguageTempFile($language_name = null)
     {
         $unique_array = $this->uniqueUsedTranslations();
 
@@ -150,23 +148,25 @@ class Language extends CI_Language
         $this->resetJustLanguageTemp($unique_array);
 
         // Reset only one language
-        if($language_name != NULL){
+        if ($language_name != null) {
             $languagePath = COREPATH.'Language/'.$language_name;
-            if(!file_exists($languagePath))
+            if (!file_exists($languagePath)) {
                 throw new \Exception("\"{$languagePath}\" doesn't exists!");
+            }
             $languages = array($languagePath);
         }
         // Reset all exists language
-        else{
+        else {
             $languages = array_filter(glob(COREPATH.'Language/*'), 'is_dir');
         }
 
         // Generate untranslated lines
         $untranslated_lines = array_combine($unique_array, $unique_array);
 
-        foreach ($languages as $item){
-            if(preg_match('/.*\/([A-Za-z]{2}})/', $item, $my_match))
+        foreach ($languages as $item) {
+            if (preg_match('/.*\/([A-Za-z]{2}})/', $item, $my_match)) {
                 $this->saveTranslations($untranslated_lines, $my_match[1], true);
+            }
         }
     }
 
@@ -194,8 +194,9 @@ class Language extends CI_Language
      */
     private function getLines(string $locale, string $file): array
     {
-        if(!isset($this->language[$locale]) && !isset($this->language[$locale][$file]))
+        if (!isset($this->language[$locale]) && !isset($this->language[$locale][$file])) {
             return [];
+        }
 
         return $this->language[$locale][$file];
     }
@@ -264,26 +265,29 @@ class Language extends CI_Language
         $dirs = !empty($controllers) ? $controllers : [];
         $packages = \Config\Services::modules()->getPaths();
         $moduleFiles = ["Views", "Controllers"];
-        foreach($packages as $item){
-            foreach($moduleFiles as $moduleFile) {
+        foreach ($packages as $item) {
+            foreach ($moduleFiles as $moduleFile) {
                 $third_party = get_all_php_files("{$item}{$moduleFile}");
-                if(is_array($third_party))
+                if (is_array($third_party)) {
                     $dirs = array_merge($dirs, $third_party);
+                }
             }
-            if(file_exists("{$item}Bootstrap.php")) {
+            if (file_exists("{$item}Bootstrap.php")) {
                 array_push($dirs, "{$item}Bootstrap.php");
             }
         }
 
         // Find the patterns from all paths
-        foreach($dirs as $key=>$item) {
+        foreach ($dirs as $key=>$item) {
             $file_content = file_get_contents($item);
             preg_match_all($lang_regex, $file_content, $matches);
-            if(count($matches[1])!=0)
+            if (count($matches[1])!=0) {
                 $unique_array = array_unique(array_merge($unique_array, $matches[1]));
+            }
             preg_match_all($system_message_regex, $file_content, $matches);
-            if(count($matches[3])!=0)
+            if (count($matches[3])!=0) {
                 $unique_array = array_unique(array_merge($unique_array, $matches[3]));
+            }
         }
 
         return $unique_array;
@@ -298,14 +302,14 @@ class Language extends CI_Language
     private function getTempFileKeys(): array
     {
         $temp_file = COREPATH.'Language/lang_temp.php';
-        if(file_exists($temp_file)){
+        if (file_exists($temp_file)) {
             include $temp_file;
-            $in_my_temp = isset($lang_temp)?$lang_temp:array();
-        }
-        else{
+            $in_my_temp = isset($lang_temp) ? $lang_temp : array();
+        } else {
             $myFile = fopen($temp_file, "w");
-            if($myFile === false)
+            if ($myFile === false) {
                 throw new \Exception("Unable to open file!");
+            }
             fwrite($myFile, "<?php\n");
             fclose($myFile);
             $in_my_temp = array();
@@ -320,7 +324,8 @@ class Language extends CI_Language
      *
      * @param array $unique_translations
      */
-    private function resetJustLanguageTemp(array $unique_translations){
+    private function resetJustLanguageTemp(array $unique_translations)
+    {
         $new_content = "<?php\n" .
             "/**\n" .
             " * Made automatically by NodCMS\n" .
@@ -329,13 +334,13 @@ class Language extends CI_Language
             " * Find from ".count($unique_translations)." Files\n" .
             "*/\n" .
             '$lang_temp = array('."\n";
-        $new_content .= '    "'.implode('",'."\n".'    "',$unique_translations).'"'."\n";
+        $new_content .= '    "'.implode('",'."\n".'    "', $unique_translations).'"'."\n";
 
         $new_content .= ');'."\n";
         $temp_file = COREPATH.'Language/lang_temp.php';
-        if(file_exists($temp_file)){
+        if (file_exists($temp_file)) {
             file_put_contents($temp_file, $new_content);
-        }else{
+        } else {
             $myfile = fopen($temp_file, "w") or die("Unable to open file!");
             fwrite($myfile, $new_content);
             fclose($myfile);
@@ -353,10 +358,9 @@ class Language extends CI_Language
     private function saveTranslations(array $lines, string $locale, bool $reset = false)
     {
         $my_lang_file = COREPATH."Language/{$locale}/app.php";
-        if(!$reset && file_exists($my_lang_file)){
+        if (!$reset && file_exists($my_lang_file)) {
             $my_language_file_content = str_replace("];", "", file_get_contents($my_lang_file));
-        }
-        else{
+        } else {
             $my_language_file_content = "<?php\n" .
                 "/**\n" .
                 " * Made automatically by NodCMS\n" .
@@ -371,13 +375,13 @@ class Language extends CI_Language
 
         $my_language_file_content .= "];";
 
-        if(!$reset && file_exists($my_lang_file)){
+        if (!$reset && file_exists($my_lang_file)) {
             file_put_contents($my_lang_file, $my_language_file_content);
-        }
-        else{
+        } else {
             $myFile = fopen($my_lang_file, "w");
-            if($myFile === false)
+            if ($myFile === false) {
                 throw new \Exception("Unable to open file!");
+            }
             fwrite($myFile, $my_language_file_content);
             fclose($myFile);
         }
@@ -392,7 +396,7 @@ class Language extends CI_Language
     private function removeLines(array $lines, string $fileName)
     {
         $my_lang_file = COREPATH."Language/{$fileName}/app.php";
-        if(!file_exists($my_lang_file)){
+        if (!file_exists($my_lang_file)) {
             return;
         }
         $my_language_file_content = str_replace("];", "", file_get_contents($my_lang_file));

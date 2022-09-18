@@ -10,7 +10,9 @@
  *
  */
 
-if(!isset($routes)) throw new \Exception('$routes not defined.');
+if (!isset($routes)) {
+    throw new \Exception('$routes not defined.');
+}
 
 $routes->match(['post', 'get'], 'admin-portfolio/(.+)', "\NodCMS\Portfolio\Controllers\PortfolioAdmin::$1");
 $routes->get('{locale}/portfolio-([0-9]+)', "\NodCMS\Portfolio\Controllers\Portfolio::portfolio/$1");

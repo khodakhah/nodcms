@@ -33,11 +33,11 @@ class About extends Frontend
      *
      * @return string
      */
-    static function home(): string
+    public static function home(): string
     {
         $result = "";
         $data_list = Models::about()->getAllTrans(['profile_theme<>'=>"card"], null, 1, ["order", "ASC"]);
-        foreach($data_list as $item){
+        foreach ($data_list as $item) {
             $result .= Services::layout(new ViewFrontend(), false)->setData(array('item'=>$item))->render("about_item_$item[profile_theme]");
         }
         $data = ['data_list' => Models::about()->getAllTrans(['profile_theme'=>"card"], null, 1, ["order", "ASC"])];
@@ -49,7 +49,7 @@ class About extends Frontend
      * Load preview of Aboutme profiles
      * @return string
      */
-    function index()
+    public function index()
     {
         $data_list = Models::about()->getAllTrans();
         $this->data['data_list'] = $data_list;
@@ -62,12 +62,13 @@ class About extends Frontend
      * @param string $uri
      * @return string
      */
-    function profile(string $uri)
+    public function profile(string $uri)
     {
         $this->display_page_title = false;
         $data = Models::about()->getOneTrans(null, array('profile_uri'=>$uri));
-        if(empty($data))
+        if (empty($data)) {
             return $this->showError();
+        }
         $this->data['data'] = $data;
         $this->data['title'] = $data['name'];
         $this->data['description'] = $data['description'];

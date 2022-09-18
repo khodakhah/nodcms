@@ -29,8 +29,9 @@ class FormatRules extends \CodeIgniter\Validation\FormatRules
     public function valid_url(string $str = null): bool
     {
         // Ignore empty values
-        if(empty($str))
+        if (empty($str)) {
             return true;
+        }
 
         return parent::valid_url($str);
     }

@@ -19,10 +19,10 @@ use NodCMS\Portfolio\Config\ViewFrontend;
 
 class Portfolio extends Frontend
 {
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
-       Services::layout()->setConfig(new ViewFrontend());
+        Services::layout()->setConfig(new ViewFrontend());
     }
 
     /**
@@ -30,14 +30,14 @@ class Portfolio extends Frontend
      *
      * @return string
      */
-    static function home(): string
+    public static function home(): string
     {
         // TODO: Remove the $CI after change the language translation keys reader
         $CI = 0;
         $data = [];
         $data['title'] = _l("Portfolio", $CI);
         $data_list = Models::portfolio()->getAllTrans(array('portfolio_public'=>1), null, 1, array('portfolio_date', 'DESC'));
-        if(is_array($data_list)){
+        if (is_array($data_list)) {
             $data['data_list'] = $data_list;
         }
         return Services::layout(new ViewFrontend(), false)->setData($data)->render("portfolio_home");
@@ -47,13 +47,14 @@ class Portfolio extends Frontend
      * @param $id
      * @return string
      */
-    public function portfolio($id){
+    public function portfolio($id)
+    {
         $data = Models::portfolio()->getOneTrans($id);
-        if(!is_array($data) || count($data)==0){
+        if (!is_array($data) || count($data)==0) {
             return $this->showError(_l("Portfolio not found.", $this));
         }
         $this->data['data'] = $data;
-        if(Services::request()->isAJAX()){
+        if (Services::request()->isAJAX()) {
             return Services::layout()->setData($this->data)->render('portfolio_details_ajax');
         }
 

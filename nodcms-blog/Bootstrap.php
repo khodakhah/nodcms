@@ -72,11 +72,11 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
      * @inheritDoc
      * @throws \Exception
      */
-    function backend()
+    public function backend()
     {
         define('BLOG_ADMIN_URL', base_url("admin-blog").'/');
         $unread_comments_count = Models::blogComments()->getCount(array('comment_read'=>0));
-        if(Services::identity()->isAdmin(true)){
+        if (Services::identity()->isAdmin(true)) {
             Services::sidebar()->addLink(
                 "blog",
                 _l("Blog", $this),

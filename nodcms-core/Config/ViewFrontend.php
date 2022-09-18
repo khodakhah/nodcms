@@ -12,7 +12,6 @@
 
 namespace Config;
 
-
 class ViewFrontend extends View
 {
     /**

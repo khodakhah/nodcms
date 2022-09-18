@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\Validation;
 
-
 class Validation extends \CodeIgniter\Validation\Validation
 {
     protected $latestErrorMessage;
@@ -52,15 +51,14 @@ class Validation extends \CodeIgniter\Validation\Validation
         // clean the latest error message up
         $this->latestErrorMessage = null;
         // execute customize only if original method found an error
-        if(!parent::processRules($field, $label, $value, $rules, $data)) {
-
+        if (!parent::processRules($field, $label, $value, $rules, $data)) {
             // The error message from the original method
             $message = $this->errors[$field];
             /*
              * If the error from the original method is not equal with latest error message, that means
              * "getErrorMessage()" has not been executed. So this is a message that came form rule methods.
              */
-            if($message != $this->latestErrorMessage) {
+            if ($message != $this->latestErrorMessage) {
                 $message = str_replace('{field}', empty($label) ? $field : lang($label), $this->errors[$field]);
                 $this->errors[$field] = str_replace('{value}', $value, $message);
             }

@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\Controllers;
 
-
 use Config\Services;
 
 abstract class App extends Base
@@ -45,8 +44,8 @@ abstract class App extends Base
     {
         parent::__construct();
 
-        define('USER_UNDEFINED_AVATAR',base_url('upload_file/images/user.png'));
-        define('ADMIN_URL',base_url("admin")."/");
+        define('USER_UNDEFINED_AVATAR', base_url('upload_file/images/user.png'));
+        define('ADMIN_URL', base_url("admin")."/");
     }
 
     /**
@@ -58,10 +57,11 @@ abstract class App extends Base
     {
         $pagination = Services::pager();
         $pagination->setSegment($config['uri_segment']);
-        if($pagination->getPageCount() > 1)
+        if ($pagination->getPageCount() > 1) {
             $this->data['pagination'] = $pagination->makeLinks($pagination->getCurrentPage(), $config['per_page'], $config['total_rows']);
-        else
+        } else {
             $this->data['pagination'] = "";
+        }
     }
 
     /**
@@ -79,8 +79,8 @@ abstract class App extends Base
         http_response_code($status_code);
         $this->data["title"] = _l("Error", $this)." $status_code";
         $this->data["status_code"] = $status_code;
-        $this->data["heading"] = $heading!=null?$heading:_l("Page not found!", $this);
-        $this->data["message"] = $message!=null?$message:_l("Your requested page not found.", $this);
+        $this->data["heading"] = $heading!=null ? $heading : _l("Page not found!", $this);
+        $this->data["message"] = $message!=null ? $message : _l("Your requested page not found.", $this);
         $this->data["buttons"] = $buttons;
         return $this->viewRenderString($this->viewCommon("common/show_error", $this->data));
     }

@@ -12,7 +12,6 @@
 
 namespace NodCMS\Services\Config;
 
-
 use NodCMS\Services\Models\Services;
 
 class Models extends \Config\Models
@@ -23,8 +22,7 @@ class Models extends \Config\Models
      */
     public static function services(bool $getShared = true): Services
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             // Reset the class name
             static::$serviceClass = self::class;
 

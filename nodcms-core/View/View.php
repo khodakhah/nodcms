@@ -72,7 +72,7 @@ class View extends \CodeIgniter\View\View
      */
     public function loadControllerVars($controller)
     {
-        foreach($controller as $key=>$item) {
+        foreach ($controller as $key=>$item) {
             $this->$key = $item;
         }
     }
@@ -116,9 +116,11 @@ class View extends \CodeIgniter\View\View
      */
     public function fetchAllCSS()
     {
-        foreach ($this->css_files as $item){
+        foreach ($this->css_files as $item) {
             $file = ROOTPATH . "public/" . $item;
-            if(!file_exists($file)) continue;
+            if (!file_exists($file)) {
+                continue;
+            }
             echo "<link rel='stylesheet' href='".base_url($item)."'>\n";
         }
     }
@@ -129,9 +131,11 @@ class View extends \CodeIgniter\View\View
      */
     public function fetchAllJS()
     {
-        foreach ($this->footer_js_files as $item){
+        foreach ($this->footer_js_files as $item) {
             $file = ROOTPATH . "public/" . $item;
-            if(!file_exists($file)) continue;
+            if (!file_exists($file)) {
+                continue;
+            }
             echo "<script type='text/javascript' src='".base_url($item)."'></script>\n";
         }
     }
@@ -142,9 +146,11 @@ class View extends \CodeIgniter\View\View
      */
     public function fetchAllHeaderJS()
     {
-        foreach ($this->header_js_files as $item){
+        foreach ($this->header_js_files as $item) {
             $file = ROOTPATH . "public/" . $item;
-            if(!file_exists($file)) continue;
+            if (!file_exists($file)) {
+                continue;
+            }
             echo "<script type='text/javascript' src='".base_url($item)."'></script>\n";
         }
     }
@@ -179,16 +185,18 @@ class View extends \CodeIgniter\View\View
      */
     private function addAsset(&$variable, string $file_type, string $path, string $ltr_path = null)
     {
-        if($ltr_path != null) {
-            if(\Config\Services::language()->hasBeenSet() && \Config\Services::language()->get()["rtl"]){
-                if(!in_array($ltr_path . $file_type, $variable))
+        if ($ltr_path != null) {
+            if (\Config\Services::language()->hasBeenSet() && \Config\Services::language()->get()["rtl"]) {
+                if (!in_array($ltr_path . $file_type, $variable)) {
                     array_push($variable, $ltr_path . $file_type);
+                }
                 return;
             }
         }
 
-        if(!in_array($path . $file_type, $variable))
+        if (!in_array($path . $file_type, $variable)) {
             array_push($variable, $path . $file_type);
+        }
     }
 
     /**
@@ -196,7 +204,8 @@ class View extends \CodeIgniter\View\View
      *
      * @param $config
      */
-    public function setConfig($config) {
+    public function setConfig($config)
+    {
         $this->config = $config;
         $this->viewPrefix = $this->config->namespacePieces;
     }
@@ -212,8 +221,9 @@ class View extends \CodeIgniter\View\View
     public function render(string $view, array $options = null, bool $saveData = null): string
     {
         $view = $this->viewPrefix . "/" . $view;
-        if(empty($this->tempData['settings']))
+        if (empty($this->tempData['settings'])) {
             $this->setData(['settings'=>\Config\Services::settings()->get()]);
+        }
         return parent::render($view, $options, $saveData);
     }
 
@@ -237,9 +247,11 @@ class View extends \CodeIgniter\View\View
      * @param string $key
      * @return array|false|null
      */
-    public function flashdata(string $key) {
-        if(!session()->has($key))
+    public function flashdata(string $key)
+    {
+        if (!session()->has($key)) {
             return false;
+        }
 
         return session()->getFlashdata($key);
     }

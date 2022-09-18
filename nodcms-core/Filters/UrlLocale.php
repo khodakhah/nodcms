@@ -25,7 +25,6 @@ use Config\Services;
  */
 class UrlLocale implements \CodeIgniter\Filters\FilterInterface
 {
-
     /**
      * @inheritDoc
      */
@@ -34,23 +33,23 @@ class UrlLocale implements \CodeIgniter\Filters\FilterInterface
         $localePrefix = $request->uri->getSegment(1);
 
         // No prefix has been set
-        if(empty($localePrefix)) {
+        if (empty($localePrefix)) {
             $language = Models::languages()->getDefaultRecord();
         }
         // Set system language from URL language code (Language prefix)
-        else{
+        else {
             $language = Models::languages()->getByCode($localePrefix);
         }
 
-        if(empty($language)){
+        if (empty($language)) {
             $language = Models::languages()->getOne(null);
         }
 
-        if(empty($language)){
+        if (empty($language)) {
             throw new \Exception("Language \"{$localePrefix}\" not found in database.");
         }
 
-        if($language['code'] != $localePrefix) {
+        if ($language['code'] != $localePrefix) {
             $request->uri->setSegment(1, $language['code']);
             return redirect()->to($request->uri->getPath());
         }

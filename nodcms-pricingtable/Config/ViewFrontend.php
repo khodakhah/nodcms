@@ -12,7 +12,6 @@
 
 namespace NodCMS\Pricingtable\Config;
 
-
 class ViewFrontend extends \Config\ViewFrontend
 {
     /**

@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\View;
 
-
 use Config\Services;
 use NodCMS\Core\Types\SidebarLink;
 
@@ -69,8 +68,9 @@ class Sidebar extends LinkList
         $link->uri = $url;
         $link->icon = $icon;
 
-        if(!isset($this->links[$key]))
+        if (!isset($this->links[$key])) {
             return;
+        }
 
         $this->links[$key]->subLinks[$sub_key] = $link;
     }
@@ -100,7 +100,7 @@ class Sidebar extends LinkList
         $result = "";
         foreach ($links as $key=>$item) {
             $subLink = "";
-            if(!empty($item->subLinks)) {
+            if (!empty($item->subLinks)) {
                 $subLink .= $this->renderLinks($item->subLinks);
             }
             $result .= $this->renderLink($item, $key, $subLink);
@@ -126,5 +126,4 @@ class Sidebar extends LinkList
         $this->setVar("subLink", $subLink);
         return parent::render($this->view_file);
     }
-
 }

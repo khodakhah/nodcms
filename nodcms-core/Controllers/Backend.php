@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\Controllers;
 
-
 use Config\Services;
 use Config\ViewBackend;
 
@@ -50,7 +49,7 @@ abstract class Backend extends App
 
         Services::sidebar()->addLink(
             'dashboard',
-            _l("Control Panel",$this),
+            _l("Control Panel", $this),
             ADMIN_URL,
             'fas fa-th-large'
         );
@@ -60,25 +59,25 @@ abstract class Backend extends App
 
         Services::sidebar()->addLink(
             'users',
-            _l("Members",$this),
+            _l("Members", $this),
             ADMIN_URL.'user',
             'fas fa-users'
         );
         Services::sidebar()->addLink(
             'language',
-            _l("Languages",$this),
+            _l("Languages", $this),
             ADMIN_URL.'language',
             'fas fa-language'
         );
         Services::sidebar()->addLink(
             'menu',
-            _l("Menus",$this),
+            _l("Menus", $this),
             ADMIN_URL.'menu',
             'fas fa-link'
         );
         Services::sidebar()->addLink(
             'uploaded_images',
-            _l("Images",$this),
+            _l("Images", $this),
             ADMIN_URL.'imagesLibrary',
             'far fa-images'
         );
@@ -96,7 +95,7 @@ abstract class Backend extends App
         );
         Services::sidebar()->addLink(
             'settings',
-            _l("Settings",$this),
+            _l("Settings", $this),
             'javascript:;',
             'fas fa-cogs'
         );

@@ -14,7 +14,7 @@ namespace NodCMS\Core\Models;
 
 class Translations extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "translations";
         $primary_key = "translation_id";
@@ -47,7 +47,7 @@ class Translations extends Model
         $builder->select("*")
             ->where("table_id", $tableId)
             ->where("table_name", $tableName)
-            ->where('field_name IN ("'.join('","',$fields).'")')
+            ->where('field_name IN ("'.join('","', $fields).'")')
             ->where("language_id", $language_id);
         $query = $builder->get();
         return $query->getResultArray();

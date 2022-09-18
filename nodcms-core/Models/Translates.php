@@ -14,7 +14,7 @@ namespace NodCMS\Core\Models;
 
 class Translates extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "translates";
         $primary_key = "translate_id";

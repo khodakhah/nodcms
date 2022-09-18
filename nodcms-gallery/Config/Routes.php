@@ -10,7 +10,9 @@
  *
  */
 
-if(!isset($routes)) throw new \Exception('$routes not defined.');
+if (!isset($routes)) {
+    throw new \Exception('$routes not defined.');
+}
 
 $routes->match(['post', 'get'], 'admin-gallery/(.+)', "\NodCMS\Gallery\Controllers\GalleryAdmin::$1");
 $routes->get('{locale}/album-([0-9a-z\-\.]+)', "\NodCMS\Gallery\Controllers\Gallery::album/$1");

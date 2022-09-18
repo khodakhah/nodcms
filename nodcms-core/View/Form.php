@@ -12,8 +12,6 @@
 
 namespace NodCMS\Core\View;
 
-
 class Form extends View
 {
-
 }

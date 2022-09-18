@@ -1,40 +1,42 @@
-<?php namespace Config;
+<?php
+
+namespace Config;
 
 class Validation
 {
-	//--------------------------------------------------------------------
-	// Setup
-	//--------------------------------------------------------------------
+    //--------------------------------------------------------------------
+    // Setup
+    //--------------------------------------------------------------------
 
-	/**
-	 * Stores the classes that contain the
-	 * rules that are available.
-	 *
-	 * @var array
-	 */
-	public $ruleSets = [
-		\CodeIgniter\Validation\Rules::class,
+    /**
+     * Stores the classes that contain the
+     * rules that are available.
+     *
+     * @var array
+     */
+    public $ruleSets = [
+        \CodeIgniter\Validation\Rules::class,
 //		\CodeIgniter\Validation\FormatRules::class,
-		\CodeIgniter\Validation\FileRules::class,
-		\CodeIgniter\Validation\CreditCardRules::class,
-		\NodCMS\Core\Validation\Rules::class,
-		\NodCMS\Core\Validation\FormatRules::class,
-	];
+        \CodeIgniter\Validation\FileRules::class,
+        \CodeIgniter\Validation\CreditCardRules::class,
+        \NodCMS\Core\Validation\Rules::class,
+        \NodCMS\Core\Validation\FormatRules::class,
+    ];
 
-	/**
-	 * Specifies the views that are used to display the
-	 * errors.
-	 *
-	 * @var array
-	 */
-	public $templates = [
-		'list'   => 'CodeIgniter\Validation\Views\list',
-		'single' => 'CodeIgniter\Validation\Views\single',
-	];
+    /**
+     * Specifies the views that are used to display the
+     * errors.
+     *
+     * @var array
+     */
+    public $templates = [
+        'list'   => 'CodeIgniter\Validation\Views\list',
+        'single' => 'CodeIgniter\Validation\Views\single',
+    ];
 
-	//--------------------------------------------------------------------
-	// Rules
-	//--------------------------------------------------------------------
+    //--------------------------------------------------------------------
+    // Rules
+    //--------------------------------------------------------------------
 }
 /*
  *  This file is part of NodCMS.
@@ -46,5 +48,3 @@ class Validation
  * the LICENSE file that was distributed with this source code.
  *
  */
-
-

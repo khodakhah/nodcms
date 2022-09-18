@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\Modules;
 
-
 use NodCMS\Core\Types\Link;
 use NodCMS\Core\Types\MenuLink;
 

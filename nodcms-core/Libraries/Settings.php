@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\Libraries;
 
-
 use Config\Services;
 
 class Settings
@@ -41,8 +40,9 @@ class Settings
     public function load(int $languageId = 0)
     {
         // Only one time merge
-        if($this->loaded)
+        if ($this->loaded) {
             return;
+        }
 
         // Set the merged flag
         $this->loaded = true;
@@ -51,7 +51,7 @@ class Settings
         $this->data = array_merge($this->data, Services::modules()->getModulesDefaultSettings());
 
         // Set the language id automatically
-        if($languageId == 0) {
+        if ($languageId == 0) {
             $languageId = Services::language()->get()['language_id'];
         }
 

@@ -14,7 +14,7 @@ namespace NodCMS\Core\Models;
 
 class Packages extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "packages";
         $primary_key = "package_id";

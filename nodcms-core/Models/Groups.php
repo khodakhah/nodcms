@@ -14,7 +14,7 @@ namespace NodCMS\Core\Models;
 
 class Groups extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "groups";
         $primary_key = "group_id";
@@ -31,13 +31,13 @@ class Groups extends Model
     /**
      * Insert first data
      */
-    function defaultData()
+    public function defaultData()
     {
         $data = array(
             array('group_id'=>1,'group_name'=>"Admin", 'backend_login'=>1),
             array('group_id'=>20,'group_name'=>"Users", 'backend_login'=>0),
         );
-        foreach($data as $item) {
+        foreach ($data as $item) {
             $this->add($item);
         }
     }

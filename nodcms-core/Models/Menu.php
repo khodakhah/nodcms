@@ -16,7 +16,7 @@ use CodeIgniter\Database\MySQLi\Builder;
 
 class Menu extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "menu";
         $primary_key = "menu_id";
@@ -47,8 +47,9 @@ class Menu extends Model
             'public' => 1,
             'menu_key' => $key
         ];
-        if($parent!=null)
+        if ($parent!=null) {
             $conditions['sub_menu'] = $parent;
+        }
 
         return $this->getAllTrans($conditions, null, 1, ['menu_order', 'ASC']);
     }

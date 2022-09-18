@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\Libraries;
 
-
 use Config\Services;
 use NodCMS\Core\Response\QuickResponse;
 use NodCMS\Core\Types\UploadedFile;
@@ -58,17 +57,17 @@ class Upload
     public function save(string $inputName, string $path = ''): bool
     {
         $this->setPath($path);
-        if(empty($this->path)) {
+        if (empty($this->path)) {
             throw new \Exception("No path set to move the uploaded file.");
         }
         $inputFile = Services::request()->getFile($inputName);
-        if(!$inputFile->isValid()) {
+        if (!$inputFile->isValid()) {
             $this->errorResponse = Services::quickResponse()->getError($inputFile->getErrorString(), $this->back_url);
             return false;
         }
 
         $fileType = $inputFile->guessExtension();
-        if(!empty($this->allowedTypes)) {
+        if (!empty($this->allowedTypes)) {
             if (!in_array($fileType, $this->allowedTypes)) {
                 $this->errorResponse = Services::quickResponse()->getError("The file type \"{$fileType}\" is not able to upload as image.", $this->back_url);
                 return false;
@@ -83,7 +82,7 @@ class Upload
         $result->fileSize = $inputFile->getSize();
         $result->fullPath = $this->path . DIRECTORY_SEPARATOR . $result->savedName;
 
-        if ( ! $inputFile->move(SELF_PATH.$this->path, $result->savedName)) {
+        if (! $inputFile->move(SELF_PATH.$this->path, $result->savedName)) {
             $this->errorResponse = Services::quickResponse()->getError($inputFile->getError(), $this->back_url);
             return false;
         }
@@ -121,15 +120,15 @@ class Upload
      */
     public function filterTypes($types): self
     {
-        if(is_array($types)) {
+        if (is_array($types)) {
             $this->allowedTypes = $types;
             return $this;
         }
 
-        if($types == "images") {
+        if ($types == "images") {
             $this->allowedTypes = ['jpg', 'gif', 'png'];
         }
-        if($types == "text") {
+        if ($types == "text") {
             $this->allowedTypes = ['txt', 'doc', 'odt', 'pdf', 'rtf', 'tex', 'wpd'];
         }
         return $this;
@@ -154,17 +153,17 @@ class Upload
      */
     protected function setPath(string $path = '')
     {
-        if(empty($path)) {
+        if (empty($path)) {
             $this->path = "upload_file";
             return;
         }
 
         $dir_map = explode("/", $path);
         $dir = SELF_PATH;
-        foreach($dir_map as $dir_name) {
+        foreach ($dir_map as $dir_name) {
             $dir .= $dir_name.DIRECTORY_SEPARATOR;
             // Make directory
-            if(!file_exists($dir)){
+            if (!file_exists($dir)) {
                 mkdir($dir);
             }
         }

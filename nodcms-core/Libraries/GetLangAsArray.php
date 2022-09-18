@@ -14,31 +14,33 @@ namespace NodCMS\Core\Libraries;
 
 use Config\App;
 
-class GetLangAsArray {
-    var $language = array();
+class GetLangAsArray
+{
+    public $language = array();
 
     /**
      * List of loaded language files
      *
      * @var array
      */
-    var $is_loaded = array();
+    public $is_loaded = array();
 
-    function __construct() {
+    public function __construct()
+    {
         log_message('debug', "Language Class Initialized");
     }
 
-    function load($langfile = '', $idiom = '', $return = false, $add_suffix = false, $alt_path = COREPATH) {
-
+    public function load($langfile = '', $idiom = '', $return = false, $add_suffix = false, $alt_path = COREPATH)
+    {
         $langfile = str_replace('.php', '', $langfile);
 
-        if ($add_suffix == TRUE) {
+        if ($add_suffix == true) {
             $langfile = str_replace('_lang.', '', $langfile) . '_lang';
         }
 
         $langfile .= '.php';
 
-        if (in_array($langfile, $this->is_loaded, TRUE)) {
+        if (in_array($langfile, $this->is_loaded, true)) {
             return [];
         }
 
@@ -55,7 +57,7 @@ class GetLangAsArray {
             throw new \Exception('Language file contains no data: '.$alt_path.'/language/' . $idiom . '/' . $langfile);
         }
 
-        if ($return == TRUE) {
+        if ($return == true) {
             return $lang;
         }
 

@@ -14,7 +14,7 @@ namespace NodCMS\Core\Models;
 
 class Sessions extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "ci_sessions";
         $primary_key = "";

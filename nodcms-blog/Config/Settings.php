@@ -12,7 +12,6 @@
 
 namespace NodCMS\Blog\Config;
 
-
 class Settings extends \Config\Settings
 {
     /**

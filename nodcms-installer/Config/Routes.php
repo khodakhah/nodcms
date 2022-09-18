@@ -10,7 +10,9 @@
  *
  */
 
-if(!isset($routes)) throw new \Exception('$routes not defined.');
+if (!isset($routes)) {
+    throw new \Exception('$routes not defined.');
+}
 
 $namespace = "\NodCMS\Installer\Controllers\\";
 

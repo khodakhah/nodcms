@@ -40,10 +40,11 @@ class Modules
         $this->activeModules = [];
 
         $modules = Models::packages()->getAll(null, null, 1, ['package_sort', 'ASC']);
-        foreach($modules as $item) {
+        foreach ($modules as $item) {
             $class = "\\".$this->getNameSpace($item['package_name'])."\Bootstrap";
-            if(!class_exists($class))
+            if (!class_exists($class)) {
                 continue;
+            }
 
             $key = strtolower($item['package_name']);
 
@@ -53,8 +54,9 @@ class Modules
             // Set DB data on the class
             $this->installedModules[$key]->setData($item);
 
-            if($item['active'] == 1)
+            if ($item['active'] == 1) {
                 $this->activeModules[$key] = $this->installedModules[$key];
+            }
         }
     }
 
@@ -73,7 +75,7 @@ class Modules
      *
      * @return string[]
      */
-    public function getNames() : array
+    public function getNames(): array
     {
         return array_keys($this->modulesDirs);
     }
@@ -95,7 +97,9 @@ class Modules
      */
     private function getPath(string $name): string
     {
-        if(!$this->packageExists($name)) return "";
+        if (!$this->packageExists($name)) {
+            return "";
+        }
 
         return $this->modulesDirs[strtolower($name)];
     }
@@ -121,14 +125,14 @@ class Modules
         $path = $this->getPath($name);
         $tables = array();
         $models_paths = get_all_php_files("{$path}/Models/");
-        if(!$models_paths) {
+        if (!$models_paths) {
             return $tables;
         }
-        foreach($models_paths as $model_path) {
-            $model_name = "\\".$this->getNameSpace($name)."\Models\\".basename($model_path,".php");
+        foreach ($models_paths as $model_path) {
+            $model_name = "\\".$this->getNameSpace($name)."\Models\\".basename($model_path, ".php");
 
             $theModel = new $model_name();
-            if(!method_exists($theModel, 'tableName')) {
+            if (!method_exists($theModel, 'tableName')) {
                 continue;
             }
 
@@ -148,13 +152,14 @@ class Modules
      *
      * @return \NodCMS\Core\Modules\Bootstrap[]
      */
-    public function getAllBootstraps() : array
+    public function getAllBootstraps(): array
     {
         $result = [];
-        foreach($this->modulesDirs as $name=>$item) {
+        foreach ($this->modulesDirs as $name=>$item) {
             $class = $this->getNameSpace($name)."\Bootstrap";
-            if(class_exists($class))
+            if (class_exists($class)) {
                 $result[$name] = new $class();
+            }
         }
 
         return $result;
@@ -169,12 +174,13 @@ class Modules
     private function _getSettings(string $entity): array
     {
         $result = [];
-        foreach($this->modulesDirs as $name=>$item) {
+        foreach ($this->modulesDirs as $name=>$item) {
             $className = $this->getNameSpace($name)."\Config\Settings";
-            if(class_exists($className)) {
+            if (class_exists($className)) {
                 $class = new $className();
-                if(!property_exists($class, $entity))
+                if (!property_exists($class, $entity)) {
                     continue;
+                }
 
                 $result = array_merge($result, $class->$entity);
             }
@@ -188,7 +194,7 @@ class Modules
      *
      * @return array
      */
-    public function getAllAutoEmailMessages() : array
+    public function getAllAutoEmailMessages(): array
     {
         return $this->_getSettings("autoEmailMessages");
     }
@@ -198,7 +204,7 @@ class Modules
      *
      * @return array
      */
-    public function getModulesDefaultSettings() : array
+    public function getModulesDefaultSettings(): array
     {
         return $this->_getSettings("settings_default");
     }
@@ -208,7 +214,7 @@ class Modules
      *
      * @return array|I_Bootstrap[]
      */
-    public function getAllInstalled() : array
+    public function getAllInstalled(): array
     {
         return $this->installedModules;
     }
@@ -216,7 +222,7 @@ class Modules
     /**
      * @return string[]
      */
-    public function getAllActiveNames() : array
+    public function getAllActiveNames(): array
     {
         return array_keys($this->activeModules);
     }
@@ -230,20 +236,20 @@ class Modules
         $modules = Models::packagesDashboard()->getAll(null, null, 1, ['package_sort', 'ASC']);
         $max = 0;
         // Remove not exists packages
-        foreach ($modules as $item){
-            if(!key_exists($item['package_name'], $this->installedModules)){
+        foreach ($modules as $item) {
+            if (!key_exists($item['package_name'], $this->installedModules)) {
                 Models::packagesDashboard()->remove($item['package_id']);
                 continue;
             }
-            if($item['package_sort']>$max){
+            if ($item['package_sort']>$max) {
                 $max = $item['package_sort'];
             }
             $dashboard_modules[] = $item['package_name'];
         }
 
         // Add the packages that not exists in database
-        foreach($this->installedModules as $key=>$item){
-            if(!in_array($key, $dashboard_modules)){
+        foreach ($this->installedModules as $key=>$item) {
+            if (!in_array($key, $dashboard_modules)) {
                 Models::packagesDashboard()->add(array('package_name'=>$key, 'package_sort'=>$max));
                 $max++;
             }
@@ -255,9 +261,10 @@ class Modules
      */
     public function executeBackend()
     {
-        foreach($this->installedModules as $module) {
-            if(method_exists($module, 'backend'))
+        foreach ($this->installedModules as $module) {
+            if (method_exists($module, 'backend')) {
                 $module->backend();
+            }
         }
     }
 
@@ -266,9 +273,10 @@ class Modules
      */
     public function executeMembership()
     {
-        foreach($this->installedModules as $module) {
-            if(method_exists($module, 'membership'))
+        foreach ($this->installedModules as $module) {
+            if (method_exists($module, 'membership')) {
                 $module->membership();
+            }
         }
     }
 
@@ -280,7 +288,7 @@ class Modules
     public function getMenuList(): array
     {
         $list = [];
-        foreach($this->installedModules as $item) {
+        foreach ($this->installedModules as $item) {
             $list = array_merge($list, (array) $item->menuList());
         }
 
@@ -294,9 +302,10 @@ class Modules
      */
     public function hasDashboard(): bool
     {
-        foreach($this->activeModules as $module) {
-            if(method_exists($module, 'hasDashboard') && $module->hasDashboard())
+        foreach ($this->activeModules as $module) {
+            if (method_exists($module, 'hasDashboard') && $module->hasDashboard()) {
                 return true;
+            }
         }
 
         return false;
@@ -310,14 +319,15 @@ class Modules
     public function getDashboards(): array
     {
         $result = [];
-        foreach($this->activeModules as $key=>$module) {
-            if($module->hasDashboard())
+        foreach ($this->activeModules as $key=>$module) {
+            if ($module->hasDashboard()) {
                 $result[$key] = [
                     'package_id' => $module->getData()['package_id'],
                     'package_name' => $module->getData()['package_name'],
                     'active' => $module->getData()['active'],
                     'content' => $module->getDashboard(),
                 ];
+            }
         }
 
         return $result;
@@ -330,9 +340,10 @@ class Modules
      */
     public function hasMemberDashboard(): bool
     {
-        foreach($this->activeModules as $module) {
-            if(method_exists($module, 'hasMemberDashboard') && $module->hasMemberDashboard())
+        foreach ($this->activeModules as $module) {
+            if (method_exists($module, 'hasMemberDashboard') && $module->hasMemberDashboard()) {
                 return true;
+            }
         }
 
         return false;
@@ -346,9 +357,10 @@ class Modules
     public function getMemberDashboards(): array
     {
         $result = [];
-        foreach($this->activeModules as $key=>$module) {
-            if($module->hasMemberDashboard())
+        foreach ($this->activeModules as $key=>$module) {
+            if ($module->hasMemberDashboard()) {
                 $result[$key] = $module->getMemberDashboard();
+            }
         }
         return $result;
     }
@@ -361,9 +373,10 @@ class Modules
     public function getHomePreviews(): array
     {
         $result = [];
-        foreach($this->activeModules as $key=>$module) {
-            if($module->hasHomePreview())
+        foreach ($this->activeModules as $key=>$module) {
+            if ($module->hasHomePreview()) {
                 $result[$key] = $module->getHomePreview();
+            }
         }
         return $result;
     }

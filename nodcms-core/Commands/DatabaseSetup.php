@@ -64,7 +64,7 @@ class DatabaseSetup extends BaseCommand
      */
     public function run(array $params)
     {
-        if(count($params) != 4) {
+        if (count($params) != 4) {
             CLI::error('Params missing!');
             CLI::write('Please make sure to use the command correctly.');
             $this->showHelp();
@@ -77,13 +77,12 @@ class DatabaseSetup extends BaseCommand
 
         try {
             $dataMapping->setConnection($host, $username, $password, $database);
-        }
-        catch (DatabaseException $e) {
+        } catch (DatabaseException $e) {
             CLI::write(CLI::color("Unable to connect database!", 'red'));
             CLI::newLine();
             CLI::write("Error Code: {$e->getCode()}");
             CLI::write("Error Message: {$e->getMessage()}");
-            if($e->getCode() == 2002) {
+            if ($e->getCode() == 2002) {
                 CLI::newLine();
                 $dbService = CLI::color('mysql-server', 'blue');
                 CLI::write("Please make sure $dbService is available on your server!");

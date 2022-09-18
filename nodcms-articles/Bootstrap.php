@@ -9,6 +9,7 @@
  * the LICENSE file that was distributed with this source code.
  *
  */
+
 namespace NodCMS\Articles;
 
 use Config\Services;
@@ -77,8 +78,8 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
      */
     public function backend()
     {
-        define('ARTICLES_ADMIN_URL',base_url('admin-articles').'/');
-        if(Services::identity()->isAdmin(true)) {
+        define('ARTICLES_ADMIN_URL', base_url('admin-articles').'/');
+        if (Services::identity()->isAdmin(true)) {
             Services::sidebar()->addLink(
                 "article_list",
                 _l("Articles", $this),
@@ -96,7 +97,7 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
     {
         $list = [];
         $data_list = Models::articles()->getAll();
-        foreach($data_list as $item) {
+        foreach ($data_list as $item) {
             $link = new MenuLink();
             $link->title = _l("Article", $this).": {$item['name']}";
             $link->uri = ARTICLES_ADMIN_URL."article/{$item['article_uri']}";

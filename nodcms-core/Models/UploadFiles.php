@@ -14,7 +14,7 @@ namespace NodCMS\Core\Models;
 
 class UploadFiles extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "upload_files";
         $primary_key = "file_id";
@@ -53,8 +53,9 @@ class UploadFiles extends Model
      */
     public function add(array $data): int
     {
-        if(!key_exists("session_id", $data))
+        if (!key_exists("session_id", $data)) {
             $data['session_id'] = session_id();
+        }
         return parent::add($data);
     }
 

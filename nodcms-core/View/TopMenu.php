@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\View;
 
-
 use NodCMS\Core\Types\Link;
 
 class TopMenu extends LinkList
@@ -37,8 +36,9 @@ class TopMenu extends LinkList
     {
         $link = $this->newLink();
         $link->title = $title;
-        if($url !== null)
+        if ($url !== null) {
             $link->uri = $url;
+        }
         $this->add($key, $link);
     }
 }

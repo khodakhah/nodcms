@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\Notification;
 
-
 class EmailNotification
 {
     public function getEmptyMessages(): int

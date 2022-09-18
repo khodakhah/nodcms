@@ -19,7 +19,7 @@ use NodCMS\Pricingtable\Config\Models;
 
 class PricingTableAdmin extends Backend
 {
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
     }
@@ -27,21 +27,21 @@ class PricingTableAdmin extends Backend
     /**
      * Table post list
      */
-    function tables(): string
+    public function tables(): string
     {
-        $this->data['title'] = _l("Pricing Tables",$this);
+        $this->data['title'] = _l("Pricing Tables", $this);
         $this->data['breadcrumb']=array(
             array('title'=>$this->data['title'])
         );
 
         $list_items = array();
-        $data_list = Models::pricingTable()->getAll(null,null,1,array('sort_order','ASC'));
-        foreach ($data_list as &$item){
+        $data_list = Models::pricingTable()->getAll(null, null, 1, array('sort_order','ASC'));
+        foreach ($data_list as &$item) {
             $_sub_items = array();
             $item['table_name'] = '<i class="fas fa-table"></i> '.$item['table_name'];
             $sub_items = Models::pricingTableRecord()->getAll(array('table_id'=>$item['table_id']), null, 1, array("sort_order","ASC"));
-            if($sub_items!=null && count($sub_items)!=0){
-                foreach($sub_items as $sub_item){
+            if ($sub_items!=null && count($sub_items)!=0) {
+                foreach ($sub_items as $sub_item) {
                     $data = array(
                         'id'=>$sub_item['record_id'],
                         'element_id'=>"record-item".$sub_item['record_id'],
@@ -66,7 +66,7 @@ class PricingTableAdmin extends Backend
                 'edit_url'=>PRICING_TABLE_ADMIN_URL."tableSubmit/$item[table_id]",
                 'remove_url'=>PRICING_TABLE_ADMIN_URL."deleteTable/$item[table_id]",
                 'visibility_url'=>PRICING_TABLE_ADMIN_URL."tableVisibility/$item[table_id]",
-                'sub_items'=>join("\n",$_sub_items),
+                'sub_items'=>join("\n", $_sub_items),
             );
             $list_items[] = Services::layout()->setData($data)->render("list_sort_item");
         }
@@ -89,19 +89,20 @@ class PricingTableAdmin extends Backend
      * Save new sort
      * @throws \Exception
      */
-    function sortSubmit()
+    public function sortSubmit()
     {
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
-        if(!Services::identity()->isAdmin())
+        if (!Services::identity()->isAdmin()) {
             return Services::identity()->getResponse();
+        }
         $post_data = Services::request()->getPost("data");
-        if($post_data == null) {
+        if ($post_data == null) {
             return $this->errorMessage("Sort data shouldn't be empty.", $back_url);
         }
         $post_data = json_decode($post_data);
-        foreach($post_data as $i=>$item){
-            if(isset($item->children) && is_array($item->children)){
-                foreach($item->children as $j=>$sub_item){
+        foreach ($post_data as $i=>$item) {
+            if (isset($item->children) && is_array($item->children)) {
+                foreach ($item->children as $j=>$sub_item) {
                     $update_data = array(
                         'sort_order'=>$j,
                         'table_id'=>$item->id,
@@ -124,19 +125,19 @@ class PricingTableAdmin extends Backend
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function tableSubmit(int $id = 0)
+    public function tableSubmit(int $id = 0)
     {
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
         $self_url = PRICING_TABLE_ADMIN_URL."tableSubmit/$id";
 
-        if($id!=0){
+        if ($id!=0) {
             $data = Models::pricingTable()->getOne($id);
-            if(count($data)==0){
+            if (count($data)==0) {
                 return $this->errorMessage("The table couldn't find.", $back_url);
             }
             $this->data['sub_title'] = _l("Edit", $this);
             $form_attr = array('data-redirect'=>1);
-        }else{
+        } else {
             $this->data['sub_title'] = _l("Add", $this);
             $form_attr = array('data-reset'=>1,'data-redirect'=>1);
         }
@@ -148,7 +149,7 @@ class PricingTableAdmin extends Backend
                 'label' => _l("Name", $this),
                 'type' => "text",
                 'rules' => 'required',
-                'default'=>isset($data)?$data['table_name']:"",
+                'default'=>isset($data) ? $data['table_name'] : "",
             ),
             array(
                 'field' => 'table_price',
@@ -156,37 +157,37 @@ class PricingTableAdmin extends Backend
                 'type' => "currency",
                 'rules' => 'validCurrency',
                 'default_formatted' => $this->settings['currency_format'],
-                'divider' => $this->settings['currency_code'] == "1.234,56"?',':'.',
+                'divider' => $this->settings['currency_code'] == "1.234,56" ? ',' : '.',
                 'after_sign' => $this->settings['currency_code'],
-                'default'=>isset($data)?$data['table_price']:0,
+                'default'=>isset($data) ? $data['table_price'] : 0,
             ),
             array(
                 'field' => 'table_public',
                 'label' => _l("Public", $this),
                 'type' => "switch",
                 'rules' => 'required|in_list[0,1]',
-                'default'=>isset($data)?$data['table_public']:"",
+                'default'=>isset($data) ? $data['table_public'] : "",
             ),
             array(
                 'field' => 'table_highlight',
                 'label' => _l("Highlight", $this),
                 'type' => "switch",
                 'rules' => 'required|in_list[0,1]',
-                'default'=>isset($data)?$data['table_highlight']:"",
+                'default'=>isset($data) ? $data['table_highlight'] : "",
             ),
             array(
                 'field' => 'table_url',
                 'label' => _l("URL", $this),
                 'type' => "text",
                 'rules' => '',
-                'default'=>isset($data)?$data['table_url']:"",
+                'default'=>isset($data) ? $data['table_url'] : "",
             ),
         );
 
         $languages = Models::languages()->getAll();
-        foreach ($languages as $language){
+        foreach ($languages as $language) {
             $translate = Models::pricingTable()->getTranslations($id, $language['language_id']);
-            array_push($config,array(
+            array_push($config, array(
                 'prefix_language'=>$language,
                 'label'=>$language['language_title'],
                 'type'=>"h4",
@@ -194,46 +195,46 @@ class PricingTableAdmin extends Backend
             $prefix = "translate[$language[language_id]]";
             array_push($config, array(
                 'field'=>$prefix."[title]",
-                'label'=>_l('Title',$this),
+                'label'=>_l('Title', $this),
                 'rules'=>"",
                 'type'=>"text",
-                'default'=>isset($translate['title'])?$translate['title']:'',
+                'default'=>isset($translate['title']) ? $translate['title'] : '',
             ));
             array_push($config, array(
                 'field'=>$prefix."[btn_label]",
                 'label'=>_l("Button label", $this),
                 'rules'=>"",
                 'type'=>"text",
-                'default'=>isset($translate['btn_label'])?$translate['btn_label']:'',
+                'default'=>isset($translate['btn_label']) ? $translate['btn_label'] : '',
             ));
         }
 
         $myform->config($config, $self_url, 'post', 'ajax');
-        if($myform->ispost()){
-            if(!Services::identity()->isAdmin())
+        if ($myform->ispost()) {
+            if (!Services::identity()->isAdmin()) {
                 return Services::identity()->getResponse();
+            }
             $post_data = $myform->getPost();
             // Stop Page
-            if($post_data === false){
+            if ($post_data === false) {
                 return $myform->getResponse();
             }
 
-            if(key_exists('translate', $post_data)){
+            if (key_exists('translate', $post_data)) {
                 $translates = $post_data['translate'];
                 unset($post_data['translate']);
             }
 
-            if($id!=null){
+            if ($id!=null) {
                 Models::pricingTable()->edit($id, $post_data);
-                if(isset($translates)){
-                    Models::pricingTable()->updateTranslations($id,$translates,$languages);
+                if (isset($translates)) {
+                    Models::pricingTable()->updateTranslations($id, $translates, $languages);
                 }
                 return $this->successMessage("The table has been edited successfully.", $back_url);
-            }
-            else{
+            } else {
                 $new_id = Models::pricingTable()->add($post_data);
-                if(isset($translates)){
-                    Models::pricingTable()->updateTranslations($new_id,$translates,$languages);
+                if (isset($translates)) {
+                    Models::pricingTable()->updateTranslations($new_id, $translates, $languages);
                 }
                 return $this->successMessage("A new table has been added successfully.", $back_url);
             }
@@ -244,7 +245,7 @@ class PricingTableAdmin extends Backend
             array('title'=>_l("Table tables", $this), 'url'=>$back_url),
             array('title'=>$this->data['sub_title']));
         $this->data['page'] = "pricing_table_submit";
-        return $this->viewRenderString($myform->fetch(null,$form_attr));
+        return $this->viewRenderString($myform->fetch(null, $form_attr));
     }
 
     /**
@@ -254,22 +255,22 @@ class PricingTableAdmin extends Backend
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function tableVisibility($id)
+    public function tableVisibility($id)
     {
-        if(!Services::identity()->isAdmin()){
+        if (!Services::identity()->isAdmin()) {
             return Services::identity()->getResponse();
         }
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
         $data= Models::pricingTable()->getOne($id);
-        if($data == null || count($data)==0){
+        if ($data == null || count($data)==0) {
             return $this->errorMessage("Couldn't find the table.", $back_url);
         }
         $public = Services::request()->getPost('data');
-        if($public == 1){
+        if ($public == 1) {
             $public = 0;
-        }elseif($public == 0){
+        } elseif ($public == 0) {
             $public = 1;
-        }else{
+        } else {
             return $this->errorMessage("Visibility value isn't correct. Please reload the page to solve this problem.", $back_url);
         }
         $update_data = array(
@@ -287,19 +288,20 @@ class PricingTableAdmin extends Backend
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function deleteTable(int $id, int $confirm = 0)
+    public function deleteTable(int $id, int $confirm = 0)
     {
-        if(!Services::identity()->isAdmin())
+        if (!Services::identity()->isAdmin()) {
             return Services::identity()->getResponse();
+        }
 
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
         $self_url = PRICING_TABLE_ADMIN_URL."deleteTable/$id";
         $data = Models::pricingTable()->getOne($id);
-        if(count($data)==0){
+        if (count($data)==0) {
             return $this->errorMessage("Couldn't find the table.", $back_url);
         }
 
-        if($confirm!=1){
+        if ($confirm!=1) {
             return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">'._l("This action will delete the pricing table with its records.", $this).
@@ -314,7 +316,7 @@ class PricingTableAdmin extends Backend
         }
 
         $childes = Models::pricingTableRecord()->getAll(array('table_id'=>$id));
-        foreach($childes as $item){
+        foreach ($childes as $item) {
             Models::pricingTableRecord()->remove($item['record_id']);
         }
         Models::pricingTable()->remove($id);
@@ -328,29 +330,29 @@ class PricingTableAdmin extends Backend
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function recordSubmit(int$id = 0)
+    public function recordSubmit(int$id = 0)
     {
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
         $self_url = PRICING_TABLE_ADMIN_URL."recordSubmit/$id";
 
-        if($id!=0){
+        if ($id!=0) {
             $data = Models::pricingTableRecord()->getOne($id);
-            if(count($data)==0){
+            if (count($data)==0) {
                 return $this->errorMessage("The record couldn't find.", $back_url);
             }
             $this->data['sub_title'] = _l("Edit", $this);
             $form_attr = array('data-redirect'=>1);
-        }else{
+        } else {
             $this->data['sub_title'] = _l("Add", $this);
             $form_attr = array('data-reset'=>1,'data-redirect'=>1);
         }
 
         $tables = Models::pricingTable()->getAll();
-        if(empty($tables)){
+        if (empty($tables)) {
             return $this->errorMessage("Before add a record you need to have a table.", $back_url);
         }
 
-        if($id == 0){
+        if ($id == 0) {
             array_unshift($tables, array(
                 'table_name'=>_l("All tables", $this),
                 'table_id'=>0,
@@ -364,7 +366,7 @@ class PricingTableAdmin extends Backend
                 'label' => _l("Name", $this),
                 'type' => "text",
                 'rules' => 'required',
-                'default'=>isset($data)?$data['record_name']:"",
+                'default'=>isset($data) ? $data['record_name'] : "",
             ),
             array(
                 'field' => 'table_id',
@@ -374,14 +376,14 @@ class PricingTableAdmin extends Backend
                 'options'=>$tables,
                 'option_name'=>"table_name",
                 'option_value'=>"table_id",
-                'default'=>isset($data)?$data['table_id']:"",
+                'default'=>isset($data) ? $data['table_id'] : "",
             ),
         );
 
         $languages = Models::languages()->getAll();
-        foreach ($languages as $language){
+        foreach ($languages as $language) {
             $translate = Models::pricingTable()->getTranslations($id, $language['language_id']);
-            array_push($config,array(
+            array_push($config, array(
                 'prefix_language'=>$language,
                 'label'=>$language['language_title'],
                 'type'=>"h4",
@@ -392,50 +394,51 @@ class PricingTableAdmin extends Backend
                 'label'=>_l("Label", $this),
                 'rules'=>"",
                 'type'=>"text",
-                'default'=>isset($translate['title'])?$translate['title']:'',
+                'default'=>isset($translate['title']) ? $translate['title'] : '',
             ));
         }
 
         $myform->config($config, $self_url, 'post', 'ajax');
-        if($myform->ispost()){
-            if(!Services::identity()->isAdmin())
+        if ($myform->ispost()) {
+            if (!Services::identity()->isAdmin()) {
                 return Services::identity()->getResponse();
+            }
             $post_data = $myform->getPost();
             // Stop Page
-            if($post_data === false){
+            if ($post_data === false) {
                 return $myform->getResponse();
             }
 
-            if(key_exists('translate', $post_data)){
+            if (key_exists('translate', $post_data)) {
                 $translates = $post_data['translate'];
                 unset($post_data['translate']);
             }
 
             // Add all under all tables
-            if($post_data['table_id']==0){
-                foreach($tables as $i=>$table){
-                    if($i==0)
+            if ($post_data['table_id']==0) {
+                foreach ($tables as $i=>$table) {
+                    if ($i==0) {
                         continue;
+                    }
                     $post_data['table_id'] = $table['table_id'];
                     $new_id = Models::pricingTableRecord()->add($post_data);
-                    if(isset($translates)){
-                        Models::pricingTableRecord()->updateTranslations($new_id,$translates,$languages);
+                    if (isset($translates)) {
+                        Models::pricingTableRecord()->updateTranslations($new_id, $translates, $languages);
                     }
                 }
                 return $this->successMessage("A new record has been on all tables added successfully.", $back_url);
             }
 
-            if($id!=0){
+            if ($id!=0) {
                 Models::pricingTableRecord()->edit($id, $post_data);
-                if(isset($translates)){
-                    Models::pricingTableRecord()->updateTranslations($id,$translates,$languages);
+                if (isset($translates)) {
+                    Models::pricingTableRecord()->updateTranslations($id, $translates, $languages);
                 }
                 return $this->successMessage("The table record has been edited successfully.", $back_url);
-            }
-            else{
+            } else {
                 $new_id = Models::pricingTableRecord()->add($post_data);
-                if(isset($translates)){
-                    Models::pricingTableRecord()->updateTranslations($new_id,$translates,$languages);
+                if (isset($translates)) {
+                    Models::pricingTableRecord()->updateTranslations($new_id, $translates, $languages);
                 }
                 return $this->successMessage("A new table record has been added successfully.", $back_url);
             }
@@ -446,24 +449,25 @@ class PricingTableAdmin extends Backend
             array('title'=>_l("Tables Records", $this), 'url'=>$back_url),
             array('title'=>$this->data['sub_title']));
         $this->data['page'] = "pricing_table_record_submit";
-        return $this->viewRenderString($myform->fetch(null,$form_attr));
+        return $this->viewRenderString($myform->fetch(null, $form_attr));
     }
 
     /**
      * Save new sort
      * @throws \Exception
      */
-    function recordSortSubmit()
+    public function recordSortSubmit()
     {
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
-        if(!Services::identity()->isAdmin())
+        if (!Services::identity()->isAdmin()) {
             return Services::identity()->getResponse();
+        }
         $post_data = Services::request()->getPost("data");
-        if($post_data == null) {
+        if ($post_data == null) {
             return $this->errorMessage("Sort data shouldn't be empty.", $back_url);
         }
         $post_data = json_decode($post_data);
-        foreach($post_data as $i=>$item){
+        foreach ($post_data as $i=>$item) {
             $update_data = array(
                 'sort_order'=>$i,
             );
@@ -480,19 +484,20 @@ class PricingTableAdmin extends Backend
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function deleteRecord(int $id, $confirm = 0)
+    public function deleteRecord(int $id, $confirm = 0)
     {
-        if(!Services::identity()->isAdmin())
+        if (!Services::identity()->isAdmin()) {
             return Services::identity()->getResponse();
+        }
 
         $back_url = PRICING_TABLE_ADMIN_URL."tables";
         $self_url = PRICING_TABLE_ADMIN_URL."deleteRecord/$id";
         $data = Models::pricingTableRecord()->getOne($id);
-        if($data==null || count($data)==0){
+        if ($data==null || count($data)==0) {
             return $this->errorMessage("Couldn't find the record.", $back_url);
         }
 
-        if($confirm!=1){
+        if ($confirm!=1) {
             return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">'._l("This action will delete the pricing table record.", $this).

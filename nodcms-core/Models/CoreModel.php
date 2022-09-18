@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\Models;
 
-
 use CodeIgniter\Database\ConnectionInterface;
 use Config\Database;
 
@@ -40,10 +39,10 @@ abstract class CoreModel
      */
     public function __construct(ConnectionInterface $db = null)
     {
-        if($db != null)
+        if ($db != null) {
             $this->db = $db;
-        else
+        } else {
             $this->db = Database::connect($this->DBGroup);
+        }
     }
-
 }

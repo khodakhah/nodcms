@@ -19,7 +19,7 @@ use NodCMS\Services\Config\Models;
 
 class ServicesFrontend extends Frontend
 {
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         Services::layout()->setConfig(new ViewFrontend());
@@ -30,16 +30,18 @@ class ServicesFrontend extends Frontend
      *
      * @return string
      */
-    static function home(){
+    public static function home()
+    {
         $data = [];
         $data_list = Models::services()->getAllTrans(array('service_public'=>1), null, 1, array('sort_order', 'ASK'));
-        if(is_array($data_list)){
+        if (is_array($data_list)) {
             $data['services_has_price'] = Services::settings()->get()['services_display_price'];
             $data['services_has_content'] = Services::settings()->get()['services_page'];
-            if($data['services_has_content'])
-                foreach ($data_list as &$item){
+            if ($data['services_has_content']) {
+                foreach ($data_list as &$item) {
                     $item['service_url'] = base_url(Services::language()->getLocale()."/service-{$item['service_uri']}");
                 }
+            }
             $data['data_list'] = $data_list;
         }
         $data['title'] = Services::settings()->get()['services_page_title'];
@@ -52,10 +54,10 @@ class ServicesFrontend extends Frontend
      * @param string $uri
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      */
-    function service(string $uri)
+    public function service(string $uri)
     {
         $data = Models::services()->getOneTrans(null, array('service_uri'=>$uri,'service_public'=>1));
-        if(!is_array($data) || count($data)==0){
+        if (!is_array($data) || count($data)==0) {
             return $this->errorMessage(_l("Service not found.", $this));
         }
 
@@ -65,11 +67,12 @@ class ServicesFrontend extends Frontend
         $this->data['services_has_content'] = $this->settings['services_page'];
 
         $data_list = Models::services()->getAllTrans(array('service_id <>'=>$data['service_id'],'service_public'=>1));
-        if(is_array($data_list)){
-            if($this->data['services_has_content'])
-                foreach ($data_list as &$item){
+        if (is_array($data_list)) {
+            if ($this->data['services_has_content']) {
+                foreach ($data_list as &$item) {
                     $item['service_url'] = base_url($this->language['code']."/service-$item[service_uri]");
                 }
+            }
             $this->data['data_list'] = $data_list;
         }
 

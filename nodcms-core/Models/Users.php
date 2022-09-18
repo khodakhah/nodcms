@@ -16,7 +16,7 @@ use Config\Services;
 
 class Users extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "users";
         $primary_key = "user_id";
@@ -61,9 +61,9 @@ class Users extends Model
      */
     public function generateUniqueKey()
     {
-        $unique_key = md5(time()+rand(100000,999999));
-        while ($this->getCount(array("user_unique_key"=>$unique_key))!=0){
-            $unique_key = md5(time()+rand(100000,999999));
+        $unique_key = md5(time()+rand(100000, 999999));
+        while ($this->getCount(array("user_unique_key"=>$unique_key))!=0) {
+            $unique_key = md5(time()+rand(100000, 999999));
         }
         return $unique_key;
     }
@@ -90,7 +90,7 @@ class Users extends Model
 
         $data = array_merge($default_data, $data);
 
-        if(!key_exists('fullname', $data)) {
+        if (!key_exists('fullname', $data)) {
             $data['fullname'] = "$data[firstname] $data[lastname]";
         }
 
@@ -107,12 +107,12 @@ class Users extends Model
      */
     public function edit($id, $data)
     {
-        if(key_exists('password', $data)) {
+        if (key_exists('password', $data)) {
             $data['password'] = md5($data['password']);
         }
 
         $_data = $this->getOne($id);
-        if(!empty($_data)) {
+        if (!empty($_data)) {
             $__data = array_merge(array(
                 'firstname'=>$_data['firstname'],
                 'lastname'=>$_data['lastname'],
@@ -143,7 +143,7 @@ class Users extends Model
      * @param $password
      * @return array|null
      */
-    public function loginMatch($username, $password) : ?array
+    public function loginMatch($username, $password): ?array
     {
         return $this->getOne(null, ['username'=>$username, 'password'=>md5($password)]);
     }
