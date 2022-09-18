@@ -34,6 +34,7 @@
 	"require": {
 		"codeigniter4/framework": "^4.2",
 		"codeigniter4/translations": "^4.2",
-		"composer/composer": "^2.4"
+		"composer/composer": "^2.4",
+		"friendsofphp/php-cs-fixer": "^3.11"
 	}
 }
