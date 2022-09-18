@@ -22,7 +22,8 @@
 		],
 		"env-production": "NodCMS\\Core\\ComposerScripts::setEnv",
 		"env-development": "cp .env.development .env",
-		"start": "php -S localhost:8000 -t public"
+		"start": "php -S localhost:8000 -t public",
+		"fix": "php vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --config=php-cs-fixer.dist.php"
 	},
 	"support": {
 		"forum": "https://nodecms.com/",
