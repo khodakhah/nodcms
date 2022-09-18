@@ -16,8 +16,7 @@ $rules = [
 
 $finder = PhpCsFixer\Finder::create()
   ->in(__DIR__)
-  ->exclude('vendor')
-  ->exclude('writable')
+  ->exclude(['vendor', 'writable', 'Views'])
 ;
 
 $config = new PhpCsFixer\Config();
