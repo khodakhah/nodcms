@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.4.2] 20-10-03
+### Changed
+- PHP web server with spark in `composer start` command
+- The command interface descriptions
+
 ## [3.4.1] 20-09-13
 ## Fixed
 - The bundle pipeline

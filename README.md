@@ -73,7 +73,7 @@ You need only open the project with a browser and follow the installation steps.
 [Learn more](https://nodcms.com/user-guide/)
 
 ### 2. Command Interface
-You need run following commands in shell:
+To setup database and create tables via CLI, you need to run the following commands:
 ```shell
 # 1. Save database connection parameters in .env file
 php spark database:setup localhost root db-password table-name
