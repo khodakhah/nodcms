@@ -90,6 +90,12 @@ Database parameters for docker:
 
 To stop the docker please run ``docker-composer stop`` if you run the ``docker-compose -d`` in the previous step.
 
+**NOTE**
+
+In order to install dependencies without PHP environment checking, please run `composer install --ignore-platform-reqs` 
+
+---
+
 ### 2. Command Interface
 You need run following commands in shell:
 ```shell
