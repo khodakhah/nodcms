@@ -29,7 +29,7 @@ class DatabaseBuild extends BaseCommand
      *
      * @var string
      */
-    protected $description = 'Builds database tables on the given connection.';
+    protected $description = 'Create database tables.';
 
     /**
      * The Command's Usage

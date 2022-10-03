@@ -29,7 +29,7 @@ class SettingsAdmin extends BaseCommand
      *
      * @var string
      */
-    protected $description = '';
+    protected $description = 'Create or update an admin user with the given parameters.';
 
     /**
      * The Command's Usage

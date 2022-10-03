@@ -75,13 +75,13 @@ You need only open the project with a browser and follow the installation steps.
 ### 2. Command Interface
 You need run following commands in shell:
 ```shell
-# 1. Save your database connection in .env file
+# 1. Save database connection parameters in .env file
 php spark database:setup localhost root db-password table-name
 
-# 2. Build your database
+# 2. Create database tables
 php spark database:build
 
-# 3. Re/Generate admin user
+# 3. Create/Update an admin user with the given parameters
 php spark settings:admin [firstname] [lastname] [email] [password]
 ```
 #### Important
