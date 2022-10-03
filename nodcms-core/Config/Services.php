@@ -3,6 +3,7 @@
 use CodeIgniter\Config\Services as CoreServices;
 use NodCMS\Core\Libraries\Currency;
 use NodCMS\Core\Libraries\DatabaseEnvConfig;
+use NodCMS\Core\Libraries\DatabaseMapping;
 use NodCMS\Core\Libraries\Identity;
 use NodCMS\Core\Libraries\Language;
 use NodCMS\Core\Libraries\Settings as SettingsLibrary;
@@ -230,6 +231,21 @@ class Services extends CoreServices
         }
 
         return new Models();
+    }
+
+    /**
+     * Database mapping from Models
+     *
+     * @param bool $getShared
+     * @return DatabaseMapping
+     */
+    public static function databaseMapping(bool $getShared = true): DatabaseMapping
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('databaseMapping');
+        }
+        return new DatabaseMapping();
     }
 
     /**

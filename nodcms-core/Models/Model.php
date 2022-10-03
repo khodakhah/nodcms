@@ -17,7 +17,7 @@ use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Database\Exceptions\DatabaseException;
 use Config\Services;
 
-class Model extends CoreModel
+class Model extends CoreModel implements ModelInterface
 {
     private $table_name;
     private $primary_key;
@@ -36,7 +36,7 @@ class Model extends CoreModel
     }
 
     /**
-     * The function to setup the model in child classes
+     * @inheritDoc
      */
     public function init()
     {
@@ -44,15 +44,9 @@ class Model extends CoreModel
     }
 
     /**
-     * NodCMS_Model constructor.
-     *
-     * @param $table_name
-     * @param $primary_key
-     * @param $fields
-     * @param null $foreign_tables
-     * @param null $translation_fields
+     * @inheritDoc
      */
-    function setup($table_name, $primary_key, $fields, $foreign_tables = null, $translation_fields = null)
+    public function setup($table_name, $primary_key, $fields, $foreign_tables = null, $translation_fields = null)
     {
         $this->table_name = $table_name;
         $this->primary_key = $primary_key;
@@ -62,9 +56,7 @@ class Model extends CoreModel
     }
 
     /**
-     * Insert to the database
-     *
-     * @param array $data
+     * @inheritDoc
      */
     public function add(array $data): int
     {
@@ -79,20 +71,15 @@ class Model extends CoreModel
     }
 
     /**
-     * Update a table in database with id as condition
-     *
-     * @param $id
-     * @param $data
+     * @inheritDoc
      */
-    function edit($id, $data)
+    public function edit($id, $data)
     {
         $this->getBuilder()->update($data, array($this->primary_key=>$id));
     }
 
     /**
-     * Update a table in database with conditions
-     * @param array $data
-     * @param array|string $conditions
+     * @inheritDoc
      */
     public function update(array $data, $conditions)
     {
@@ -100,11 +87,9 @@ class Model extends CoreModel
     }
 
     /**
-     * Delete form a database
-     *
-     * @param $id
+     * @inheritDoc
      */
-    function remove($id)
+    public function remove($id)
     {
         // Delete Foreign Tables
         if($this->foreign_tables != null && is_array($this->foreign_tables) && count($this->foreign_tables)!=0){
@@ -123,11 +108,9 @@ class Model extends CoreModel
     }
 
     /**
-     * Delete a list rows from a table
-     *
-     * @param $conditions
+     * @inheritDoc
      */
-    function clean($conditions = null)
+    public function clean($conditions = null)
     {
         $all = $this->getAll($conditions);
         if($conditions == null)
@@ -147,12 +130,9 @@ class Model extends CoreModel
     }
 
     /**
-     * Universal count query
-     *
-     * @param null|array $conditions
-     * @return mixed
+     * @inheritDoc
      */
-    function getCount($conditions = null)
+    public function getCount($conditions = null)
     {
         $builder = $this->getBuilder();
         if ($conditions != null)
@@ -161,13 +141,9 @@ class Model extends CoreModel
     }
 
     /**
-     * Universal sum query
-     *
-     * @param $field
-     * @param null $conditions
-     * @return int
+     * @inheritDoc
      */
-    function getSum($field, $conditions = null): int
+    public function getSum($field, $conditions = null): int
     {
         $builder = $this->getBuilder();
         $builder->select("sum($field)");
@@ -179,13 +155,9 @@ class Model extends CoreModel
     }
 
     /**
-     * Universal max query
-     *
-     * @param $field
-     * @param null $conditions
-     * @return int
+     * @inheritDoc
      */
-    function getMax($field, $conditions = null): int
+    public function getMax($field, $conditions = null): int
     {
         $builder = $this->getBuilder();
         $builder->select("max($field)");
@@ -197,16 +169,9 @@ class Model extends CoreModel
     }
 
     /**
-     * Select a list from a database
-     *
-     * @param null|array $conditions
-     * @param null|int $limit
-     * @param int $page
-     * @param null|array $sort_by
-     * @param BaseBuilder|null $builder
-     * @return mixed
+     * @inheritDoc
      */
-    function getAll($conditions = null, $limit=null, $page=1, ?array $sort_by = null, BaseBuilder $builder = null): array
+    public function getAll($conditions = null, $limit=null, $page=1, ?array $sort_by = null, BaseBuilder $builder = null): array
     {
         if(!$builder != null)
             $builder = $this->getBuilder();
@@ -231,13 +196,9 @@ class Model extends CoreModel
     }
 
     /**
-     * Select a row from a database
-     *
-     * @param $id
-     * @param null $conditions
-     * @return mixed
+     * @inheritDoc
      */
-    function getOne($id, $conditions = null)
+    public function getOne($id, $conditions = null)
     {
         $builder = $this->getBuilder();
         $builder->select('*');
@@ -253,12 +214,9 @@ class Model extends CoreModel
     }
 
     /**
-     * Decode search data
-     *
-     * @param array|string $conditions
-     * @param BaseBuilder $builder
+     * @inheritDoc
      */
-    function searchDecode($conditions, BaseBuilder $builder)
+    public function searchDecode($conditions, BaseBuilder $builder)
     {
         if(!is_array($conditions)){
             $builder->where($conditions);
@@ -334,14 +292,9 @@ class Model extends CoreModel
     }
 
     /**
-     * Select a row from database and merging with related translations
-     *
-     * @param $id
-     * @param null $conditions
-     * @param null $language_id
-     * @return null|array
+     * @inheritDoc
      */
-    function getOneTrans($id, $conditions = null, $language_id = null): ?array
+    public function getOneTrans($id, $conditions = null, $language_id = null): ?array
     {
         $default_trans = array_fill_keys($this->translation_fields,"");
         $first_result = $this->getOne($id, $conditions);
@@ -361,16 +314,9 @@ class Model extends CoreModel
     }
 
     /**
-     * Select a list from a database with translation keys
-     *
-     * @param array|null $conditions
-     * @param int|null $limit
-     * @param int $page
-     * @param array|null $sort_by
-     * @param int|null $language_id
-     * @return array
+     * @inheritDoc
      */
-    function getAllTrans(array $conditions = null, int $limit = null, int $page = 1, ?array $sort_by = null, int $language_id = null): array
+    public function getAllTrans(array $conditions = null, int $limit = null, int $page = 1, ?array $sort_by = null, int $language_id = null): array
     {
         $first_result = $this->getAll($conditions, $limit, $page, $sort_by);
 
@@ -394,14 +340,9 @@ class Model extends CoreModel
     }
 
     /**
-     * Select a row from "translations"
-     *
-     * @param int $id
-     * @param string $field
-     * @param null|int $language_id
-     * @return array
+     * @inheritDoc
      */
-    function getTranslation(int $id, string $field, int $language_id = null): array
+    public function getTranslation(int $id, string $field, int $language_id = null): array
     {
         if($language_id==null)
             $language_id = Services::language()->get()['language_id'];
@@ -411,13 +352,9 @@ class Model extends CoreModel
     }
 
     /**
-     * Get a result of translations
-     *
-     * @param int $id
-     * @param int $language_id
-     * @return array
+     * @inheritDoc
      */
-    function getTranslations(int $id, int $language_id = 0): array
+    public function getTranslations(int $id, int $language_id = 0): array
     {
         if($language_id != 0)
             $language_id = Services::language()->get()['language_id'];
@@ -433,14 +370,9 @@ class Model extends CoreModel
     }
 
     /**
-     * Insert/Update a translation row
-     *
-     * @param $id
-     * @param $value
-     * @param $field
-     * @param $language_id
+     * @inheritDoc
      */
-    function updateTranslation($id, $value, $field, $language_id)
+    public function updateTranslation($id, $value, $field, $language_id)
     {
         if(!in_array($field, $this->translation_fields)){
             throw new DatabaseException("The field '$field' doesn't exists in the translation_files of $this->table_name.");
@@ -470,13 +402,9 @@ class Model extends CoreModel
     }
 
     /**
-     * Update translations of a field
-     *
-     * @param $id
-     * @param $values
-     * @param $languages
+     * @inheritDoc
      */
-    function updateTranslations($id, $values, $languages)
+    public function updateTranslations($id, $values, $languages)
     {
         foreach ($languages as $language) {
             foreach ($this->translation_fields as $field_name){
@@ -488,64 +416,49 @@ class Model extends CoreModel
     }
 
     /**
-     * Get the table_name
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    function tableName()
+    public function tableName()
     {
         return $this->table_name;
     }
 
     /**
-     * Get the primary_key
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    function primaryKey()
+    public function primaryKey()
     {
         return $this->primary_key;
     }
 
     /**
-     * Get the fields
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    function fields()
+    public function fields()
     {
         return $this->fields;
     }
 
     /**
-     * Get the foreign_tables
-     *
-     * @return null
+     * @inheritDoc
      */
-    function foreignTables()
+    public function foreignTables()
     {
         return $this->foreign_tables;
     }
 
     /**
-     * Get the translation_fields
-     *
-     * @return null
+     * @inheritDoc
      */
-    function translationFields()
+    public function translationFields()
     {
         return $this->translation_fields;
     }
 
     /**
-     * Select data from a table to use in statistics
-     *
-     * @param $type
-     * @param null $sum
-     * @param null $conditions
-     * @return array
+     * @inheritDoc
      */
-    function getDateStatistic($type, $sum = null, $conditions = null): array
+    public function getDateStatistic($type, $sum = null, $conditions = null): array
     {
         $types = array(
             'weekdays'=>array(
@@ -575,9 +488,7 @@ class Model extends CoreModel
     }
 
     /**
-     * Create table
-     *
-     * @return mixed
+     * @inheritDoc
      */
     public function installTable()
     {
@@ -611,9 +522,7 @@ class Model extends CoreModel
     }
 
     /**
-     * Repair fields of a table
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function repairTable()
     {
@@ -652,9 +561,7 @@ class Model extends CoreModel
     }
 
     /**
-     * Drop table
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function dropTable()
     {
@@ -663,9 +570,7 @@ class Model extends CoreModel
     }
 
     /**
-     * Return true if the table exists
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function tableExists()
     {

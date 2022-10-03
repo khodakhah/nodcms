@@ -21,7 +21,7 @@ class App extends BaseConfig
 	| environments.
 	|
 	*/
-	public $baseURL = CONFIG_BASE_URL;
+	public $baseURL = '';
 
 	/*
 	|--------------------------------------------------------------------------
@@ -88,7 +88,7 @@ class App extends BaseConfig
 	| found, the first locale will be used.
 	|
 	*/
-	public $supportedLocales = ['ar', 'de', 'en', 'es', 'fa', 'fr', 'id', 'it', 'lo', 'lt', 'no', 'pl', 'pt', 'pt-BR', 'ru', 'sk', 'tr', 'zh-CN', 'zh-TW'];
+	public $supportedLocales = ['en', 'ar', 'de', 'es', 'fa', 'fr', 'id', 'it', 'lo', 'lt', 'no', 'pl', 'pt', 'pt-BR', 'ru', 'sk', 'tr', 'zh-CN', 'zh-TW'];
 
 	/*
 	|--------------------------------------------------------------------------

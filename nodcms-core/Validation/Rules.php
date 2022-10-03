@@ -666,9 +666,9 @@ class Rules
             return false;
         }
         // * Check hostname
-        if($response['hostname']!=CONFIG_BASE_URL){
+        if($response['hostname'] != base_url()){
             $search = array('{response_hostname}','{current_hostname}');
-            $replace = array($response['hostname'],CONFIG_BASE_URL);
+            $replace = array($response['hostname'], base_url());
             $error = str_replace($search, $replace,_l("The solve hostname({response_hostname}) shall be equal to {current_hostname}.", $this));
             return false;
         }
