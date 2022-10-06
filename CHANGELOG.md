@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PHP web server with spark for `composer start` command.
 - The command interface descriptions.
 
+### Added
+- Docker to the project.
+
 ## [3.4.1] 20-09-13
 ## Fixed
 - The bundle pipeline
@@ -28,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ``composer env-production`` to build ``.env`` file from ``.env.production``
   - ``composer env-development`` to build ``.env`` file from ``.env.development``
 ### Changed
-- Environment defination moved from ``/public/index.php`` to ``/.env`` file.
+- Environment definition moved from ``/public/index.php`` to ``/.env`` file.
 ### Fixed
 - [NodCMS-Bundle](https://github.com/khodakhah/nodcms-bundle) issue [#87](https://github.com/khodakhah/nodcms/issues/87)
 

@@ -13,4 +13,5 @@ writable/debugbar/*
 nodcms/config/database.php
 vendor
 .idea
+docker/data/*
 .env
