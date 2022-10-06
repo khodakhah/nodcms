@@ -72,6 +72,30 @@ NodCMS database structure can be created automatically from models throw a wizar
 You need only open the project with a browser and follow the installation steps.
 [Learn more](https://nodcms.com/user-guide/)
 
+## Docker
+Please install docker compose or install docker desktop which will install compose plugin.
+
+[Install docker compose](https://docs.docker.com/compose/install/)
+
+Open the project folder and run ``docker-compose up`` or ``docker-compose up -d``
+
+Then open the http://localhost:8000 in the browser.
+
+Database parameters for docker:
+- HOST: nodcmsdb
+- PASSWORD: nodcms
+- DATABASE: nodcms
+- USER: nodcms
+- PASSWORD: nodcms
+
+To stop the docker please run ``docker-composer stop`` if you run the ``docker-compose -d`` in the previous step.
+
+**NOTE**
+
+In order to install dependencies without PHP environment checking, please run `composer install --ignore-platform-reqs` 
+
+---
+
 ### 2. Command Interface
 You need run following commands in shell:
 ```shell

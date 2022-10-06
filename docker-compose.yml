@@ -1,0 +1,51 @@
+version: "3.8"
+services:
+  php:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: nodcms_php
+    expose:
+      - 9000
+    volumes:
+      - .:/var/www/html
+    user: 1000:1000
+    depends_on:
+      - database
+    networks:
+      - nodcms_network
+  nginx:
+    build: ./docker/nginx/
+    container_name: nodcms_nginx
+    ports:
+      - "8000:80"
+    links:
+      - php
+      - database
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - database
+    networks:
+      - nodcms_network
+    # MySQL 8.0
+  database:
+    restart: always
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: nodcms
+      MYSQL_DATABASE: nodcms
+      MYSQL_USER: nodcms
+      MYSQL_PASSWORD: nodcms
+      MYSQL_TCP_PORT: 3306
+    volumes:
+      - ./docker/data/database:/var/lib/mysql
+      - ./docker/data/logs/mysql:/var/log/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - nodcms_network
+    hostname: nodcmsdb
+networks:
+  nodcms_network:
+    driver: bridge
