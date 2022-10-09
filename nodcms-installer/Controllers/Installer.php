@@ -383,6 +383,7 @@ class Installer extends Base
                 'options'=>$date_formats,
                 'option_name'=>'name',
                 'option_value'=>'format',
+                'class' => 'select2me'
             ),
             array(
                 'field'=>"time_format",

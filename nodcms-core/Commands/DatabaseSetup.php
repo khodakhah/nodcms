@@ -28,7 +28,7 @@ class DatabaseSetup extends BaseCommand
      *
      * @var string
      */
-    protected $description = 'Builds database tables on the given connection.';
+    protected $description = 'Save database connection parameters in the .env file.';
 
     /**
      * The Command's Usage
