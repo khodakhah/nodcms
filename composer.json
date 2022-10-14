@@ -17,6 +17,7 @@
 		}
 	},
 	"scripts": {
+		"post-create-project-cmd": "@checkout",
 		"movefiles": [
 			"NodCMS\\Core\\ComposerScripts::postUpdate"
 		],
