@@ -18,6 +18,9 @@ else
   cp .env.development .env &> /dev/null
 fi
 
+BACK_PID=$!
+wait $BACK_PID
+
 if [ $? -ne 0 ]; then
   print_error_message "Syncing .env from .env development was failed"
   ERROR_OCCURRED=1
@@ -32,6 +35,9 @@ if [[ $VERBOSE -ne 0 ]]; then
 else
   composer install &> /dev/null
 fi
+
+BACK_PID=$!
+wait $BACK_PID
 
 if [ $? -ne 0 ]; then
   print_error_message "Installing composer dependencies was failed"
@@ -49,6 +55,9 @@ else
   cp bin/git/pre-commit ,git/hooks/pre-commit &> /dev/null
   chmod 0755 .git/hooks/pre-commit &> /dev/null
 fi
+
+BACK_PID=$!
+wait $BACK_PID
 
 if [ $? -ne 0 ]; then
   print_error_message "Syncing pre-commit hook failed"
