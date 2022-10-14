@@ -21,7 +21,7 @@
 			"NodCMS\\Core\\ComposerScripts::postUpdate"
 		],
 		"env-production": "NodCMS\\Core\\ComposerScripts::setEnv",
-		"env-development": "cp .env.development .env",
+		"checkout": "sh ./bin/checkout.sh",
 		"start": "php spark serve",
 		"fix": "php vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --config=php-cs-fixer.dist.php -v",
 		"lint": "php vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --config=php-cs-fixer.dist.php -v --dry-run"

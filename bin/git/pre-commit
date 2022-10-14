@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+#  This file is part of nodcms.
+#
+#  (c) Mojtaba Khodakhah <info@nodcms.com>
+#  https://nodcms.com
+#
+# For the full copyright and license information, please view
+# the LICENSE file that was distributed with this source code.
+#
+#
+. ./bin/functions.sh
+
+start_step 1 1 "Linting"
+
+composer lint &> /dev/null
+
+if [ $? -ne 0 ]; then
+  print_error_message "Linting failed. Run 'composer lint' for more information."
+  printf "Run 'composer fix' to solve the problem.\n"
+  print_abort_message
+  exit 1
+fi
+
+print_success message "Commit successful"
+
+exit $?
