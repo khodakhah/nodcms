@@ -718,7 +718,7 @@ class Rules
      * @param string|null $error
      * @return bool
      */
-    public function validateFileExists($value, string $param,  array $data, string &$error = null): bool
+    public function validateFileExists($value, string $param, array $data, string &$error = null): bool
     {
         if ($value=="") {
             return true;
