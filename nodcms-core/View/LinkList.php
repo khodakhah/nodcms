@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\View;
 
-
 use NodCMS\Core\Types\Link;
 
 abstract class LinkList extends View

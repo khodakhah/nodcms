@@ -12,7 +12,6 @@
 
 namespace NodCMS\Gallery\Config;
 
-
 class ViewFrontend extends \Config\ViewFrontend
 {
     public $namespacePieces = "NodCMS\Gallery/frontend";

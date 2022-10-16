@@ -32,15 +32,15 @@ abstract class Frontend extends App
         $this->page_sidebar = "frontend_sidebar";
         Services::layout()->setConfig(new ViewFrontend());
 
-        if($this->frameTemplate==null)
+        if ($this->frameTemplate==null) {
             $this->frameTemplate = $this->mainTemplate;
+        }
 
         $this->data['lang_url'] = base_url().uri_string();
 
-        if(Services::identity()->hasSession()) {
+        if (Services::identity()->hasSession()) {
             $this->userdata = Services::identity()->getUserData();
-        }
-        else {
+        } else {
             $this->userdata = null;
         }
 
@@ -55,26 +55,26 @@ abstract class Frontend extends App
     private function setMenus()
     {
         $all_menus = array('top_menu', 'footer_menu');
-        foreach($all_menus as $menu_type){
+        foreach ($all_menus as $menu_type) {
             $data_menu = array();
             $menu = Models::menu()->getMenu($menu_type, 0);
-            foreach($menu as $item){
+            foreach ($menu as $item) {
                 $menu_item = array(
                     'name' =>$item['menu_name'],
                     'title' =>$item['menu_name'],
                     'icon' =>$item['menu_icon'],
-                    'url' =>substr($item['menu_url'],0,4)=="http"?$item['menu_url']:base_url($this->language['code']."/".$item['menu_url']),
+                    'url' =>substr($item['menu_url'], 0, 4)=="http" ? $item['menu_url'] : base_url($this->language['code']."/".$item['menu_url']),
                 );
                 $sub_menu = Models::menu()->getMenu("top_menu", $item['menu_id']);
 
-                if(count($sub_menu)!=0){
+                if (count($sub_menu)!=0) {
                     $sub_menu_data = array();
-                    foreach ($sub_menu as $sub_item){
+                    foreach ($sub_menu as $sub_item) {
                         $sub_menu_item = array(
                             'name' =>$sub_item['menu_name'],
                             'title' =>$sub_item['menu_name'],
                             'icon' =>$sub_item['menu_icon'],
-                            'url' =>substr($sub_item['menu_url'],0,4)=="http"?$sub_item['menu_url']:base_url($this->language['code']."/".$sub_item['menu_url']),
+                            'url' =>substr($sub_item['menu_url'], 0, 4)=="http" ? $sub_item['menu_url'] : base_url($this->language['code']."/".$sub_item['menu_url']),
                         );
                         array_push($sub_menu_data, $sub_menu_item);
                     }

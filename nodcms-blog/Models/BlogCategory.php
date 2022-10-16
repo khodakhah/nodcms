@@ -30,13 +30,13 @@ class BlogCategory extends Model
         parent::setup($table_name, $primary_key, $fields, $foreign_tables, $translation_fields);
     }
 
-    function idExists($values)
+    public function idExists($values)
     {
         $builder = $this->getBuilder();
         $builder->select('category_id');
         $builder->where("category_id IN ($values)");
         $query = $builder->get();
         $result = $query->getResultArray();
-        return $result!=null?array_column($result, "category_id"):array();
+        return $result!=null ? array_column($result, "category_id") : array();
     }
 }

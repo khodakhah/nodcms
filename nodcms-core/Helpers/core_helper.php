@@ -10,63 +10,76 @@
  *
  */
 
-if ( ! function_exists('_l')){
+if (! function_exists('_l')) {
     function _l($label, $obj = null)
     {
-        $label = str_replace('"','&quot;',$label);
+        $label = str_replace('"', '&quot;', $label);
         return lang($label);
     }
 }
 
-if ( ! function_exists('substr_string')){
-    function substr_string($text,$start = 0,$count = 10,$end_text=" ..."){
-        $explode = explode(" ",strip_tags($text));
-        return implode(" ",array_splice($explode,$start,$count)).(count($explode)>$count?$end_text:"");
+if (! function_exists('substr_string')) {
+    function substr_string($text, $start = 0, $count = 10, $end_text=" ...")
+    {
+        $explode = explode(" ", strip_tags($text));
+        return implode(" ", array_splice($explode, $start, $count)).(count($explode)>$count ? $end_text : "");
     }
 }
 
-if ( ! function_exists('json_range_date_to_array')){
+if (! function_exists('json_range_date_to_array')) {
     function json_range_date_to_array($date, $delimiter = ',')
     {
         $dates = explode($delimiter, $date);
-        foreach ($dates as &$item){
+        foreach ($dates as &$item) {
             $item /= 1000;
         }
         return $dates;
     }
 }
 
-if ( ! function_exists('my_int_date')){
+if (! function_exists('my_int_date')) {
     function my_int_date($date)
     {
-        if($date==0) return "";
-        return date(\Config\Services::settings()->get()["date_format"] ,$date);
+        if ($date==0) {
+            return "";
+        }
+        return date(\Config\Services::settings()->get()["date_format"], $date);
     }
 }
 
-if ( ! function_exists('my_int_fullDate')){
-    function my_int_fullDate($time){
-        if($time==0) return "";
-        return date_translate(date("j F Y | ".\Config\Services::settings()->get()["time_format"],$time));
+if (! function_exists('my_int_fullDate')) {
+    function my_int_fullDate($time)
+    {
+        if ($time==0) {
+            return "";
+        }
+        return date_translate(date("j F Y | ".\Config\Services::settings()->get()["time_format"], $time));
     }
 }
 
-if ( ! function_exists('my_int_justDate')){
-    function my_int_justDate($time){
-        if($time==0) return "";
-        return date_translate(date("j F Y",$time));
+if (! function_exists('my_int_justDate')) {
+    function my_int_justDate($time)
+    {
+        if ($time==0) {
+            return "";
+        }
+        return date_translate(date("j F Y", $time));
     }
 }
 
-if ( ! function_exists('my_int_justTime')){
-    function my_int_justTime($time){
-        if($time==0) return "";
+if (! function_exists('my_int_justTime')) {
+    function my_int_justTime($time)
+    {
+        if ($time==0) {
+            return "";
+        }
         return date_translate(date(\Config\Services::settings()->get()["time_format"], $time));
     }
 }
 
-if( !function_exists('date_translate')){
-    function date_translate($text){
+if (!function_exists('date_translate')) {
+    function date_translate($text)
+    {
         $translation = array(
             "January" => _l("January"),
             "February" => _l("February"),
@@ -124,11 +137,12 @@ if( !function_exists('date_translate')){
     }
 }
 
-if ( ! function_exists('email_key_replace')){
-    function email_key_replace($text, $array){
+if (! function_exists('email_key_replace')) {
+    function email_key_replace($text, $array)
+    {
         $search = array();
         $replace = array();
-        foreach($array as $key=>$value){
+        foreach ($array as $key=>$value) {
             array_push($search, '[--$'.$key.'--]');
             array_push($replace, $value);
         }
@@ -137,27 +151,30 @@ if ( ! function_exists('email_key_replace')){
 }
 
 // TODO: check the function (! email not found!)
-if ( ! function_exists('send_notification_email')){
-    function send_notification_email($key, $to, $data, $language_id = NULL, $from = NULL){
+if (! function_exists('send_notification_email')) {
+    function send_notification_email($key, $to, $data, $language_id = null, $from = null)
+    {
         \Config\Services::notification($key, $language_id)->sendEmail($data, $to, null, $from);
     }
 }
-if ( ! function_exists('send_notification_sms')){
-    function send_notification_sms($key, $to, $data, $language_id = NULL){
+if (! function_exists('send_notification_sms')) {
+    function send_notification_sms($key, $to, $data, $language_id = null)
+    {
         $CI = &get_instance();
 
-        if(!$CI->load->packageExists("Sms"))
+        if (!$CI->load->packageExists("Sms")) {
             return;
+        }
 
         $CI->load->add_package_path(APPPATH."third_party/Sms");
         $smsContent = $CI->Sms_model->getAutoMessages($key, $language_id);
-        if (!isset($smsContent['content'])){
+        if (!isset($smsContent['content'])) {
             log_message("error", "Couldn't send notification sms to '$to', because there isn't any sms content for '$key'");
             return;
         }
         $search = array();
         $replace = array();
-        foreach($data as $key=>$value){
+        foreach ($data as $key=>$value) {
             array_push($search, '[--$'.$key.'--]');
             array_push($replace, $value);
         }
@@ -166,33 +183,27 @@ if ( ! function_exists('send_notification_sms')){
     }
 }
 
-if ( ! function_exists('get_all_php_files')){
-    function get_all_php_files($source_dir, $directory_depth = 0, $hidden = FALSE)
+if (! function_exists('get_all_php_files')) {
+    function get_all_php_files($source_dir, $directory_depth = 0, $hidden = false)
     {
-        if ($fp = @opendir($source_dir))
-        {
+        if ($fp = @opendir($source_dir)) {
             $filedata	= array();
             $new_depth	= $directory_depth - 1;
             $source_dir	= rtrim($source_dir, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 
-            while (FALSE !== ($file = readdir($fp)))
-            {
+            while (false !== ($file = readdir($fp))) {
                 // Remove '.', '..', and hidden files [optional]
-                if ($file === '.' OR $file === '..' OR ($hidden === FALSE && $file[0] === '.'))
-                {
+                if ($file === '.' or $file === '..' or ($hidden === false && $file[0] === '.')) {
                     continue;
                 }
 
                 is_dir($source_dir.$file) && $file .= DIRECTORY_SEPARATOR;
 
-                if (($directory_depth < 1 OR $new_depth > 0) && is_dir($source_dir.$file))
-                {
+                if (($directory_depth < 1 or $new_depth > 0) && is_dir($source_dir.$file)) {
                     $filedata = array_merge($filedata, get_all_php_files($source_dir.$file, $new_depth, $hidden));
-                }
-                else
-                {
+                } else {
                     $check_match = preg_match('/^([A-Za-z\_\-]+\.php)$/', $file);
-                    if($check_match==false || $check_match==0){
+                    if ($check_match==false || $check_match==0) {
                         continue;
                     }
                     $filedata[] = $source_dir.$file;
@@ -203,14 +214,15 @@ if ( ! function_exists('get_all_php_files')){
             return $filedata;
         }
 
-        return FALSE;
+        return false;
     }
 }
 
-if( ! function_exists('print_captcha')){
-    function print_captcha(){
+if (! function_exists('print_captcha')) {
+    function print_captcha()
+    {
         $CI =& get_instance();
-        $random_word = substr(md5(rand(10000,99999)),-6,6);
+        $random_word = substr(md5(rand(10000, 99999)), -6, 6);
         $_SESSION[$CI->captcha_session_name] = $random_word;
         $CI->load->helper('captcha');
         $vals = array(
@@ -227,39 +239,43 @@ if( ! function_exists('print_captcha')){
         echo $cap['image'];
     }
 }
-if( ! function_exists('active_captcha')){
-    function active_captcha(){
+if (! function_exists('active_captcha')) {
+    function active_captcha()
+    {
         $CI =& get_instance();
-        if(!isset($CI->settings['captcha']))
+        if (!isset($CI->settings['captcha'])) {
             return 0;
-        if($CI->settings['captcha']==2){
-            if(!isset($CI->provider["settings"]["captcha"]))
+        }
+        if ($CI->settings['captcha']==2) {
+            if (!isset($CI->provider["settings"]["captcha"])) {
                 return 0;
+            }
             return $CI->provider["settings"]["captcha"];
         }
         return $CI->settings['captcha'];
     }
 }
 
-if( ! function_exists('adminSidebarMap')){
-    function adminSidebarMap($sidebar_array){
-        if(is_array($sidebar_array) && count($sidebar_array) != 0){
-            foreach($sidebar_array as $key=>$item){
-                if(isset($item["sub_menu"]) && is_array($item["sub_menu"]) && count($item["sub_menu"])!=0){
-                    $sub_menu = TRUE;
-                }else{
-                    $sub_menu = FALSE;
+if (! function_exists('adminSidebarMap')) {
+    function adminSidebarMap($sidebar_array)
+    {
+        if (is_array($sidebar_array) && count($sidebar_array) != 0) {
+            foreach ($sidebar_array as $key=>$item) {
+                if (isset($item["sub_menu"]) && is_array($item["sub_menu"]) && count($item["sub_menu"])!=0) {
+                    $sub_menu = true;
+                } else {
+                    $sub_menu = false;
                 }
                 ?>
                 <li class="nav-item" id="<?php echo $key; ?>">
-                    <a class="nav-link nav-toggle" href="<?php echo isset($item["url"])?$item["url"]:""; ?>">
-                        <i class="<?php echo isset($item["icon"])?$item["icon"]:''; ?>"></i>
-                        <span class="title"><?php echo isset($item["title"])?$item["title"]:"Undefined title"; ?></span>
-                        <?php if($sub_menu){ ?>
+                    <a class="nav-link nav-toggle" href="<?php echo isset($item["url"]) ? $item["url"] : ""; ?>">
+                        <i class="<?php echo isset($item["icon"]) ? $item["icon"] : ''; ?>"></i>
+                        <span class="title"><?php echo isset($item["title"]) ? $item["title"] : "Undefined title"; ?></span>
+                        <?php if ($sub_menu) { ?>
                             <span class="arrow"></span>
                         <?php } ?>
                     </a>
-                    <?php if($sub_menu){ ?>
+                    <?php if ($sub_menu) { ?>
                         <ul class="sub-menu">
                             <?php adminSidebarMap($item["sub_menu"]); ?>
                         </ul>
@@ -271,7 +287,7 @@ if( ! function_exists('adminSidebarMap')){
     }
 }
 
-if(!function_exists('array_remove_diff')){
+if (!function_exists('array_remove_diff')) {
     /**
      * Merge and remove the difference of two input array
      *
@@ -279,7 +295,8 @@ if(!function_exists('array_remove_diff')){
      * @param $arr2 array
      * @return array
      */
-    function array_remove_diff($arr1, $arr2){
+    function array_remove_diff($arr1, $arr2)
+    {
         $arr = array_merge($arr1, $arr2);
         $diff = array_diff_key($arr, $arr1);
         foreach ($diff as $key=>$item) {
@@ -289,22 +306,23 @@ if(!function_exists('array_remove_diff')){
     }
 }
 
-if(!function_exists('get_user_avatar_url')){
+if (!function_exists('get_user_avatar_url')) {
     /**
      * Return the full url of a user
      *
      * @param $user
      * @return string
      */
-    function get_user_avatar_url($user){
-        if($user['avatar']=="" || !file_exists(FCPATH.$user['avatar'])){
+    function get_user_avatar_url($user)
+    {
+        if ($user['avatar']=="" || !file_exists(FCPATH.$user['avatar'])) {
             return base_url("upload_file/images/user.png");
         }
         return base_url($user['avatar']);
     }
 }
 
-if(!function_exists('split_hex_color')){
+if (!function_exists('split_hex_color')) {
     /**
      * Automatic split color code and return the color code of the index
      *
@@ -312,12 +330,13 @@ if(!function_exists('split_hex_color')){
      * @param $count
      * @return string
      */
-    function split_hex_color($index, $count){
+    function split_hex_color($index, $count)
+    {
         // Max number(white)
         $col = hexdec("FFFFFF");
         $col_part = round($col/$count);
         // Put a way form black & white
-        while($col_part%hexdec("111111")==0 || $col_part%16==0 || $count%17==0){
+        while ($col_part%hexdec("111111")==0 || $col_part%16==0 || $count%17==0) {
             $count++;
             $col_part = round($col/$count);
         }
@@ -325,27 +344,28 @@ if(!function_exists('split_hex_color')){
         $index++;
         $color_code=($index*$col_part);
         // Set the 0 before to make it 6 char
-        $color=substr("000000".dechex($color_code),-6);
+        $color=substr("000000".dechex($color_code), -6);
         return "#$color";
     }
 }
 
-if(!function_exists('human_file_size')){
+if (!function_exists('human_file_size')) {
     /**
      * @param $value
      * @return string
      */
-    function human_file_size($value){
+    function human_file_size($value)
+    {
 //        var_dump(require_once )
-        if($value < 1024){
+        if ($value < 1024) {
             return "$value KB";
         }
         $value = round($value/1024);
-        if($value < 1024){
+        if ($value < 1024) {
             return "$value MB";
         }
         $value = round($value/1024);
-        if($value < 1024){
+        if ($value < 1024) {
             return "$value GB";
         }
         $value = round($value/1024);
@@ -353,8 +373,9 @@ if(!function_exists('human_file_size')){
     }
 }
 
-if(!function_exists('countries_iso_codes')){
-    function countries_iso_codes(){
+if (!function_exists('countries_iso_codes')) {
+    function countries_iso_codes()
+    {
         return array(
             'AF' => 'Afghanistan',
             'AX' => 'Aland Islands',
@@ -610,8 +631,9 @@ if(!function_exists('countries_iso_codes')){
     }
 }
 
-if(!function_exists('countries_iso')){
-    function countries_iso(){
+if (!function_exists('countries_iso')) {
+    function countries_iso()
+    {
         return array(
             'AF'=>array(
                 'name'=>'Afghanistan',
@@ -2375,17 +2397,19 @@ if(!function_exists('countries_iso')){
         );
     }
 }
-if(!function_exists('country_iso_code')){
-    function country_name_to_iso($name, $code_type = "char-2"){
+if (!function_exists('country_iso_code')) {
+    function country_name_to_iso($name, $code_type = "char-2")
+    {
         $countries = countries_iso();
-        $_countries = array_combine(array_column($countries,"name"), array_column($countries, $code_type));
-        if(!key_exists($name,$_countries))
+        $_countries = array_combine(array_column($countries, "name"), array_column($countries, $code_type));
+        if (!key_exists($name, $_countries)) {
             return "";
+        }
         return $_countries[$name];
     }
 }
 
-if( ! function_exists("timespan")) {
+if (! function_exists("timespan")) {
     /**
      * Carry an old function!
      *
@@ -2395,7 +2419,8 @@ if( ! function_exists("timespan")) {
      * @return string
      * @throws Exception
      */
-    function timespan(int $seconds = 1, string $nowTime = 'now', int $units = 1) {
+    function timespan(int $seconds = 1, string $nowTime = 'now', int $units = 1)
+    {
         $time = new \CodeIgniter\I18n\Time();
         $now = new \CodeIgniter\I18n\Time(!empty($nowTime) ? $nowTime : "now");
         $time->setTimestamp($seconds);
@@ -2404,15 +2429,17 @@ if( ! function_exists("timespan")) {
     }
 }
 
-if( ! function_exists("image")) {
-    function image($image_path,$default_image, $width = 0, $height = 0) {
-        if(!file_exists($image_path)) {
+if (! function_exists("image")) {
+    function image($image_path, $default_image, $width = 0, $height = 0)
+    {
+        if (!file_exists($image_path)) {
             return $default_image;
         }
 
         //Alternative image if file was not found
-        if($image_path=="")
+        if ($image_path=="") {
             $image_path = $default_image;
+        }
 
         //The new generated filename we want
         $fileinfo = pathinfo($image_path);

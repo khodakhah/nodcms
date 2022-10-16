@@ -16,31 +16,26 @@
  * @param bool $hidden
  * @return array|bool
  */
-function get_all_php_files($source_dir, $directory_depth = 0, $hidden = FALSE) {
-    if ($fp = @opendir($source_dir))
-    {
+function get_all_php_files($source_dir, $directory_depth = 0, $hidden = false)
+{
+    if ($fp = @opendir($source_dir)) {
         $filedata	= array();
         $new_depth	= $directory_depth - 1;
         $source_dir	= rtrim($source_dir, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 
-        while (FALSE !== ($file = readdir($fp)))
-        {
+        while (false !== ($file = readdir($fp))) {
             // Remove '.', '..', and hidden files [optional]
-            if ($file === '.' OR $file === '..' OR ($hidden === FALSE && $file[0] === '.'))
-            {
+            if ($file === '.' or $file === '..' or ($hidden === false && $file[0] === '.')) {
                 continue;
             }
 
             is_dir($source_dir.$file) && $file .= DIRECTORY_SEPARATOR;
 
-            if (($directory_depth < 1 OR $new_depth > 0) && is_dir($source_dir.$file))
-            {
+            if (($directory_depth < 1 or $new_depth > 0) && is_dir($source_dir.$file)) {
                 $filedata = array_merge($filedata, get_all_php_files($source_dir.$file, $new_depth, $hidden));
-            }
-            else
-            {
+            } else {
                 $check_match = preg_match('/^([A-Za-z\_\-]+\.php)$/', $file);
-                if($check_match==false || $check_match==0){
+                if ($check_match==false || $check_match==0) {
                     continue;
                 }
                 $filedata[] = $source_dir.$file;
@@ -51,24 +46,22 @@ function get_all_php_files($source_dir, $directory_depth = 0, $hidden = FALSE) {
         return $filedata;
     }
 
-    return FALSE;
+    return false;
 }
 
 /**
  * @return array|bool
  */
-function get_all_resources_dir() {
+function get_all_resources_dir()
+{
     $source_dir = APPPATH."third_party/";
-    if ($fp = @opendir($source_dir))
-    {
+    if ($fp = @opendir($source_dir)) {
         $filedata	= array();
         $source_dir	= rtrim($source_dir, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 
-        while (FALSE !== ($file = readdir($fp)))
-        {
+        while (false !== ($file = readdir($fp))) {
             // Remove '.', '..', and hidden files [optional]
-            if ($file === '.' OR $file === '..')
-            {
+            if ($file === '.' or $file === '..') {
                 continue;
             }
 
@@ -79,34 +72,38 @@ function get_all_resources_dir() {
         return $filedata;
     }
 
-    return FALSE;
+    return false;
 }
 
-function autoload_resources($class_name) {
+function autoload_resources($class_name)
+{
     $paths = array();
     $_paths = get_all_php_files(APPPATH.RESOURCES_DIR_NAME);
 
-    if($_paths != false)
+    if ($_paths != false) {
         $paths = array_merge($paths, $_paths);
+    }
 
     $third_parties = get_all_resources_dir();
 
-    if(is_array($third_parties)){
-        foreach($third_parties as $item) {
+    if (is_array($third_parties)) {
+        foreach ($third_parties as $item) {
             $_paths = get_all_php_files(APPPATH."third_party/$item".DIRECTORY_SEPARATOR.RESOURCES_DIR_NAME.DIRECTORY_SEPARATOR);
-            if(!is_array($_paths) || count($_paths) == 0) {
+            if (!is_array($_paths) || count($_paths) == 0) {
                 continue;
             }
             $paths = array_merge($paths, $_paths);
         }
     }
 
-    if(count($paths) == 0)
+    if (count($paths) == 0) {
         return;
+    }
 
-    foreach($paths as $path) {
-        if(strpos($path, $class_name.".php") === false)
+    foreach ($paths as $path) {
+        if (strpos($path, $class_name.".php") === false) {
             continue;
+        }
         require_once $path;
     }
 }

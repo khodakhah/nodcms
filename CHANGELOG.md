@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Docker to the project.
+- [PHP-CS-Fixer](https://github.com/FriendsOfPHP/PHP-CS-Fixer)
+- Composer command``composer checkout``
+
+### Removed
+- Composer command``composer env-development``
 
 ## [3.4.1] 20-09-13
 ## Fixed

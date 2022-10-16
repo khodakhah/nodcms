@@ -261,5 +261,4 @@ interface ModelInterface
      * @return bool
      */
     public function tableExists();
-
 }

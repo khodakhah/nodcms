@@ -10,7 +10,9 @@
  *
  */
 
-if(!isset($routes)) throw new \Exception('$routes not defined.');
+if (!isset($routes)) {
+    throw new \Exception('$routes not defined.');
+}
 
 $routes->match(['post', 'get'], 'admin-services/(.+)', "\NodCMS\Services\Controllers\ServicesAdmin::$1");
 $routes->get('{locale}/service-([a-z0-9\-\.]+)', '\NodCMS\Services\Controllers\ServicesFrontend::service/$1');

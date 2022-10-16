@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\Notification;
 
-
 use Config\Services;
 
 class Notification
@@ -38,12 +37,12 @@ class Notification
      * @param string $key
      * @param null $language_id
      */
-    public function __construct(string $key, $language_id = NULL)
+    public function __construct(string $key, $language_id = null)
     {
         $this->key = $key;
         $autoEmailMSG = \Config\Services::model()->emailMessages()->getOneByKey($this->key, $language_id);
-        if (empty($autoEmailMSG)){
-            if(!\Config\Services::view()->fileExists("emails/{$this->key}")){
+        if (empty($autoEmailMSG)) {
+            if (!\Config\Services::view()->fileExists("emails/{$this->key}")) {
                 log_message('error', "Couldn't find notification email content for $this->key.");
                 return;
             }
@@ -66,7 +65,7 @@ class Notification
     {
         $search = array();
         $replace = array();
-        foreach($data as $key=>$value){
+        foreach ($data as $key=>$value) {
             array_push($search, '[--$'.$key.'--]');
             array_push($replace, $value);
         }
@@ -92,11 +91,13 @@ class Notification
                 array(' '),
                 $content
             );
-            $setting =  Services::settings()->get();;
-            if($from == null)
+            $setting =  Services::settings()->get();
+            ;
+            if ($from == null) {
                 $from = array($setting['send_email'], $setting['company']);
+            }
 
-            if(isset($setting['use_smtp']) && $setting['use_smtp']==1){
+            if (isset($setting['use_smtp']) && $setting['use_smtp']==1) {
                 $config = array(
                     'protocol' => 'smtp',
                     'SMTPHost' => $setting['smtp_host'],
@@ -108,7 +109,7 @@ class Notification
                     'SMTPCrypto'  => true,
                     'newline'   => "\r\n"
                 );
-            }else{
+            } else {
                 $config = array(
                     'protocol' => 'mail',
                     'mailType'  => 'html',
@@ -121,10 +122,10 @@ class Notification
             $email->initialize($config);
             $email->clear();
             $email->setTo($emails);
-            $email->setFrom($from[0],$from[1]);
+            $email->setFrom($from[0], $from[1]);
             $email->setHeader('Subject', $subject);
             $email->setMessage($content);
-            if(!$email->send()) {
+            if (!$email->send()) {
                 log_message('error', "The email \"{$subject}\" couldn't sent to \"{$emails}\"!");
             }
         }

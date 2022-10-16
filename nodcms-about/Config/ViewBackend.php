@@ -12,7 +12,6 @@
 
 namespace NodCMS\About\Config;
 
-
 class ViewBackend extends \Config\ViewBackend
 {
     /**

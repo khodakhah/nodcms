@@ -18,7 +18,6 @@ use NodCMS\Core\Models\ModelInterface;
 
 class DatabaseMapping
 {
-
     public const BUILD_ACTION_IGNORE = 'ignore';
 
     public const BUILD_ACTION_DROP = 'drop';
@@ -42,7 +41,7 @@ class DatabaseMapping
      *
      * @return bool
      */
-    public function hasConnection():bool
+    public function hasConnection(): bool
     {
         return $this->connection instanceof BaseConnection;
     }
@@ -102,20 +101,18 @@ class DatabaseMapping
      * @return bool
      * @throws \Exception
      */
-    public function buildTables(callable $report, callable $failedReport):bool
+    public function buildTables(callable $report, callable $failedReport): bool
     {
-        if(!$this->hasConnection()) {
+        if (!$this->hasConnection()) {
             throw new \Exception("No connection exists. setConnection() should be executed before.");
         }
 
         $paths = $this->getMaps();
 
         foreach ($paths as $models) {
-
-            foreach($models as $model) {
-
+            foreach ($models as $model) {
                 if ($model->tableExists()) {
-                    if(!$this->overwriteTables) {
+                    if (!$this->overwriteTables) {
                         $report($model->tableName(), self::BUILD_ACTION_IGNORE);
                         continue;
                     }
@@ -130,7 +127,7 @@ class DatabaseMapping
                 $report($model->tableName(), self::BUILD_ACTION_CREATE);
 
                 // Insert default data
-                if(method_exists($model, 'defaultData')) {
+                if (method_exists($model, 'defaultData')) {
                     $model->defaultData();
                     $report($model->tableName(), self::BUILD_ACTION_INSERT_DEFAULTS);
                 }
@@ -146,11 +143,11 @@ class DatabaseMapping
      * @return ModelInterface[][]
      * @throws \Exception
      */
-    public function getMaps():array
+    public function getMaps(): array
     {
         helper('core_helper');
         $moduleModels = get_all_php_files(COREPATH . 'Models'.DIRECTORY_SEPARATOR);
-        if($moduleModels === false) {
+        if ($moduleModels === false) {
             throw new \Exception("On path: \"".COREPATH . 'Models'.DIRECTORY_SEPARATOR."\" no Models have been found.", 500);
         }
         $coreModelMaps = $this->getModelMaps($moduleModels);
@@ -160,11 +157,12 @@ class DatabaseMapping
         $modulesDirs = Autoload::modulesPaths();
         foreach ($modulesDirs as $dir) {
             $moduleModels = get_all_php_files($dir . 'Models'.DIRECTORY_SEPARATOR);
-            if($moduleModels === false)
+            if ($moduleModels === false) {
                 continue;
+            }
 
             $modelMaps = $this->getModelMaps($moduleModels);
-            if(!empty($modelMaps)) {
+            if (!empty($modelMaps)) {
                 $maps[basename($dir)] = $modelMaps;
             }
         }
@@ -181,11 +179,12 @@ class DatabaseMapping
     private function getModelMaps(array $modelsFilePaths): array
     {
         $maps = [];
-        foreach($modelsFilePaths as $modelPath) {
+        foreach ($modelsFilePaths as $modelPath) {
             $modelObject = $this->getModelFromPath($modelPath);
 
-            if($modelObject === null)
+            if ($modelObject === null) {
                 continue;
+            }
 
             $maps[$modelPath] = $modelObject;
         }
@@ -199,22 +198,25 @@ class DatabaseMapping
      * @param string $path
      * @return ModelInterface|null
      */
-    private function getModelFromPath(string $path):?ModelInterface
+    private function getModelFromPath(string $path): ?ModelInterface
     {
-        $model = basename($path,".php");
-        if(in_array($model, ["Model", "CoreModel", "ModelInterface"]))
+        $model = basename($path, ".php");
+        if (in_array($model, ["Model", "CoreModel", "ModelInterface"])) {
             return null;
+        }
 
         $dirname = basename(dirname(realpath($path), 2));
         $break = explode('-', $dirname);
         $namespace = '\\NodCMS\\' . ucfirst($break[1]) . '\Models\\';
         $model = $namespace . $model;
         $theModel = new $model($this->connection);
-        if(!is_subclass_of($theModel, "\NodCMS\Core\Models\Model"))
+        if (!is_subclass_of($theModel, "\NodCMS\Core\Models\Model")) {
             return null;
+        }
 
-        if(!method_exists($theModel, 'tableName'))
+        if (!method_exists($theModel, 'tableName')) {
             return  null;
+        }
 
         return $theModel;
     }

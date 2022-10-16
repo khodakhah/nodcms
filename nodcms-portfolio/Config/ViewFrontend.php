@@ -12,7 +12,6 @@
 
 namespace NodCMS\Portfolio\Config;
 
-
 class ViewFrontend extends \Config\ViewFrontend
 {
     /**

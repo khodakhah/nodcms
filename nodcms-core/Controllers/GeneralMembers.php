@@ -16,9 +16,11 @@ use Config\Services;
 use Config\Models;
 use NodCMS\Core\Libraries\Form;
 
-class GeneralMembers extends Membership {
+class GeneralMembers extends Membership
+{
     public $avatar_file_key = "avatar-user-";
-    function __construct(){
+    public function __construct()
+    {
         parent::__construct();
         $this->avatar_file_key .= $this->userdata['user_id'];
         $this->data['title'] = _l("Account", $this);
@@ -30,9 +32,9 @@ class GeneralMembers extends Membership {
      *  - will read all exists members dashboard and display in this page.
      *  URL: /user/dashboard
      */
-    function dashboard()
+    public function dashboard()
     {
-        if(!Services::modules()->hasMemberDashboard()) {
+        if (!Services::modules()->hasMemberDashboard()) {
             return $this->showError();
         }
 
@@ -52,7 +54,7 @@ class GeneralMembers extends Membership {
      *  URL: /user/account
      *
      */
-    function account()
+    public function account()
     {
         $user = $this->userdata;
         $user['language'] = Models::languages()->getOne($user['language_id']);
@@ -70,7 +72,7 @@ class GeneralMembers extends Membership {
      * Change personal info page
      *  URL: user/account/personal-info
      */
-    function accountPersonalInfo()
+    public function accountPersonalInfo()
     {
         $self_url = base_url("user/account/personal-info");
         $myform = new Form($this);
@@ -78,7 +80,7 @@ class GeneralMembers extends Membership {
         $config = array(
             array(
                 'field'=>"username",
-                'label'=>_l('Username',$this),
+                'label'=>_l('Username', $this),
                 'rules'=>"required|is_unique[users.username,user_id,".$this->userdata['user_id']."]",
 //                'type'=>"text",
 //                'default'=>$this->userdata['username'],
@@ -87,7 +89,7 @@ class GeneralMembers extends Membership {
             ),
             array(
                 'field'=>"email",
-                'label'=>_l('Email Address',$this),
+                'label'=>_l('Email Address', $this),
                 'rules'=>"required|valid_email|is_unique[users.email,user_id,".$this->userdata['user_id']."]",
 //                'type'=>"text",
 //                'default'=>$this->userdata['email'],
@@ -96,8 +98,8 @@ class GeneralMembers extends Membership {
             ),
             array(
                 'field'=>"language_id",
-                'label'=>_l('Language',$this),
-                'rules'=>"required|in_list[".join(',',array_column($languages,"language_id"))."]",
+                'label'=>_l('Language', $this),
+                'rules'=>"required|in_list[".join(',', array_column($languages, "language_id"))."]",
                 'type'=>"select",
                 'options'=>$languages,
                 'option_name'=>"language_title",
@@ -106,28 +108,28 @@ class GeneralMembers extends Membership {
             ),
             array(
                 'field'=>"firstname",
-                'label'=>_l('First Name',$this),
+                'label'=>_l('First Name', $this),
                 'rules'=>"required|formRulesName",
                 'type'=>"text",
                 'default'=>$this->userdata['firstname'],
             ),
             array(
                 'field'=>"lastname",
-                'label'=>_l('Last Name',$this),
+                'label'=>_l('Last Name', $this),
                 'rules'=>"required|formRulesName",
                 'type'=>"text",
                 'default'=>$this->userdata['lastname'],
             ),
             array(
                 'field'=>"mobile",
-                'label'=>_l('Mobile',$this),
+                'label'=>_l('Mobile', $this),
                 'rules'=>"validPhone",
                 'type'=>"text",
                 'default'=>$this->userdata['mobile'],
             ),
             array(
                 'field'=>"website",
-                'label'=>_l('Website',$this),
+                'label'=>_l('Website', $this),
                 'rules'=>"valid_url",
                 'type'=>"url",
                 'default'=>$this->userdata['website'],
@@ -135,13 +137,13 @@ class GeneralMembers extends Membership {
         );
         $myform->config($config, $self_url, 'post', 'ajax');
         // * Submit form
-        if($myform->ispost()){
-            if($this->userdata['group_id']==100){
+        if ($myform->ispost()) {
+            if ($this->userdata['group_id']==100) {
                 return $this->errorMessage("As demo account you aren't able to change any thing.", base_url());
             }
             $post_data = $myform->getPost();
             // Stop Page
-            if($post_data === false){
+            if ($post_data === false) {
                 return $myform->getResponse();
             }
 
@@ -168,7 +170,7 @@ class GeneralMembers extends Membership {
             return $this->successMessage("Your profile has been updated successfully.", $self_url);
         }
 
-        if(Services::request()->isAJAX()){
+        if (Services::request()->isAJAX()) {
             return $myform->fetch();
         }
         $this->data['data'] = $this->userdata;
@@ -180,43 +182,43 @@ class GeneralMembers extends Membership {
      * Change the password
      *  URL: user/account/change-password
      */
-    function accountChangePassword()
+    public function accountChangePassword()
     {
         $self_url = base_url("user/account/change-password");
         $myform = new Form($this);
         $config = array(
             array(
                 'field'=>"password",
-                'label'=>_l('Current Password',$this),
+                'label'=>_l('Current Password', $this),
                 'rules'=>"required",
                 'type'=>"password",
             ),
             array(
                 'field'=>"new_password",
-                'label'=>_l('New Password',$this),
+                'label'=>_l('New Password', $this),
                 'rules'=>"required|matches[confirm_password]",
                 'type'=>"password",
             ),
             array(
                 'field'=>"confirm_password",
-                'label'=>_l('Confirm new Password',$this),
+                'label'=>_l('Confirm new Password', $this),
                 'rules'=>"required",
                 'type'=>"password",
             ),
         );
         $myform->config($config, $self_url, 'post', 'ajax');
         // * Submit form
-        if($myform->ispost()){
-            if($this->userdata['group_id']==100){
+        if ($myform->ispost()) {
+            if ($this->userdata['group_id']==100) {
                 return $this->errorMessage("As demo account you aren't able to change any thing.", $self_url);
             }
             $post_data = $myform->getPost();
             // Stop Page
-            if($post_data === false){
+            if ($post_data === false) {
                 return $myform->getResponse();
             }
 
-            if(md5($post_data['password']) != $this->userdata["password"]){
+            if (md5($post_data['password']) != $this->userdata["password"]) {
                 return $this->errorMessage("Your current password is wrong.", $self_url);
             }
 
@@ -227,7 +229,7 @@ class GeneralMembers extends Membership {
             return $this->successMessage("Your password has been updated successfully.", $self_url);
         }
 
-        if(Services::request()->isAJAX()){
+        if (Services::request()->isAJAX()) {
             return $myform->fetch('', array('data-reset'=>1));
         }
         $this->data['data'] = $this->userdata;
@@ -239,7 +241,7 @@ class GeneralMembers extends Membership {
      * Change user avatar page
      *  URL: user/account/change-avatar
      */
-    function accountChangeAvatar()
+    public function accountChangeAvatar()
     {
         $self_url = base_url("user/account/change-avatar");
         $myform = new Form($this);
@@ -247,8 +249,8 @@ class GeneralMembers extends Membership {
         $config = [
             [
                 'field'=>"avatar",
-                'label'=>_l('New Avatar',$this),
-                'help'=>_l('Best size: 200x200px',$this),
+                'label'=>_l('New Avatar', $this),
+                'help'=>_l('Best size: 200x200px', $this),
                 'rules'=>"required|in_list[".(join(',', array_column($uploaded_files, "file_id")))."]",
                 'type'=>"files",
                 //'max_file_size'=>2,//MB
@@ -263,7 +265,7 @@ class GeneralMembers extends Membership {
             ]
         ];
 
-        if($this->userdata['avatar'] != null) {
+        if ($this->userdata['avatar'] != null) {
             $config[] = [
                 'type'=>"div",
                 'label'=>'<button type="button" class="btn red-soft btn-ask" onclick="$.loadConfirmModal(\''.base_url("user/account/remove-avatar").'\')">'
@@ -274,13 +276,13 @@ class GeneralMembers extends Membership {
         $myform->config($config, $self_url, 'post', 'ajax');
         $myform->setStyle("bootstrap-vertical");
         // * Submit form
-        if($myform->ispost()){
-            if($this->userdata['group_id']==100){
+        if ($myform->ispost()) {
+            if ($this->userdata['group_id']==100) {
                 return $this->errorMessage("As demo account you aren't able to change any thing.", base_url());
             }
             $post_data = $myform->getPost();
             // Stop Page
-            if($post_data === false){
+            if ($post_data === false) {
                 return $myform->getResponse();
             }
 
@@ -303,11 +305,11 @@ class GeneralMembers extends Membership {
             return $this->successMessage("Your profile has been updated successfully.", $self_url, $data);
         }
 
-        if(Services::request()->isAJAX()){
+        if (Services::request()->isAJAX()) {
             return $myform->fetch('', array('data-reset'=>1));
         }
         $this->data['data'] = $this->userdata;
-        $this->data['title'] = _l("Account Settings",$this);
+        $this->data['title'] = _l("Account Settings", $this);
         $this->data['page'] = "account";
         return $this->viewRenderString($myform->fetch());
     }
@@ -320,18 +322,19 @@ class GeneralMembers extends Membership {
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function accountRemoveAvatar(int $confirm = 0)
+    public function accountRemoveAvatar(int $confirm = 0)
     {
-        if(!Services::identity()->isValidMember())
+        if (!Services::identity()->isValidMember()) {
             return Services::identity()->getResponse();
-
-        if(Services::identity()->isValid())
-
-        if($this->userdata['avatar']==""){
-            return $this->errorMessage("There isn't set any Avatar image for you.", base_url("user/account/change-avatar"));
         }
 
-        if($confirm!=1){
+        if (Services::identity()->isValid()) {
+            if ($this->userdata['avatar']=="") {
+                return $this->errorMessage("There isn't set any Avatar image for you.", base_url("user/account/change-avatar"));
+            }
+        }
+
+        if ($confirm!=1) {
             return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center font-lg bold">'._l("Are you sure to delete your Avatar Image?", $this).'</p>',
@@ -359,11 +362,13 @@ class GeneralMembers extends Membership {
     private function userAvatarRemove()
     {
         $user = Models::users()->getOne($this->userdata['user_id']);
-        if($user['avatar']=='')
+        if ($user['avatar']=='') {
             return;
+        }
         $file = Models::uploadFiles()->getOne(null, ['file_thumbnail'=>$user['avatar']]);
-        if(!is_array($file) || count($file)==0)
+        if (!is_array($file) || count($file)==0) {
             return;
+        }
         $theForm = new Form($this);
         $theForm->removeFiles($file['file_id']);
     }
@@ -372,16 +377,16 @@ class GeneralMembers extends Membership {
      * Upload the user avatar image
      * @throws \Exception
      */
-    function accountAvatarUpload()
+    public function accountAvatarUpload()
     {
         $myform = new Form($this);
         $uploaded_files = $myform->getLastUploadedFiles($this->avatar_file_key);
-        if(count($uploaded_files)>1){
+        if (count($uploaded_files)>1) {
             return $this->errorMessage("You can't upload file any more.", base_url());
         }
         // To keep storage clean
         $myform->removeUselessFiles(strtotime("last week"));
-        return $myform->uploadFile("upload_file/users/user-".$this->userdata['user_id']."/".date("Y-m"), $this->avatar_file_key, 'image', true,1);
+        return $myform->uploadFile("upload_file/users/user-".$this->userdata['user_id']."/".date("Y-m"), $this->avatar_file_key, 'image', true, 1);
     }
 
 
@@ -389,16 +394,16 @@ class GeneralMembers extends Membership {
      * Change the account details
      *
      */
-    function accountSetting()
+    public function accountSetting()
     {
-        if($this->userdata==null){
+        if ($this->userdata==null) {
             return $this->showError();
         }
         $languages = $this->model->languages()->getAll();
         $config = array(
             array(
                 'field'=>"username",
-                'label'=>_l('Username',$this),
+                'label'=>_l('Username', $this),
                 'rules'=>"required|is_unique[users.username,user_id,".$this->userdata['user_id']."]",
 //                'type'=>"text",
 //                'default'=>$this->userdata['username'],
@@ -407,7 +412,7 @@ class GeneralMembers extends Membership {
             ),
             array(
                 'field'=>"email",
-                'label'=>_l('Email Address',$this),
+                'label'=>_l('Email Address', $this),
                 'rules'=>"required|valid_email|is_unique[users.email,user_id,".$this->userdata['user_id']."]",
 //                'type'=>"text",
 //                'default'=>$this->userdata['email'],
@@ -416,42 +421,42 @@ class GeneralMembers extends Membership {
             ),
             array(
                 'field'=>"firstname",
-                'label'=>_l('First Name',$this),
+                'label'=>_l('First Name', $this),
                 'rules'=>"required|formRulesName",
                 'type'=>"text",
                 'default'=>$this->userdata['firstname'],
             ),
             array(
                 'field'=>"lastname",
-                'label'=>_l('Last Name',$this),
+                'label'=>_l('Last Name', $this),
                 'rules'=>"required|formRulesName",
                 'type'=>"text",
                 'default'=>$this->userdata['lastname'],
             ),
             array(
                 'field'=>"mobile",
-                'label'=>_l('Mobile',$this),
+                'label'=>_l('Mobile', $this),
                 'rules'=>"validPhone",
                 'type'=>"text",
                 'default'=>$this->userdata['mobile'],
             ),
             array(
                 'field'=>"website",
-                'label'=>_l('Website',$this),
+                'label'=>_l('Website', $this),
                 'rules'=>"valid_url",
                 'type'=>"url",
                 'default'=>$this->userdata['website'],
             ),
             array(
                 'field'=>"password",
-                'label'=>_l('Password',$this),
+                'label'=>_l('Password', $this),
                 'rules'=>"formRulesPassword",
                 'type'=>"password",
             ),
             array(
                 'field'=>"language_id",
-                'label'=>_l('Language',$this),
-                'rules'=>"required|in_list[".join(',',array_column($languages,"language_id"))."]",
+                'label'=>_l('Language', $this),
+                'rules'=>"required|in_list[".join(',', array_column($languages, "language_id"))."]",
                 'type'=>"select",
                 'options'=>$languages,
                 'option_name'=>"language_title",
@@ -462,13 +467,13 @@ class GeneralMembers extends Membership {
         $myform = new Form($this);
         $myform->config($config, base_url("{$this->language['code']}/account-setting/"), 'post', 'ajax');
         // * Submit form
-        if($myform->ispost()){
-            if($this->userdata['group_id']==100){
+        if ($myform->ispost()) {
+            if ($this->userdata['group_id']==100) {
                 return $this->errorMessage("As demo account you aren't able to change any thing.", base_url());
             }
             $post_data = $myform->getPost();
             // Stop Page
-            if($post_data === false){
+            if ($post_data === false) {
                 return $myform->getResponse();
             }
 
@@ -482,7 +487,9 @@ class GeneralMembers extends Membership {
                 'mobile'=>$post_data['mobile'],
                 'language_id'=>$post_data['language_id']
             );
-            if($post_data['password']!='') $data['password'] = md5($post_data['password']);
+            if ($post_data['password']!='') {
+                $data['password'] = md5($post_data['password']);
+            }
             Models::users()->edit($this->userdata['user_id'], $data);
 
             $row = Models::users()->getOne($this->userdata['user_id']);
@@ -497,7 +504,7 @@ class GeneralMembers extends Membership {
         // * Upload an avatar
         $this->data['data'] = $this->userdata;
         $this->data['submit_form'] = $myform->fetch();
-        $this->data['title'] = _l("Account setting",$this);
+        $this->data['title'] = _l("Account setting", $this);
         $this->data['page'] = "account";
         return $this->viewRender("membership/account_setting");
     }
@@ -506,20 +513,20 @@ class GeneralMembers extends Membership {
      * Upload and remove the user avatar
      * TODO: Change this!
      */
-    function accountAvatarChange()
+    public function accountAvatarChange()
     {
-        if($this->userdata==null){
+        if ($this->userdata==null) {
             return $this->showError();
         }
         $back_url = base_url("{$this->language['code']}/account-setting");
-        if(Services::identity()->isDemo()){
+        if (Services::identity()->isDemo()) {
             return $this->errorMessage("As demo account you aren't able to change any thing.", $back_url);
         }
-        if(Services::request()->getFile("file")->isValid()){
+        if (Services::request()->getFile("file")->isValid()) {
             $dir = "upload_file/users/user-".$this->userdata["user_id"];
 
             $upload = Services::upload()->filterTypes("images")->setBackUrl($back_url);
-            if(!$upload->save("file", $dir)) {
+            if (!$upload->save("file", $dir)) {
                 return $upload->getErrorResponse();
             }
 
@@ -527,8 +534,9 @@ class GeneralMembers extends Membership {
                 "avatar"=>$upload->getResult()->path,
             );
             Models::users()->edit($this->userdata['user_id'], $setData);
-            if(isset($this->userdata["avatar"])&&$this->userdata["avatar"]!=null&&$this->userdata["avatar"]!=""&&file_exists(SELF_PATH.$this->userdata["avatar"]))
+            if (isset($this->userdata["avatar"])&&$this->userdata["avatar"]!=null&&$this->userdata["avatar"]!=""&&file_exists(SELF_PATH.$this->userdata["avatar"])) {
                 unlink($dir."/".$this->userdata["avatar"]);
+            }
             return $this->successMessage("Your avatar has updated successfully.", base_url("{$this->language['code']}/account-setting"));
         }
 
@@ -536,8 +544,9 @@ class GeneralMembers extends Membership {
             "avatar"=>"",
         );
         Models::users()->edit($this->userdata['user_id'], $setData);
-        if(isset($this->userdata["avatar"])&&$this->userdata["avatar"]!=null&&$this->userdata["avatar"]!=""&&file_exists(SELF_PATH.$this->userdata["avatar"]))
+        if (isset($this->userdata["avatar"])&&$this->userdata["avatar"]!=null&&$this->userdata["avatar"]!=""&&file_exists(SELF_PATH.$this->userdata["avatar"])) {
             unlink(SELF_PATH.$this->userdata["avatar"]);
+        }
 
         return $this->successMessage("Your avatar has removed successfully.!", base_url("{$this->language['code']}/account-setting"));
     }

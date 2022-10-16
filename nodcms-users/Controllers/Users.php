@@ -17,8 +17,9 @@ use Config\Services;
 use Exception as ExceptionAlias;
 use NodCMS\Core\Libraries\Form;
 
-class Users extends \NodCMS\Core\Controllers\Frontend {
-    function __construct()
+class Users extends \NodCMS\Core\Controllers\Frontend
+{
+    public function __construct()
     {
         parent::__construct();
         $this->view->setConfig(new \NodCMS\Users\Config\View());
@@ -30,12 +31,12 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
      * @return RedirectResponse|false|string
      * @throws ExceptionAlias
      */
-    function userRegistration()
+    public function userRegistration()
     {
-        if($this->settings['registration']!=1){
+        if ($this->settings['registration']!=1) {
             return redirect()->to("/{$this->lang}");
         }
-        $this->data['title']=_l("User registration",$this);
+        $this->data['title']=_l("User registration", $this);
         $config = array(
             array(
                 'type'=>"h3",
@@ -89,22 +90,23 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
         $myform->config($config, base_url("{$this->lang}/user-registration"), 'post', 'ajax');
         $myform->setStyle("bootstrap-vertical");
         $myform->setFormTheme("form_only");
-        if(isset($this->settings['google_captcha_active']) && $this->settings['google_captcha_active']==1)
+        if (isset($this->settings['google_captcha_active']) && $this->settings['google_captcha_active']==1) {
             $myform->setGoogleCaptcha();
+        }
 
-        $myform->data['title']=_l("Registration form",$this);
-        $myform->data['submit_label']=_l("Register",$this);
+        $myform->data['title']=_l("Registration form", $this);
+        $myform->data['submit_label']=_l("Register", $this);
         $myform->data['submit_class']="green-soft";
-        if($myform->ispost()){
+        if ($myform->ispost()) {
             $data = $myform->getPost();
             // Stop Page
-            if($data === false){
+            if ($data === false) {
                 return $myform->getResponse();
             }
-            $active_code = md5(substr(md5(time()),4,6));
-            $unique_key = md5(time()+rand(100000,999999));
-            while (Services::model()->users()->getCount(['user_unique_key'=>$unique_key])!=0){
-                $unique_key = md5(time()+rand(100000,999999));
+            $active_code = md5(substr(md5(time()), 4, 6));
+            $unique_key = md5(time()+rand(100000, 999999));
+            while (Services::model()->users()->getCount(['user_unique_key'=>$unique_key])!=0) {
+                $unique_key = md5(time()+rand(100000, 999999));
             }
             $user = array(
                 "user_unique_key"=>$unique_key,
@@ -138,9 +140,9 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
             );
             send_notification_email("registration_confirm", $data['email'], $email_data);
             // Make confirm message
-            return $this->successMessage("Your registration was successful. We sent the confirmation link to your email.",base_url("{$this->lang}/user-registration/message"));
+            return $this->successMessage("Your registration was successful. We sent the confirmation link to your email.", base_url("{$this->lang}/user-registration/message"));
         }
-        $this->data['the_form'] = $myform->fetch(null,array('data-message'=>1,'data-reset'=>1));
+        $this->data['the_form'] = $myform->fetch(null, array('data-message'=>1,'data-reset'=>1));
         return $this->viewRender('signup_form');
     }
 
@@ -150,9 +152,9 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
      * @return RedirectResponse|false|string
      * @throws ExceptionAlias
      */
-    function returnPassword()
+    public function returnPassword()
     {
-        $this->data['title'] = _l("Return Password",$this);
+        $this->data['title'] = _l("Return Password", $this);
         $config = array(
             array(
                 'type'=>"h3",
@@ -160,7 +162,7 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
             ),
             array(
                 'field'=>"email",
-                'label'=>_l('Email Address',$this),
+                'label'=>_l('Email Address', $this),
                 'rules'=>"required|valid_email|existsEmail",
                 'type'=>"email",
             )
@@ -169,37 +171,38 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
         $myform->config($config, base_url("{$this->lang}/return-password"), 'post', 'ajax');
         $myform->setStyle("bootstrap-vertical");
         $myform->setFormTheme("form_only");
-        if(isset($this->settings['google_captcha_active']) && $this->settings['google_captcha_active']==1)
+        if (isset($this->settings['google_captcha_active']) && $this->settings['google_captcha_active']==1) {
             $myform->setGoogleCaptcha();
+        }
 
-        $myform->data['title']=_l("Registration form",$this);
-        if($myform->ispost()){
+        $myform->data['title']=_l("Registration form", $this);
+        if ($myform->ispost()) {
             $data = $myform->getPost();
             // Stop Page
-            if($data === false){
+            if ($data === false) {
                 return $myform->getResponse();
             }
 
             $email = $data['email'];
 
             $user = Services::model()->users()->getOne(null, ['email'=>$email]);
-            if(empty($user)){
+            if (empty($user)) {
                 return $this->errorMessage("User not found!", base_url("{$this->lang}/return-password"));
             }
 
             $tries = 0;
             $active_code_expired = strtotime("+24h");
-            if($user['active_code_expired'] > strtotime("now")) {
+            if ($user['active_code_expired'] > strtotime("now")) {
                 $active_code_expired = $user['active_code_expired'];
                 $tries = $user['reset_password_tries'];
-                if($tries >= Services::settings()->get()['reset_password_tries_limit']) {
+                if ($tries >= Services::settings()->get()['reset_password_tries_limit']) {
                     return $this->errorMessage("For security reason you are not able to request the a new password any more. " .
                         "Please try after 24 hours again.", base_url("{$this->lang}/return-password"));
                 }
                 $tries++;
             }
 
-            $rand_str = md5(rand(1000,9999) + time() + rand(1000, 9999) );
+            $rand_str = md5(rand(1000, 9999) + time() + rand(1000, 9999));
 
             $update_data = [
                 'active_code'=>$rand_str,
@@ -234,22 +237,22 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
      * @return RedirectResponse|false|string
      * @throws ExceptionAlias
      */
-    function setNewPassword($user_unique_key, $active_code)
+    public function setNewPassword($user_unique_key, $active_code)
     {
-        $this->data['title']=_l("Set a new password",$this);
+        $this->data['title']=_l("Set a new password", $this);
         $user = Services::model()->users()->getOneWithSecretKeys($user_unique_key, $active_code);
         $errorButtons = array(
             array('url'=>base_url("{$this->lang}"),'label'=>_l("Home", $this)),
             array('url'=>base_url("{$this->lang}/login"),'label'=>_l("Login", $this)),
             array('url'=>base_url("{$this->lang}/user-registration"),'label'=>_l("Register", $this)),
         );
-        if(count($user)==0) {
+        if (count($user)==0) {
             $header = _l("Not available", $this);
             $message = _l("This page is not available any more.", $this);
 
             return $this->showError($message, 1, $header, $errorButtons);
         }
-        if($user['active_code_expired'] <= time()){
+        if ($user['active_code_expired'] <= time()) {
             $header = _l("Active link is expired", $this);
             $message = _l("Thi link is not active any more. Please request to reset your password again.", $this);
             return $this->showError($message, 1, $header, $errorButtons);
@@ -262,13 +265,13 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
             ),
             array(
                 'field'=>"password",
-                'label'=>_l('Password',$this),
+                'label'=>_l('Password', $this),
                 'rules'=>"required|formRulesPassword",
                 'type'=>"password",
             ),
             array(
                 'field'=>"re_password",
-                'label'=>_l('Password Confirm',$this),
+                'label'=>_l('Password Confirm', $this),
                 'rules'=>"required|formRulesPassword|matches[password]",
                 'type'=>"password",
             ),
@@ -277,13 +280,14 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
         $myform->config($config, base_url("{$this->lang}/set-new-password/$user_unique_key/$active_code"), 'post', 'ajax');
         $myform->setStyle("bootstrap-vertical");
         $myform->setFormTheme("form_only");
-        if(isset($this->settings['google_captcha_active']) && $this->settings['google_captcha_active']==1)
+        if (isset($this->settings['google_captcha_active']) && $this->settings['google_captcha_active']==1) {
             $myform->setGoogleCaptcha();
+        }
 
-        if($myform->ispost()){
+        if ($myform->ispost()) {
             $data = $myform->getPost();
             // Stop Page
-            if($data === false){
+            if ($data === false) {
                 return $myform->getResponse();
             }
 
@@ -302,7 +306,7 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
     /**
      * Login form
      */
-    function login()
+    public function login()
     {
         $this->data['title'] = _l("Sign in", $this);
 
@@ -313,13 +317,13 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
             ),
             array(
                 'field'=>"username",
-                'label'=>_l('Username',$this),
+                'label'=>_l('Username', $this),
                 'rules'=>"required|validateUsernameType",
                 'type'=>"text",
             ),
             array(
                 'field'=>"password",
-                'label'=>_l('Password',$this),
+                'label'=>_l('Password', $this),
                 'rules'=>"required|formRulesPassword",
                 'type'=>"password",
             )
@@ -328,15 +332,16 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
         $myform->config($config, base_url($this->lang."/login"), 'post', 'ajax');
         $myform->setStyle("bootstrap-vertical");
         $myform->setFormTheme("form_only");
-        if(isset($this->settings['google_captcha_active']) && $this->settings['google_captcha_active']==1)
+        if (isset($this->settings['google_captcha_active']) && $this->settings['google_captcha_active']==1) {
             $myform->setGoogleCaptcha();
+        }
 
         $myform->data['submit_label'] = $this->data['title'];
         $myform->data['submit_class']="blue-steel";
-        if($myform->ispost()){
+        if ($myform->ispost()) {
             $data = $myform->getPost();
             // Stop Page
-            if($data === false){
+            if ($data === false) {
                 return $myform->getResponse();
             }
 
@@ -344,7 +349,7 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
             $password = $data['password'];
 
             $user = Services::model()->users()->loginMatch($username, $password);
-            if(empty($user)){
+            if (empty($user)) {
                 return $this->errorMessage("Password or username is incorrect.", "/{$this->lang}/login");
             }
 
@@ -359,8 +364,8 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
 
             );
             Services::session()->set($login_data);
-            $continue_url = $user['group_id']==1?ADMIN_URL:base_url();
-            return $this->successMessage(NULL, $continue_url);
+            $continue_url = $user['group_id']==1 ? ADMIN_URL : base_url();
+            return $this->successMessage(null, $continue_url);
         }
 
         $this->data['the_form'] = $myform->fetch('login-form', array('data-redirect'=>1));
@@ -372,9 +377,9 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
      *
      * @return RedirectResponse|string
      */
-    function userRegistrationMessage()
+    public function userRegistrationMessage()
     {
-        if(!Services::session()->getFlashdata('message')){
+        if (!Services::session()->getFlashdata('message')) {
             return redirect()->to("/{$this->lang}");
         }
 
@@ -387,10 +392,10 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
     }
 
     // Set new password for users after restoring request
-    function activeAccount($user_unique_key, $active_code)
+    public function activeAccount($user_unique_key, $active_code)
     {
         $user = Services::model()->users()->getOneWithSecretKeys($user_unique_key, $active_code);
-        if(!empty($user) && $user["reset_pass_exp"] > time() && $user["active_register"]==0) {
+        if (!empty($user) && $user["reset_pass_exp"] > time() && $user["active_register"]==0) {
             Services::model()->users()->setActive($user['user_id']);
             $message = array(
                 'title' => _l('User Activate', $this),
@@ -406,7 +411,7 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
             array('url'=>base_url("/{$this->lang}/login"),'label'=>_l("Login", $this)),
             array('url'=>base_url("/{$this->lang}/user-registration"),'label'=>_l("Registration", $this)),
         );
-        return $this->showError(null,404,null,$buttons);
+        return $this->showError(null, 404, null, $buttons);
     }
 
     /**
@@ -414,7 +419,7 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
      *
      * @return string
      */
-    function accountLocked(): string
+    public function accountLocked(): string
     {
         $this->data['title'] = _l("Account locked", $this);
         return $this->viewRender('account_lock');
@@ -425,7 +430,7 @@ class Users extends \NodCMS\Core\Controllers\Frontend {
      *
      * @return RedirectResponse
      */
-    function logout(): RedirectResponse
+    public function logout(): RedirectResponse
     {
         Services::session()->destroy();
         return redirect()->to("/{$this->language['code']}");

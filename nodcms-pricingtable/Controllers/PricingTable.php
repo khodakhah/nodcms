@@ -19,7 +19,7 @@ use NodCMS\Pricingtable\Config\ViewFrontend;
 
 class PricingTable extends Frontend
 {
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         Services::layout()->setConfig(new ViewFrontend());
@@ -30,13 +30,13 @@ class PricingTable extends Frontend
      *
      * @return string
      */
-    static function home(): string
+    public static function home(): string
     {
         $data = [];
         $data['title'] = Services::settings()->get()['pricing_table_page_title'];
         $data_list = Models::pricingTable()->getAllTrans(array('table_public'=>1), null, 1, array('sort_order', 'ASC'));
-        if(is_array($data_list)){
-            foreach($data_list as &$item){
+        if (is_array($data_list)) {
+            foreach ($data_list as &$item) {
                 $item['records'] = Models::pricingTableRecord()->getAllTrans(array(
                     'table_id'=>$item['table_id'],
 //                    'record_public'=>1
@@ -50,11 +50,11 @@ class PricingTable extends Frontend
     /**
      * @return string
      */
-    function prices(): string
+    public function prices(): string
     {
         $data_list = Models::pricingTable()->getAllTrans(array('table_public'=>1), null, 1, array('sort_order', 'ASC'));
-        if(is_array($data_list)){
-            foreach($data_list as &$item){
+        if (is_array($data_list)) {
+            foreach ($data_list as &$item) {
                 $item['records'] = Models::pricingTableRecord()->getAllTrans(array(
                     'table_id'=>$item['table_id'],
 //                    'record_public'=>1

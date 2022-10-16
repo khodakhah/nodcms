@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\Types;
 
-
 class SidebarLink extends Link
 {
     /**
@@ -24,5 +23,4 @@ class SidebarLink extends Link
      * @var SidebarLink[]
      */
     public $subLinks = [];
-
 }

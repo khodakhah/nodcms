@@ -71,10 +71,10 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
      * @inheritdoc
      * @throws \Exception
      */
-    function backend()
+    public function backend()
     {
-        define('GALLERY_ADMIN_URL',base_url('admin-gallery').'/');
-        if(Services::identity()->isAdmin(true)){
+        define('GALLERY_ADMIN_URL', base_url('admin-gallery').'/');
+        if (Services::identity()->isAdmin(true)) {
             Services::sidebar()->addLink(
                 'galleries',
                 _l("Galleries", $this),

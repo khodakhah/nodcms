@@ -69,10 +69,10 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
     /**
      * @throws \Exception
      */
-    function backend()
+    public function backend()
     {
-        define('PORTFOLIO_ADMIN_URL',base_url("admin-portfolio").'/');
-        if(Services::identity()->isAdmin(true)){
+        define('PORTFOLIO_ADMIN_URL', base_url("admin-portfolio").'/');
+        if (Services::identity()->isAdmin(true)) {
             Services::sidebar()->addLink(
                 'portfolio_posts',
                 _l("Portfolio", $this),

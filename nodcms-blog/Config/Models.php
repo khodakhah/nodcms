@@ -12,7 +12,6 @@
 
 namespace NodCMS\Blog\Config;
 
-
 use NodCMS\Blog\Models\BlogCategory;
 use NodCMS\Blog\Models\BlogComments;
 use NodCMS\Blog\Models\BlogPost;
@@ -26,8 +25,7 @@ class Models extends \Config\Models
      */
     public static function blogPost(bool $getShared = true): BlogPost
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             // Reset the class name
             static::$serviceClass = self::class;
 
@@ -44,8 +42,7 @@ class Models extends \Config\Models
      */
     public static function blogCategory(bool $getShared = true): BlogCategory
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             // Reset the class name
             static::$serviceClass = self::class;
 
@@ -62,8 +59,7 @@ class Models extends \Config\Models
      */
     public static function blogComments(bool $getShared = true): BlogComments
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             // Reset the class name
             static::$serviceClass = self::class;
 
@@ -80,8 +76,7 @@ class Models extends \Config\Models
      */
     public static function blogPostsCategory(bool $getShared = true): BlogPostsCategory
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             // Reset the class name
             static::$serviceClass = self::class;
 

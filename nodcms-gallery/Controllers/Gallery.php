@@ -22,7 +22,7 @@ class Gallery extends Frontend
     public function __construct()
     {
         parent::__construct();
-        Services::layout()->setConfig( new ViewFrontend());
+        Services::layout()->setConfig(new ViewFrontend());
     }
 
     /**
@@ -30,7 +30,7 @@ class Gallery extends Frontend
      *
      * @return string
      */
-    static function home(): string
+    public static function home(): string
     {
         $data = [];
         $data_list = Models::gallery()->getAllTrans(['gallery_public'=>1]);
@@ -45,11 +45,11 @@ class Gallery extends Frontend
      * @param int $id
      * @return string
      */
-    function album(int $id): string
+    public function album(int $id): string
     {
         $data = Models::gallery()->getOneTrans($id);
         $this->data['data'] = $data;
-        if(Services::request()->isAJAX()){
+        if (Services::request()->isAJAX()) {
             return Services::layout()->setData($this->data)->render("gallery_details_ajax");
         }
         $this->display_page_title = false;
@@ -61,14 +61,14 @@ class Gallery extends Frontend
         );
         $this->data['description'] = $data['description'];
         $this->data['keyword'] = $data['keywords'];
-        $this->data['title_bg'] = isset($this->settings['gallery_page_title_bg'])?base_url($this->settings['gallery_page_title_bg']):"";
+        $this->data['title_bg'] = isset($this->settings['gallery_page_title_bg']) ? base_url($this->settings['gallery_page_title_bg']) : "";
         return $this->viewRender('gallery_details');
     }
 
     /**
      * Gallery page
      */
-    function gallery()
+    public function gallery()
     {
         $this->display_page_title = true;
         $data_list = Models::gallery()->getAllTrans(['gallery_public'=>1]);
@@ -85,7 +85,7 @@ class Gallery extends Frontend
         );
         $this->data['description'] = $setting['gallery_page_descriptions'];
         $this->data['keyword'] = $setting['gallery_page_keywords'];
-        $this->data['title_bg'] = $setting['gallery_page_title_bg']!=""?base_url($setting['gallery_page_title_bg']):'';
+        $this->data['title_bg'] = $setting['gallery_page_title_bg']!="" ? base_url($setting['gallery_page_title_bg']) : '';
         return $this->viewRender("gallery_list");
     }
 }

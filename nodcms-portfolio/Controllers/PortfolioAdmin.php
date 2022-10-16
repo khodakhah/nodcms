@@ -27,7 +27,7 @@ class PortfolioAdmin extends Backend
      * @param int $page
      * @return false|string
      */
-    function posts(int $page = 1)
+    public function posts(int $page = 1)
     {
         $self_url = PORTFOLIO_ADMIN_URL."posts";
         $config = array(
@@ -96,19 +96,19 @@ class PortfolioAdmin extends Backend
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function postSubmit(int $id = 0)
+    public function postSubmit(int $id = 0)
     {
         $back_url = PORTFOLIO_ADMIN_URL."posts";
         $self_url = PORTFOLIO_ADMIN_URL."postSubmit/$id";
 
-        if($id!=0){
+        if ($id!=0) {
             $data = Models::portfolio()->getOne($id);
-            if(count($data)==0){
+            if (count($data)==0) {
                 return $this->errorMessage("The post couldn't find.", $back_url);
             }
             $this->data['sub_title'] = _l("Edit", $this);
             $form_attr = array('data-redirect'=>1);
-        }else{
+        } else {
             $this->data['sub_title'] = _l("Add", $this);
             $form_attr = array('data-reset'=>1,'data-redirect'=>1);
         }
@@ -120,14 +120,14 @@ class PortfolioAdmin extends Backend
                 'label' => _l("Name", $this),
                 'type' => "text",
                 'rules' => 'required',
-                'default'=>isset($data)?$data['portfolio_name']:"",
+                'default'=>isset($data) ? $data['portfolio_name'] : "",
             ),
             array(
                 'field' => 'portfolio_image',
                 'label' => _l("Avatar", $this),
                 'type' => "image-library",
                 'rules' => '',
-                'default'=>isset($data)?$data['portfolio_image']:"",
+                'default'=>isset($data) ? $data['portfolio_image'] : "",
             ),
             array(
                 'field' => 'portfolio_date',
@@ -138,21 +138,21 @@ class PortfolioAdmin extends Backend
                     'todayHighlight'=>true,
                     'dateFormat'=>$this->settings['datepicker_date_format']
                 ),
-                'default'=>isset($data)?my_int_date($data['portfolio_date']):"",
+                'default'=>isset($data) ? my_int_date($data['portfolio_date']) : "",
             ),
             array(
                 'field' => 'portfolio_public',
                 'label' => _l("Public", $this),
                 'type' => "switch",
                 'rules' => 'required|in_list[0,1]',
-                'default'=>isset($data)?$data['portfolio_public']:"",
+                'default'=>isset($data) ? $data['portfolio_public'] : "",
             ),
         );
 
         $languages = Models::languages()->getAll();
-        foreach ($languages as $language){
+        foreach ($languages as $language) {
             $translate = Models::portfolio()->getTranslations($id, $language['language_id']);
-            array_push($config,array(
+            array_push($config, array(
                 'prefix_language'=>$language,
                 'label'=>$language['language_title'],
                 'type'=>"h4",
@@ -160,50 +160,50 @@ class PortfolioAdmin extends Backend
             $prefix = "translate[$language[language_id]]";
             array_push($config, array(
                 'field'=>$prefix."[title]",
-                'label'=>_l('Title',$this),
+                'label'=>_l('Title', $this),
                 'rules'=>"",
                 'type'=>"text",
-                'default'=>isset($translate['title'])?$translate['title']:'',
+                'default'=>isset($translate['title']) ? $translate['title'] : '',
             ));
             array_push($config, array(
                 'field'=>$prefix."[details]",
                 'label'=>_l("Details", $this),
                 'rules'=>"",
                 'type'=>"textarea",
-                'default'=>isset($translate['details'])?$translate['details']:'',
+                'default'=>isset($translate['details']) ? $translate['details'] : '',
             ));
         }
 
         $myform->config($config, $self_url, 'post', 'ajax');
-        if($myform->ispost()){
-            if(!Services::identity()->isAdmin())
+        if ($myform->ispost()) {
+            if (!Services::identity()->isAdmin()) {
                 return Services::identity()->getResponse();
+            }
             $post_data = $myform->getPost();
             // Stop Page
-            if($post_data === false){
+            if ($post_data === false) {
                 return $myform->getResponse();
             }
 
-            if(key_exists('portfolio_date', $post_data)){
+            if (key_exists('portfolio_date', $post_data)) {
                 $post_data['portfolio_date'] = strtotime($post_data['portfolio_date']);
             }
 
-            if(key_exists('translate', $post_data)){
+            if (key_exists('translate', $post_data)) {
                 $translates = $post_data['translate'];
                 unset($post_data['translate']);
             }
 
-            if($id!=0){
+            if ($id!=0) {
                 Models::portfolio()->edit($id, $post_data);
-                if(isset($translates)){
-                    Models::portfolio()->updateTranslations($id,$translates,$languages);
+                if (isset($translates)) {
+                    Models::portfolio()->updateTranslations($id, $translates, $languages);
                 }
                 return $this->successMessage("The post has been edited successfully.", $back_url);
-            }
-            else{
+            } else {
                 $new_id = Models::portfolio()->add($post_data);
-                if(isset($translates)){
-                    Models::portfolio()->updateTranslations($new_id,$translates,$languages);
+                if (isset($translates)) {
+                    Models::portfolio()->updateTranslations($new_id, $translates, $languages);
                 }
                 return $this->successMessage("A new post has been added successfully.", $back_url);
             }
@@ -214,7 +214,7 @@ class PortfolioAdmin extends Backend
             array('title'=>_l("Portfolio Posts", $this), 'url'=>$back_url),
             array('title'=>$this->data['sub_title']));
         $this->data['page'] = "portfolio_portfolio_submit";
-        return $this->viewRenderString($myform->fetch(null,$form_attr));
+        return $this->viewRenderString($myform->fetch(null, $form_attr));
     }
 
     /**
@@ -225,19 +225,20 @@ class PortfolioAdmin extends Backend
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function postDelete(int $id, int $confirm = 0)
+    public function postDelete(int $id, int $confirm = 0)
     {
-        if(!Services::identity()->isAdmin())
+        if (!Services::identity()->isAdmin()) {
             return Services::identity()->getResponse();
+        }
 
         $back_url = PORTFOLIO_ADMIN_URL."posts";
         $self_url = PORTFOLIO_ADMIN_URL."postDelete/$id";
         $data = Models::portfolio()->getOne($id);
-        if(count($data)==0){
+        if (count($data)==0) {
             return $this->errorMessage("Couldn't find the post.", $back_url);
         }
 
-        if($confirm!=1){
+        if ($confirm!=1) {
             return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">'._l("This action will delete the Portfolio post with its comments.", $this).

@@ -12,7 +12,6 @@
 
 namespace NodCMS\Gallery\Config;
 
-
 use NodCMS\Gallery\Models\Gallery;
 use NodCMS\Gallery\Models\GalleryImages;
 
@@ -24,8 +23,7 @@ class Models extends \Config\Models
      */
     public static function gallery(bool $getShared = true): Gallery
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             // Reset the class name
             static::$serviceClass = self::class;
 
@@ -41,8 +39,7 @@ class Models extends \Config\Models
      */
     public static function galleryImages(bool $getShared = true): GalleryImages
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             // Reset the class name
             static::$serviceClass = self::class;
 

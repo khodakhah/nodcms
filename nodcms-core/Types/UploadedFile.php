@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\Types;
 
-
 class UploadedFile
 {
     public $path;

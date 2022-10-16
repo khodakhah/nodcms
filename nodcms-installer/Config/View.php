@@ -1,8 +1,10 @@
-<?php namespace NodCMS\Installer\Config;
+<?php
+
+namespace NodCMS\Installer\Config;
 
 class View extends \Config\View
 {
-	/**
+    /**
          * NodCMS variable!
          * Path of view file. This path will attached before view files with
          *
@@ -37,5 +39,3 @@ class View extends \Config\View
  * the LICENSE file that was distributed with this source code.
  *
  */
-
-

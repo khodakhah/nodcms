@@ -11,6 +11,7 @@
  */
 
 namespace NodCMS\Core\Libraries;
+
 use Config\Services;
 
 /**
@@ -40,24 +41,24 @@ class Currency
     public function setup()
     {
         // Set currency options (pricing feature)
-        if(isset(Services::settings()->get()["currency_sign"]) && Services::settings()->get()["currency_sign"]!=""){
+        if (isset(Services::settings()->get()["currency_sign"]) && Services::settings()->get()["currency_sign"]!="") {
             $currencyConfig = array(
                 "code"=>Services::settings()->get()["currency_code"],
                 "sign"=>Services::settings()->get()["currency_sign"],
                 "add_before"=>"$",
                 "add_after"=>"USD",
             );
-            if(Services::settings()->get()["currency_sign_before"]==1) {
+            if (Services::settings()->get()["currency_sign_before"]==1) {
                 $currencyConfig["add_before"] = Services::settings()->get()["currency_sign"];
                 $currencyConfig["add_after"] = "";
-            }else {
+            } else {
                 $currencyConfig["add_before"] = "";
                 $currencyConfig["add_after"] = Services::settings()->get()["currency_sign"];
             }
             $this->setOptions($currencyConfig);
         }
 
-        if(Services::settings()->get()["currency_format"]!=""){
+        if (Services::settings()->get()["currency_format"]!="") {
             $this->setFormat(Services::settings()->get()["currency_format"]);
         }
     }
@@ -87,8 +88,9 @@ class Currency
      *
      * @param $value
      */
-    public function setFormat($value){
-        if(!in_array($value, $this->acceptable_formats)){
+    public function setFormat($value)
+    {
+        if (!in_array($value, $this->acceptable_formats)) {
             $value = $this->_currencyFormat;
         }
         if ($value == "1.234,56") {
@@ -112,21 +114,27 @@ class Currency
      *
      * @param $value
      */
-    public function setOptions($value){
-        if(!isset($value["code"]))
+    public function setOptions($value)
+    {
+        if (!isset($value["code"])) {
             $value["code"]=$this->options["code"];
+        }
 
-        if(!isset($value["sign"]))
+        if (!isset($value["sign"])) {
             $value["sign"]=$this->options["sign"];
+        }
 
-        if(!isset($value["html_sign"]))
+        if (!isset($value["html_sign"])) {
             $value["html_sign"]=$this->options["html_sign"];
+        }
 
-        if(!isset($value["add_before"]))
+        if (!isset($value["add_before"])) {
             $value["add_before"]=$this->options["add_before"];
+        }
 
-        if(!isset($value["add_after"]))
+        if (!isset($value["add_after"])) {
             $value["add_after"]=$this->options["add_after"];
+        }
 
         $this->options = $value;
     }
@@ -136,20 +144,24 @@ class Currency
      *
      * @return array
      */
-    public function getOptions(){
+    public function getOptions()
+    {
         return $this->options;
     }
 
     // Convert number to currency string
-    function format($value){
-        if(!is_int($value) && !is_float($value))
+    public function format($value)
+    {
+        if (!is_int($value) && !is_float($value)) {
             $value = floatval($value);
+        }
         $this->setParts($value);
 
         $format = $this->options["add_before"];
         $format .= $this->_bigPart;
-        if($this->_smallPartDivider != "")
+        if ($this->_smallPartDivider != "") {
             $format .= $this->_smallPartDivider.$this->_smallPart;
+        }
         $format .= $this->options["add_after"];
         return $format;
     }
@@ -161,14 +173,17 @@ class Currency
      * @param $value float
      * @return string
      */
-    function formatCode($value){
-        if(!is_int($value) && !is_float($value))
+    public function formatCode($value)
+    {
+        if (!is_int($value) && !is_float($value)) {
             $value = floatval($value);
+        }
         $this->setParts($value);
 
         $format = $this->_bigPart;
-        if($this->_smallPartDivider != "")
+        if ($this->_smallPartDivider != "") {
             $format .= $this->_smallPartDivider.$this->_smallPart;
+        }
         $format .= " ".$this->options["code"];
         return $format;
     }
@@ -180,19 +195,23 @@ class Currency
      * @param $divider mixed
      * @return string
      */
-    function formatFloat($value, $divider = null){
-        if(!is_int($value) && !is_float($value))
+    public function formatFloat($value, $divider = null)
+    {
+        if (!is_int($value) && !is_float($value)) {
             $value = floatval($value);
+        }
         $this->setParts($value, false);
 
         $format = $this->_bigPart;
         $_smallPartDivider = $this->_smallPartDivider;
         // Set the add-on divider if it sets
-        if($divider!=null)
+        if ($divider!=null) {
             $_smallPartDivider = $divider;
+        }
         // Add . if didn't set any divider
-        if($_smallPartDivider == "")
+        if ($_smallPartDivider == "") {
             $_smallPartDivider = ".";
+        }
 
         $format .= $_smallPartDivider.$this->_smallPart;
         return $format;
@@ -204,33 +223,37 @@ class Currency
      * @param $value
      * @return string
      */
-    function noSignFormat($value){
-        if(!is_int($value) && !is_float($value))
+    public function noSignFormat($value)
+    {
+        if (!is_int($value) && !is_float($value)) {
             $value = floatval($value);
+        }
         $this->setParts($value);
 
         $format = $this->_bigPart;
-        if($this->_smallPartDivider != "")
+        if ($this->_smallPartDivider != "") {
             $format .= $this->_smallPartDivider.$this->_smallPart;
+        }
         return $format;
     }
 
-    private function setParts($value, $big_part_divider = true){
+    private function setParts($value, $big_part_divider = true)
+    {
         $str_value = strval($value);
         $array_value = explode(".", $str_value);
-        if(is_float($value) && isset($array_value[1])){
+        if (is_float($value) && isset($array_value[1])) {
             $this->_smallPart = substr($array_value[1]."00", 0, 2);
             $this->_bigPart = $array_value[0];
-        }else{
+        } else {
             $this->_bigPart = $str_value;
             $this->_smallPart = "00";
         }
-        if($big_part_divider == true){
+        if ($big_part_divider == true) {
             $value_len = strlen($this->_bigPart);
-            if($value_len > 3){
+            if ($value_len > 3) {
                 $mod = $value_len%3;
                 $bigPart = substr($this->_bigPart, 0, $mod);
-                for ($i=$mod;$i<$value_len;$i+=3){
+                for ($i=$mod;$i<$value_len;$i+=3) {
                     $bigPart .= $this->_bigPartDivider;
                     $bigPart .= substr($this->_bigPart, $i, 3);
                 }

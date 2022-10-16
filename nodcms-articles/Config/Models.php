@@ -22,8 +22,7 @@ class Models extends \Config\Models
      */
     public static function articles(bool $getShared = true): Articles
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             // Reset the class name
             static::$serviceClass = self::class;
 

@@ -14,7 +14,7 @@ namespace NodCMS\Core\Models;
 
 class Languages extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "languages";
         $primary_key = "language_id";
@@ -49,7 +49,7 @@ class Languages extends Model
     public function defaultData()
     {
         $data = [self::getDefaultRecord()];
-        foreach($data as $item) {
+        foreach ($data as $item) {
             $this->add($item);
         }
     }
@@ -63,7 +63,7 @@ class Languages extends Model
     public function getByCode(string $code): ?array
     {
         $result = $this->getOne(null, ['code'=>$code]);
-        if(empty($result)) {
+        if (empty($result)) {
             $result = $this->getOne(null);
         }
         return $result;

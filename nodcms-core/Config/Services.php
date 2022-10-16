@@ -1,4 +1,6 @@
-<?php namespace Config;
+<?php
+
+namespace Config;
 
 use CodeIgniter\Config\Services as CoreServices;
 use NodCMS\Core\Libraries\Currency;
@@ -34,16 +36,15 @@ use NodCMS\Core\View\TopMenu;
  */
 class Services extends CoreServices
 {
-
-	//    public static function example($getShared = true)
-	//    {
-	//        if ($getShared)
-	//        {
-	//            return static::getSharedInstance('example');
-	//        }
-	//
-	//        return new \CodeIgniter\Example();
-	//    }
+    //    public static function example($getShared = true)
+    //    {
+    //        if ($getShared)
+    //        {
+    //            return static::getSharedInstance('example');
+    //        }
+    //
+    //        return new \CodeIgniter\Example();
+    //    }
 
     /**
      * Load the CI customized Validation class from NodCMS core
@@ -54,13 +55,11 @@ class Services extends CoreServices
      */
     public static function validation(Validation $config = null, bool $getShared = true)
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance('validation', $config);
         }
 
-        if (is_null($config))
-        {
+        if (is_null($config)) {
             $config = config('Validation');
         }
 
@@ -75,10 +74,9 @@ class Services extends CoreServices
      * @param false $getShared
      * @return View
      */
-    public static function formLayout($config = null, $getShared = true) : Form
+    public static function formLayout($config = null, $getShared = true): Form
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance('formLayout', $config);
         }
 
@@ -94,8 +92,7 @@ class Services extends CoreServices
      */
     public static function layout($config = null, bool $getShared = true): Layout
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance('layout', $config);
         }
 
@@ -111,8 +108,7 @@ class Services extends CoreServices
      */
     public static function view($config = null, bool $getShared = true): View
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance('view', $config);
         }
 
@@ -126,8 +122,7 @@ class Services extends CoreServices
      */
     public static function language(string $locale = null, bool $getShared = true): Language
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance('language', $locale)
                 ->setLocale($locale);
         }
@@ -144,8 +139,7 @@ class Services extends CoreServices
      */
     public static function settings(bool $getShared = true): SettingsLibrary
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance('settings');
         }
 
@@ -158,8 +152,7 @@ class Services extends CoreServices
      */
     public static function currency(bool $getShared = true): Currency
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance('currency');
         }
 
@@ -175,8 +168,7 @@ class Services extends CoreServices
      */
     public static function identity(bool $getShared = true): Identity
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance('identity');
         }
 
@@ -191,8 +183,7 @@ class Services extends CoreServices
      */
     public static function emailNotification(bool $getShared = true): EmailNotification
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance('emailNotification');
         }
 
@@ -209,8 +200,7 @@ class Services extends CoreServices
      */
     public static function notification(string $key, int $languageId = null, bool $getShared = true): Notification
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance('notification', $key, $languageId);
         }
 
@@ -225,8 +215,7 @@ class Services extends CoreServices
      */
     public static function model(bool $getShared = true)
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance('model');
         }
 
@@ -241,8 +230,7 @@ class Services extends CoreServices
      */
     public static function databaseMapping(bool $getShared = true): DatabaseMapping
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance('databaseMapping');
         }
         return new DatabaseMapping();
@@ -255,8 +243,7 @@ class Services extends CoreServices
      */
     public static function modules(bool $getShared = true): Modules
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance('modules');
         }
 
@@ -281,8 +268,7 @@ class Services extends CoreServices
      */
     public static function sidebar(bool $getShared = true): Sidebar
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance("sidebar");
         }
 
@@ -297,8 +283,7 @@ class Services extends CoreServices
      */
     public static function topMenu(bool $getShared = true): LinkList
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance("topMenu");
         }
 
@@ -323,8 +308,7 @@ class Services extends CoreServices
      */
     public static function databaseEnvConfig(bool $getShared = true): DatabaseEnvConfig
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             return static::getSharedInstance("databaseEnvConfig");
         }
         return new DatabaseEnvConfig();
@@ -340,5 +324,3 @@ class Services extends CoreServices
  * the LICENSE file that was distributed with this source code.
  *
  */
-
-

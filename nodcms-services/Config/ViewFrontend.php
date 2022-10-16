@@ -12,7 +12,6 @@
 
 namespace NodCMS\Services\Config;
 
-
 class ViewFrontend extends \Config\ViewFrontend
 {
     public $namespacePieces = "NodCMS\Services/frontend";

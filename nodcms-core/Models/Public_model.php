@@ -14,56 +14,68 @@ namespace NodCMS\Core\Models;
 
 class Public_model extends CoreModel
 {
-    function init()
+    public function init()
     {
         // Call the Model constructor
     }
 
     // Select from "auto_email_message" for notification emails
-    function getAutoMessages($key, $language_id = NULL){
-        if($language_id==NULL)
+    public function getAutoMessages($key, $language_id = null)
+    {
+        if ($language_id==null) {
             $language_id = $this->language["language_id"];
+        }
         $this->db->select("*");
-        $this->db->where('code_key',$key);
-        $this->db->where('language_id',$language_id);
+        $this->db->where('code_key', $key);
+        $this->db->where('language_id', $language_id);
         $this->db->from('auto_email_messages');
         $query = $this->db->get();
         return $query->row_array();
     }
 
-    function getAllLanguages($conditions = NULL){
+    public function getAllLanguages($conditions = null)
+    {
         $this->db->select("*");
         $this->db->from('languages');
-        if($conditions != NULL) $this->db->where($conditions);
+        if ($conditions != null) {
+            $this->db->where($conditions);
+        }
         $this->db->order_by('default', 'DESC');
         $this->db->order_by('sort_order', 'ASC');
         $query = $this->db->get();
         return $query->result_array();
     }
 
-    function getLanguage($language_id, $conditions = NULL){
+    public function getLanguage($language_id, $conditions = null)
+    {
         $this->db->select("*");
         $this->db->from('languages');
         $this->db->where('language_id', $language_id);
-        if($conditions != NULL) $this->db->where($conditions);
+        if ($conditions != null) {
+            $this->db->where($conditions);
+        }
         $query = $this->db->get();
         return $query->row_array();
     }
 
-    function getDefaultLanguage($conditions = NULL){
+    public function getDefaultLanguage($conditions = null)
+    {
         $this->db->select("*");
         $this->db->from('languages');
         $this->db->order_by('default', 'DESC');
         $this->db->order_by('sort_order', 'ASC');
-        if($conditions != NULL) $this->db->where($conditions);
+        if ($conditions != null) {
+            $this->db->where($conditions);
+        }
         $query = $this->db->get();
         return $query->row_array();
     }
 
-    function getTitle($table, $id, $language_id = null)
+    public function getTitle($table, $id, $language_id = null)
     {
-        if($language_id==null)
+        if ($language_id==null) {
             $language_id = $this->language['language_id'];
+        }
         $this->db->select("*");
         $this->db->from('titles');
         $this->db->where("relation_id", $id);
@@ -73,7 +85,7 @@ class Public_model extends CoreModel
         return $query->row_array();
     }
 
-    function getTitleTranslations($table, $id)
+    public function getTitleTranslations($table, $id)
     {
         $this->db->select("*");
         $this->db->from('titles');
@@ -81,32 +93,34 @@ class Public_model extends CoreModel
         $this->db->where("data_type", $table);
         $query = $this->db->get();
         $result = $query->result_array();
-        if(count($result)==0)
+        if (count($result)==0) {
             return array();
-        else
+        } else {
             return array_combine(array_column($result, "language_id"), $result);
+        }
     }
 
-    function getAllUsers($conditions = null)
+    public function getAllUsers($conditions = null)
     {
         $this->db->select('*');
         $this->db->from('users');
-        if($conditions!=null)
+        if ($conditions!=null) {
             $this->db->where($conditions);
+        }
         $query = $this->db->get();
         return $query->result_array();
     }
 
-    function getUserDetails($id)
+    public function getUserDetails($id)
     {
         $this->db->select('*');
         $this->db->from('users');
-        $this->db->where('user_id',$id);
+        $this->db->where('user_id', $id);
         $query = $this->db->get();
         return $query->row_array();
     }
 
-    function socialLinks()
+    public function socialLinks()
     {
         $this->db->select('*');
         $this->db->from('social_links');
@@ -114,7 +128,7 @@ class Public_model extends CoreModel
         return $query->result_array();
     }
 
-    function getSetting()
+    public function getSetting()
     {
         $this->db->select('*');
         $this->db->from('setting');
@@ -122,7 +136,7 @@ class Public_model extends CoreModel
         return $query->row_array();
     }
 
-    function getSettings($language_id = 0)
+    public function getSettings($language_id = 0)
     {
         $this->db->select('*');
         $this->db->from('settings');
@@ -132,37 +146,42 @@ class Public_model extends CoreModel
         return array_combine(array_column($result, 'field_name'), array_column($result, 'field_value'));
     }
 
-    function getMenu($key, $parent = null)
+    public function getMenu($key, $parent = null)
     {
         $this->db->select('*');
         $this->db->from('menu');
-        $this->db->join('titles',"titles.relation_id = menu_id");
-        $this->db->where('titles.data_type',"menu");
-        $this->db->where('titles.language_id',$this->language["language_id"]);
-        $this->db->where('public',1);
+        $this->db->join('titles', "titles.relation_id = menu_id");
+        $this->db->where('titles.data_type', "menu");
+        $this->db->where('titles.language_id', $this->language["language_id"]);
+        $this->db->where('public', 1);
         $this->db->where('menu_key', $key);
-        if($parent!==null)
-            $this->db->where('sub_menu',$parent);
+        if ($parent!==null) {
+            $this->db->where('sub_menu', $parent);
+        }
         $this->db->order_by('menu_order', "ASC");
         $query = $this->db->get();
         return $query->result_array();
     }
 
-    function isUnique($value,$table,$filed,$except_field = null, $except_value = null, $conditions = null)
+    public function isUnique($value, $table, $filed, $except_field = null, $except_value = null, $conditions = null)
     {
         $this->db->select($filed);
         $this->db->from($table);
         $this->db->where($filed, $value);
-        if($except_field!=null && $except_value!=null)
+        if ($except_field!=null && $except_value!=null) {
             $this->db->where("$except_field <>", $except_value);
-        if($conditions!=null)
+        }
+        if ($conditions!=null) {
             $this->db->where($conditions);
+        }
         return $this->db->count_all_results();
     }
 
-    function getFiles($file_ids)
+    public function getFiles($file_ids)
     {
-        if(is_array($file_ids)) $file_ids = join(',', $file_ids);
+        if (is_array($file_ids)) {
+            $file_ids = join(',', $file_ids);
+        }
         $this->db->select('*, CONCAT("file-",file_id,"-",file_key) as file_download_uri, CONCAT("image-",file_id,"-",file_key) as file_image_uri');
         $this->db->from("upload_files");
         $this->db->where("file_id IN($file_ids)");
@@ -170,16 +189,16 @@ class Public_model extends CoreModel
         return $query->result_array();
     }
 
-    function getFile($file_id)
+    public function getFile($file_id)
     {
         $this->db->select('*, CONCAT("file-",file_id,"-",file_key) as file_download_uri, CONCAT("image-",file_id,"-",file_key) as file_image_uri');
         $this->db->from("upload_files");
-        $this->db->where('file_id',$file_id);
+        $this->db->where('file_id', $file_id);
         $query = $this->db->get();
         return $query->row_array();
     }
 
-    function getFileDetails($conditions)
+    public function getFileDetails($conditions)
     {
         $this->db->select('*, CONCAT("file-",file_id,"-",file_key) as file_download_uri, CONCAT("image-",file_id,"-",file_key) as file_image_uri');
         $this->db->from("upload_files");
@@ -188,7 +207,7 @@ class Public_model extends CoreModel
         return $query->row_array();
     }
 
-    function setFileUsing($file_id)
+    public function setFileUsing($file_id)
     {
         $this->db->update("upload_files", array('file_using'=>1), array('file_id'=>$file_id));
     }
@@ -204,16 +223,16 @@ class Public_model extends CoreModel
      * @param $order
      * @return mixed
      */
-    function getResult($table, $conditions = null, $limit = null, $offset = null, $order_by = null, $order = 'ASC')
+    public function getResult($table, $conditions = null, $limit = null, $offset = null, $order_by = null, $order = 'ASC')
     {
         $this->db->select('*')->from($table);
-        if($conditions!=null){
+        if ($conditions!=null) {
             $this->searchDecode($conditions);
         }
-        if($limit!=null){
+        if ($limit!=null) {
             $this->db->limit($limit, $offset);
         }
-        if($order_by!=null){
+        if ($order_by!=null) {
             $this->db->order_by($order_by, $order);
         }
         $query = $this->db->get();
@@ -227,15 +246,15 @@ class Public_model extends CoreModel
      * @param null $conditions
      * @return int
      */
-    function getCount($table, $conditions = null)
+    public function getCount($table, $conditions = null)
     {
         $this->db->select('count(*)')->from($table);
-        if($conditions!=null){
+        if ($conditions!=null) {
             $this->searchDecode($conditions);
         }
         $query = $this->db->get();
         $result = $query->row_array();
-        return count($result)!=0?$result['count(*)']:0;
+        return count($result)!=0 ? $result['count(*)'] : 0;
     }
 
     /**
@@ -247,11 +266,11 @@ class Public_model extends CoreModel
      * @param null $conditions
      * @return mixed
      */
-    function getDetails($table,$key_filed, $value, $conditions = null)
+    public function getDetails($table, $key_filed, $value, $conditions = null)
     {
         $this->db->select('*')->from($table);
         $this->db->where($key_filed, $value);
-        if($conditions!=null){
+        if ($conditions!=null) {
             $this->searchDecode($conditions);
         }
         $query = $this->db->get();
@@ -266,14 +285,14 @@ class Public_model extends CoreModel
      * @param string $order
      * @return mixed
      */
-    function getLastRow($table,$offset, $conditions = null, $order_by = null, $order = 'ASC')
+    public function getLastRow($table, $offset, $conditions = null, $order_by = null, $order = 'ASC')
     {
         $this->db->select('*')->from($table);
-        if($conditions!=null){
+        if ($conditions!=null) {
             $this->searchDecode($conditions);
         }
-        $this->db->limit(1,$offset);
-        if($order_by!=null){
+        $this->db->limit(1, $offset);
+        if ($order_by!=null) {
             $this->db->order_by($order_by, $order);
         }
         $query = $this->db->get();
@@ -286,33 +305,34 @@ class Public_model extends CoreModel
      *
      * @param $conditions
      */
-    function searchDecode($conditions)
+    public function searchDecode($conditions)
     {
-        if(!is_array($conditions)){
+        if (!is_array($conditions)) {
             $this->db->where($conditions);
             return;
         }
-        if(isset($conditions['search']) && count($conditions['search'])!=0){
-            foreach ($conditions['search'] as $key=>$value){
-                if($value == 'null'){
+        if (isset($conditions['search']) && count($conditions['search'])!=0) {
+            foreach ($conditions['search'] as $key=>$value) {
+                if ($value == 'null') {
                     continue;
                 }
-                if(preg_match('/^([A-Za-z\_]+)\_\_(like|not_like|or_like|or_not_like)$/', $key, $parameters) == true){
-                    if($value=='')
+                if (preg_match('/^([A-Za-z\_]+)\_\_(like|not_like|or_like|or_not_like)$/', $key, $parameters) == true) {
+                    if ($value=='') {
                         continue;
-                    $values = explode(' ',$value);
+                    }
+                    $values = explode(' ', $value);
                     $this->db->group_start();
-                    foreach ($values as $item){
-                        $this->db->$parameters[2]($parameters[1],$item);
+                    foreach ($values as $item) {
+                        $this->db->$parameters[2]($parameters[1], $item);
                     }
                     $this->db->group_end();
                     continue;
                 }
-                $this->db->where($key,$value);
+                $this->db->where($key, $value);
             }
             unset($conditions['search']);
         }
-        if(count($conditions)!=0){
+        if (count($conditions)!=0) {
             $this->db->where($conditions);
         }
     }
@@ -324,7 +344,7 @@ class Public_model extends CoreModel
      * @param $data
      * @return mixed
      */
-    function add($table, $data)
+    public function add($table, $data)
     {
         $this->db->insert($table, $data);
         return $this->db->insert_id();
@@ -337,7 +357,7 @@ class Public_model extends CoreModel
      * @param $data
      * @return mixed
      */
-    function addTo($table, $data)
+    public function addTo($table, $data)
     {
         $data['created_date'] = time();
         $this->db->insert($table, $data);
@@ -351,7 +371,7 @@ class Public_model extends CoreModel
      * @param $data
      * @param null $conditions
      */
-    function edit($table, $data, $conditions = null)
+    public function edit($table, $data, $conditions = null)
     {
         $this->db->update($table, $data, $conditions);
     }
@@ -364,12 +384,12 @@ class Public_model extends CoreModel
      * @param $data
      * @param $conditions
      */
-    function updateTable($table, $data, $conditions)
+    public function updateTable($table, $data, $conditions)
     {
         $count = $this->db->select("*")->from($table)->where($conditions)->count_all_results();
-        if($count){
+        if ($count) {
             $this->db->update($table, $data, $conditions);
-        }else{
+        } else {
             $this->db->insert($table, array_merge($data, $conditions));
         }
     }
@@ -383,10 +403,11 @@ class Public_model extends CoreModel
      * @param null|int $language_id
      * @return array
      */
-    function getTranslation($table, $id, $field, $language_id = null)
+    public function getTranslation($table, $id, $field, $language_id = null)
     {
-        if($language_id==null)
+        if ($language_id==null) {
             $language_id = $this->language['language_id'];
+        }
         $this->db->select("*");
         $this->db->from('translations');
         $this->db->where("table_id", $id);
@@ -405,10 +426,11 @@ class Public_model extends CoreModel
      * @param null $language_id
      * @return array
      */
-    function getTranslations($table, $id, $language_id = null)
+    public function getTranslations($table, $id, $language_id = null)
     {
-        if($language_id==null)
+        if ($language_id==null) {
             $language_id = $this->language['language_id'];
+        }
         $this->db->select("*");
         $this->db->from('translations');
         $this->db->where("table_id", $id);
@@ -427,7 +449,7 @@ class Public_model extends CoreModel
      * @param int $language_id
      * @param string $value
      */
-    function updateTranslation($table, $id, $language_id, $field, $value)
+    public function updateTranslation($table, $id, $language_id, $field, $value)
     {
         $conditions = array(
             'table_name'=>$table,
@@ -438,19 +460,20 @@ class Public_model extends CoreModel
         $data = array('value'=>$value);
         $select = $this->db->select("*")->from("translations")->where($conditions)->get();
         $row = $select->row_array();
-        if(count($row)!=0){
+        if (count($row)!=0) {
             $this->db->update("translations", $data, $conditions);
-        }else{
+        } else {
             $this->db->insert("translations", array_merge($data, $conditions));
         }
     }
 
-    function updateTranslations($table, $id, $values, $languages, $keys)
+    public function updateTranslations($table, $id, $values, $languages, $keys)
     {
         foreach ($languages as $language) {
-            foreach ($keys as $field_name){
-                if(!isset($values[$language['language_id']][$field_name]))
+            foreach ($keys as $field_name) {
+                if (!isset($values[$language['language_id']][$field_name])) {
                     continue;
+                }
                 $condition = array(
                     'table_name'=>$table,
                     'table_id'=>$id,
@@ -462,12 +485,12 @@ class Public_model extends CoreModel
                 );
                 $translation_count = $this->db->from("translations")->where($condition)->count_all_results();
                 // * Update the exists title
-                if($translation_count!=0){
-                    $this->db->update("translations", $data,$condition);
+                if ($translation_count!=0) {
+                    $this->db->update("translations", $data, $condition);
                 }
                 // * Create new title
-                else{
-                    $this->db->insert("translations", array_merge($condition,$data));
+                else {
+                    $this->db->insert("translations", array_merge($condition, $data));
                 }
             }
         }

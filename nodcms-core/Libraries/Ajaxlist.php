@@ -9,7 +9,9 @@
  * the LICENSE file that was distributed with this source code.
  *
  */
+
 namespace NodCMS\Core\Libraries;
+
 use CodeIgniter\Exceptions\EmergencyError;
 use Config\Services;
 use Config\View;
@@ -39,7 +41,7 @@ class Ajaxlist
         'per_page' => 10,
     );
 
-    function __construct()
+    public function __construct()
     {
         $this->view = Services::layout(new View(), false);
         $this->view->getData();
@@ -65,13 +67,13 @@ class Ajaxlist
      *
      * @param $options array
      */
-    function setOptions($options)
+    public function setOptions($options)
     {
         $this->options = array_merge($this->options, $options);
-        if($this->options['total_rows']>$this->options['per_page']){
+        if ($this->options['total_rows']>$this->options['per_page']) {
             $div = $this->options['total_rows']/$this->options['per_page'];
             $round = round($div, 0);
-            $this->options['pages'] = $round+($round<$div?1:0);
+            $this->options['pages'] = $round+($round<$div ? 1 : 0);
         }
     }
 
@@ -94,7 +96,7 @@ class Ajaxlist
             $row['row_id']=$row_id;
             $row['row_class'] = "";
             $row['row_bold'] = 0;
-            foreach($this->options['callback_rows'] as $callback_row=>$value){
+            foreach ($this->options['callback_rows'] as $callback_row=>$value) {
                 $row = $this->$callback_row($row, $data, $value);
             }
             foreach ($this->options['headers'] as $key => $item) {
@@ -105,15 +107,15 @@ class Ajaxlist
                     continue;
                 }
 
-                if(key_exists('function', $item)){
+                if (key_exists('function', $item)) {
                     $content = $item['function']($data);
-                }else{
+                } else {
                     $content = $data[$item['content']];
                 }
-                if(key_exists('callback_function', $item)){
+                if (key_exists('callback_function', $item)) {
                     $content = $item['callback_function']($content);
                 }
-                if(key_exists('theme', $item)){
+                if (key_exists('theme', $item)) {
                     $content = $this->renderView("common/ajaxlist/item_themes/{$item['theme']}", array('content' => $content, 'data'=>$data, 'config'=>$item, 'row_id'=>$row_id));
                 }
                 $row['columns'][$key] = array_merge($item, array('content' => $content, 'row_id'=>$row_id, 'column_class'=>$item['column_class']));
@@ -123,7 +125,8 @@ class Ajaxlist
         return $result;
     }
 
-    function ajaxData($data){
+    public function ajaxData($data)
+    {
         return json_encode(array(
             'status'=>"success",
             'msg'=>null,
@@ -142,7 +145,8 @@ class Ajaxlist
      * @param $list_id
      * @return string
      */
-    function ajaxDataSearchPost($data,$list_id){
+    public function ajaxDataSearchPost($data, $list_id)
+    {
         return json_encode(array(
             'status'=>"success",
             'msg'=>null,
@@ -165,9 +169,9 @@ class Ajaxlist
      */
     public function getPage(): string
     {
-        if($this->options['type']=='static'){
+        if ($this->options['type']=='static') {
             $this->options['data'] = $this->getData($this->options['data']);
-        }else{
+        } else {
             $this->options['data'] = null;
         }
         return $this->renderView("common/ajaxlist/handel-page", ['options'=>$this->options]);
@@ -185,18 +189,17 @@ class Ajaxlist
     private function check_bold($row, $data, $params)
     {
         $result = $row;
-        if(!is_array($params)){
-            if($data[$params]==0)
+        if (!is_array($params)) {
+            if ($data[$params]==0) {
                 $result['row_bold'] = 1;
-        }
-        elseif(count($params)!=2){
+            }
+        } elseif (count($params)!=2) {
             throw new EmergencyError("The parameter of check_bold shall be a single value or an array with two element.");
-        }
-        else{
-            if($data[$params[0]]==$params[1])
+        } else {
+            if ($data[$params[0]]==$params[1]) {
                 $result['row_bold'] = 1;
+            }
         }
         return $result;
     }
-
 }

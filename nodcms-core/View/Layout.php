@@ -12,7 +12,6 @@
 
 namespace NodCMS\Core\View;
 
-
 use Config\Services;
 
 class Layout extends View
@@ -79,7 +78,7 @@ class Layout extends View
      */
     public function common()
     {
-        if(empty($this->_common_view)) {
+        if (empty($this->_common_view)) {
             $this->_common_view = new self();
         }
         return $this->_common_view;

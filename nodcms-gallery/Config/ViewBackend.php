@@ -12,7 +12,6 @@
 
 namespace NodCMS\Gallery\Config;
 
-
 class ViewBackend extends \Config\ViewBackend
 {
     /**

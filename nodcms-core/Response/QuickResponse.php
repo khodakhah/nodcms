@@ -133,39 +133,43 @@ class QuickResponse
      */
     private function get(string $type, $message = null, string $uri = null)
     {
-        if(!key_exists($type, $this->_types)) {
+        if (!key_exists($type, $this->_types)) {
             throw new \Exception("Response type \"{$type}\" is undefined.");
         }
 
         $_type = $this->_types[$type];
 
-        if($message != null)
+        if ($message != null) {
             $this->setMessage($message);
+        }
 
-        if($uri != null)
+        if ($uri != null) {
             $this->setUrl($uri);
+        }
 
-        if($this->ajax === null) {
+        if ($this->ajax === null) {
             $request = Services::request();
             $this->ajax = $request->isAJAX();
         }
 
-        if($this->ajax){
+        if ($this->ajax) {
             $data = array(
                 "url"=>$this->url,
                 "status"=>$_type['ajax']['status'],
             );
 
-            if($this->message!=null)
+            if ($this->message!=null) {
                 $data[$_type['ajax']['messageVar']] = $this->message;
+            }
 
-            if(!empty($this->data))
+            if (!empty($this->data)) {
                 $data["data"] = $this->data;
+            }
 
             return json_encode($data);
         }
 
-        if($this->message!=null) {
+        if ($this->message!=null) {
             $session = Services::session();
             $session->setFlashdata($_type['redirect']['messageVar'], $this->message);
         }

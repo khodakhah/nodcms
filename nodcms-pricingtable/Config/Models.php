@@ -12,7 +12,6 @@
 
 namespace NodCMS\Pricingtable\Config;
 
-
 use NodCMS\Pricingtable\Models\PricingTable;
 use NodCMS\Pricingtable\Models\PricingTableRecord;
 
@@ -24,8 +23,7 @@ class Models extends \Config\Models
      */
     public static function pricingTable(bool $getShared = true): PricingTable
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             // Reset the class name
             static::$serviceClass = self::class;
 
@@ -42,8 +40,7 @@ class Models extends \Config\Models
      */
     public static function pricingTableRecord(bool $getShared = true): PricingTableRecord
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             // Reset the class name
             static::$serviceClass = self::class;
 

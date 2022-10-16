@@ -32,9 +32,9 @@ class Link
      */
     public function __construct(array $value = null)
     {
-        if($value != null) {
-            foreach($this as $key=>$item) {
-                if(key_exists($key, $value)) {
+        if ($value != null) {
+            foreach ($this as $key=>$item) {
+                if (key_exists($key, $value)) {
                     $this->$key = $value;
                 }
             }

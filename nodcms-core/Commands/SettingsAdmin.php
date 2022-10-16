@@ -64,7 +64,7 @@ class SettingsAdmin extends BaseCommand
      */
     public function run(array $params)
     {
-        if(count($params) < 4) {
+        if (count($params) < 4) {
             CLI::error('Params missing!');
             CLI::write('Please make sure to use the command correctly.');
             $this->showHelp();
@@ -73,14 +73,14 @@ class SettingsAdmin extends BaseCommand
 
         [$firstName, $lastName, $email, $password] = $params;
 
-        if(!preg_match('/^.+\@.+\..+$/', $email)) {
+        if (!preg_match('/^.+\@.+\..+$/', $email)) {
             CLI::error('Invalid email address: ' . $email);
             CLI::write('Please make sure to enter a valid.');
             CLI::newLine();
             return;
         }
 
-        if(strlen(trim($password)) < 6) {
+        if (strlen(trim($password)) < 6) {
             CLI::error('Password was to short.');
             CLI::write('Please enter 6 or more character as password.');
             CLI::newLine();
@@ -95,7 +95,7 @@ class SettingsAdmin extends BaseCommand
         ];
 
         $userAdmin = Models::users()->getOne(1);
-        if(!empty($userAdmin)) {
+        if (!empty($userAdmin)) {
             Models::users()->edit(1, $data);
 
             return;

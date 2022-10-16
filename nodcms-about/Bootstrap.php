@@ -9,6 +9,7 @@
  * the LICENSE file that was distributed with this source code.
  *
  */
+
 namespace NodCMS\About;
 
 use Config\Services;
@@ -23,8 +24,9 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
      */
     public function __construct()
     {
-        if(!defined('ABOUT_ADMIN_URL'))
-            define('ABOUT_ADMIN_URL',base_url('admin-about').'/');
+        if (!defined('ABOUT_ADMIN_URL')) {
+            define('ABOUT_ADMIN_URL', base_url('admin-about').'/');
+        }
     }
 
     /**
@@ -84,15 +86,17 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
     /**
      * Backend setups
      */
-    function backend()
+    public function backend()
     {
         parent::backend();
 
-        if(Services::identity()->isAdmin(true)){
-            Services::sidebar()->addLink("about_profiles",
+        if (Services::identity()->isAdmin(true)) {
+            Services::sidebar()->addLink(
+                "about_profiles",
                 _l("About profiles", $this),
                 ABOUT_ADMIN_URL."profiles",
-                "far fa-id-card");
+                "far fa-id-card"
+            );
         }
     }
 
@@ -103,7 +107,7 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
     {
         $list = [];
         $data_list = Models::about()->getAll();
-        foreach($data_list as $item) {
+        foreach ($data_list as $item) {
             $link = new MenuLink();
             $link->title = str_replace("{data}", $item['profile_name'], _l("Profile {data}", $this));
             $link->uri = ABOUT_ADMIN_URL."about-".$item['profile_uri'];

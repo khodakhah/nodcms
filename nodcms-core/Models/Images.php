@@ -14,7 +14,7 @@ namespace NodCMS\Core\Models;
 
 class Images extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "images";
         $primary_key = "image_id";

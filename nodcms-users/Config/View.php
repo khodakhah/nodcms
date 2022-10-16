@@ -1,4 +1,6 @@
-<?php namespace NodCMS\Users\Config;
+<?php
+
+namespace NodCMS\Users\Config;
 
 class View extends \Config\View
 {
@@ -30,5 +32,3 @@ class View extends \Config\View
  * the LICENSE file that was distributed with this source code.
  *
  */
-
-

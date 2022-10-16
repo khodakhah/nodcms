@@ -10,7 +10,9 @@
  *
  */
 
-if(!isset($routes)) throw new \Exception('$routes not defined.');
+if (!isset($routes)) {
+    throw new \Exception('$routes not defined.');
+}
 
 $routes->match(['post', 'get'], 'admin-articles/(.+)', "\NodCMS\Articles\Controllers\ArticlesAdmin::$1");
 

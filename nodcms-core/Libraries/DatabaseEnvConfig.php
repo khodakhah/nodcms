@@ -153,19 +153,19 @@ class DatabaseEnvConfig
      */
     public function checkRequiredParameters()
     {
-        if(is_null($this->host)){
+        if (is_null($this->host)) {
             throw new Exception('The database host is required.');
         }
 
-        if(is_null($this->username)){
+        if (is_null($this->username)) {
             throw new Exception('The database username is required.');
         }
 
-        if(is_null($this->password)){
+        if (is_null($this->password)) {
             throw new Exception('The database password is required.');
         }
 
-        if(is_null($this->database)){
+        if (is_null($this->database)) {
             throw new Exception('The database name is required.');
         }
     }

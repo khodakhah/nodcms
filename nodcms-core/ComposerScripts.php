@@ -81,19 +81,20 @@ final class ComposerScripts
     public static function postUpdate()
     {
         // Remove directory if it's exists
-        if(is_dir(self::$basePath)) {
+        if (is_dir(self::$basePath)) {
             self::recursiveDelete(self::$basePath);
             rmdir(self::$basePath);
         }
 
         foreach (self::$dependencies as $dependency) {
-            if(!key_exists("pattern",$dependency)) {
+            if (!key_exists("pattern", $dependency)) {
                 self::recursiveMirror($dependency['from'], $dependency['to']);
                 continue;
             }
-            foreach(scandir($dependency['from']) as $content) {
-                if(preg_match($dependency['pattern'], $content))
+            foreach (scandir($dependency['from']) as $content) {
+                if (preg_match($dependency['pattern'], $content)) {
                     self::recursiveMirror($dependency['from']."$content/", $dependency['to']."$content/");
+                }
             }
         }
 
@@ -108,7 +109,7 @@ final class ComposerScripts
      */
     public static function setEnv(Event $event)
     {
-        if(empty($event->getArguments())) {
+        if (empty($event->getArguments())) {
             echo self::CMD_COLOR_ERROR . "No Base URL given! " . self::CMD_COLOR_END . "\n" .
                 "Please enter your url like bellow:\n" .
                 self::CMD_COLOR_CODE . "composer env-production YOUR_URL" . self::CMD_COLOR_END . "\n";
@@ -144,9 +145,9 @@ final class ComposerScripts
 
         /** @var SplFileInfo $file */
         foreach (new RecursiveIteratorIterator(
-                     new RecursiveDirectoryIterator(rtrim($directory, '\\/'), FilesystemIterator::SKIP_DOTS),
-                     RecursiveIteratorIterator::CHILD_FIRST
-                 ) as $file) {
+            new RecursiveDirectoryIterator(rtrim($directory, '\\/'), FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
+        ) as $file) {
             $path = $file->getPathname();
 
             if ($file->isDir()) {
@@ -184,9 +185,9 @@ final class ComposerScripts
 
         /** @var SplFileInfo $file */
         foreach (new RecursiveIteratorIterator(
-                     new RecursiveDirectoryIterator($originDir, FilesystemIterator::SKIP_DOTS),
-                     RecursiveIteratorIterator::SELF_FIRST
-                 ) as $file) {
+            new RecursiveDirectoryIterator($originDir, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST
+        ) as $file) {
             $origin = $file->getPathname();
             $target = $targetDir . substr($origin, $dirLen);
 

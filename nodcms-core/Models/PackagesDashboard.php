@@ -14,7 +14,7 @@ namespace NodCMS\Core\Models;
 
 class PackagesDashboard extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "packages_dashboard";
         $primary_key = "package_id";

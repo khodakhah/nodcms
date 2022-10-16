@@ -69,10 +69,10 @@ class Bootstrap extends \NodCMS\Core\Modules\Bootstrap
     /**
      * @throws \Exception
      */
-    function backend()
+    public function backend()
     {
-        define('SERVICES_ADMIN_URL',base_url("admin-services").'/');
-        if(Services::identity()->isAdmin(true)){
+        define('SERVICES_ADMIN_URL', base_url("admin-services").'/');
+        if (Services::identity()->isAdmin(true)) {
             Services::sidebar()->addLink(
                 "services",
                 _l("Services", $this),

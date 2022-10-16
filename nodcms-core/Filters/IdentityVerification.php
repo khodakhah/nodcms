@@ -15,11 +15,11 @@ namespace NodCMS\Core\Filters;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\Services;
+
 use function PHPUnit\Framework\throwException;
 
 class IdentityVerification implements \CodeIgniter\Filters\FilterInterface
 {
-
     /**
      * @inheritDoc
      * @throws \Exception
@@ -30,17 +30,17 @@ class IdentityVerification implements \CodeIgniter\Filters\FilterInterface
 
         $lang = Services::language()->getLocale();
 
-        if(!Services::identity()->isValid()){
+        if (!Services::identity()->isValid()) {
             return $response->getError(lang("Please login to access this page."), "/{$lang}/login");
         }
 
-        if(!Services::identity()->isActive()) {
-            if($request->uri !== "account-locked") {
+        if (!Services::identity()->isActive()) {
+            if ($request->uri !== "account-locked") {
                 return Services::identity()->getResponse();
             }
         }
 
-        if(!Services::identity()->isAdmin(true)) {
+        if (!Services::identity()->isAdmin(true)) {
             return Services::identity()->getResponse();
         }
 

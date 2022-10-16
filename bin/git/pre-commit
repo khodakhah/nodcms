@@ -1,0 +1,24 @@
+#!/bin/bash
+. ./bin/functions.sh
+
+print_abort_message () {
+  echo ""
+  print_error_message "Commit aborted"
+}
+
+start_step 1 1 "Linting"
+
+composer lint &> /dev/null
+
+rc=$?
+
+if [ ${rc} -ne 0 ]; then
+  print_error_message "Linting failed. Run 'composer lint' for more information."
+  print_info_message "Run 'composer fix' to solve the problem."
+  print_abort_message
+  exit 1
+fi
+
+print_success_message "Commit successful"
+
+exit ${rc}

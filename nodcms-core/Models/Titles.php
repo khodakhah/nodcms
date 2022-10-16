@@ -16,7 +16,7 @@ use Config\Services;
 
 class Titles extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "titles";
         $primary_key = "title_id";
@@ -40,10 +40,11 @@ class Titles extends Model
      * @param int|null $language_id
      * @return array|null
      */
-    public function getTitle(string $table, int $id, int $language_id = null) : ?array
+    public function getTitle(string $table, int $id, int $language_id = null): ?array
     {
-        if($language_id==null)
+        if ($language_id==null) {
             $language_id = Services::language()->get()['language_id'];
+        }
 
         $builder = $this->getBuilder();
 

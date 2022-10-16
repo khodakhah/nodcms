@@ -17,12 +17,15 @@
 		}
 	},
 	"scripts": {
+		"post-create-project-cmd": "@checkout",
 		"movefiles": [
 			"NodCMS\\Core\\ComposerScripts::postUpdate"
 		],
 		"env-production": "NodCMS\\Core\\ComposerScripts::setEnv",
-		"env-development": "cp .env.development .env",
-		"start": "php spark serve"
+		"checkout": "sh ./bin/checkout.sh",
+		"start": "php spark serve",
+		"fix": "php-cs-fixer fix --verbose",
+		"lint": "php-cs-fixer fix --verbose --dry-run"
 	},
 	"support": {
 		"forum": "https://nodecms.com/",
@@ -34,6 +37,7 @@
 	"require": {
 		"codeigniter4/framework": "^4.2",
 		"codeigniter4/translations": "^4.2",
-		"composer/composer": "^2.4"
+		"composer/composer": "^2.4",
+		"friendsofphp/php-cs-fixer": "^3.11"
 	}
 }

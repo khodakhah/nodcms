@@ -12,7 +12,6 @@
 
 namespace NodCMS\Portfolio\Config;
 
-
 use NodCMS\Portfolio\Models\Portfolio;
 
 class Models extends \Config\Models
@@ -23,8 +22,7 @@ class Models extends \Config\Models
      */
     public static function portfolio(bool $getShared = true): Portfolio
     {
-        if ($getShared)
-        {
+        if ($getShared) {
             // Reset the class name
             static::$serviceClass = self::class;
 

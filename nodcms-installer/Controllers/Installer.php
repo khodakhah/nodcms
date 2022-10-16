@@ -59,8 +59,8 @@ class Installer extends Base
 
         $this->php_version_valid = version_compare(PHP_VERSION, $this->required_php_version, '>=');
         $this->extensions_valid = true;
-        foreach($this->required_extensions as $item) {
-            if(!extension_loaded($item)) {
+        foreach ($this->required_extensions as $item) {
+            if (!extension_loaded($item)) {
                 $this->extensions_valid = false;
                 break;
             }
@@ -77,22 +77,22 @@ class Installer extends Base
 
         $step_key = array_search($this->router->methodName(), $steps);
 
-        if($step_key > 0 && $step_key < count($steps)) {
+        if ($step_key > 0 && $step_key < count($steps)) {
             $this->back_url = base_url("installer/".$steps[$step_key-1]);
             $this->self_url = base_url("installer/".$steps[$step_key]);
-            $this->next_url = base_url((isset($steps[$step_key+1])?"installer/".$steps[$step_key+1]:"en/login"));
+            $this->next_url = base_url((isset($steps[$step_key+1]) ? "installer/".$steps[$step_key+1] : "en/login"));
         }
 
         $this->data['steps'] = array();
-        foreach($steps as $key=>$val) {
-            if($key<$step_key) {
+        foreach ($steps as $key=>$val) {
+            if ($key<$step_key) {
                 $url = base_url("installer/".$steps[$key]);
                 $this->data['steps'][] = "<div class='col bg-green-jungle'>" .
                     "<a class='text-center d-block pt-3 pb-3 font-white' href='$url'>".($key+1).". ".strtoupper($val)."</a>" .
                     "</div>";
                 continue;
             }
-            if($key == $step_key) {
+            if ($key == $step_key) {
                 $this->data['steps'][] = "<div class='col bg-grey'>" .
                     "<span class='text-center d-block pt-3 pb-3'>".($key+1).". ".strtoupper($val)."</span>" .
                     "</div>";
@@ -111,12 +111,12 @@ class Installer extends Base
     {
         $this->data['sub_title'] = "Welcome";
         $requirements_error = array();
-        if(!$this->php_version_valid) {
+        if (!$this->php_version_valid) {
             $requirements_error[] = "Unfortunately, your hosting's <strong>PHP version ".PHP_VERSION."</strong> is not compatible with {$this->product_name} v{$this->product_version} required <strong>PHP version {$this->required_php_version}</strong>.";
         }
-        if(!$this->required_extensions) {
+        if (!$this->required_extensions) {
             foreach ($this->required_extensions as $item) {
-                if(!extension_loaded($item)) {
+                if (!extension_loaded($item)) {
                     $requirements_error[] = "Unfortunately, extension <strong>$item</strong> is not installed, activated, or loaded. It's required to run {$this->product_name} v{$this->product_version}.";
                 }
             }
@@ -130,8 +130,9 @@ class Installer extends Base
      */
     public function license()
     {
-        if(!$this->hasAccess())
+        if (!$this->hasAccess()) {
             return $this->_response;
+        }
         $this->data['sub_title'] = "License Agreement";
         $config = array(
             array(
@@ -149,10 +150,10 @@ class Installer extends Base
 
         $myform->data['submit_label'] = "Accept and continue <i class=\"far fa-arrow-alt-circle-right\"></i>";
         $myform->data['submit_class']="btn-success";
-        if($myform->ispost()){
+        if ($myform->ispost()) {
             $data = $myform->getPost();
             // Stop Page
-            if($data === false){
+            if ($data === false) {
                 return $myform->getResponse();
             }
 
@@ -168,8 +169,9 @@ class Installer extends Base
      */
     public function authorization()
     {
-        if(!$this->hasAccess())
+        if (!$this->hasAccess()) {
             return $this->_response;
+        }
         $this->data['title'] = "{$this->product_name} Installer";
         $this->data['sub_title'] = "Authorization";
 
@@ -207,10 +209,10 @@ class Installer extends Base
 
         $myform->data['submit_label'] = "Let's go";
         $myform->data['submit_class']="btn-success";
-        if($myform->ispost()){
+        if ($myform->ispost()) {
             $data = $myform->getPost();
             // Stop Page
-            if($data === false){
+            if ($data === false) {
                 return $myform->getResponse();
             }
 
@@ -231,19 +233,21 @@ class Installer extends Base
      */
     public function database()
     {
-        if(!$this->hasAccess() || !$this->hasDatabase())
+        if (!$this->hasAccess() || !$this->hasDatabase()) {
             return $this->_response;
+        }
 
         $coreTables = $this->getTables(get_all_php_files(COREPATH . 'Models'.DIRECTORY_SEPARATOR));
         $modulesTables = array();
 
         $modulesDirs = Autoload::modulesPaths();
         foreach ($modulesDirs as $dir) {
-            if(!$moduleModels = get_all_php_files($dir . DIRECTORY_SEPARATOR . 'models'.DIRECTORY_SEPARATOR))
+            if (!$moduleModels = get_all_php_files($dir . DIRECTORY_SEPARATOR . 'models'.DIRECTORY_SEPARATOR)) {
                 continue;
+            }
 
             $tables = $this->getTables($moduleModels);
-            if(!empty($tables)) {
+            if (!empty($tables)) {
                 $modulesTables[basename($dir)] = $tables;
             }
         }
@@ -253,8 +257,8 @@ class Installer extends Base
         $this->data['tables'] = array($coreTables, $modulesTables);
 
         $paths = array_column($coreTables, 'path');
-        if(isset($modulesTables) && !empty($modulesTables)) {
-            foreach($modulesTables as $path) {
+        if (isset($modulesTables) && !empty($modulesTables)) {
+            foreach ($modulesTables as $path) {
                 $paths = array_merge($paths, array_column($path, 'path'));
             }
         }
@@ -277,30 +281,30 @@ class Installer extends Base
 
         $myform->data['submit_label'] = "Create database";
         $myform->data['submit_class']="btn-success";
-        if($myform->ispost()){
+        if ($myform->ispost()) {
             $data = $myform->getPost();
             // Stop Page
-            if($data === false){
+            if ($data === false) {
                 return $myform->getResponse();
             }
 
-            $model_name = basename($data['path'],".php");
-            if(in_array($model_name, ["Model", "CoreModel"])) {
+            $model_name = basename($data['path'], ".php");
+            if (in_array($model_name, ["Model", "CoreModel"])) {
                 return $this->errorMessage("Wrong table name!", $this->self_url);
             }
 
             $model_name = "\NodCMS\Core\Models\\".$model_name;
             $theModel = new $model_name($this->db);
 
-            if($theModel->tableExists()) {
+            if ($theModel->tableExists()) {
                 $theModel->dropTable();
             }
-            if(!$theModel->installTable()) {
+            if (!$theModel->installTable()) {
                 return $this->errorMessage("Table couldn't install.", $this->self_url);
             }
 
             // Insert first default data
-            if(method_exists($theModel, 'defaultData')) {
+            if (method_exists($theModel, 'defaultData')) {
                 $theModel->defaultData();
             }
 
@@ -315,8 +319,9 @@ class Installer extends Base
      */
     public function settings()
     {
-        if(!$this->hasAccess() || !$this->hasDatabase())
+        if (!$this->hasAccess() || !$this->hasDatabase()) {
             return $this->_response;
+        }
 
         $this->data['title'] = "{$this->product_name} Installer";
         $this->data['sub_title'] = "Prepare settings";
@@ -397,10 +402,10 @@ class Installer extends Base
 
         $myform->data['submit_label'] = "Create database";
         $myform->data['submit_class']="btn-success";
-        if($myform->ispost()){
+        if ($myform->ispost()) {
             $data = $myform->getPost();
             // Stop Page
-            if($data === false){
+            if ($data === false) {
                 return $myform->getResponse();
             }
 
@@ -413,7 +418,7 @@ class Installer extends Base
             $Settings->updateSettings($update_data);
 
             $user = $Users->getOne(1);
-            if(!is_array($user) || count($user) == 0) {
+            if (!is_array($user) || count($user) == 0) {
                 $_data = array(
                     "firstname"=>$data['firstname'],
                     "lastname"=>$data['lastname'],
@@ -425,8 +430,7 @@ class Installer extends Base
                     "status"=>1
                 );
                 $Users->add($_data);
-            }
-            else {
+            } else {
                 $_data = array(
                     "firstname"=>$data['firstname'],
                     "lastname"=>$data['lastname'],
@@ -437,7 +441,7 @@ class Installer extends Base
             }
             return $this->successMessage("Settings has been saved successfully.", $this->next_url);
         }
-        return $this->viewRenderString($myform->fetch('',array('data-redirect'=>1)));
+        return $this->viewRenderString($myform->fetch('', array('data-redirect'=>1)));
     }
 
     /**
@@ -447,8 +451,9 @@ class Installer extends Base
      */
     public function complete()
     {
-        if(!$this->hasAccess() || !$this->hasDatabase())
+        if (!$this->hasAccess() || !$this->hasDatabase()) {
             return $this->_response;
+        }
 
         $this->data['sub_title'] = "Complete";
 
@@ -487,7 +492,7 @@ class Installer extends Base
                 'value'=>empty($admin_user) ? "<i class=\"fa fa-times text-danger\"></i>" : "<i class='fa fa-check text-success'></i>",
             ),
         );
-        if(!empty($admin_user)) {
+        if (!empty($admin_user)) {
             $config = array_merge($config, array(
                 array(
                     'type'=>"h4",
@@ -517,18 +522,18 @@ class Installer extends Base
         $myform->data['submit_label'] = "Confirm & Done";
         $myform->data['submit_class']="btn-success";
 
-        if($myform->ispost()){
+        if ($myform->ispost()) {
             $data = $myform->getPost();
             // Stop Page
-            if($data === false){
+            if ($data === false) {
                 return $myform->getResponse();
             }
 
-            if(!$prepare_settings) {
+            if (!$prepare_settings) {
                 return $this->errorMessage("Prepared settings is not set.", $this->back_url);
             }
 
-            if(!is_array($admin_user) || count($admin_user) == 0) {
+            if (!is_array($admin_user) || count($admin_user) == 0) {
                 return $this->errorMessage("Administration account not found.", $this->back_url);
             }
 
@@ -556,7 +561,7 @@ class Installer extends Base
             return $this->successMessage("Installation has been done.", $this->next_url);
         }
 
-        $this->data['the_form'] = $myform->fetch('',array('data-redirect'=>1));
+        $this->data['the_form'] = $myform->fetch('', array('data-redirect'=>1));
         return $this->viewRender("complete");
     }
 
@@ -567,18 +572,20 @@ class Installer extends Base
     private function getTables(array $models_paths): array
     {
         $base_tables = array();
-        foreach($models_paths as $model_path) {
-            $model_name = basename($model_path,".php");
+        foreach ($models_paths as $model_path) {
+            $model_name = basename($model_path, ".php");
 
-            if(in_array($model_name, ["Model", "CoreModel"]))
+            if (in_array($model_name, ["Model", "CoreModel"])) {
                 continue;
+            }
 
             $model_name = "\NodCMS\Core\Models\\".$model_name;
             $theModel = new $model_name($this->db);
-            if(!is_subclass_of($theModel, "\NodCMS\Core\Models\Model"))
+            if (!is_subclass_of($theModel, "\NodCMS\Core\Models\Model")) {
                 continue;
+            }
 
-            if(method_exists($theModel, 'tableName')) {
+            if (method_exists($theModel, 'tableName')) {
                 $base_tables[] = array(
                     'path' => $model_path,
                     'table' => $theModel->tableName(),
@@ -597,7 +604,7 @@ class Installer extends Base
      */
     private function hasAccess(): bool
     {
-        if(!$this->required_extensions || !$this->required_php_version) {
+        if (!$this->required_extensions || !$this->required_php_version) {
             $this->_response = $this->errorMessage("Required services not found.", $this->back_url);
             return false;
         }
@@ -612,14 +619,14 @@ class Installer extends Base
      */
     public function hasDatabase($data = null): bool
     {
-        if($data == null) {
-            if(!isset($_SESSION['database_connect'])) {
+        if ($data == null) {
+            if (!isset($_SESSION['database_connect'])) {
                 $this->_response = $this->errorMessage("Database connection data not found.", $this->back_url);
                 return false;
             }
             $data = $_SESSION['database_connect'];
         }
-        if(!isset($data['database'])) {
+        if (!isset($data['database'])) {
             $this->_response = $this->errorMessage("Database not found.", $this->back_url);
             return false;
         }
@@ -648,9 +655,7 @@ class Installer extends Base
         $db = Database::connect($custom);
         try {
             $db->connID = $db->connect();
-        }
-        catch (\Throwable $e)
-        {
+        } catch (\Throwable $e) {
             $this->_response = $this->errorMessage($e->getMessage(), $this->self_url);
             return false;
         }

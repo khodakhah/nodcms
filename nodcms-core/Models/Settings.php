@@ -14,7 +14,7 @@ namespace NodCMS\Core\Models;
 
 class Settings extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "settings";
         $primary_key = "id";
@@ -37,10 +37,10 @@ class Settings extends Model
      * @param int $language_id
      * @return bool
      */
-    public function updateSettings($data = NULL, $language_id = 0): bool
+    public function updateSettings($data = null, $language_id = 0): bool
     {
-        if($data != NULL && is_array($data) && count($data)!=0)
-            foreach($data as $name=>$value){
+        if ($data != null && is_array($data) && count($data)!=0) {
+            foreach ($data as $name=>$value) {
                 $sql = 'INSERT INTO settings'.
                     '  (field_name, language_id, field_value)'.
                     'VALUES'.
@@ -49,6 +49,7 @@ class Settings extends Model
                     '  field_value = ?';
                 $this->db->query($sql, array($name, $language_id, $value, $value));
             }
+        }
         return true;
     }
 

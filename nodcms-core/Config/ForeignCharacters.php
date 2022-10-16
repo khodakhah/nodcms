@@ -1,8 +1,9 @@
-<?php namespace Config;
+<?php
+
+namespace Config;
 
 class ForeignCharacters extends \CodeIgniter\Config\ForeignCharacters
 {
-
 }
 /*
  *  This file is part of NodCMS.
@@ -14,5 +15,3 @@ class ForeignCharacters extends \CodeIgniter\Config\ForeignCharacters
  * the LICENSE file that was distributed with this source code.
  *
  */
-
-

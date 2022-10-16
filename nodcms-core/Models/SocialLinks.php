@@ -14,7 +14,7 @@ namespace NodCMS\Core\Models;
 
 class SocialLinks extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "social_links";
         $primary_key = "id";

@@ -17,7 +17,7 @@ use http\Params;
 
 class EmailMessages extends Model
 {
-    function init()
+    public function init()
     {
         $table_name = "auto_email_messages";
         $primary_key = "msg_id";
@@ -39,10 +39,11 @@ class EmailMessages extends Model
      * @param null $language_id
      * @return array|null
      */
-    public function getOneByKey($key, $language_id = NULL): ?array
+    public function getOneByKey($key, $language_id = null): ?array
     {
-        if($language_id==NULL)
+        if ($language_id==null) {
             $language_id = Services::language()->get()["language_id"];
+        }
         return $this->getOne(null, [
             'code_key' => $key,
             'language_id' => $language_id,

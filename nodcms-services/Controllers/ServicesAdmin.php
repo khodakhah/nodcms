@@ -24,9 +24,9 @@ class ServicesAdmin extends Backend
      *
      * @return string
      */
-    function services(): string
+    public function services(): string
     {
-        $this->data['title'] = _l("Services",$this);
+        $this->data['title'] = _l("Services", $this);
         $this->data['breadcrumb']=array(
             array('title'=>$this->data['title'])
         );
@@ -35,8 +35,8 @@ class ServicesAdmin extends Backend
         );
 
         $list_items = array();
-        $data_list = Models::services()->getAll(null,null,1,array('sort_order','asc'));
-        foreach ($data_list as &$item){
+        $data_list = Models::services()->getAll(null, null, 1, array('sort_order','asc'));
+        foreach ($data_list as &$item) {
             $data = array(
                 'id'=>$item['service_id'],
                 'element_id'=>"services-item".$item['service_id'],
@@ -64,24 +64,22 @@ class ServicesAdmin extends Backend
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string|void
      * @throws \Exception
      */
-    function serviceSubmit(int $id = 0)
+    public function serviceSubmit(int $id = 0)
     {
         $self_url = SERVICES_ADMIN_URL."serviceSubmit";
         $back_url = SERVICES_ADMIN_URL."services";
-        $this->data['title'] = _l("Services",$this);
-        if($id!=0)
-        {
+        $this->data['title'] = _l("Services", $this);
+        if ($id!=0) {
             $current_data = Models::services()->getOne($id);
-            if(empty($current_data)){
+            if (empty($current_data)) {
                 return $this->errorMessage("Service not found.", $back_url);
             }
             $form_attr = array();
-            $this->data['sub_title'] = _l("Edit",$this);
+            $this->data['sub_title'] = _l("Edit", $this);
             $self_url .= "/$id";
-        }
-        else{
+        } else {
             $form_attr = array('data-redirect'=>1);
-            $this->data['sub_title'] = _l("Add",$this);
+            $this->data['sub_title'] = _l("Add", $this);
         }
 
         $config = array(
@@ -90,18 +88,18 @@ class ServicesAdmin extends Backend
                 'label' => _l("Name", $this),
                 'rules' => 'required',
                 'type' => "text",
-                'default'=>isset($current_data)?$current_data["service_name"]:''
+                'default'=>isset($current_data) ? $current_data["service_name"] : ''
             ),
             array(
                 'field' => 'service_public',
                 'label' => _l("Public", $this),
                 'rules' => 'in_list[0,1]',
                 'type' => "switch",
-                'default'=>isset($current_data)?$current_data["service_public"]:''
+                'default'=>isset($current_data) ? $current_data["service_public"] : ''
             ),
         );
 
-        if($this->settings['services_display_mode']=="icon") {
+        if ($this->settings['services_display_mode']=="icon") {
             $config[] = array(
                 'field' => 'service_icon',
                 'label' => _l("Font Icon", $this),
@@ -109,18 +107,17 @@ class ServicesAdmin extends Backend
                 'type' => "icons",
                 'default' => isset($current_data) ? $current_data["service_icon"] : ''
             );
-        }
-        elseif($this->settings['services_display_mode']=="image"){
+        } elseif ($this->settings['services_display_mode']=="image") {
             $config[] = array(
                 'field' => 'service_image',
                 'label' => _l("Image", $this),
                 'rules' => '',
                 'type' => "image-library",
-                'default'=>isset($current_data)?$current_data["service_image"]:''
+                'default'=>isset($current_data) ? $current_data["service_image"] : ''
             );
         }
 
-        if($this->settings['services_display_price']){
+        if ($this->settings['services_display_price']) {
             $config[] = array(
                 'field' => 'service_price',
                 'label' => _l("Price", $this),
@@ -128,26 +125,26 @@ class ServicesAdmin extends Backend
                 'rules' => 'validCurrency',
                 'divider' => '.',
                 'after_sign' => $this->settings['currency_code'],
-                'default'=>isset($current_data)?Services::currency()->formatFloat($current_data['service_price']):"",
+                'default'=>isset($current_data) ? Services::currency()->formatFloat($current_data['service_price']) : "",
             );
         }
 
-        if($this->settings['services_page']){
+        if ($this->settings['services_page']) {
             $config[] = array(
                 'field' => 'service_uri',
                 'label' => _l("Service URI", $this),
-                'rules' => 'required|validURI|is_unique[services.service_uri'.(isset($current_data)?",service_id,$current_data[service_id]":"").']',
+                'rules' => 'required|validURI|is_unique[services.service_uri'.(isset($current_data) ? ",service_id,$current_data[service_id]" : "").']',
                 'type' => "text",
-                'default'=>isset($current_data)?$current_data["service_uri"]:'',
+                'default'=>isset($current_data) ? $current_data["service_uri"] : '',
                 'input_prefix'=>base_url($this->language['code']."/service/"),
             );
         }
 
         $languages = Models::languages()->getAll();
-        foreach($languages as $language){
+        foreach ($languages as $language) {
             $translate = Models::services()->getTranslations($id, $language['language_id']);
             // Add language title
-            array_push($config,array(
+            array_push($config, array(
                 'prefix_language'=>$language,
                 'label'=>$language['language_title'],
                 'type'=>"h4",
@@ -155,39 +152,39 @@ class ServicesAdmin extends Backend
             $prefix = "translate[$language[language_id]]";
             array_push($config, array(
                 'field'=>$prefix."[title]",
-                'label'=>_l('Title',$this),
+                'label'=>_l('Title', $this),
                 'rules'=>"",
                 'type'=>"text",
-                'default'=>isset($translate['title'])?$translate['title']:'',
+                'default'=>isset($translate['title']) ? $translate['title'] : '',
             ));
             array_push($config, array(
                 'field'=>$prefix."[home_preview]",
                 'label'=>_l("Home Preview", $this),
                 'rules'=>"",
                 'type'=>"textarea",
-                'default'=>isset($translate['home_preview'])?$translate['home_preview']:'',
+                'default'=>isset($translate['home_preview']) ? $translate['home_preview'] : '',
             ));
-            if($this->settings['services_page']) {
+            if ($this->settings['services_page']) {
                 array_push($config, array(
                     'field'=>$prefix."[description]",
                     'label'=>_l("Description", $this),
                     'rules'=>"",
                     'type'=>"textarea",
-                    'default'=>isset($translate['description'])?$translate['description']:'',
+                    'default'=>isset($translate['description']) ? $translate['description'] : '',
                 ));
                 array_push($config, array(
                     'field'=>$prefix."[keywords]",
                     'label'=>_l("Keywords", $this),
                     'rules'=>"",
                     'type'=>"textarea",
-                    'default'=>isset($translate['keywords'])?$translate['keywords']:'',
+                    'default'=>isset($translate['keywords']) ? $translate['keywords'] : '',
                 ));
                 array_push($config, array(
                     'field'=>$prefix."[content]",
                     'label'=>_l("Page Content", $this),
                     'rules'=>"",
                     'type'=>"texteditor",
-                    'default'=>isset($translate['content'])?$translate['content']:'',
+                    'default'=>isset($translate['content']) ? $translate['content'] : '',
                 ));
             }
         }
@@ -195,32 +192,31 @@ class ServicesAdmin extends Backend
         $myform = new Form($this);
         $myform->config($config, $self_url, 'post', 'ajax');
 
-        if($myform->ispost()){
-            if(!Services::identity()->isAdmin()){
+        if ($myform->ispost()) {
+            if (!Services::identity()->isAdmin()) {
                 return Services::identity()->getResponse();
             }
             $post_data = $myform->getPost();
             // Stop Page
-            if($post_data === false || !is_array($post_data)){
+            if ($post_data === false || !is_array($post_data)) {
                 return;
             }
 
-            if(key_exists('translate',$post_data)){
+            if (key_exists('translate', $post_data)) {
                 $translates = $post_data['translate'];
                 unset($post_data['translate']);
             }
 
-            if($id!=0){
+            if ($id!=0) {
                 Models::services()->edit($id, $post_data);
-                if(isset($translates)){
-                    Models::services()->updateTranslations($id,$translates,$languages);
+                if (isset($translates)) {
+                    Models::services()->updateTranslations($id, $translates, $languages);
                 }
                 return $this->successMessage("Service has been edited successfully.", $back_url);
-            }
-            else{
+            } else {
                 $new_id = Models::services()->add($post_data);
-                if(isset($translates)){
-                    Models::services()->updateTranslations($new_id,$translates,$languages);
+                if (isset($translates)) {
+                    Models::services()->updateTranslations($new_id, $translates, $languages);
                 }
                 return $this->successMessage("Service has been sent successfully.", $back_url);
             }
@@ -238,17 +234,18 @@ class ServicesAdmin extends Backend
     /**
      * Save new sort
      */
-    function sortSubmit()
+    public function sortSubmit()
     {
         $back_url = SERVICES_ADMIN_URL."services";
-        if(!Services::identity()->isAdmin())
+        if (!Services::identity()->isAdmin()) {
             return Services::identity()->getResponse();
+        }
         $post_data = Services::request()->getPost("data");
-        if($post_data == null) {
+        if ($post_data == null) {
             return $this->errorMessage("Sort data shouldn't be empty.", $back_url);
         }
         $post_data = json_decode($post_data);
-        foreach($post_data as $i=>$item){
+        foreach ($post_data as $i=>$item) {
             $update_data = array(
                 'sort_order'=>$i,
             );
@@ -265,19 +262,20 @@ class ServicesAdmin extends Backend
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string
      * @throws \Exception
      */
-    function deleteService($id, $confirm = 0)
+    public function deleteService($id, $confirm = 0)
     {
-        if(!Services::identity()->isAdmin())
+        if (!Services::identity()->isAdmin()) {
             return Services::identity()->getResponse();
+        }
 
         $back_url = SERVICES_ADMIN_URL."services";
         $self_url = SERVICES_ADMIN_URL."deleteService/$id";
         $data = Models::services()->getOne($id);
-        if(count($data)==0){
+        if (count($data)==0) {
             return $this->errorMessage("The service couldn't find.", $back_url);
         }
 
-        if($confirm!=1){
+        if ($confirm!=1) {
             return json_encode(array(
                 'status'=>'success',
                 'content'=>'<p class="text-center">'._l("This action will delete the service from database.", $this).
@@ -299,11 +297,11 @@ class ServicesAdmin extends Backend
      * @return \CodeIgniter\HTTP\RedirectResponse|false|string|void
      * @throws \Exception
      */
-    function settings()
+    public function settings()
     {
         $self_url = SERVICES_ADMIN_URL."settings";
         $back_url = SERVICES_ADMIN_URL."services";
-        $this->data['title'] = _l("Services Settings",$this);
+        $this->data['title'] = _l("Services Settings", $this);
 
         $display_modes = array(
             array('name'=>_l("With image", $this),'value'=>"image"),
@@ -312,7 +310,7 @@ class ServicesAdmin extends Backend
         $config = array(
             array(
                 'field' => 'services_display_mode',
-                'label' => _l('Display mode',$this),
+                'label' => _l('Display mode', $this),
                 'rules' => 'required|in_list['.join(",", array_column($display_modes, "value")).']',
                 'type' => "select-radio",
                 'options'=>$display_modes,
@@ -322,7 +320,7 @@ class ServicesAdmin extends Backend
             ),
             array(
                 'field' => 'services_display_price',
-                'label' => _l('Display prices',$this),
+                'label' => _l('Display prices', $this),
                 'rules' => 'required|in_list[0,1]',
                 'type' => "switch",
                 'default'=>$this->settings["services_display_price"]
@@ -338,7 +336,7 @@ class ServicesAdmin extends Backend
         );
 
         $languages = Models::languages()->getAll();
-        foreach($languages as $language){
+        foreach ($languages as $language) {
             $config[] = array(
                 'label'=>$language['language_title'],
                 'type'=>"h4",
@@ -351,23 +349,24 @@ class ServicesAdmin extends Backend
                 'label' => _l("Page title", $this),
                 'rules' => "",
                 'type' => "text",
-                'default'=>isset($setting['services_page_title'])?$setting['services_page_title']:'',
+                'default'=>isset($setting['services_page_title']) ? $setting['services_page_title'] : '',
             );
         }
         $myform = new Form($this);
         $myform->config($config, $self_url, 'post', 'ajax');
 
-        if($myform->ispost()){
-            if(!Services::identity()->isAdmin())
+        if ($myform->ispost()) {
+            if (!Services::identity()->isAdmin()) {
                 return Services::identity()->getResponse();
+            }
             $data = $myform->getPost();
             // Stop Page
-            if($data === false){
+            if ($data === false) {
                 return $myform->getResponse();
             }
-            if(isset($data["options"])){
-                foreach($data["options"] as $language_id=>$item){
-                    if(!Models::settings()->updateSettings($item, $language_id)){
+            if (isset($data["options"])) {
+                foreach ($data["options"] as $language_id=>$item) {
+                    if (!Models::settings()->updateSettings($item, $language_id)) {
                         return $this->errorMessage("A settings options could not be saved.", $this);
                     }
                 }
