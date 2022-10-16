@@ -52,7 +52,7 @@ if [[ $VERBOSE -ne 0 ]]; then
   cp bin/git/pre-commit .git/hooks/pre-commit
   chmod 0755 .git/hooks/pre-commit
 else
-  cp bin/git/pre-commit ,git/hooks/pre-commit &> /dev/null
+  cp bin/git/pre-commit .git/hooks/pre-commit &> /dev/null
   chmod 0755 .git/hooks/pre-commit &> /dev/null
 fi
 
