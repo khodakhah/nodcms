@@ -15,3 +15,4 @@ vendor
 .idea
 docker/data/*
 .env
+.phpunit.result.cache
