@@ -11,7 +11,7 @@
   -->
 
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		bootstrap="./vendor/codeigniter4/framework/system/Test/bootstrap.php"
+		bootstrap="tests/bootstrap.php"
 		backupGlobals="false"
 		colors="true"
 		convertErrorsToExceptions="true"

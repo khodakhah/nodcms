@@ -31,7 +31,8 @@
 		"checkout": "sh ./bin/checkout.sh",
 		"start": "php spark serve",
 		"fix": "php-cs-fixer fix --verbose",
-		"lint": "php-cs-fixer fix --verbose --dry-run"
+		"lint": "php-cs-fixer fix --verbose --dry-run",
+		"test": "./vendor/bin/phpunit --testdox"
 	},
 	"support": {
 		"forum": "https://nodecms.com/",
