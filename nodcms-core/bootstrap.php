@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  *  This file is part of NodCMS.
  *
  *  (c) Mojtaba Khodakhah <info@nodcms.com>
